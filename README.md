@@ -1,19 +1,16 @@
-# Hearth & Harbor — Pixel Village v0.7.0
+# Hearth & Harbor — Storybook Village v0.8
 
-A ground-up 2.5D retro-styled art reset of Hearth & Harbor, with original pixel-sprite characters and scenery. Runs directly on GitHub Pages and iPhone Safari. No Three.js, no API keys, no hosting fees, no paid content.
+An iPhone-first, original 2.5D pixel-art life simulator. This edition overhauls character sprites, house graphics, foliage and neighborhood decoration while preserving gameplay and local saves.
 
-## What's different
+## What's new
+- Redrawn 96×132 human-chibi sprites with expressive eyes, hairstyling, outfit types and personality details
+- Redesigned layered tree canopies, fruit and blossoms
+- Rebuilt storybook cottages with arched doors, shutters, layered roofs and flower boxes
+- Custom flower gardens, picket fences, picnic furniture and a flower arch
+- Refreshed mobile HUD palette
 
-The old 3D renderer, procedural sphere characters, floating bodies and boxy buildings have been replaced with a canvas 2.5D painter's-order engine and a consistent original 64-era-inspired pixel-art style. Characters have distinct outfits, hair, skin, eyes, expressions and animated walking. Scenery includes a town plaza, winding paths, cottages, garden beds, fruit stand, leafy trees, spring flowers, furniture and fishing pond.
+## Publishing
+Static files: deploy the repository root with GitHub Pages (main branch, root directory). No Vercel or build process.
 
-## Gameplay
-
-Walk by tapping the ground. Tap characters to approach and talk without a full-screen modal. Compliment or gift neighbors to gain friendship. Tap buildings and locations to enter the house, work at the café, browse the market, tend the garden or play a fishing minigame. Style your avatar, buy and place furniture, and claim journal rewards. Auto-save uses the same key as before: `hearth-harbor-save-v1`. Saves are still local to the browser, so use Menu → Export save for backup.
-
-## Deployment
-
-Static site only. Commit `index.html`, `game.js`, `style.css`, `manifest.webmanifest`, `sw.js` and `assets/` at the repository root. In GitHub Settings → Pages, choose main / root. No build step.
-
-## Scope
-
-This is a playable vertical slice and a replacement art direction, not a completed Sims-like life simulator or a recreation of Nintendo IP. All art is original. Character drawing is generated locally on offscreen canvases. There is no cloud sync, detailed pathfinding, generational simulation or house-wall editing yet. Fine-tuning mobile look and performance will continue after device playtests.
+## Playing
+Open the GitHub Pages link in iPhone Safari. Tap to move, tap neighbors to chat, enter the cottage, fish, garden, work at the cafe, decorate, and manage needs. Saved progress is stored in localStorage under `hearth-harbor-save-v1`; export backups from Menu. No purchases, adverts, subscriptions or server required.
