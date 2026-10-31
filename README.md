@@ -1,4 +1,4 @@
-# Hearth & Harbor · Playable Prototype v0.4
+# Hearth & Harbor · Playable Prototype v0.5
 
 An original cozy chibi life simulator designed first for iPhone Safari and GitHub Pages. Free to play; no accounts, paid services, advertisements, subscriptions, or backend required.
 
@@ -69,3 +69,7 @@ Brighter grass and textures, saturated orchard greens and colorful flower beds, 
 - Updated warm daylight and sign contrast, while leaving gameplay rules and save-key unchanged.
 
 **Art direction note:** This is still a hand-built procedural art prototype, not a commercial console game's custom-model and hand-painted texture pipeline. All added assets are original.
+
+## v0.5 — Living conversations
+
+Neighbor dialogue is now in-world: no full-screen talk menu, resident-visible camera framing, head/arm gestures and face changes, floating emotes, and a compact mobile conversation panel. Existing local saves remain compatible.
