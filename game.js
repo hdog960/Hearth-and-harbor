@@ -1,11 +1,11 @@
-/* Hearth & Harbor — Quality Edition v1.0.0
+/* Hearth & Harbor — Village Life v1.1.0
    A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),rand=(a,b)=>a+Math.random()*(b-a);
 const hash=(n)=>{const x=Math.sin(n*127.1+8.45)*43758.5453;return x-Math.floor(x)};
 const SAVE='hearth-harbor-save-v1';
-const DEF=()=>({name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
+const DEF=()=>({socialDaily:{},name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
 function cleanSave(raw){
  const d=DEF();if(!raw||typeof raw!=='object'||Array.isArray(raw))return d;
  const number=(v,f,min,max)=>typeof v==='number'&&Number.isFinite(v)?clamp(v,min,max):f;
@@ -19,6 +19,7 @@ function cleanSave(raw){
    hairStyle:number(raw.hairStyle,d.hairStyle,0,4)|0,coins:number(raw.coins,d.coins,0,1000000),hearts:number(raw.hearts,0,0,1000000),
    day:number(raw.day,1,1,9999)|0,minute:number(raw.minute,d.minute,0,1439.999),season:number(raw.season,0,0,3)|0,
    homeStyle:number(raw.homeStyle,0,0,3)|0,seenWelcome:!!raw.seenWelcome,
+   socialDaily:Object.fromEntries(Object.entries(obj(raw.socialDaily)).filter(([id])=>npcIds.has(id)).map(([id,record])=>{const r=obj(record);return [id,{day:number(r.day,0,0,9999)|0,chat:number(r.chat,0,0,2)|0,compliment:number(r.compliment,0,0,1)|0,gift:number(r.gift,0,0,1)|0}]})),
    needs:Object.fromEntries(Object.entries(d.needs).map(([k,v])=>[k,number(needs[k],v,0,100)])),
    relations:Object.fromEntries(Object.entries(relationships).filter(([k])=>npcIds.has(k)).map(([k,v])=>[k,number(v,0,0,100)])),
    quests:Object.fromEntries(Object.entries(quests).filter(([k])=>/^(meet|chat|fish|garden|work)(_claimed)?$/.test(k)).map(([k,v])=>[k,k.endsWith('_claimed')?!!v:number(v,0,0,100000)])),
@@ -56,6 +57,14 @@ function updateUI(){const seasons=['SPRING','SUMMER','AUTUMN','WINTER'],h=Math.f
 function changeNeed(id,v){state.needs[id]=clamp(state.needs[id]+v,0,100);updateUI();save()}
 function coins(v){state.coins=Math.max(0,state.coins+v);updateUI();save()}
 function task(id){state.quests[id]=(state.quests[id]||0)+1;save()}
+const personalityTalk={
+ mabel:{compliments:['You noticed my flowers? That makes me so happy!','I pressed your compliment into my memory like a flower.'],gift:['I will put this somewhere sunny!','Oh! A new treasure for my greenhouse!']},
+ rosie:{compliments:['Stop, you are making me grin like a peach!','Kind words are the best things in my market.'],gift:['For me? I should give you a loyalty card!','This deserves a special spot by my counter.']},
+ oliver:{compliments:['I am blushing like a freshly baked bun!','You are sweeter than the icing!'],gift:['Thank you! You have made my entire morning.','I will save this for after the café rush.']},
+ jun:{compliments:['Oh... I might write a poem about that.','You are very kind. I never know what to say.'],gift:['This is so thoughtful. I will cherish it.','I am going to keep this next to my favorite books.']},
+ bea:{compliments:['You just brightened my whole color palette!','Can I paint that compliment? It was beautiful.'],gift:['This sparks so many ideas!','I love gifts with a little story behind them.']},
+ finn:{compliments:['That is mighty nice of you.','Aw, you are good company.'],gift:['I will treasure it on my next fishing trip.','That is even better than a lucky catch!']}
+};
 const questDefs=[{id:'meet',text:'Meet 3 neighbors',max:3,reward:70},{id:'chat',text:'Have 5 friendly chats',max:5,reward:80},{id:'fish',text:'Catch 3 fish',max:3,reward:85},{id:'garden',text:'Harvest your first flowers',max:1,reward:55},{id:'work',text:'Work 2 café shifts',max:2,reward:120}];
 
 // ===== ORIGINAL 64-ERA INSPIRED PIXEL SPRITE ARTWORK =====
@@ -487,7 +496,89 @@ function drawScene(){if(!W||!H)return;
 }
 function drawName(g,name,x,y){g.font='900 13px monospace';let textW=g.measureText(name).width;fill(g,'#295955',x-textW/2-8,y-14,textW+16,22);fill(g,'#fff7d7',x-textW/2-4,y-11,textW+8,17);g.textAlign='center';g.fillStyle='#3a6551';g.fillText(name,x,y+1);g.textAlign='left'}
 function resize(){W=Math.max(280,innerWidth);H=Math.max(350,innerHeight);DPR=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);canvas.style.width=W+'px';canvas.style.height=H+'px';worldScale=scene==='home'?clamp(W/770,.47,.86):clamp(W/530,.69,1.17);ctx.imageSmoothingEnabled=false}
-function goTo(dest,after){player.target={x:dest.x,y:dest.y,after};if(Math.hypot(dest.x-player.x,dest.y-player.y)<28){const t=player.target;player.target=null;if(t.after)t.after()}}
+// Characters navigate walkable corridors; scenery is no longer intangible.
+const NAV_STEP=35;
+function isWalkable(x,y,where=scene,ignoreNpc=false){
+ if(where==='home'){
+  if(x<215||x>958||y<260||y>1070)return false;
+  for(const [fx,fy,rx,ry] of [[332,430,95,62],[803,489,85,67],[840,309,100,64],[342,314,72,70]])
+   if(Math.abs(x-fx)<rx&&Math.abs(y-fy)<ry)return false;
+  for(const f of state.placed){if(f.kind==='rug')continue;if(Math.abs(x-f.x)<47&&Math.abs(y-f.z)<34)return false}
+  return true;
+ }
+ if(x<80||x>1440||y<190||y>1460)return false;
+ // House foundations, market, garden plots, pond, and decorative props.
+ for(const o of objects){
+  if(o.type==='house'&&Math.abs(x-o.x)<113&&y>o.y-92&&y<o.y-8)return false;
+  if(o.type==='stall'&&Math.abs(x-o.x)<64&&y>o.y-47&&y<o.y+5)return false;
+  if(o.type==='garden'&&x>655&&x<874&&y>297&&y<459)return false;
+  if(o.type==='pond'&&((x-940)/151)**2+((y-1249)/89)**2<1)return false;
+  if(o.type==='tree'&&Math.hypot(x-o.x,y-(o.y-15))<23)return false;
+  if(o.type==='lamp'&&Math.hypot(x-o.x,y-o.y)<13)return false;
+  if(o.type==='fence'&&Math.abs(x-o.x)<71&&Math.abs(y-o.y)<17)return false;
+  if(o.type==='picnic'&&Math.abs(x-o.x)<61&&Math.abs(y-o.y)<21)return false;
+ }
+ if(!ignoreNpc)for(const n of NPCS){if(Math.hypot(x-n.x,y-n.y)<25)return false}
+ return true;
+}
+function nearestWalkable(dest,where=scene,ignoreNpc=false){
+ const b=where==='home'?{minx:225,maxx:947,miny:270,maxy:1055}:{minx:90,maxx:1430,miny:200,maxy:1450};
+ const point={x:clamp(dest.x,b.minx,b.maxx),y:clamp(dest.y,b.miny,b.maxy)};
+ if(isWalkable(point.x,point.y,where,ignoreNpc))return point;
+ for(let r=16;r<=250;r+=16)for(let i=0;i<24;i++){
+  const a=i*Math.PI/12,p={x:clamp(point.x+Math.cos(a)*r,b.minx,b.maxx),y:clamp(point.y+Math.sin(a)*r,b.miny,b.maxy)};
+  if(isWalkable(p.x,p.y,where,ignoreNpc))return p;
+ }
+ return null;
+}
+function findPath(start,dest,where=scene){
+ const b=where==='home'?{minx:215,maxx:960,miny:260,maxy:1070}:{minx:80,maxx:1440,miny:190,maxy:1460};
+ const width=Math.floor((b.maxx-b.minx)/NAV_STEP)+1,height=Math.floor((b.maxy-b.miny)/NAV_STEP)+1;
+ const idx=(cx,cy)=>cy*width+cx;
+ const coord=(x,y)=>({x:b.minx+x*NAV_STEP,y:b.miny+y*NAV_STEP});
+ const nearest=(p)=>({x:clamp(Math.round((p.x-b.minx)/NAV_STEP),0,width-1),y:clamp(Math.round((p.y-b.miny)/NAV_STEP),0,height-1)});
+ const a=nearest(start),z=nearest(dest),from=idx(a.x,a.y),to=idx(z.x,z.y);
+ const pass=(x,y)=>{if(x<0||y<0||x>=width||y>=height)return false;const pt=coord(x,y);return isWalkable(pt.x,pt.y,where,true)};
+ const q=[from],came=new Map([[from,-1]]),directions=[[1,0],[-1,0],[0,1],[0,-1]];
+ let found=-1,closest=from,minDist=Infinity;
+ for(let qi=0;qi<q.length;qi++){
+  const cur=q[qi],cx=cur%width,cy=Math.floor(cur/width),d=Math.abs(cx-z.x)+Math.abs(cy-z.y);
+  if(d<minDist){minDist=d;closest=cur}
+  if(cur===to){found=cur;break}
+  if(q.length>width*height)break;
+  for(const [dx,dy] of directions){const nx=cx+dx,ny=cy+dy,n=idx(nx,ny);if(pass(nx,ny)&&!came.has(n)){came.set(n,cur);q.push(n)}}
+ }
+ // A nearest reachable node is better than walking through solid scenery.
+ let cur=found>=0?found:closest,path=[];
+ while(cur!==from&&came.has(cur)){path.push(coord(cur%width,Math.floor(cur/width)));cur=came.get(cur)}
+ path.reverse();
+ // Remove redundant collinear grid nodes for a smoother and more economical route.
+ const simplified=[];
+ for(let i=0;i<path.length;i++){
+  const prev=simplified[simplified.length-1],next=path[i+1],p=path[i];
+  if(prev&&next&&((prev.x===p.x&&p.x===next.x)||(prev.y===p.y&&p.y===next.y)))continue;
+  simplified.push(p);
+ }
+ if(found>=0&&isWalkable(dest.x,dest.y,where,true))simplified.push(dest);
+ return simplified;
+}
+function goTo(dest,after){
+ const safe=nearestWalkable(dest);
+ if(!safe){notify('That spot is out of reach.');return}
+ const route=findPath(player,safe);
+ if(!route.length&&Math.hypot(player.x-safe.x,player.y-safe.y)>32){notify('No clear path there.');return}
+ player.target={x:safe.x,y:safe.y,route,after};
+ if(Math.hypot(safe.x-player.x,safe.y-player.y)<24){const t=player.target;player.target=null;if(t.after)t.after()}
+}
+function approachObject(o){
+ const access=o.type==='house'?{x:o.x+122,y:o.y+27}:
+  o.type==='garden'?{x:764,y:478}:
+  o.type==='pond'?{x:940,y:1360}:
+  o.type==='stall'?{x:o.x+28,y:o.y+45}:{x:o.x,y:o.y+45};
+ return nearestWalkable(access)||access;
+}
+function approachNeighbor(n){return nearestWalkable({x:n.x-51,y:n.y+35},scene,true)||{x:n.x-55,y:n.y+38}}
+
 function goScene(next){if(talk)closeTalk();closeModal();stopPlacement();scene=next;player.target=null;
  if(next==='home'){player.x=575;player.y=670;cam.x=575;cam.y=650;}else{player.x=566;player.y=621;cam.x=566;cam.y=620;}
  resize();updateUI();save();notify(next==='home'?'Home sweet home! 🏡':'Out into the sunshine! 🌷')}
@@ -500,7 +591,7 @@ function clickWorld(x,y){if(modal||talk)return;
  if(placement&&scene==='home'){
   const pos=chooseFurniturePosition(wx,wy),f=placement.moveIndex!==undefined?state.placed[placement.moveIndex]:placement;
   const blocked=[[332,430,95],[803,489,89],[840,309,95],[342,314,94]];
-  const occupied=blocked.some(([x,y,r])=>Math.hypot(pos.x-x,(pos.y-20)-(y-35))<r)||state.placed.some((item,i)=>i!==placement.moveIndex&&Math.hypot(pos.x-item.x,pos.y-item.z)<72);
+  const occupied=blocked.some(([x,y,r])=>Math.hypot(pos.x-x,(pos.y-20)-(y-35))<r)||state.placed.some((item,i)=>i!==placement.moveIndex&&Math.hypot(pos.x-item.x,pos.y-item.z)<72)||Math.hypot(pos.x-player.x,pos.y-player.y)<55;
   if(occupied)return notify('That spot is taken. Try a clear area!');
   if(placement.moveIndex!==undefined){state.placed[placement.moveIndex].x=pos.x;state.placed[placement.moveIndex].z=pos.y;}
   else{const item=furnitureTypes.find(t=>t.id===f.kind);if(state.coins<item.cost)return notify('Not enough coins!');state.coins-=item.cost;state.placed.push({kind:f.kind,x:pos.x,z:pos.y});}
@@ -511,24 +602,38 @@ function clickWorld(x,y){if(modal||talk)return;
   const bounds={x:clamp(wx,225,947),y:clamp(wy,275,738)};
   const fixed=[{kind:'bed',x:332,y:430,act:()=>{changeNeed('energy',70);notify('A wonderful nap! 💤')}},{kind:'sofa',x:803,y:489,act:()=>{changeNeed('fun',25);notify('Cozy sofa time! 💗')}},{kind:'kitchen',x:840,y:309,act:()=>{if(state.coins<10)return notify('A small meal costs 10 coins.');coins(-10);changeNeed('hunger',42);notify('Homemade comfort food! 🍞')}},{kind:'books',x:342,y:314,act:()=>{changeNeed('fun',15);notify('A lovely story! 📚')}}];
   const near=fixed.find(o=>Math.hypot(wx-o.x,wy-(o.y-35))<80);
-  goTo(near?{x:near.x+54,y:near.y+28}:bounds,near?.act);return;
+  goTo(near?nearestWalkable({x:near.x+105,y:near.y+60}):bounds,near?.act);return;
  }
  const character=NPCS.map(n=>({n,dist:Math.hypot(wx-n.x,wy-(n.y-66))})).sort((a,b)=>a.dist-b.dist)[0];
- if(character&&character.dist<84){const n=character.n;goTo({x:n.x-46,y:n.y+23},()=>openTalk(n.id));return}
+ if(character&&character.dist<84){const n=character.n;goTo(approachNeighbor(n),()=>openTalk(n.id));return}
  const actions=objects.filter(o=>o.action).map(o=>({o,dist:Math.hypot(wx-o.x,(wy-(o.type==='house'?o.y-100:o.y-30)))})).sort((a,b)=>a.dist-b.dist);
  const hit=actions[0];if(hit&&hit.dist<(hit.o.type==='house'?150:hit.o.type==='pond'?135:90)){
-  const o=hit.o,approach={x:o.x-50,y:o.y+14};goTo(approach,()=>perform(o.action));return;
+  const o=hit.o;goTo(approachObject(o),()=>perform(o.action));return;
  }
  goTo({x:clamp(wx,65,1460),y:clamp(wy,200,1440)});
 }
 function perform(action){if(action==='home')return goScene('home');if(action==='cafe')return cafe();if(action==='library'){changeNeed('fun',16);notify('You found a beautiful new story! 📖');return}if(action==='hall')return townHall();if(action==='market')return market();if(action==='garden')return garden();if(action==='fish')return fishing();}
 function update(dt){tick+=dt;
- if(!talk&&!modal){let next=player.target;if(next){const dx=next.x-player.x,dy=next.y-player.y,d=Math.hypot(dx,dy),step=Math.min(d,dt*178);if(d>step+3){player.x+=dx/d*step;player.y+=dy/d*step;player.facing=dy< -25?'back':Math.abs(dx)>Math.abs(dy)*1.1?'side':'front';}else{player.x=next.x;player.y=next.y;player.target=null;player.facing='front';if(next.after)next.after()}}}
+ if(!talk&&!modal){const next=player.target;if(next){
+  const point=next.route?.[0]||{x:next.x,y:next.y};let dx=point.x-player.x,dy=point.y-player.y,d=Math.hypot(dx,dy),step=Math.min(d,dt*178);
+  if(d>Math.max(step,1)+2){
+   const xx=player.x+dx/d*step,yy=player.y+dy/d*step;
+   if(isWalkable(xx,yy,scene,true)){player.x=xx;player.y=yy;player.facing=dy < -25?'back':Math.abs(dx)>Math.abs(dy)*1.1?'side':'front';}
+   else{player.target=null;notify('Something is in the way. Tap another spot!')}
+  }else{
+   if(isWalkable(point.x,point.y,scene,true)){player.x=point.x;player.y=point.y}
+   if(next.route?.length){next.route.shift()}
+   if(!next.route?.length){player.target=null;player.facing='front';if(next.after)next.after()}
+  }
+ }}
  if(scene==='town'){
   for(let i=0;i<NPCS.length;i++){const n=NPCS[i];if(talk===n.id)continue;n.wanderDelay-=dt;
    if(n.wanderDelay<=0){n.wanderDelay=2+hash(Math.floor(tick*.5+i)*3.2)*4;n.wanderAngle=hash(tick*2.3+i*5)*TAU;n.moving=.8+hash(i+tick)*1.3}
-   if(n.moving>0){n.moving-=dt;let dx=Math.cos(n.wanderAngle),dy=Math.sin(n.wanderAngle);n.x+=dx*dt*14;n.y+=dy*dt*14;
-    if(Math.hypot(n.x-n.cx,n.y-n.cy)>60){n.wanderAngle+=Math.PI;n.x-=dx*dt*28;n.y-=dy*dt*28};n.facing=dy<-.15?'back':Math.abs(dx)>Math.abs(dy)?'side':'front';}
+   if(n.moving>0){n.moving-=dt;const dx=Math.cos(n.wanderAngle),dy=Math.sin(n.wanderAngle),nx=n.x+dx*dt*18,ny=n.y+dy*dt*18;
+    if(Math.hypot(nx-n.cx,ny-n.cy)>72||!isWalkable(nx,ny,'town',true)||NPCS.some(other=>other!==n&&Math.hypot(nx-other.x,ny-other.y)<35)){
+      n.moving=0;n.wanderDelay=1+hash(i+tick)*2;n.wanderAngle+=Math.PI;
+    }else{n.x=nx;n.y=ny;n.facing=dy<-.15?'back':Math.abs(dx)>Math.abs(dy)?'side':'front'}
+   }
   }
  }
  if(speed>0&&!modal&&!talk&&!placement){state.minute+=dt*speed*2.0;while(state.minute>=1440){state.minute-=1440;state.day++;if(state.day%7===1)state.season=(state.season+1)%4;notify('A bright new day begins! 🌞');save()}
@@ -547,16 +652,23 @@ function showModal(kind,body){closeTalk();modal=kind;$('modalContent').innerHTML
 function btn(label,fn){return `<button class="btn" data-act="${fn}">${label}</button>`}
 function buttonClick(e){const b=e.target.closest('[data-act]');if(!b)return;handleAction(b.dataset.act,b.dataset.id||'')}
 function openTalk(id){const n=NPCS.find(a=>a.id===id);if(!n)return;closeModal();talk=id;n.emotion='happy';n.emotionUntil=tick+1.2;const r=state.relations[id]||0;
- $('talkName').textContent=n.name;$('talkRole').textContent=n.job+' • ♥ '+r;$('talkPortrait').textContent=n.emoji;
+ $('talkName').textContent=n.name;$('talkRole').textContent=n.job+' • ♥ '+r;$('talkPortrait').textContent='';const portrait=document.createElement('canvas');portrait.width=54;portrait.height=54;portrait.className='portrait-canvas';const pg=portrait.getContext('2d');pg.imageSmoothingEnabled=false;pg.drawImage(charArt(n,'front',0,'happy'),4,0,88,79,0,0,54,54);$('talkPortrait').append(portrait);
  $('talkText').textContent=n.lines[Math.floor(rand(0,n.lines.length))];$('conversation').classList.remove('hidden');$('game').classList.add('talking');
  $('talkActions').innerHTML='<button data-act="chat">💬 Chat</button><button data-act="compliment">💗 Compliment</button><button data-act="gift">🎁 Gift</button><button data-act="bye">See you!</button>';
  $('emote').textContent='💗';$('emote').hidden=false;state.met=state.met||[];if(!state.met.includes(id)){state.met.push(id);task('meet')}changeNeed('social',7);save()}
 function closeTalk(){talk=null;$('conversation').classList.add('hidden');$('game').classList.remove('talking');$('emote').hidden=true}
 function respond(kind){const n=NPCS.find(o=>o.id===talk);if(!n)return;
- const r=state.relations[n.id]||0;let gain=0;
- if(kind==='chat'){gain=7;task('chat');$('talkText').textContent=n.lines[Math.floor(rand(0,n.lines.length))];n.emotion='happy';$('emote').textContent='✨';changeNeed('social',13)}
- else if(kind==='compliment'){gain=12;n.emotion='happy';$('talkText').textContent=['Aw, you just made my whole day!','You are so sweet. I might blush!','That means the world to me!'][Math.floor(rand(0,3))];$('emote').textContent='💕'}
- else if(kind==='gift'){if(state.coins<20){$('talkText').textContent='Even a friendly hello is a gift, you know!';return}coins(-20);gain=20;n.emotion='surprised';$('talkText').textContent='For me?! Oh my goodness, I love it!';$('emote').textContent='🎁'}
+ if(!state.socialDaily[n.id]||state.socialDaily[n.id].day!==state.day)state.socialDaily[n.id]={day:state.day,chat:0,compliment:0,gift:0};
+ const daily=state.socialDaily[n.id],r=state.relations[n.id]||0,cap=kind==='chat'?2:1;
+ const voices=personalityTalk[n.id]||personalityTalk.mabel;
+ if(daily[kind]>=cap){$('talkText').textContent=kind==='chat'?`We've had a lovely chat already. Let's catch up tomorrow!`:kind==='compliment'?'I am still smiling from what you said earlier!':'That was so thoughtful. One gift a day is plenty!';$('emote').textContent='💛';return}
+ if(kind==='gift'&&state.coins<20){$('talkText').textContent='Even a friendly hello is a gift, you know!';return}
+ daily[kind]++;let gain=0;
+ if(kind==='chat'){
+  gain=7;task('chat');const lines=n.lines||[];const pick=(state.day+daily.chat+Math.floor(tick*.1))%lines.length;
+  $('talkText').textContent=lines[pick];n.emotion='happy';$('emote').textContent='✨';changeNeed('social',13);
+ }else if(kind==='compliment'){gain=12;n.emotion='happy';$('talkText').textContent=voices.compliments[(state.day+daily.compliment)%voices.compliments.length];$('emote').textContent='💕'}
+ else if(kind==='gift'){coins(-20);gain=20;n.emotion='surprised';$('talkText').textContent=voices.gift[(state.day+daily.gift)%voices.gift.length];$('emote').textContent='🎁'}
  state.relations[n.id]=Math.min(100,r+gain);state.hearts+=gain;n.emotionUntil=tick+2.1;$('talkRole').textContent=n.job+' • ♥ '+state.relations[n.id];$('heartText').textContent=state.hearts;save();
 }
 function people(){showModal('people',`<h2>💌 Meet the Neighbors</h2><p>Everyone has a life, a story, and a friendship to build. Find a neighbor to chat in the actual village.</p>${NPCS.map(n=>`<div class="card"><div><b>${n.emoji} ${n.name} · ♥ ${state.relations[n.id]||0}</b><small>${n.job} · ${n.trait}</small></div><button data-act="find" data-id="${n.id}">Find</button></div>`).join('')}`)}
@@ -572,11 +684,11 @@ function decorate(){if(scene!=='home')goScene('home');
 function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
  showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(pendingName??state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair color</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Haircut</h3><div class="haircuts">${['Bob','Side-part','Tousled','Ponytail','Buns'].map((n,i)=>`<button data-act="set-style" data-id="${i}" aria-pressed="${state.hairStyle===i}" class="haircut ${state.hairStyle===i?'selected':''}">${n}</button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Quality Edition v1.0.0 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
+function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Village Life v1.1.0 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
 function handleAction(action,id){
  if(action==='chat'||action==='compliment'||action==='gift')return respond(action);
  if(action==='bye')return closeTalk();
- if(action==='find'){closeModal();if(scene==='home')goScene('town');const n=NPCS.find(n=>n.id===id);if(n)goTo({x:n.x-50,y:n.y+20},()=>openTalk(id));return}
+ if(action==='find'){closeModal();if(scene==='home')goScene('town');const n=NPCS.find(n=>n.id===id);if(n)goTo(approachNeighbor(n),()=>openTalk(id));return}
  if(action==='journal')return journal();
  if(action==='claim'){const q=questDefs.find(q=>q.id===id);if(!q||state.quests[q.id+'_claimed']||(state.quests[q.id]||0)<q.max)return;state.quests[q.id+'_claimed']=true;coins(q.reward);notify(`Quest complete! +${q.reward} coins ✨`);return journal()}
  if(action==='work'){task('work');coins(45);changeNeed('energy',-13);changeNeed('fun',9);notify('Delicious work! +45 coins 🥐');return cafe()}
