@@ -21,7 +21,8 @@ Pantry shopping and starter stock, cooking XP/mastery, meal storage/eating, old-
 
 **Exit:** Each recipe completed with touch and accessibility alternatives; save and reload preserved; fair prices; visible art differentiation; no duplicate serving rewards.
 
-## v2.3 — A House Is a Home (next major build)
+## v2.3 — A House Is a Home (first playable slice live; continuing development)
+- **First slice implemented:** Guide residents inside their own residences, schedule five routines, choose among six room palettes, buy visible personal touches, and earn capped home comfort benefits. Remaining work: full household-wide control, richer building and deeper autonomy.
 - **Controllable household switching:** household portraits and independent action queues for every family member, with clear pause/fast-forward and ownership indicators.
 - **Deep decoration:** room layouts, walls and flooring, wallpaper, lighting, adjustable placement/rotation/snapping, colorways, custom furniture sets and a comfortable 2.5D dollhouse view. Prioritize touch ease with undo/redo, affordability preview, free placement grid options, sensible storage and collision protections.
 - **Decoration matters:** comfort, style, mood, hobbies and home function improve when residents actually use well-furnished spaces. Functional kitchen upgrades make cooking convenient, bookshelves support reading, inviting seating supports conversations; avoid pay-to-win stat stacking or unavoidable chores.
