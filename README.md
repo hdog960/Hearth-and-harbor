@@ -1,4 +1,4 @@
-# Hearth & Harbor · Playable Prototype v0.2
+# Hearth & Harbor · Playable Prototype v0.3
 
 An original cozy chibi life simulator designed first for iPhone Safari and GitHub Pages. Free to play; no accounts, paid services, advertisements, subscriptions, or backend required.
 
@@ -44,4 +44,16 @@ This is a **vertical slice**, not the full Sims-like game: no autonomous househo
 
 ## Visual overhaul v0.2 (October 31, 2026)
 
-Reworked original chibi bodies, hairstyles and expressive faces; organic painted grass and textured sandy paths; rebuilt cottages with gables, shutters, dormers, flowerboxes and porches; more detailed trees, shrubs and flowers; lily pond and ripples; upgraded market, benches, plaza fountain and cottage furnishings. Instanced grass and pebble meshes keep draw calls low. Existing local saves stay compatible. The next step toward a production-quality game is an art-directed 3D asset and hand-painted texture pipeline.
+- Richer original rounded chibi character heads, expressive glossy eyes, shaped hairstyles, sleeves and proper shoes.
+- Organic hand-shaped sandy paths instead of hard rectangle tiles, with instanced stones.
+- Procedurally painted grass and wood plank textures (generated in browser, no heavy texture downloads).
+- Layered trees, tinted foliage, blossoms, fruit, garden beds, wild grass, mushrooms and natural landscaping.
+- Rebuilt cottages with gable roofs, scalloped shingle lines, dormers, porches, shutters, flower boxes and wreaths.
+- Upgraded pond, lily pads, reeds, reflective ripples, market stall, benches, town fountain and warmer home decor.
+- Shared 3D materials, instanced detail meshes and retained mobile resolution cap for iPhone performance.
+
+Existing local saves remain compatible. This is original stylized art inspired by the feel of cozy life sims, not a reuse of Nintendo or EA assets. The team should continue toward art-directed 3D models and hand-painted textures for a production-quality finish.
+
+## v0.3 Sunshine Color Update
+
+Brighter grass and textures, saturated orchard greens and colorful flower beds, sparkling cyan pond, warm sunshine with reduced tone-mapping washout, vivid coral / butter-yellow / mint / violet cottages, cheerful in-game UI. Existing save data is preserved.
