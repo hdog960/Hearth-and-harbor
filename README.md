@@ -1,4 +1,4 @@
-# Hearth & Harbor · Playable Prototype v0.3
+# Hearth & Harbor · Playable Prototype v0.4
 
 An original cozy chibi life simulator designed first for iPhone Safari and GitHub Pages. Free to play; no accounts, paid services, advertisements, subscriptions, or backend required.
 
@@ -57,3 +57,15 @@ Existing local saves remain compatible. This is original stylized art inspired b
 ## v0.3 Sunshine Color Update
 
 Brighter grass and textures, saturated orchard greens and colorful flower beds, sparkling cyan pond, warm sunshine with reduced tone-mapping washout, vivid coral / butter-yellow / mint / violet cottages, cheerful in-game UI. Existing save data is preserved.
+
+## v0.4 Village & Character Art Rebuild
+
+- Sculpted faces with larger irises, glossy highlights, eyebrows, cheeks and tiny smiles; more distinctive hairstyles and accessories for named residents.
+- Additional clothing features, rounded hems, decorated pockets, embroidery, hat, hair bows, and baker's cap.
+- Detailed cottage front façades with roof edge trim, shaped roof-tile details, colorful awnings, porch lights, mailboxes and doorstep patterns.
+- Soft foliage highlights, bark detailing, blossom/fruit colors and more decorative treetop layering.
+- Art-directed flower beds, sunflower stands, trellis arch, streetlights, potted bouquets, small seating areas and picnic tables.
+- Replaced the new flower beds with instanced geometry to keep decorative density inexpensive on iPhone.
+- Updated warm daylight and sign contrast, while leaving gameplay rules and save-key unchanged.
+
+**Art direction note:** This is still a hand-built procedural art prototype, not a commercial console game's custom-model and hand-painted texture pipeline. All added assets are original.
