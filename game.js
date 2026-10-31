@@ -32,6 +32,7 @@ const defaultState=()=>({name:'Poppy',hair:0x5d4037,outfit:0xe3a0a8,skin:0xf4c5a
 let state=defaultState();
 try{const saved=JSON.parse(localStorage.getItem('hearth-harbor-save-v1')||'null');if(saved&&typeof saved==='object')state={...state,...saved,needs:{...state.needs,...saved.needs},relations:{...saved.relations},quests:{...saved.quests}}}catch(e){console.warn('Save unavailable',e)}
 let speed=1,modal='',placement=null,currentScene='town',pending=null,clockAccumulator=0,autoSaveT=0,toastTimer=0,fishValue=0,fishRaf=0, muted=false;
+let talking=null,talkEmoteUntil=0,talkCameraZoom=1;
 let scene,camera,renderer,light,player,playerBody,ground, raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),camTarget=new THREE.Vector3(),world=new THREE.Group(),npcs=[],clickable=[],decors=[],interactEntities=[],gardenMeshes=[],placedGroups=[],clouds=[];
 // Shared materials & procedural textures keep the mobile renderer light.
 const materialCache=new Map();
@@ -108,6 +109,7 @@ function chibi(opts={}){
  const torso=sphere(.53,outfit,0,1.0,0,20,15);torso.scale.set(1.02,1.08,.86);c.add(torso);
  const collar=mat(0xfff3dc),trouser=mat(0xf2e8d7);c.add(cyl(.32,.29,.10,collar,0,1.43,.05,14));
  const head=sphere(.80,skin,0,2.06,.035,28,21);head.scale.set(1,1.01,.94);c.add(head);
+ const expressionEyes=[],closedEyes=[];
  // Smooth side-parted hair with shaped bangs, a fringe and two little locks.
  const cap=sphere(.807,hair,0,2.45,-.09,26,18);cap.scale.set(1.015,.62,.98);c.add(cap);
  for(let j=0;j<5;j++){let xp=-.61+j*.27;let b=sphere(.26,hair,xp,2.49+(j===0?-.09:Math.sin(j)*.055),.50-(Math.abs(xp)*.11),14,10);b.scale.set(1.04,.68,.86);c.add(b)}
@@ -115,8 +117,9 @@ function chibi(opts={}){
   const lock=sphere(.21,hair,side*.69,2.14,-.045,12,9);lock.scale.set(.67,1.70,.75);c.add(lock);
   c.add(sphere(.14,skin,side*.79,1.99,0,12,9));
   // Flat glossy button eyes rather than round protruding balls.
-  let e=sphere(.139,eyes,side*.314,2.07,.739,14,11);e.scale.set(.78,1.12,.28);c.add(e);
-  c.add(sphere(.037,mat(0xffffff),side*.338-.02,2.122,.776,9,7));
+  let e=sphere(.139,eyes,side*.314,2.07,.739,14,11);e.scale.set(.78,1.12,.28);c.add(e);expressionEyes.push(e);
+  const shine=sphere(.037,mat(0xffffff),side*.338-.02,2.122,.776,9,7);c.add(shine);expressionEyes.push(shine);
+  const sleepy=new THREE.Mesh(new THREE.TorusGeometry(.12,.019,6,18,Math.PI*.93),mat(0x4c3434));sleepy.position.set(side*.314,2.063,.759);sleepy.visible=false;c.add(sleepy);closedEyes.push(sleepy);
   const cheek=sphere(.15,blush,side*.53,1.84,.66,11,8);cheek.scale.set(1.1,.36,.20);c.add(cheek);
   let brow=sphere(.09,hair,side*.315,2.285,.731,9,5);brow.scale.set(1.25,.20,.18);c.add(brow);
  }
@@ -137,9 +140,9 @@ function chibi(opts={}){
  // Big animated-film-style irises and a shiny expression, shaped for the camera-facing front.
  const iris=mat(0x584744),pupil=mat(0x1d292c),catchlight=mat(0xffffff);
  for(const side of [-1,1]){
-  const ir=sphere(.105,iris,side*.313,2.065,.788,16,12);ir.scale.set(.78,1.12,.25);c.add(ir);
-  const pup=sphere(.070,pupil,side*.317,2.058,.809,13,10);pup.scale.set(.77,1.08,.24);c.add(pup);
-  c.add(sphere(.026,catchlight,side*.312-.025,2.112,.832,10,8));
+  const ir=sphere(.105,iris,side*.313,2.065,.788,16,12);ir.scale.set(.78,1.12,.25);c.add(ir);expressionEyes.push(ir);
+  const pup=sphere(.070,pupil,side*.317,2.058,.809,13,10);pup.scale.set(.77,1.08,.24);c.add(pup);expressionEyes.push(pup);
+  const glint=sphere(.026,catchlight,side*.312-.025,2.112,.832,10,8);c.add(glint);expressionEyes.push(glint);
   const lash=sphere(.078,hair,side*.381,2.184,.755,9,7);lash.scale.set(.56,.18,.22);lash.rotation.z=side*.35;c.add(lash);
  }
  // Tiny cardigan hem, pockets, embroidered flower, and warm-colored scarf ribbon.
@@ -177,7 +180,9 @@ function chibi(opts={}){
  }
  // Embroidered buttons and a little pouch create detail at gameplay distance.
  for(let j=0;j<2;j++)c.add(sphere(.043,collar,0,1.13-j*.18,.49,9,7));
- c.userData={arms,legs,outfit,skin,hair,cap,head};return c;
+ const happyMouth=new THREE.Mesh(new THREE.TorusGeometry(.15,.022,6,20,Math.PI),mat(0x9c5152));happyMouth.position.set(0,1.84,.76);happyMouth.rotation.z=Math.PI;happyMouth.visible=false;c.add(happyMouth);
+ const surpriseMouth=sphere(.085,mat(0x903d50),0,1.805,.767,12,9);surpriseMouth.scale.set(.75,1.25,.15);surpriseMouth.visible=false;c.add(surpriseMouth);
+ c.userData={arms,legs,outfit,skin,hair,cap,head,expressionEyes,closedEyes,mouth,happyMouth,surpriseMouth,expression:'neutral'};return c;
 }
 function makeHouse(x,z,bodyColor,roofColor,label,tag,id){
  const g=groupAt(x,z);shadow(g,3.6);
@@ -544,9 +549,9 @@ function save(){try{localStorage.setItem('hearth-harbor-save-v1',JSON.stringify(
 function chime(){if(!state.sound)return;try{const ctx=chime.ctx||(chime.ctx=new (window.AudioContext||window.webkitAudioContext)());if(ctx.state==='suspended')ctx.resume();[0,.09].forEach((offset,i)=>{const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type='sine';osc.frequency.value=i?698:523;gain.gain.setValueAtTime(.0001,ctx.currentTime+offset);gain.gain.exponentialRampToValueAtTime(.035,ctx.currentTime+offset+.015);gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+offset+.20);osc.connect(gain).connect(ctx.destination);osc.start(ctx.currentTime+offset);osc.stop(ctx.currentTime+offset+.22)})}catch{}}
 function toast(t){chime();clearTimeout(toastTimer);$('toast').textContent=t;$('toast').classList.add('show');toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2700)}
 function goal(id,amount=1){const q=QUESTS.find(q=>q.id===id);if(!q||state.quests[id]==='done')return;state.quests[id]=Math.min(q.target,(state.quests[id]||0)+amount);if(state.quests[id]>=q.target){state.quests[id]='done';state.coins+=q.reward;state.hearts+=1;toast(`✨ ${q.name} complete! +${q.reward} coins`)}updateHud();save()}
-function changeScene(where){if(where===currentScene)return;placement=null;pending=null;currentScene=where;if(where==='town')buildTown();else buildHome();camTarget.copy(player.position);updateHud();save();toast(where==='home'?'🏡 Home sweet home!':'🌷 Fresh air, fresh possibilities!')}
+function changeScene(where){endTalking();if(where===currentScene)return;placement=null;pending=null;currentScene=where;if(where==='town')buildTown();else buildHome();camTarget.copy(player.position);updateHud();save();toast(where==='home'?'🏡 Home sweet home!':'🌷 Fresh air, fresh possibilities!')}
 function approach(object,target,cb){pending={x:target.x,z:target.z,cb,tag:object?.tag};}
-function tapGame(e){if(modal||Math.hypot(e.clientX-startX,e.clientY-startY)>18)return;const rect=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-rect.left)/rect.width)*2-1;pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(pointer,camera);let hits=raycaster.intersectObjects(clickable,true);const interact=hits.find(h=>findAction(h.object));if(interact&&!placement){const action=findAction(interact.object);let obj=interact.object;while(obj.parent&&!obj.userData.action)obj=obj.parent;const loc=new THREE.Vector3();obj.getWorldPosition(loc);approach(action,loc,()=>interactAction(action));return}
+function tapGame(e){if(modal||talking||Math.hypot(e.clientX-startX,e.clientY-startY)>18)return;const rect=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-rect.left)/rect.width)*2-1;pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(pointer,camera);let hits=raycaster.intersectObjects(clickable,true);const interact=hits.find(h=>findAction(h.object));if(interact&&!placement){const action=findAction(interact.object);let obj=interact.object;while(obj.parent&&!obj.userData.action)obj=obj.parent;const loc=new THREE.Vector3();obj.getWorldPosition(loc);approach(action,loc,()=>interactAction(action));return}
  const floorY=new THREE.Plane(new THREE.Vector3(0,1,0),0),pt=new THREE.Vector3();if(raycaster.ray.intersectPlane(floorY,pt)){
  if(placement){if(currentScene!=='home')return;placeItem(pt.x,pt.z);return}
  const maxX=currentScene==='home'?9.7:26,maxZ=currentScene==='home'?7.3:24;const dest={x:clamp(pt.x,-maxX,maxX),z:clamp(pt.z,-maxZ,maxZ)};pending={...dest,cb:null};$('hint').style.opacity=.2;
@@ -554,19 +559,116 @@ function tapGame(e){if(modal||Math.hypot(e.clientX-startX,e.clientY-startY)>18)r
 function findAction(o){while(o){if(o.userData?.action)return o.userData.action;o=o.parent}return null}
 function interactAction({tag,id}){if(tag==='npc')talk(id);if(tag==='enterHome')changeScene('home');if(tag==='cafe')cafe();if(tag==='garden')gardenAction(id);if(tag==='fish')startFishing();if(tag==='bench'){state.needs.fun=clamp(state.needs.fun+18,0,100);state.needs.energy=clamp(state.needs.energy+12,0,100);toast('🌿 A lovely moment in the sunshine');save();updateHud()}if(tag==='market')market();if(tag==='library'){state.needs.fun=clamp(state.needs.fun+16,0,100);toast('📚 You borrowed a lovely novel');updateHud()}if(tag==='hall')townHall();if(tag==='furniture')furnitureAction(id)}
 function animate(now){requestAnimationFrame(animate);let dt=Math.min((now-(animate.last||now))/1000,.07);animate.last=now;const t=now*.001;if(player&&scene){if(pending){const dx=pending.x-player.position.x,dz=pending.z-player.position.z,dist=Math.hypot(dx,dz);let buffer=pending.cb?.45:.1;if(dist>buffer){let step=Math.min(dist-buffer,dt*4.2);player.position.x+=dx/dist*step;player.position.z+=dz/dist*step;const dir=Math.atan2(dx,dz);let delta=((dir-player.rotation.y+3*Math.PI)%(2*Math.PI))-Math.PI;player.rotation.y+=delta*.20;for(let i=0;i<2;i++){playerBody.legs[i].rotation.x=Math.sin(t*12+i*Math.PI)*.42;playerBody.arms[i].rotation.x=-Math.sin(t*12+i*Math.PI)*.36}player.children[1].position.y=1.01+Math.abs(Math.sin(t*12))*.06}else{const done=pending;pending=null;for(let a of [...playerBody.legs,...playerBody.arms])a.rotation.x=0;player.children[1].position.y=1.01;if(done.cb)done.cb()}}else{playerBody.arms[0].rotation.x=Math.sin(t*1.8)*.045;playerBody.arms[1].rotation.x=-Math.sin(t*1.8)*.045}
- for(const n of npcs){n.wander+=dt;const obj=n.object;obj.position.x=n.origin.x+Math.sin(t*.35+n.phase)*.42;obj.position.z=n.origin.z+Math.cos(t*.28+n.phase)*.38;obj.rotation.y=Math.sin(t*.32+n.phase)*.65;for(let i=0;i<2;i++)n.object.userData.arms[i].rotation.x=Math.sin(t*2+n.phase+i)*.13}
- const aspect=innerWidth/innerHeight;const aim=new THREE.Vector3(player.position.x,0,player.position.z);camTarget.lerp(aim,dt*2.3);let off=currentScene==='town'?new THREE.Vector3(20,25,34):new THREE.Vector3(16,24,31);const desired=camTarget.clone().add(off);camera.position.lerp(desired,dt*2);camera.lookAt(camTarget.x,1.0,camTarget.z);light.position.set(camTarget.x-13,26,camTarget.z+15);light.target.position.set(camTarget.x,0,camTarget.z);light.target.updateMatrixWorld();
+ for(const n of npcs){n.wander+=dt;const obj=n.object,active=talking?.id===n.info.id;
+ if(!active){obj.position.x=n.origin.x+Math.sin(t*.35+n.phase)*.42;obj.position.z=n.origin.z+Math.cos(t*.28+n.phase)*.38;obj.rotation.y=Math.sin(t*.32+n.phase)*.65;}
+ else{const angle=Math.atan2(player.position.x-obj.position.x,player.position.z-obj.position.z);obj.rotation.y+=Math.atan2(Math.sin(angle-obj.rotation.y),Math.cos(angle-obj.rotation.y))*Math.min(1,dt*6)}
+ for(let i=0;i<2;i++){const arm=obj.userData.arms[i];arm.rotation.x=active&&talkEmoteUntil>t?-.55:Math.sin(t*2+n.phase+i)*.13;arm.rotation.z=active&&talkEmoteUntil>t?(i?1:-1)*(.45+Math.sin(t*13)*.1):(i?1:-1)*.26}
+ obj.rotation.z=active?(obj.userData.expression==='shy'?.07:Math.sin(t*2)*.025):0;
+ }
+ const focus=talking?npcs.find(x=>x.info.id===talking.id):null;
+ const aim=focus?new THREE.Vector3(focus.object.position.x*.78+player.position.x*.22,0,focus.object.position.z*.78+player.position.z*.22):new THREE.Vector3(player.position.x,0,player.position.z);
+ camTarget.lerp(aim,dt*(focus?5.5:2.3));let off=currentScene==='town'?new THREE.Vector3(20,25,34):new THREE.Vector3(16,24,31);const desired=camTarget.clone().add(off);camera.position.lerp(desired,dt*(focus?4.2:2));camera.lookAt(camTarget.x,focus?1.8:1,camTarget.z);
+ const targetZoom=focus?(innerWidth<innerHeight?2.1:1.75):1;
+ talkCameraZoom+=(targetZoom-talkCameraZoom)*Math.min(1,dt*5);
+ if(Math.abs(camera.zoom-talkCameraZoom)>.002){camera.zoom=talkCameraZoom;camera.updateProjectionMatrix()}
+ if(focus){const v=focus.object.position.clone().add(new THREE.Vector3(0,3.5,0)).project(camera),badge=$('talkEmote');
+ badge.style.left=clamp((v.x*.5+.5)*innerWidth,35,innerWidth-35)+'px';badge.style.top=clamp((-v.y*.5+.5)*innerHeight,118,innerHeight*.6)+'px';
+ const visible=!!(talking.emote&&talkEmoteUntil>t);badge.textContent=visible?talking.emote:'';badge.classList.toggle('visible',visible);
+ }else if($('talkEmote'))$('talkEmote').classList.remove('visible');
+ light.position.set(camTarget.x-13,26,camTarget.z+15);light.target.position.set(camTarget.x,0,camTarget.z);light.target.updateMatrixWorld();
  for(const a of decorMotion){if(a.kind==='ripple'){a.o.scale.setScalar(1+Math.sin(t*.7+a.phase)*.08);a.o.position.y=a.base+Math.sin(t*1.7+a.phase)*.003}}
  renderer.render(scene,camera);
  }
- if(speed&&!modal){clockAccumulator+=dt*speed*2.4;while(clockAccumulator>=1){clockAccumulator--;state.minute+=1;state.needs.hunger=clamp(state.needs.hunger-.007,0,100);state.needs.energy=clamp(state.needs.energy-.005,0,100);state.needs.fun=clamp(state.needs.fun-.002,0,100);state.needs.social=clamp(state.needs.social-.003,0,100);if(state.minute>=1440){state.minute-=1440;state.day++;if(state.day%7===0)state.season=(state.season+1)%4;state.garden=state.garden.map(x=>x===1?2:x);if(currentScene==='town')paintGarden();toast('🌅 A new day begins!')} }updateHud()}
+ if(speed&&!modal&&!talking){clockAccumulator+=dt*speed*2.4;while(clockAccumulator>=1){clockAccumulator--;state.minute+=1;state.needs.hunger=clamp(state.needs.hunger-.007,0,100);state.needs.energy=clamp(state.needs.energy-.005,0,100);state.needs.fun=clamp(state.needs.fun-.002,0,100);state.needs.social=clamp(state.needs.social-.003,0,100);if(state.minute>=1440){state.minute-=1440;state.day++;if(state.day%7===0)state.season=(state.season+1)%4;state.garden=state.garden.map(x=>x===1?2:x);if(currentScene==='town')paintGarden();toast('🌅 A new day begins!')} }updateHud()}
  autoSaveT+=dt;if(autoSaveT>25){save();autoSaveT=0}
 }
-function showModal(name,html){modal=name;placement=null;const shade=$('modalShade');shade.classList.remove('hidden');$('modalBody').innerHTML=html;cancelAnimationFrame(fishRaf)}
+function showModal(name,html){endTalking();modal=name;placement=null;const shade=$('modalShade');shade.classList.remove('hidden');$('modalBody').innerHTML=html;cancelAnimationFrame(fishRaf)}
 function closeModal(){modal='';$('modalShade').classList.add('hidden');$('modalBody').innerHTML='';cancelAnimationFrame(fishRaf)}
 function intro(){showModal('welcome',`<div style="text-align:center;font-size:54px">🏡🌸</div><h2 style="text-align:center;margin-right:0">Welcome to Hearth & Harbor!</h2><p class="subtitle" style="text-align:center">A tiny town with a whole lot of heart. This is the first playable slice of your very own cozy life simulator.</p><div class="card-row"><span>👆</span><div><b>Tap to walk</b><br><small>Tap a path, person, house, or interesting place.</small></div></div><div class="card-row"><span>💌</span><div><b>Make connections</b><br><small>Talk, compliment, and give gifts to your neighbors.</small></div></div><div class="card-row"><span>🏡</span><div><b>Make a little life</b><br><small>Decorate your home, fish, garden, and earn coins.</small></div></div><button class="btn full" data-action="begin">Let's go explore! 🌷</button>`)}
-function talk(id){const npc=NPCS.find(n=>n.id===id);if(!npc)return;const rel=state.relations[id]||0;let line=npc.lines[Math.floor(rand(0,npc.lines.length))];showModal('npc',`<div style="text-align:center;font-size:51px">${npc.emoji}</div><h2 style="text-align:center;margin-right:0">${npc.name} <span style="font-size:13px;color:#e0a098">♥ ${rel}</span></h2><p class="subtitle" style="text-align:center">${npc.job} · ${npc.trait}</p><p style="background:#f1f2e2;border-radius:18px;padding:15px;font-weight:800;text-align:center">“${line}”</p><div class="progress"><b style="width:${rel}%"></b></div><p class="subtitle" style="text-align:center">Friendship grows when you spend time together.</p><div class="choices"><button class="btn" data-action="chat" data-id="${id}">💬 Chat (+8)</button><button class="btn pink" data-action="compliment" data-id="${id}">💕 Compliment (+12)</button><button class="btn secondary" data-action="gift" data-id="${id}">🎁 Gift (15 🪙)</button><button class="btn secondary" data-action="bye">👋 See you!</button></div>`)}
-function socialize(id,kind){const npc=NPCS.find(n=>n.id===id);if(!npc)return;let add=kind==='compliment'?12:kind==='gift'?20:8;if(kind==='gift'&&state.coins<15){toast('You need 15 coins for a gift');return}if(kind==='gift')state.coins-=15;state.relations[id]=clamp((state.relations[id]||0)+add,0,100);state.needs.social=clamp(state.needs.social+14,0,100);state.needs.fun=clamp(state.needs.fun+6,0,100);if(!state.met.includes(id)){state.met.push(id);goal('welcome',1)}if(state.relations[id]>=30)goal('friend',1);updateHud();save();closeModal();toast(`${npc.emoji} ${npc.name} feels closer to you! +${add} ♥`)}
+
+function setExpression(obj,kind='neutral'){
+ const f=obj?.userData;if(!f?.expressionEyes)return;
+ f.expression=kind;const closed=kind==='happy'||kind==='shy';
+ f.expressionEyes.forEach(x=>x.visible=!closed);
+ f.closedEyes.forEach(x=>x.visible=closed);
+ f.mouth.visible=kind==='neutral'||kind==='curious';
+ f.happyMouth.visible=kind==='happy'||kind==='excited'||kind==='shy';
+ f.surpriseMouth.visible=kind==='surprised';
+}
+const REACTION_LINES={
+ oliver:{chat:['A cinnamon roll is even better with a friend nearby!','The café smelled like strawberries this morning.'],compliment:['Oh! You just made my whole morning sweeter!','That was warmer than freshly baked bread!'],gift:['For me? I wish I had baked you something in return!','This is so thoughtful! Thank you!']},
+ mabel:{chat:['Every flower has a little personality, don’t you think?','I vote we grow EVERY color of flower!'],compliment:['Eeee! You made my heart bloom!','I feel like a sunflower!'],gift:['You picked this for me? I will treasure it!','It is perfect! I know just where to put it.']},
+ jun:{chat:['I found a book about a lighthouse that grants wishes.','Do you ever lose an entire afternoon inside a good book?'],compliment:['Oh… thank you. I really needed to hear that.','You really think so? That means a lot.'],gift:['A gift? I… wow. I will take very good care of it.','You remembered me. That is the nicest surprise.']},
+ bea:{chat:['Clouds are just little paintings that keep changing.','Our town needs a giant mural, don’t you agree?'],compliment:['Stop, you are making me blush! Well… don’t actually stop.','That calls for a HAPPY DANCE!'],gift:['Incredible! This deserves its own painting!','What a beautiful surprise! You are my muse today.']},
+ finn:{chat:['I saw a fish jump clean out of the pond today!','Sometimes the best plan is no plan at all.'],compliment:['Heh, thanks, pal. That made my day.','You are a good egg, you know that?'],gift:['No way! This is a keeper!','That is mighty kind of you. Thanks, friend!']},
+ rosie:{chat:['I think we need a pancake festival. Pancakes for everybody!','I have a secret special planned for the next market day!'],compliment:['Oh, sweetie! You are a ray of sunshine!','That calls for a celebration!'],gift:['Oh, this is adorable! You shouldn’t have!','I LOVE it! I am telling everyone about it.']}
+};
+function endTalking(){
+ if(!talking)return;
+ const n=npcs.find(x=>x.info.id===talking.id);
+ if(n){setExpression(n.object);n.object.rotation.z=0;n.object.userData.head.position.y=0}
+ talking=null;$('conversationLayer').classList.add('hidden');$('talkEmote').classList.remove('visible');$('game').classList.remove('talking');
+}
+function talkLine(line){$('talkText').textContent=line;chime()}
+function talkButtons(){
+ if(!talking)return;
+ const row=$('talkActions');
+ if(talking.stage==='greeting')row.innerHTML='<button data-talk="next" class="talk-next">Keep talking ➜</button>';
+ else if(talking.stage==='choice')row.innerHTML='<button data-talk="chat">💬 Chat</button><button data-talk="compliment">💗 Compliment</button><button data-talk="gift">🎁 Gift · 15 🪙</button><button data-talk="bye" class="talk-bye">👋 Bye!</button>';
+ else row.innerHTML='<button data-talk="next" class="talk-next">One more thing ➜</button><button data-talk="bye" class="talk-bye">Say goodbye</button>';
+}
+function reactTo(id,kind,points){
+ const n=npcs.find(x=>x.info.id===id),options=REACTION_LINES[id]?.[kind];if(!talking||talking.id!==id||!n||!options)return;
+ talking.stage='response';talking.emote=kind==='gift'?'🎁':kind==='compliment'?'💕':'✨';
+ talkEmoteUntil=performance.now()/1000+1.8;
+ setExpression(n.object,kind==='chat'?'excited':kind==='compliment'?'shy':'surprised');
+ talkLine(options[Math.floor(Math.random()*options.length)]);
+ $('talkHearts').textContent='♥ '+(state.relations[id]||0);
+ const badge=$('talkGain');badge.textContent='+'+points+' ♥';badge.classList.remove('pop');void badge.offsetWidth;badge.classList.add('pop');
+ talkButtons();
+}
+function talkChoice(kind){
+ if(!talking)return;
+ const id=talking.id;
+ if(kind==='bye'){endTalking();return}
+ if(kind==='next'){talking.stage='choice';setExpression(npcs.find(x=>x.info.id===id)?.object);talkLine('It’s lovely to see you! What else is on your mind?');talkButtons();return}
+ if(!['chat','compliment','gift'].includes(kind))return;
+ if(kind==='gift'&&state.coins<15){talking.stage='response';talkLine('Oh, no worries! A visit from you is gift enough.');talkButtons();return}
+ socialize(id,kind);
+}
+function initTalking(){
+ $('game').insertAdjacentHTML('beforeend','<div id="talkEmote" class="talk-emote" aria-hidden="true"></div><section id="conversationLayer" class="talk-layer hidden" aria-label="Neighbor conversation"><div class="talk-card"><div class="talk-head"><span id="talkAvatar" class="talk-avatar">🌼</span><div class="talk-name"><strong id="talkName"></strong><small id="talkJob"></small></div><b id="talkHearts"></b><button id="talkClose" aria-label="End conversation">✕</button></div><p id="talkText" aria-live="polite"></p><span id="talkGain" class="talk-gain"></span><div id="talkActions" class="talk-actions"></div></div></section>');
+ $('talkActions').addEventListener('click',e=>{let b=e.target.closest('[data-talk]');if(b)talkChoice(b.dataset.talk)});
+ $('talkClose').addEventListener('click',endTalking);
+}
+
+function talk(id){
+ const npc=NPCS.find(x=>x.id===id),n=npcs.find(x=>x.info.id===id);
+ if(!npc||!n)return;
+ if(modal)closeModal();endTalking();pending=null;
+ talking={id,stage:'greeting',emote:'👋'};
+ talkEmoteUntil=performance.now()/1000+1.6;
+ player.rotation.y=Math.atan2(n.object.position.x-player.position.x,n.object.position.z-player.position.z);
+ setExpression(n.object,'happy');
+ $('talkName').textContent=npc.name;$('talkJob').textContent=npc.job;$('talkAvatar').textContent=npc.emoji;$('talkHearts').textContent='♥ '+(state.relations[id]||0);
+ $('talkGain').classList.remove('pop');$('talkGain').textContent='';
+ talkLine(npc.lines[Math.floor(Math.random()*npc.lines.length)]);
+ talkButtons();$('conversationLayer').classList.remove('hidden');$('game').classList.add('talking');
+}
+function socialize(id,kind){
+ const npc=NPCS.find(n=>n.id===id);if(!npc)return;
+ let add=kind==='compliment'?12:kind==='gift'?20:8;
+ if(kind==='gift'&&state.coins<15){toast('You need 15 coins for a gift');return}
+ if(kind==='gift')state.coins-=15;
+ state.relations[id]=clamp((state.relations[id]||0)+add,0,100);
+ state.needs.social=clamp(state.needs.social+14,0,100);
+ state.needs.fun=clamp(state.needs.fun+6,0,100);
+ if(!state.met.includes(id)){state.met.push(id);goal('welcome',1)}
+ if(state.relations[id]>=30)goal('friend',1);
+ updateHud();save();
+ if(talking?.id===id)reactTo(id,kind,add);
+ else{closeModal();toast(npc.emoji+' '+npc.name+' feels closer to you! +'+add+' ♥')}
+}
 function people(){showModal('people',`<h2>💌 Your Neighbors</h2><p class="subtitle">Everyone has a story. The more you talk, the more you become part of it.</p>${NPCS.map(n=>`<div class="card-row"><div class="person"><div class="face">${n.emoji}</div><div><b>${n.name} <span style="font-size:10px;color:#b89184">♥ ${state.relations[n.id]||0}</span></b><br><small>${n.job} · ${n.trait}</small><div class="relation"><span style="width:${state.relations[n.id]||0}%"></span></div></div></div><button class="btn secondary" data-action="findPerson" data-id="${n.id}">Find</button></div>`).join('')}`)}
 function journal(){const qdone=QUESTS.filter(q=>state.quests[q.id]==='done').length;showModal('journal',`<h2>📖 Your Little Journal</h2><p class="subtitle">Small adventures are worth celebrating. ${qdone} of ${QUESTS.length} discoveries completed.</p><div class="progress"><b style="width:${qdone/QUESTS.length*100}%"></b></div>${QUESTS.map(q=>{const completed=state.quests[q.id]==='done',n=completed?q.target:(state.quests[q.id]||0);return `<div class="card-row ${completed?'quest-complete':''}"><div><b>${q.icon} ${q.name} ${completed?'✓':''}</b><br><small>${q.description}</small><div class="progress" style="width:160px;height:6px"><b style="width:${n/q.target*100}%"></b></div></div><span class="tag">${completed?'Done':`${n}/${q.target}`} · 🪙${q.reward}</span></div>`}).join('')}<h3>🧺 Collections</h3><div class="card-row"><div>🐟 Fish caught</div><b>${state.fish.length}</b></div><div class="card-row"><div>🪑 Furniture placed</div><b>${state.placed.length}</b></div><div class="card-row"><div>💗 Friends met</div><b>${state.met.length}/${NPCS.length}</b></div>`)}
 function market(){showModal('market',`<h2>🛒 Rosie’s Market</h2><p class="subtitle">Fresh finds, friendly prices, and everything you need for a lovely day.</p><div class="tiles"><button class="tile" data-action="buySnack"><span class="emoji">🥐</span><b>Sweet bun</b><small>20 coins · +35 Food</small></button><button class="tile" data-action="buyFun"><span class="emoji">🧸</span><b>Little toy</b><small>25 coins · +25 Fun</small></button><button class="tile" data-action="buyBouquet"><span class="emoji">💐</span><b>Flower bouquet</b><small>30 coins · +20 Fun</small></button></div><p class="subtitle" style="margin-top:15px">Tip: plant flowers and catch fish to earn extra pocket money!</p>`)}
@@ -615,5 +717,5 @@ function doAction(act,id){switch(act){
  case 'help':help();break;
  }}
 function button(id,fn){$(id).addEventListener('click',fn)}
-function connectUI(){button('closeModal',closeModal);$('modalShade').addEventListener('click',e=>{if(e.target===$('modalShade'))closeModal()});$('modalBody').addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(b)doAction(b.dataset.action,b.dataset.id)});button('homeBtn',()=>{closeModal();changeScene('home')});button('townBtn',()=>{closeModal();changeScene('town')});button('peopleBtn',people);button('journalBtn',journal);button('buildBtn',shop);button('styleBtn',style);button('menuBtn',gameMenu);button('helpBtn',help);button('pauseBtn',()=>{speed=0;updateHud()});button('playBtn',()=>{speed=1;updateHud()});button('fastBtn',()=>{speed=4;updateHud()});button('soundBtn',()=>{state.sound=!state.sound;save();$('soundBtn').textContent=state.sound?'♫':'♪';toast(state.sound?'Sound enabled':'Sound disabled')});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal)closeModal()});document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});}
+function connectUI(){initTalking();button('closeModal',closeModal);$('modalShade').addEventListener('click',e=>{if(e.target===$('modalShade'))closeModal()});$('modalBody').addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(b)doAction(b.dataset.action,b.dataset.id)});button('homeBtn',()=>{endTalking();closeModal();changeScene('home')});button('townBtn',()=>{endTalking();closeModal();changeScene('town')});button('peopleBtn',people);button('journalBtn',journal);button('buildBtn',shop);button('styleBtn',style);button('menuBtn',gameMenu);button('helpBtn',help);button('pauseBtn',()=>{speed=0;updateHud()});button('playBtn',()=>{speed=1;updateHud()});button('fastBtn',()=>{speed=4;updateHud()});button('soundBtn',()=>{state.sound=!state.sound;save();$('soundBtn').textContent=state.sound?'♫':'♪';toast(state.sound?'Sound enabled':'Sound disabled')});document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(talking)endTalking();else if(modal)closeModal()}else if(talking&&['Enter',' '].includes(e.key)){e.preventDefault();if(talking.stage!=='choice')talkChoice('next')}});document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});}
 try{init3d();buildTown();connectUI();updateHud();requestAnimationFrame(animate);setTimeout(()=>{$('loading').classList.add('hidden');setTimeout(()=>$('loading').remove(),700);if(!state.seenWelcome)intro();else toast('🌸 Welcome back to Hearth & Harbor!')},550);if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{})}catch(err){console.error(err);$('loading').innerHTML=`<div class="loading-card"><div class="loading-icon">🌦️</div><h1>Couldn't open the town</h1><p>Make sure you're online and open this game from GitHub Pages.</p><small style="display:block;max-width:360px">${escapeText(err.message)}</small></div>`}
