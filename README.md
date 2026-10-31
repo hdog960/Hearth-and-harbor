@@ -1,4 +1,4 @@
-# Hearth & Harbor · Playable Prototype v0.1
+# Hearth & Harbor · Playable Prototype v0.2
 
 An original cozy chibi life simulator designed first for iPhone Safari and GitHub Pages. Free to play; no accounts, paid services, advertisements, subscriptions, or backend required.
 
@@ -41,3 +41,7 @@ This is a **vertical slice**, not the full Sims-like game: no autonomous househo
 - Local state key: `hearth-harbor-save-v1`.
 - iPhone optimization: capped device pixel ratio, simple geometry, orthographic camera, responsive touch UI.
 - Site source is original, using no copyrighted Sims or Animal Crossing assets.
+
+## Visual overhaul v0.2 (October 31, 2026)
+
+Reworked original chibi bodies, hairstyles and expressive faces; organic painted grass and textured sandy paths; rebuilt cottages with gables, shutters, dormers, flowerboxes and porches; more detailed trees, shrubs and flowers; lily pond and ripples; upgraded market, benches, plaza fountain and cottage furnishings. Instanced grass and pebble meshes keep draw calls low. Existing local saves stay compatible. The next step toward a production-quality game is an art-directed 3D asset and hand-painted texture pipeline.
