@@ -1,0 +1,64 @@
+/* v2.1 — Hearth Kitchen Atelier. A deliberate hand-illustrated kitchen presentation. */
+.modal-card:has(.k-experience){background:#fff7e7;border:3px solid #fffdf5;border-bottom:7px solid #d6b68a;border-radius:26px;padding:12px 14px 15px;box-shadow:0 12px 0 #1f453e70,0 30px 85px #1d393b90;max-height:min(92dvh,860px);width:min(510px,100%);scrollbar-width:thin;scrollbar-color:#d0ac82 transparent}
+.modal:has(.k-experience){padding:12px;background:#153c3f99;backdrop-filter:blur(5px)}
+.modal-card:has(.k-experience)>.xbtn{width:35px;height:35px;border-radius:50%;background:#fff5e8;border:2px solid #e3c6a6;color:#925c53;position:sticky;top:0;z-index:5;box-shadow:0 2px 0 #d5ae89;font-size:15px}
+.k-experience{color:#554837;font-family:'Trebuchet MS',ui-rounded,system-ui,sans-serif}
+.k-eyebrow{font-size:10px;font-weight:950;letter-spacing:1.7px;color:#558576}
+.k-experience h2{font-family:Georgia,'Iowan Old Style',serif!important;letter-spacing:-.7px!important;color:#3d655a!important}
+.k-step-top{display:flex;align-items:center;justify-content:space-between;padding:7px 0 6px;min-height:49px;margin-right:42px}
+.k-small-overline{display:block;font-size:13px;font-weight:800;color:#8b6a56;margin-top:6px}
+.k-counter{font:900 24px Georgia,serif;color:#d47d63;white-space:nowrap}.k-counter small{font:800 12px system-ui;color:#a0a18a}
+.k-step-dots{display:flex;gap:7px;margin:5px 0 10px}.k-step-dots span{display:block;flex:1;height:6px;border-radius:10px;background:#eadbca;box-shadow:inset 0 1px 1px #d8c7b2}.k-step-dots span.done{background:#88b8a0}.k-step-dots span.current{background:#e7a15c}
+.modal .k-step-title{font-size:28px;line-height:1.04;margin:6px 38px 5px 0;color:#31594c!important}.modal .k-step-intro{font-size:12px;line-height:1.55;color:#8c7762;margin:4px 0 13px;max-width:95%;font-weight:650}
+.k-gesture{touch-action:none!important;overscroll-behavior:contain;user-select:none;-webkit-user-select:none;position:relative;height:266px;border:3px solid #f8e4bc;border-bottom:8px solid #9b604a;border-radius:24px;background:radial-gradient(ellipse at 45% 18%,#fff1ce 0,#eebf91 57%,#ce906b 100%);box-shadow:inset 0 0 0 5px #ffeed0,inset 0 -12px 30px #ad66444d,0 7px 18px #68483633;display:block;overflow:hidden;isolation:isolate}
+.k-gesture:before{content:'';position:absolute;inset:0;opacity:.3;background:repeating-linear-gradient(90deg,transparent 0 45px,#fff1cb 45px 48px,transparent 49px 91px);mix-blend-mode:soft-light;pointer-events:none}
+.k-stage-top{position:absolute;z-index:2;top:11px;left:14px;right:14px;display:flex;justify-content:space-between;gap:4px;align-items:center;font-size:8px;font-weight:950;letter-spacing:1px;color:#8e6653;opacity:.85}
+.k-stage-top span:last-child{background:#fff6ddbd;border-radius:20px;padding:5px 7px;white-space:nowrap}
+.k-board-art{position:absolute;inset:18px 0 17px;width:100%;height:auto;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.k-art-svg{display:block;width:100%;height:100%;max-height:245px;overflow:visible;filter:drop-shadow(0 8px 4px #6d463427)}
+.k-stage-tip{position:absolute;z-index:2;left:50%;bottom:6px;transform:translateX(-50%);white-space:nowrap;background:#fff9e9;border:1px solid #e9d4b3;border-radius:18px;padding:5px 12px;color:#875b47;font-size:9px;font-weight:950;letter-spacing:1px;box-shadow:0 2px 0 #aa785d}
+.k-stage-sparkle{position:absolute;right:14px;top:35px;font-size:26px;color:#fff5d7;text-shadow:0 2px 2px #bc895e;animation:k-twinkle 1.8s ease-in-out infinite;pointer-events:none}
+.k-underboard{display:flex;align-items:center;justify-content:space-between;font-size:9px;font-weight:950;letter-spacing:1px;color:#927960;margin-top:12px}
+.k-underboard span:first-child{color:#4c997e}
+.k-progress{height:14px;background:#efddc5;border:2px solid #e2cbaa;margin:6px 0 12px;border-radius:50px;overflow:hidden;box-shadow:inset 0 2px 4px #b99b7e55}
+.k-progress>div{height:100%;width:0;background:linear-gradient(90deg,#6fbb9f,#b4dcc0 64%,#f7d77c);border-radius:50px;transition:width .14s}
+.k-step-control{display:flex;gap:9px;margin:0}.k-step-control>.btn{min-height:53px;flex:1;margin:0;border-radius:14px;font-size:13px;letter-spacing:.1px}
+.k-step-control .k-primary-action,.k-primary-action{background:linear-gradient(#63b99e,#399879)!important;border:2px solid #8bd2ab!important;border-bottom:5px solid #247c65!important;color:#fffdf4!important;box-shadow:0 4px 0 #c4e2c2;font-weight:900!important}
+.k-step-control .k-secondary-action{flex:0 0 28%;background:#f5e6d3;color:#8b715d;border:2px solid #e1c8a8;border-bottom:4px solid #d6ba95}
+.k-experience .k-hint{font-size:10px!important;color:#948471!important;margin:10px 3px 0!important;line-height:1.4}
+.k-timing{z-index:3;bottom:28px;left:16%;width:68%;height:15px;background:#fff4dd;border:2px solid #805346;border-radius:9px;overflow:hidden;position:absolute;box-shadow:0 3px 0 #a76c4a}
+.k-target{width:25%;margin-left:38%;height:100%;background:#91d5a7}.k-needle{position:absolute;top:0;bottom:0;width:5px;background:#ec6c67;border-radius:2px;animation:k-needle .9s linear infinite alternate}
+.k-gesture.k-flip .k-stage-tip{bottom:54px}
+.k-knife{transition:transform .15s;animation:k-knife-bob 1.5s ease-in-out infinite}.k-gesture.k-active .k-knife{animation-duration:.5s}
+.k-whisk{transform-origin:272px 104px;animation:k-whisk-bob 1.5s ease-in-out infinite}.k-gesture.k-active .k-whisk{animation-duration:.45s}
+.k-food-flip{transform-origin:205px 145px;animation:k-pan-bob 2.2s ease-in-out infinite}
+.k-swirl-lines{transform-origin:208px 133px;animation:k-swirl-art 4s linear infinite}
+.k-cut-lines{transition:opacity .2s}
+@keyframes k-knife-bob{50%{transform:translateY(-6px)}}@keyframes k-whisk-bob{50%{transform:rotate(-10deg)}}@keyframes k-pan-bob{50%{transform:translateY(-5px)}}@keyframes k-swirl-art{to{transform:rotate(360deg)}}@keyframes k-twinkle{50%{opacity:.4;transform:scale(.7)}}
+/* Cookbook: attractive miniature recipe illustrations and real hierarchy */
+.k-book-cover{position:relative;overflow:hidden;padding:20px 17px 14px;margin:-2px 0 15px;border-radius:19px;border:2px solid #fff4dc;background:linear-gradient(115deg,#dbefe0,#f5e7be 72%,#ffe4c9);box-shadow:inset 0 -5px #b5d9b7,0 5px 0 #f1dfc4}
+.k-book-cover:after{content:'✿';position:absolute;right:-13px;top:-39px;font-size:154px;color:#79bba077;pointer-events:none;line-height:1}
+.k-book-cover .k-eyebrow{position:relative;z-index:1;color:#6c9a77;font-size:9px}
+.k-book-cover h2{font-size:34px!important;margin:12px 0 6px!important;line-height:.95!important;position:relative;z-index:1}
+.k-book-cover h2 em{font-weight:normal;color:#d67d66}.k-book-cover p{font-weight:750!important;color:#85735c!important;position:relative;z-index:1;margin:7px 0 14px;font-size:12px}
+.k-book-sun{position:absolute;right:33px;top:35px;color:#f6b966;font-size:66px;z-index:0}
+.k-skill{display:flex;justify-content:space-between;position:relative;z-index:1;gap:7px;background:#fff9e6e8;border:1px solid #e5dac2;border-radius:12px;padding:9px;font-size:10px;color:#668c77;font-weight:950}
+.k-section-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:17px 3px 9px;color:#80977b;letter-spacing:1.45px;font-size:9px;font-weight:1000}
+.k-section-heading span:last-child{color:#bca38a;white-space:nowrap}
+.k-recipe{display:flex;align-items:center;gap:8px;background:#fffdf3;border:1px solid #f1e1ce;border-bottom:4px solid #e6d1b9;border-radius:17px;padding:8px 8px 8px 4px;margin:8px 0;min-height:110px;box-shadow:0 2px 8px #674c3120}
+.k-recipe-art{width:99px;height:93px;flex:0 0 99px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse,#fff6e3,#f7e5c8);border-radius:13px;overflow:hidden}
+.k-recipe-art svg{width:100%;height:96px;transform:scale(1.25)}
+.k-recipe-copy{flex:1;min-width:0}.k-recipe-copy strong{font-size:14px;line-height:1.14;color:#4f6150;display:block;font-weight:1000;margin:4px 0}.k-recipe-copy small{font-size:10px;line-height:1.35;color:#91836e}.k-recipe-eyebrow{font-size:8px;font-weight:900;color:#c78f73;letter-spacing:.7px}.k-recipe-ingredients{display:flex;gap:4px;margin:7px 0 0;flex-wrap:wrap}.k-recipe-ingredients span{font-size:10px;background:#f5ead7;color:#735e4b;border-radius:8px;padding:3px 6px;font-weight:800}.k-recipe .k-missing{color:#d07465;display:block}
+.k-recipe>button{background:#5caf91;color:#fff;border:1px solid #92d4a5;border-bottom:4px solid #34886f;border-radius:10px;font-size:11px;font-weight:950;min-width:58px;min-height:42px;padding:7px 4px}.k-recipe>button span{font-size:16px;vertical-align:-1px}.k-recipe>button:disabled{background:#bdbba9;border-color:#ded8c9;border-bottom-color:#9b9c91}
+.k-shop{display:flex;justify-content:space-between;align-items:center;width:100%;font-size:12px;margin:13px 0!important;padding:12px;border-radius:13px;background:#d4ebd2!important;border:2px solid #b8dcba!important;border-bottom:4px solid #9bcba8!important;color:#427861!important}.k-shop span{font-size:17px}
+.k-pantry{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.k-pantry>span{background:#faf0da;border:1px solid #ebd9be;border-radius:13px;padding:8px 3px;text-align:center;display:flex;flex-direction:column;gap:2px;align-items:center;justify-content:center}.k-pantry b{font-size:23px}.k-pantry small{color:#927960;font-size:9px;line-height:1.1}.k-pantry strong{font-size:11px;color:#487967}
+.k-plate{display:flex;align-items:center;gap:8px;background:#fff9ed;border-radius:12px;padding:6px;margin:5px 0}.k-saved-art{width:59px;height:54px}.k-saved-art svg{width:100%;height:100%}.k-plate span{flex:1;font-size:12px;font-weight:850}.k-plate span small{display:block;color:#dfa452}.k-plate button{background:#60ae90;border:0;border-radius:10px;color:white;font-weight:900;padding:9px}
+.k-options{display:flex;gap:8px;align-items:center;margin-top:14px;background:#f1f4dc;border-radius:13px;padding:10px;font-size:12px;font-weight:850}.k-options label{flex:1}.k-options button{border:0;background:#5eaa87;color:white;padding:9px;border-radius:9px;font-weight:900;font-size:10px}.k-empty{font-size:11px;color:#a29179;text-align:center;padding:10px;background:#fcf3e2;border-radius:12px}
+/* Dinner reveal */
+.k-result{text-align:center}.k-result-heading{background:linear-gradient(120deg,#dcebd6,#fceac8);border-radius:18px;padding:20px 7px 13px}.k-result-heading h2{font-size:33px!important;margin:9px 0 5px!important}.k-result-heading p{font-size:12px!important;color:#9c8069!important}
+.k-reveal-art{position:relative;height:260px;margin:3px auto}.k-reveal-art>svg{height:100%;width:100%;max-width:400px;animation:k-plate-in .6s ease-out}.k-float-star{position:absolute;color:#e7a35e;font-size:30px;animation:k-twinkle 1.5s ease-in-out infinite}.k-float-a{left:12%;top:25%}.k-float-b{right:14%;bottom:23%;animation-delay:.4s}.k-result h3{font-family:Georgia,serif;font-size:23px;color:#526b58;margin:0}.k-stars{font-size:27px;color:#eab557;letter-spacing:5px;margin:8px 0}.k-stars span{color:#d8d2bd}.k-result-copy{color:#897d68!important;font-size:12px!important}.k-result-buttons{display:flex;gap:6px}.k-result-buttons .btn{flex:1;min-height:47px;border-radius:12px}.k-result-buttons .secondary{color:#6e7a62!important;background:#f4ecd9!important;border:2px solid #e6d8bd!important}
+@keyframes k-plate-in{from{transform:scale(.65) rotate(-9deg);opacity:0}to{transform:scale(1);opacity:1}}
+@media(max-width:390px){.modal-card:has(.k-experience){padding:10px}.k-gesture{height:238px}.k-board-art{top:22px;bottom:20px}.modal .k-step-title{font-size:25px}.k-step-top{margin-right:38px}.k-recipe-art{width:86px;flex-basis:86px}.k-recipe-copy strong{font-size:12px}}
+@media(max-width:340px){.k-gesture{height:204px}.k-stage-top{font-size:7px}.k-recipe-art{width:71px;flex-basis:71px}.k-recipe-ingredients span{font-size:8px}.k-counter{font-size:20px}.k-step-control>.btn{min-height:46px}.k-stage-tip{font-size:7px}}
+@media(orientation:landscape) and (max-height:540px){.modal-card:has(.k-experience){max-height:94dvh;width:min(690px,100%)}.k-step-view .k-gesture{height:150px}.k-step-view .k-board-art{top:0;bottom:0}.k-step-view .k-stage-tip{bottom:2px}.k-step-top{min-height:25px}.k-step-intro{margin:2px 0!important}}
+@media(prefers-reduced-motion:reduce){.k-whisk,.k-knife,.k-food-flip,.k-swirl-lines,.k-stage-sparkle,.k-reveal-art svg{animation:none!important}}
