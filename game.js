@@ -1,752 +1,402 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
-
-// Hearth & Harbor — playable vertical slice. All world art is original procedural geometry.
-const $=id=>document.getElementById(id);
-const rand=(a,b)=>a+Math.random()*(b-a), clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-const COLORS={grass:0x76d461,ground:0x9de87b,sky:0x86dafa,path:0xffe6ae,cream:0xfffae8,wood:0xd99558,pink:0xff6f9b,blue:0x46cde8,green:0x35b872};
+/* Hearth & Harbor — Pixel Village v0.7.0
+   A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
+(()=>{'use strict';
+const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
+const TAU=Math.PI*2,clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),rand=(a,b)=>a+Math.random()*(b-a);
+const hash=(n)=>{const x=Math.sin(n*127.1+8.45)*43758.5453;return x-Math.floor(x)};
+const SAVE='hearth-harbor-save-v1';
+const DEF=()=>({name:'Poppy',hair:0x5d4037,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],fish:[],homeStyle:0,sound:false,seenWelcome:false});
+let state=DEF();try{const raw=JSON.parse(localStorage.getItem(SAVE)||'null');if(raw){state={...state,...raw,needs:{...state.needs,...raw.needs},relations:raw.relations||{},garden:raw.garden||[0,0,0,0],placed:raw.placed||[],quests:raw.quests||{}}}}catch(e){}
 const NPCS=[
- {id:'oliver',name:'Oliver',job:'Baker',trait:'Warmhearted · Foodie',emoji:'👨🏻‍🍳',outfit:0x829cf9,hair:0x724e39,skin:0xf5c5a2,x:12,z:-1,lines:['The café smells like cinnamon today. That is my favorite kind of morning.','I want to create the perfect strawberry tart. Any ideas?','Sometimes all a town needs is a good pastry.']},
- {id:'mabel',name:'Mabel',job:'Florist',trait:'Creative · Loves nature',emoji:'👩🏽‍🌾',outfit:0xff76a4,hair:0x48392b,skin:0xb98261,x:-6,z:3,lines:['Have you noticed the wildflowers blooming by the pond?','I think each flower has its own personality.','My dream is to fill every garden in town with color.']},
- {id:'jun',name:'Jun',job:'Bookshop keeper',trait:'Shy · Bookworm',emoji:'🧑🏻‍🏫',outfit:0x46bddc,hair:0x34363b,skin:0xf3cda6,x:-13,z:8,lines:['I could spend an entire afternoon in a bookshop.','People are like stories. The best chapters take time.','The wind makes the trees sound like turning pages.']},
- {id:'bea',name:'Bea',job:'Artist',trait:'Outgoing · Dreamer',emoji:'👩🏾‍🎨',outfit:0xffc64c,hair:0x56372f,skin:0x986147,x:3,z:9,lines:['I am sketching the sunset. It changes every night.','A friend told me art should be practical. I disagree!','Your outfit has such lovely colors.']},
- {id:'finn',name:'Finn',job:'Fisher',trait:'Laid-back · Outdoorsy',emoji:'🧑🏼‍🦱',outfit:0x54cb9a,hair:0xa77943,skin:0xf4c8a4,x:13,z:13,lines:['The water is quiet today. That usually means the fish are hiding.','I caught an enormous fish once. Nobody believes me.','There is no rush. Not here.']},
- {id:'rosie',name:'Rosie',job:'Market owner',trait:'Cheerful · Ambitious',emoji:'👩🏻',outfit:0xc68fea,hair:0x8c4b39,skin:0xf4cfb9,x:-5,z:-4,lines:['The market is full of treats today!','Do you think this town needs a cake festival?','I have big plans for this little place.']},
+ {id:'mabel',name:'Mabel',job:'Florist',trait:'Creative · Loves flowers',skin:'#c48b67',hair:'#523b31',outfit:'#f08fbd',kind:'dress',style:0,emoji:'🌸',x:720,y:594,lines:['I was just admiring the daisies. They seem extra happy today!','Do you think flowers have favorite neighbors? I think they do.','A pink blossom is like a tiny hello from spring.']},
+ {id:'rosie',name:'Rosie',job:'Market owner',trait:'Cheerful · Ambitious',skin:'#e7ae85',hair:'#9b5143',outfit:'#e786a1',kind:'overalls',style:3,emoji:'🍓',x:505,y:725,lines:['Fresh peaches, just for you! Well, if you have a few coins.','I want this market to be the heart of the whole village.','I heard someone is planning a picnic by the river!']},
+ {id:'oliver',name:'Oliver',job:'Baker',trait:'Warmhearted · Foodie',skin:'#f8caa0',hair:'#674332',outfit:'#82a1d6',kind:'apron',style:2,emoji:'🥐',x:948,y:525,lines:['The cinnamon buns are rising beautifully today.','I think a warm pastry can fix almost any rainy afternoon.','Maybe I should open a little strawberry tart stand.']},
+ {id:'jun',name:'Jun',job:'Bookshop keeper',trait:'Shy · Bookworm',skin:'#f3d2ae',hair:'#353441',outfit:'#8bb59c',kind:'sweater',style:1,emoji:'📚',x:423,y:935,lines:['This is the quietest little corner of town. I love it.','Would you like to borrow my favorite storybook?','Sometimes I write poems about the ocean.']},
+ {id:'bea',name:'Bea',job:'Artist',trait:'Outgoing · Dreamer',skin:'#986448',hair:'#39313a',outfit:'#f2bc56',kind:'dress',style:4,emoji:'🎨',x:794,y:803,lines:['I am painting the sunset in every shade of peach.','I wish the clouds would pose for my paintings.','Your outfit is giving me so many ideas!']},
+ {id:'finn',name:'Finn',job:'Fisher',trait:'Relaxed · Outdoorsy',skin:'#eac5a2',hair:'#ad7b50',outfit:'#70b6be',kind:'overalls',style:2,emoji:'🐟',x:1035,y:1095,lines:['Fish always bite when you least expect it.','Come down to the pond sometime. The water sparkles at noon.','No need to rush. The whole day is yours.']}
 ];
-const QUESTS=[
- {id:'welcome',name:'New beginnings',description:'Chat with 2 different neighbors',target:2,reward:70,icon:'💌'},
- {id:'flower',name:'Bloom where you are',description:'Plant a flower in the community garden',target:1,reward:45,icon:'🌷'},
- {id:'fish',name:'A little splash',description:'Catch your first fish',target:1,reward:75,icon:'🐟'},
- {id:'home',name:'Make yourself at home',description:'Place a new decoration in your home',target:1,reward:60,icon:'🛋️'},
- {id:'job',name:'An honest day’s work',description:'Help out at the bakery',target:1,reward:90,icon:'🥐'},
- {id:'friend',name:'A budding friendship',description:'Reach 30 friendship with a neighbor',target:1,reward:80,icon:'💕'}
-];
-const SHOP=[
- {id:'plant',name:'Potted plant',icon:'🪴',cost:35,desc:'A leafy little friend'},
- {id:'chair',name:'Cozy chair',icon:'🪑',cost:65,desc:'A place to unwind'},
- {id:'lamp',name:'Glowing lamp',icon:'💡',cost:50,desc:'Gentle evening light'},
- {id:'books',name:'Bookshelf',icon:'📚',cost:95,desc:'Stories to get lost in'},
- {id:'table',name:'Tea table',icon:'🫖',cost:75,desc:'A tiny place to gather'},
- {id:'flowers',name:'Flower vase',icon:'💐',cost:30,desc:'Fresh color for your rooms'}
-];
-const defaultState=()=>({name:'Poppy',hair:0x5d4037,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],fish:[],homeStyle:0,sound:false,seenWelcome:false});
-let state=defaultState();
-try{const saved=JSON.parse(localStorage.getItem('hearth-harbor-save-v1')||'null');if(saved&&typeof saved==='object')state={...state,...saved,needs:{...state.needs,...saved.needs},relations:{...saved.relations},quests:{...saved.quests}}}catch(e){console.warn('Save unavailable',e)}
-let speed=1,modal='',placement=null,currentScene='town',pending=null,clockAccumulator=0,autoSaveT=0,toastTimer=0,fishValue=0,fishRaf=0, muted=false;
-let conversation=null, conversationFrame=0, conversationZoom=1, conversationEmoteEnd=0;
-let scene,camera,renderer,light,player,playerBody,ground, raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),camTarget=new THREE.Vector3(),world=new THREE.Group(),npcs=[],clickable=[],decors=[],interactEntities=[],gardenMeshes=[],placedGroups=[],clouds=[];
-// Shared materials & procedural textures keep the mobile renderer light.
-const materialCache=new Map();
-const mat=(c,roughness=1)=>{const key=`${c}:${roughness}`;if(!materialCache.has(key))materialCache.set(key,new THREE.MeshStandardMaterial({color:c,roughness,metalness:0}));return materialCache.get(key)};
-const decorMotion=[];let pathPebbles=[];let grassTexture=null,soilTexture=null,woodTexture=null;
-const hash=n=>{const v=Math.sin(n*127.1+41.73)*43758.5453;return v-Math.floor(v)};
-function texturePaint(kind){const c=document.createElement('canvas');c.width=c.height=1024;const q=c.getContext('2d');const grass=kind==='grass',wood=kind==='wood';
- if(grass){q.fillStyle='#72d860';q.fillRect(0,0,1024,1024);for(let i=0;i<18000;i++){const x=hash(i*2.13)*1024,y=hash(i*3.77)*1024,r=1+hash(i*5.1)*7;q.fillStyle=i%3===0?'#57c850':i%3===1?'#9cf17e':'#83e56c';q.globalAlpha=.12+hash(i*7.1)*.21;q.beginPath();q.ellipse(x,y,r*1.4,r*.65,hash(i)*6,0,Math.PI*2);q.fill()}q.globalAlpha=1;for(let i=0;i<1600;i++){const x=hash(i*1.7)*1024,y=hash(i*2.45)*1024;q.strokeStyle=i%3===0?'#39b947':'#c6f69a';q.globalAlpha=.22;q.lineWidth=1.7;q.beginPath();q.moveTo(x,y);q.lineTo(x+4,y-7);q.stroke()}q.globalAlpha=1;
- }else if(wood){q.fillStyle='#f3bb82';q.fillRect(0,0,1024,1024);for(let j=0;j<13;j++){const y=j*79;q.fillStyle=j%3===0?'#edac6b':j%3===1?'#ffc996':'#f6b378';q.fillRect(0,y,1024,77);q.fillStyle='rgba(105,66,41,.24)';q.fillRect(0,y+77,1024,2);for(let k=0;k<26;k++){let x=hash(j*44+k)*1024;q.fillStyle='rgba(119,80,50,.09)';q.fillRect(x,y+8+hash(k*7+j)*60,30+hash(k)*110,1)}q.fillStyle='rgba(103,69,44,.22)';q.fillRect(j%2?510:245,y,2,77)}
- }else{q.fillStyle='#ffe7b6';q.fillRect(0,0,1024,1024);for(let i=0;i<13000;i++){const x=hash(i*3.2)*1024,y=hash(i*4.7)*1024,r=1+hash(i*6.7)*5;q.fillStyle=i%3===0?'#f3c98a':i%3===1?'#fff8db':'#fad99c';q.globalAlpha=.08+hash(i*2.9)*.21;q.beginPath();q.arc(x,y,r,0,Math.PI*2);q.fill()}q.globalAlpha=1}
- const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=2;return t;
-}
-function addSoftStone(g,x,y,z,scale=1,color=0xeee5ce){const o=sphere(.35,mat(color),x,y,z,10,7);o.scale.set(scale,.30*scale,.75*scale);g.add(o);return o}
-function leafCluster(root,x,y,z,r,color){const o=sphere(r,mat(color),x,y,z,12,9);o.scale.set(1.15,.82,1.07);root.add(o);return o}
+const HEX=n=>'#'+((n>>>0)&0xffffff).toString(16).padStart(6,'0');
+const color=n=>typeof n==='number'?HEX(n):n;
+const playerDef=()=>({id:'player',name:state.name,skin:color(state.skin),hair:color(state.hair),outfit:color(state.outfit),kind:'dress',style:1});
+let scene='town',speed=1,modal=null,talk=null,paused=false,placement=null,painted=[],toastTimer=0;
+let player={x:597,y:654,target:null,facing:'front',walk:0,bodyBob:0},cam={x:597,y:654},W=0,H=0,DPR=1,last=0,tick=0;
+let displayScale=1;let worldScale=1;
+const furnitureTypes=[{id:'bed',name:'Cloud-soft bed',emoji:'🛏️',cost:95},{id:'sofa',name:'Peach sofa',emoji:'🛋️',cost:75},{id:'plant',name:'Fern in pot',emoji:'🪴',cost:25},{id:'books',name:'Storybook shelf',emoji:'📚',cost:70},{id:'lamp',name:'Honey lamp',emoji:'💡',cost:40},{id:'rug',name:'Patchwork rug',emoji:'🧶',cost:35},{id:'chair',name:'Wooden chair',emoji:'🪑',cost:30},{id:'flowers',name:'Flower vase',emoji:'💐',cost:20}];
+function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch(e){}};
+function notify(message){$('toast').textContent=message;$('toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('visible'),2900)}
+function drawBar(id,v){$(id).style.width=clamp(v,0,100)+'%';$(id).style.background=v<25?'#ef7e79':v<50?'#e7ba65':'#67bd88'}
+function updateUI(){const seasons=['SPRING','SUMMER','AUTUMN','WINTER'],h=Math.floor((state.minute%1440)/60),m=Math.floor(state.minute%60);$('dateText').textContent=`${seasons[state.season%4]} · DAY ${state.day} · ${((h+11)%12+1)}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;$('coinText').textContent=Math.floor(state.coins);$('heartText').textContent=state.hearts;$('playerName').textContent=state.name;drawBar('needFood',state.needs.hunger);drawBar('needFun',state.needs.fun);drawBar('needSocial',state.needs.social);drawBar('needEnergy',state.needs.energy);$('locationText').textContent=scene==='town'?'✦ MAPLEWOOD VILLAGE ✦':'✦ YOUR LITTLE COTTAGE ✦';$('prompt').textContent=scene==='town'?'TAP TO WALK · TAP A NEIGHBOR TO CHAT':'TAP TO WALK · TAP FURNITURE TO USE';$('townBtn').classList.toggle('active',scene==='town');$('homeBtn').classList.toggle('active',scene==='home');$('timeBtn').textContent=speed===0?'Ⅱ':speed===1?'▶':speed===2?'▶▶':'▶▶▶'}
+function changeNeed(id,v){state.needs[id]=clamp(state.needs[id]+v,0,100);updateUI();save()}
+function coins(v){state.coins=Math.max(0,state.coins+v);updateUI();save()}
+function task(id){state.quests[id]=(state.quests[id]||0)+1;save()}
+const questDefs=[{id:'meet',text:'Meet 3 neighbors',max:3,reward:70},{id:'chat',text:'Have 5 friendly chats',max:5,reward:80},{id:'fish',text:'Catch 3 fish',max:3,reward:85},{id:'garden',text:'Harvest your first flowers',max:1,reward:55},{id:'work',text:'Work 2 café shifts',max:2,reward:120}];
 
-const MATERIAL={grass:mat(COLORS.grass),path:mat(COLORS.path),wood:mat(COLORS.wood),cream:mat(COLORS.cream),leaf:mat(0x42c96d),leaf2:mat(0x38b95c),shadow:new THREE.MeshBasicMaterial({color:0x438b45,transparent:true,opacity:.20,depthWrite:false})};
-function mesh(geo,m,x=0,y=0,z=0,receive=false){const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.castShadow=!receive;o.receiveShadow=!!receive;return o}
-function cube(w,h,d,m,x=0,y=0,z=0){return mesh(new THREE.BoxGeometry(w,h,d),m,x,y,z)}
-function sphere(r,m,x=0,y=0,z=0,ws=16,hs=12){return mesh(new THREE.SphereGeometry(r,ws,hs),m,x,y,z)}
-function cyl(a,b,h,m,x=0,y=0,z=0,s=12){return mesh(new THREE.CylinderGeometry(a,b,h,s),m,x,y,z)}
-function cone(r,h,m,x=0,y=0,z=0,s=4){return mesh(new THREE.ConeGeometry(r,h,s),m,x,y,z)}
-function shapeRect(w,d,m,x,z){const o=mesh(new THREE.PlaneGeometry(w,d),m,x,.04,z,true);o.rotation.x=-Math.PI/2;return o}
-function disk(r,m,x,y,z,segments=24){const o=mesh(new THREE.CircleGeometry(r,segments),m,x,y,z,true);o.rotation.x=-Math.PI/2;return o}
-function groupAt(x=0,z=0){const g=new THREE.Group();g.position.set(x,0,z);return g}
-function setTag(obj,tag,id){obj.userData.action={tag,id};clickable.push(obj);return obj}
-function setTagGroup(gr,tag,id){gr.userData.action={tag,id};gr.traverse(o=>{if(o.isMesh)clickable.push(o)});return gr}
-function shadow(g,r=1){const s=disk(r,MATERIAL.shadow,0,.021,0);s.scale.y=.6;g.add(s)}
-// Flowers use soft, rounded petals that read clearly on a phone instead of tiny dots.
-function tinyFlower(root,x,z,palette=0){
- const g=groupAt(x,z), petals=[0xff70ab,0xffc65c,0xb88af5,0xfff3be,0xff8f76,0xf5b0db];
- const col=mat(petals[Math.abs(palette)%petals.length]);const stem=mat(0x39a764),leaves=mat(0x5ac55e);
- const height=.40+(Math.abs(palette)%3)*.08;
- g.add(cyl(.022,.028,height,stem,0,height/2,0,6));
- for(const side of [-1,1]){const leaf=sphere(.13,leaves,side*.095,height*.44,.012,9,7);leaf.scale.set(1.05,.35,.55);leaf.rotation.z=side*.35;g.add(leaf)}
- if((Math.abs(palette)%5)===3){
-  for(let k=0;k<5;k++){const a=k*Math.PI*2/5;const pet=sphere(.16,col,Math.cos(a)*.075,height+.075,Math.sin(a)*.075,10,8);pet.scale.set(.55,1.2,.65);pet.rotation.z=-Math.cos(a)*.33;pet.rotation.x=Math.sin(a)*.33;g.add(pet)}
-  g.add(sphere(.055,mat(0xffe65e),0,height+.115,0));
+// ===== ORIGINAL 64-ERA INSPIRED PIXEL SPRITE ARTWORK =====
+const art={};function makeArt(key,w,h,fn){if(art[key])return art[key];const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.imageSmoothingEnabled=false;fn(g,w,h);return art[key]=c}
+function fill(g,c,x,y,w,h){g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
+function poly(g,c,p){g.fillStyle=c;g.beginPath();g.moveTo(p[0][0],p[0][1]);for(let i=1;i<p.length;i++)g.lineTo(p[i][0],p[i][1]);g.closePath();g.fill()}
+function ellipse(g,c,x,y,w,h){g.fillStyle=c;g.beginPath();g.ellipse(x,y,w,h,0,0,TAU);g.fill()}
+function line(g,c,pts,width=2){g.strokeStyle=c;g.lineWidth=width;g.lineCap='square';g.lineJoin='miter';g.beginPath();g.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)g.lineTo(pts[i][0],pts[i][1]);g.stroke()}
+function strokeRect(g,c,x,y,w,h,s=2){g.strokeStyle=c;g.lineWidth=s;g.strokeRect(x,y,w,h)}
+function specks(g,seed,w,h,count,colors){for(let i=0;i<count;i++){const a=hash(seed*11+i*13.18),b=hash(seed*17+i*67.1);fill(g,colors[i%colors.length],a*w,b*h,1+Math.floor(hash(i+seed)*3),1+Math.floor(hash(i*7+seed)*2))}}
+function charArt(o,dir='front',frame=0,emote='neutral'){
+ const key=`C:${o.id||o.name}:${o.skin}:${o.hair}:${o.outfit}:${o.kind}:${o.style}:${dir}:${frame}:${emote}`;
+ return makeArt(key,64,88,g=>{
+  const ink='#453b42',skin=o.skin||'#edba9c',skinShade='#c88779',hair=o.hair||'#54382d',shirt=o.outfit||'#e7a7a0',accent='#fff2db';
+  const front=dir==='front',back=dir==='back',side=dir==='side',step=frame%2===1;
+  const legY=step?2:0;
+  // shoes and distinct separated legs: not a single floating skirt/blob.
+  fill(g,'#45394b',20,75+legY,9,5);fill(g,'#45394b',36,75-legY,9,5);
+  fill(g,'#c7a48a',22,69+legY,5,7);fill(g,'#c7a48a',38,69-legY,5,7);
+  fill(g,'#f5eedf',22,73+legY,5,2);fill(g,'#f5eedf',38,73-legY,5,2);
+  fill(g,'#6d5865',19,77+legY,11,5);fill(g,'#6d5865',35,77-legY,11,5);
+  fill(g,'#bca7a2',20,77+legY,7,2);fill(g,'#bca7a2',36,77-legY,7,2);
+  // skirt or trousers create entirely different readable outfit silhouettes.
+  if(o.kind==='overalls'){
+   fill(g,ink,21,55,24,18);fill(g,shirt,23,56,20,14);
+   fill(g,'#4e7f9a',24,61,18,14);fill(g,'#f5dc9d',27,63,2,2);fill(g,'#f5dc9d',39,63,2,2);
+  }else if(o.kind==='apron'){
+   fill(g,ink,22,53,22,18);fill(g,shirt,24,54,18,16);fill(g,'#fcf3dc',25,59,16,14);fill(g,'#edc790',27,62,12,1);
+  }else if(o.kind==='sweater'){
+   fill(g,ink,22,53,22,18);fill(g,shirt,24,53,18,17);fill(g,'#f6e1ab',24,67,18,2);
+  }else{
+   poly(g,ink,[[26,54],[40,54],[47,72],[19,72]]);poly(g,shirt,[[27,55],[39,55],[44,70],[22,70]]);
+   fill(g,'#fff2c7',28,57,12,2);
+  }
+  // stitched motif
+  fill(g,'#fff7eb',30,60,4,2);fill(g,'#f8cc74',32,58,2,6);
+  // arms and hands, separated from body
+  fill(g,ink,17,54+(step?1:0),8,14);fill(g,shirt,18,55+(step?1:0),6,10);
+  fill(g,ink,41,54+(step?-1:0),8,14);fill(g,shirt,42,55+(step?-1:0),6,10);
+  fill(g,skin,18,65+(step?1:0),6,5);fill(g,skin,42,65+(step?-1:0),6,5);
+  // face/hair behind; silhouette is a designed pixel contour, not assembled spheres.
+  poly(g,ink,[[14,23],[18,15],[25,11],[41,11],[49,18],[53,26],[52,43],[46,51],[20,51],[13,43]]);
+  poly(g,hair,[[16,23],[20,16],[29,13],[40,14],[48,21],[50,38],[46,47],[18,47],[16,37]]);
+  if(!back){
+   poly(g,ink,[[18,25],[25,20],[39,20],[48,25],[49,41],[43,49],[23,49],[17,41]]);
+   poly(g,skin,[[19,26],[25,22],[40,22],[46,27],[46,39],[41,46],[24,46],[20,40]]);
+   fill(g,'#f8d2b1',22,31,3,8);
+   // glossy clean eye shapes in front, small at 64-bit scale.
+   if(emote==='happy'){
+    line(g,'#403c51',[[25,34],[28,32],[31,34]],2);line(g,'#403c51',[[36,34],[39,32],[42,34]],2);
+   } else if(emote==='surprised'){
+    fill(g,'#fefcf8',26,31,5,7);fill(g,'#fefcf8',36,31,5,7);
+    fill(g,'#3f4059',28,32,2,5);fill(g,'#3f4059',38,32,2,5);
+   } else {
+    fill(g,'#fcf5e8',25,32,7,7);fill(g,'#fcf5e8',35,32,7,7);
+    fill(g,'#35364c',27,32,4,6);fill(g,'#35364c',37,32,4,6);
+    fill(g,'#fff',27,32,2,2);fill(g,'#fff',37,32,2,2);
+   }
+   fill(g,'#ee9995',22,40,4,2);fill(g,'#ee9995',41,40,4,2);
+   fill(g,'#c38c78',33,38,2,2);
+   if(emote==='surprised'){fill(g,'#9b4b65',32,42,4,3)}else{fill(g,'#a75d67',31,42,5,1);fill(g,'#f9ddb9',32,43,3,1)}
+   // sculpted bangs layered over forehead
+   if(o.style===1){poly(g,hair,[[16,27],[20,19],[30,16],[43,17],[48,25],[42,26],[37,23],[33,28],[27,24],[21,30]])}
+   else if(o.style===2){poly(g,hair,[[17,28],[23,19],[31,16],[42,17],[48,25],[45,28],[40,23],[35,24],[31,28],[25,24],[19,30]])}
+   else if(o.style===3){poly(g,hair,[[16,27],[20,19],[30,15],[44,18],[49,25],[44,26],[39,25],[34,27],[28,25],[22,29]])}
+   else {poly(g,hair,[[16,28],[19,18],[27,15],[40,15],[48,23],[48,27],[42,23],[35,26],[29,24],[24,28]])}
+   fill(g,'#ffe4c6',19,31,1,8);
+  }else{
+   fill(g,'#6d4c41',20,25,26,21);fill(g,hair,21,25,24,18);specks(g,12,64,22,7,['#865b4c','#7b5749']);
+  }
+  if(side){fill(g,hair,15,31,9,14);fill(g,skin,46,32,3,8)}
+  if(o.style===0){ // adorable side bob
+   fill(g,hair,14,34,8,13);fill(g,hair,44,34,7,13);fill(g,'#f6b5c8',41,20,7,4);
+  }else if(o.style===3){ // ponytail
+   fill(g,ink,49,29,10,18);fill(g,hair,50,29,8,17);fill(g,'#ffd493',50,29,7,3);
+  }else if(o.style===4){ // buns
+   fill(g,ink,11,19,12,13);fill(g,ink,43,19,12,13);fill(g,hair,13,20,9,10);fill(g,hair,45,20,9,10);
+  }else if(o.style===2&&o.id==='oliver'){
+   fill(g,'#f9f0db',18,16,30,9);fill(g,'#fffbeb',23,12,20,6);fill(g,'#ddd5cb',20,24,26,2);
+  }
+  // highlights and costume accent
+  fill(g,'#fff4dc',30,59,5,1);
+ });
+}
+function foliageArt(kind=0){return makeArt('tree'+kind,106,150,g=>{
+ const trunks=['#987351','#8a6954','#917855'],deep=['#245f4c','#306f54','#3d794f'],mid=['#3d9b59','#56ae63','#6ba85c'],light=['#89c976','#91d581','#f4afc0'];
+ ellipse(g,'#2c654a55',52,143,38,7);
+ fill(g,'#6d503e',48,61,13,82);fill(g,trunks[kind%3],51,65,7,70);fill(g,'#c29a6c',54,67,3,50);
+ for(let i=0;i<18;i++){const a=i*2.38;const x=52+Math.cos(a)*31*(i%3===0?.66:1),y=54+Math.sin(a)*25+(i%4)*4;
+  ellipse(g,'#204d49',x+1,y+4,16+hash(i)*9,17+hash(i*3)*7);
+  ellipse(g,kind===2?'#cd6b9d':deep[kind%3],x,y,17+hash(i)*8,17+hash(i*3)*6);
+  ellipse(g,kind===2?'#ec96bc':mid[(i+kind)%3],x-2,y-4,14+hash(i)*7,13+hash(i*3)*5);
+  if(i%2===0)fill(g,kind===2?'#ffd5da':light[(i+kind)%3],x-7,y-7,6,3);
+ }
+ ellipse(g,kind===2?'#f3a6c3':mid[kind%3],54,38,34,24);
+ for(let j=0;j<28;j++){const x=20+hash(j*71+kind)*68,y=16+hash(j*31+kind)*63;fill(g,kind===2?['#ffdae5','#fff4cf','#ffc5d5'][j%3]:['#8ee078','#b0d78b','#d3ed91'][j%3],x,y,3+(j%3),2)}
+ });}
+function houseArt(kind){return makeArt('house'+kind,198,180,g=>{
+ const schemes=[['#f5bca0','#d96c7a','#a95660'],['#ffe0a1','#679ac8','#3f75aa'],['#b2d9cb','#a992d1','#846aaf'],['#fad0c3','#da9eb3','#af7b9c']];const [wall,roof,deep]=schemes[kind%4];
+ ellipse(g,'#294c4050',96,165,90,12);
+ // deep side elevation, with clear isometric pitch
+ poly(g,'#8f736c',[[150,62],[185,44],[184,135],[151,153]]);
+ poly(g,'#d29c86',[[150,64],[182,46],[183,132],[151,151]]);
+ poly(g,wall,[[23,70],[148,70],[148,150],[23,150]]);
+ poly(g,'#fff2d2',[[19,147],[150,147],[153,155],[16,155]]);
+ // vertical clapboards and shaded edges
+ for(let y=78;y<148;y+=10){fill(g,'#e9b7a055',25,y,120,1);fill(g,'#fff6de88',27,y+2,118,1)}
+ fill(g,'#e6f0d4',22,71,4,79);fill(g,'#e6f0d4',145,71,4,79);
+ // unique 2.5D roof: distinct front and side facets
+ poly(g,'#603d50',[[10,75],[52,25],[128,23],[170,73],[153,78],[126,43],[54,41],[28,79]]);
+ poly(g,deep,[[126,26],[172,63],[184,51],[147,14]]);
+ poly(g,roof,[[13,72],[53,24],[128,24],[161,71],[148,71],[124,41],[53,40],[27,77]]);
+ poly(g,'#f6d6b6',[[53,40],[124,40],[147,72],[28,72]]);
+ poly(g,roof,[[13,70],[53,23],[127,23],[147,31],[52,31],[26,79]]);
+ for(let i=0;i<10;i++){line(g,i%3===0?'#fff2d777':'#a95e6955',[[22+i*12,66],[53+i*8,31]],1)}
+ line(g,'#fff5df',[[22,72],[53,38],[128,38],[154,72]],3);
+ // little gable window
+ fill(g,'#fff2d7',75,49,21,16);fill(g,'#81c9cb',78,52,15,10);fill(g,'#fff9df',84,52,2,11);
+ // two windows, curtains, shutters, planter boxes
+ for(const x of [36,118]){
+  fill(g,'#6c6b69',x-3,93,25,30);fill(g,'#fff9d7',x-4,90,26,31);fill(g,'#74b7c4',x,94,18,22);
+  fill(g,'#b2e7db',x+2,95,6,15);fill(g,'#fff4de',x+8,94,2,23);fill(g,'#fff4de',x,104,18,2);
+  fill(g,deep,x-9,92,5,29);fill(g,deep,x+22,92,5,29);
+  fill(g,'#795e5c',x-5,117,31,6);fill(g,'#3e8d5c',x-4,115,30,5);
+  for(let j=0;j<5;j++)fill(g,['#fa7fa6','#ffe18e','#fff7d5'][j%3],x-3+j*6,114-(j%2)*3,4,4);
+ }
+ // door has actual trim & window
+ fill(g,'#ae755f',78,105,30,45);fill(g,'#fff6dd',75,102,35,49);fill(g,deep,80,108,25,41);fill(g,'#e8ad87',83,111,19,35);
+ fill(g,'#85c6d1',87,113,11,12);fill(g,'#fff3dd',92,113,2,12);
+ fill(g,'#ffe3a5',99,132,3,3);
+ fill(g,'#c8b395',64,151,58,7);fill(g,'#f4dec0',58,156,70,7);
+ // awning over door: scalloped canvas
+ fill(g,roof,70,93,42,7);for(let i=0;i<5;i++)fill(g,i%2?'#fff2d0':roof,71+i*8,98,8,5);
+ // chimneys and aerial details
+ fill(g,'#735561',126,13,14,25);fill(g,'#cc9888',129,14,12,20);fill(g,'#edc5ab',124,13,17,5);
+ fill(g,'#f8e5ba',18,75,10,4);fill(g,'#f8e5ba',146,75,10,4);
+ // mailbox and flower pot
+ fill(g,'#785b58',155,126,4,28);fill(g,'#fff5cc',151,123,14,10);fill(g,'#f0849e',162,124,3,6);
+ fill(g,'#c97b6c',31,142,10,11);fill(g,'#378d62',28,135,16,9);fill(g,'#f6b68e',30,132,5,4);fill(g,'#ff93ad',36,130,4,4);
+ });}
+function stallArt(){return makeArt('stall',104,88,g=>{ellipse(g,'#285e4b66',51,80,43,6);fill(g,'#875a47',10,36,5,42);fill(g,'#875a47',90,36,5,42);fill(g,'#a57453',10,60,85,17);fill(g,'#eac58d',14,60,78,4);poly(g,'#5a5260',[[7,37],[21,12],[84,12],[97,37]]);for(let j=0;j<6;j++){const x=8+j*15;poly(g,j%2?'#fff2d4':'#f88ba3',[[21+j*11,13],[28+j*10,13],[x+16,37],[x,37]])}for(let j=0;j<6;j++){fill(g,['#ffbd5f','#ff796c','#a6d67b'][j%3],22+j*11,57-(j%2)*3,7,7);fill(g,'#4b945a',24+j*11,52-(j%2)*3,3,4)}fill(g,'#e6b47b',13,69,75,5)})}
+function lampArt(){return makeArt('lamp',42,106,g=>{ellipse(g,'#315a4d77',21,101,18,4);fill(g,'#315a61',17,21,8,78);fill(g,'#44787b',19,26,3,72);fill(g,'#37565e',9,21,24,5);poly(g,'#31525b',[[10,24],[12,12],[20,7],[30,12],[33,24]]);poly(g,'#e9bd74',[[14,21],[17,13],[26,13],[29,21]]);fill(g,'#fff5bc',18,15,7,6);fill(g,'#31525b',17,6,9,3);fill(g,'#f9d28a',19,1,5,6)})}
+function benchArt(){return makeArt('bench',100,64,g=>{ellipse(g,'#335b4b66',52,57,41,6);for(let x of [19,74])fill(g,'#546360',x,33,5,27);fill(g,'#4a5c57',17,18,64,7);fill(g,'#c78c59',14,16,70,7);fill(g,'#e4b876',14,16,70,3);fill(g,'#c78c59',16,26,68,6);fill(g,'#805742',18,36,66,7);fill(g,'#dba675',18,34,63,6);fill(g,'#ecbe8a',19,34,62,2)})}
+function shrubArt(type=0){return makeArt('shrub'+type,56,43,g=>{ellipse(g,'#315b4944',27,38,24,4);for(let j=0;j<7;j++){const x=12+(j*11)%34,y=20+hash(j+type)*11;ellipse(g,'#2f6e4d',x,y,11,9);ellipse(g,(['#79ba65','#8ccc77','#63ac5f'][j%3]),x,y-3,10,7)}for(let j=0;j<5;j++){const x=9+j*9,y=14+(j%2)*12;fill(g,type===1?'#f3b0d1':j%2?'#ffcd75':'#f9a6ab',x,y,4,4)}})}
+function flowerArt(n=0){return makeArt('flower'+n,32,36,g=>{fill(g,'#4a944d',15,14,3,18);fill(g,'#77be5b',10,23,5,4);fill(g,'#77be5b',18,27,5,4);const c=['#ff7fa5','#fee088','#a698ea','#f3f0dc','#ffae61'][n%5];for(const [x,y] of [[11,8],[18,8],[11,15],[18,15],[14,5]])fill(g,c,x,y,6,6);fill(g,'#f8b84a',14,11,7,7);fill(g,'#fff3d4',15,12,2,2)})}
+function grassTile(){return makeArt('grass',96,96,g=>{fill(g,'#78ba70',0,0,96,96);for(let i=0;i<65;i++){const x=hash(i*28)*95,y=hash(i*11+6)*95;fill(g,['#86c579','#68ad68','#95ce7a','#71b369'][i%4],x,y,4+(i%4)*2,2+(i%3))}for(let i=0;i<13;i++){const x=hash(i*48+4)*95,y=hash(i*8+34)*95;fill(g,'#4f9761',x,y,2,5);fill(g,'#b3d78e',x+2,y-1,2,3)}return g})}
+function floorTile(){return makeArt('floor',64,64,g=>{fill(g,'#e6bc80',0,0,64,64);for(let j=0;j<4;j++)for(let i=0;i<3;i++){const y=j*16,x=i*24-(j%2)*12;fill(g,'#b78962',x,y,23,1);fill(g,'#f7d59c',x+1,y+2,20,2);fill(g,'#dbab72',x+18,y+7,2,6)}})}
+
+const objects=[];
+function put(type,x,y,opts={}){const obj={type,x,y,...opts};objects.push(obj);return obj}
+function buildTown(){objects.length=0;
+ for(const [x,y,type] of [[385,470,0],[925,455,1],[385,1070,2],[1060,970,3]])put('house',x,y,{kind:type,label:['Your Cottage','Honeybun Café','Storybook Library','Town Hall'][type],action:['home','cafe','library','hall'][type]});
+ put('stall',530,752,{action:'market'});put('pond',940,1250,{action:'fish'});put('garden',763,416,{action:'garden'});
+ put('bench',730,780);put('bench',375,812);put('bench',1050,615);
+ for(const [x,y] of [[610,530],[890,775],[495,1095],[1080,1165],[350,675]])put('lamp',x,y);
+ for(const [x,y,n] of [[270,430,0],[265,830,1],[230,1100,0],[920,240,2],[1100,335,0],[1190,650,1],[1210,1100,0],[660,290,0],[560,1120,2],[870,1160,1],[1300,1250,0],[580,980,1],[147,650,0]])put('tree',x,y,{kind:n});
+ const shrubs=[[250,590],[486,544],[1080,525],[630,405],[905,600],[1032,790],[300,995],[805,920],[1160,850],[650,1025],[1054,1087],[765,1071],[1180,1300]];
+ shrubs.forEach(([x,y],i)=>put('shrub',x,y,{kind:i%2}));
+ for(let i=0;i<94;i++){let x=125+hash(i*31)*1130,y=300+hash(i*37+7)*1050;
+  if((Math.abs(x-610)<120&&Math.abs(y-650)<120)||(Math.abs(x-790)<160&&Math.abs(y-750)<60)||(Math.abs(x-955)<130&&Math.abs(y-1280)<120))continue;
+  put('flower',x,y,{kind:i%5,scale:.60+(i%3)*.21});}
+ NPCS.forEach(n=>{n.cx=n.x;n.cy=n.y;n.direction=0;n.moving=0;n.emotion='neutral';n.emotionUntil=0;n.wanderAngle=0;n.wanderDelay=0;});
+}
+function screenX(x){return (x-cam.x)*worldScale+W/2}
+function screenY(y){return (y-cam.y)*worldScale+H*.54}
+function drawArt(g,img,x,y,s=1){const w=img.width*s,h=img.height*s;g.drawImage(img,Math.floor(x-w/2),Math.floor(y-h),Math.round(w),Math.round(h));}
+function tileFill(g,img,x0,y0,x1,y1){let w=img.width,h=img.height;for(let y=Math.floor(y0/h)*h;y<y1;y+=h)for(let x=Math.floor(x0/w)*w;x<x1;x+=w)g.drawImage(img,x,y)}
+function pathStroke(g,pts,width){g.save();g.lineJoin='round';g.lineCap='round';g.strokeStyle='#658e55';g.lineWidth=width+12;g.beginPath();g.moveTo(...pts[0]);for(let i=1;i<pts.length;i++)g.lineTo(...pts[i]);g.stroke();g.strokeStyle='#f7dba0';g.lineWidth=width;g.stroke();g.strokeStyle='#e1bf82';g.lineWidth=width-10;g.stroke();g.restore()}
+function drawTownGround(g){
+ g.fillStyle='#77b971';g.fillRect(-100,-100,2000,1800);tileFill(g,grassTile(),0,0,1580,1520);
+ // a very deliberate 2.5D town plan: winding honey-stone roads & little clearings.
+ pathStroke(g,[[600,210],[600,340],[606,520],[610,660],[610,850],[660,1000],[745,1140],[840,1240]],100);
+ pathStroke(g,[[200,677],[380,681],[595,685],[820,676],[1040,660],[1320,662]],92);
+ pathStroke(g,[[406,440],[424,540],[470,640]],74);
+ pathStroke(g,[[915,455],[902,535],[812,641]],74);
+ pathStroke(g,[[381,1030],[460,914],[570,815]],71);
+ pathStroke(g,[[1044,950],[953,867],[834,739]],72);
+ // Town center paved cobble motif, richer than a flat square.
+ ellipse(g,'#caad82',604,650,131,99);ellipse(g,'#f5d89f',604,642,122,91);
+ for(let i=0;i<43;i++){const a=i*2.4,r=28+hash(i*3)*90;const x=604+Math.cos(a)*r,y=642+Math.sin(a)*r*.65;fill(g,'#fff1c9',x,y,6,3);fill(g,'#d3b889',x+2,y+4,3,2)}
+ // pond shape on the lower lane: animated gleam, lily pads, reeds, rocks.
+ ellipse(g,'#527c68',940,1255,163,99);ellipse(g,'#d4bc87',939,1251,155,94);
+ ellipse(g,'#4d94a5',940,1247,143,85);ellipse(g,'#74c7c3',940,1244,135,78);
+ for(let i=0;i<18;i++){const a=i*2.4,r=115+hash(i)*28;ellipse(g,i%2?'#e7d6b2':'#b1c6a2',940+Math.cos(a)*r,1245+Math.sin(a)*r*.62,5+i%4,3)}
+ for(let i=0;i<8;i++){let x=850+hash(i*3)*188,y=1207+hash(i*17)*88;ellipse(g,'#3e9283',x,y,12,6);ellipse(g,'#8dc971',x-2,y-2,10,5);if(i%3===0)fill(g,'#f7a2bb',x,y-9,5,6)}
+ for(let i=0;i<5;i++){const x=900+i*27,y=1244+Math.sin(tick*2+i)*9;line(g,'#d3f9df',[[x-7,y],[x+5,y]],2)}
+ // Garden is a recognisable place: 4 growing beds, stone border.
+ fill(g,'#b48d6f',667,307,195,144);fill(g,'#f4e3bb',671,310,187,137);
+ for(let i=0;i<4;i++){let x=683+(i%2)*83,y=326+Math.floor(i/2)*55;
+  fill(g,'#806049',x,y,71,43);fill(g,'#a57854',x+4,y+4,63,35);
+  if((state.garden[i]||0)>0){const grown=state.garden[i]===2;for(let j=0;j<5;j++){let px=x+12+(j%3)*21,py=y+12+Math.floor(j/3)*16;fill(g,'#3b8750',px,py,4,10);fill(g,grown?['#ff9cbc','#ffe6a2','#e8abed'][j%3]:'#89c96d',px-3,py-3,9,7)}}
+ }
+ // flourishes that make this a decorated settlement rather than a gray plane.
+ for(let i=0;i<45;i++){const x=160+hash(i*12)*1100,y=250+hash(i*64)*1150;
+  if(i%4===0){fill(g,'#fff5be',x,y,4,3)}else{fill(g,'#427f55',x,y,2,5);fill(g,'#9bd882',x+2,y-2,2,4)}
+ }
+}
+function drawHomeGround(g){
+ g.fillStyle='#6aa479';g.fillRect(-200,-200,2000,1800);
+ // dollhouse-like 2.5D room with thick sidewalls and papered interior.
+ fill(g,'#4d675a',160,195,860,956);fill(g,'#eed09b',170,207,841,926);
+ for(let y=207;y<1130;y+=floorTile().height)for(let x=170;x<1011;x+=floorTile().width)g.drawImage(floorTile(),x,y);
+ fill(g,'#5e6b73',158,180,864,25);fill(g,'#c5daba',169,120,840,87);
+ for(let x=175;x<1000;x+=34){fill(g,'#9bbb9a',x,128,2,75);fill(g,'#f5f7d7',x+3,131,2,71)}
+ fill(g,'#f3e2ac',165,195,850,14);fill(g,'#af9779',169,1133,845,13);
+ for(const x of [300,820]){fill(g,'#b89d7a',x-55,125,111,90);fill(g,'#fff7d9',x-48,128,97,78);fill(g,'#8ac7d9',x-42,134,86,66);fill(g,'#fef6cd',x,134,6,66);fill(g,'#fef6cd',x-42,165,86,6);for(let k=0;k<3;k++)fill(g,'#fff5c6',x-36+k*30,142,15,2)}
+ fill(g,'#bd735c',560,152,92,61);fill(g,'#e0a16f',568,153,76,55);fill(g,'#ffe3a1',634,180,4,5);
+ ellipse(g,'#d99a78',579,524,209,120);ellipse(g,'#f3d6ad',579,516,194,112);ellipse(g,'#b8cfa5',582,524,158,85);
+}
+function drawStatic(obj,g){
+ const {type,x,y}=obj;
+ if(type==='house')drawArt(g,houseArt(obj.kind),x,y,1.50);
+ if(type==='stall')drawArt(g,stallArt(),x,y,1.60);
+ if(type==='tree')drawArt(g,foliageArt(obj.kind),x,y,1.35);
+ if(type==='shrub')drawArt(g,shrubArt(obj.kind),x,y,.85);
+ if(type==='flower')drawArt(g,flowerArt(obj.kind),x,y,obj.scale||.8);
+ if(type==='bench')drawArt(g,benchArt(),x,y,1.24);
+ if(type==='lamp')drawArt(g,lampArt(),x,y,1.1);
+ if(type==='pond'){const s=Math.sin(tick*2)*2;ellipse(g,'#d8fcf3',x+30,y-40+s,26,2)}
+ if(type==='garden'){
+  for(let i=0;i<8;i++){const xx=x-99+i*24;fill(g,'#fff5de',xx,308,12,7)}
+  fill(g,'#fff3d1',703,299,84,15);fill(g,'#5c745e',716,302,59,2);
+ }
+}
+function drawHomeFurniture(g){
+ // All the pieces are painted sprites with thickness and drop shadows.
+ drawFurniture(g,'bed',332,430);drawFurniture(g,'sofa',803,489);drawFurniture(g,'kitchen',840,309);drawFurniture(g,'books',342,314);
+ for(let i=0;i<state.placed.length;i++){const f=state.placed[i];drawFurniture(g,f.kind,f.x||540,f.z||500)}
+}
+function drawFurniture(g,kind,x,y){const a=kind;
+ ellipse(g,'#355e4b44',x,y+3,50,11);
+ if(a==='bed'){
+  fill(g,'#846054',x-76,y-68,150,76);fill(g,'#f7efdf',x-68,y-70,137,65);fill(g,'#f2c4ca',x-68,y-28,136,21);fill(g,'#e29aa3',x-68,y-7,136,7);fill(g,'#fff8e8',x-62,y-65,57,30);fill(g,'#e9e7d0',x-2,y-65,57,30);fill(g,'#906b5a',x-76,y-78,150,10);
+ } else if(a==='sofa'){
+  fill(g,'#765d5a',x-66,y-89,132,86);fill(g,'#df91a6',x-67,y-88,130,70);fill(g,'#f1c0c4',x-60,y-78,119,33);fill(g,'#cf8495',x-66,y-45,132,27);fill(g,'#ffeac0',x-46,y-73,32,26);fill(g,'#ffeac0',x+14,y-73,32,26);
+ }else if(a==='kitchen'){
+  fill(g,'#907d6e',x-88,y-94,170,82);fill(g,'#fff0d0',x-82,y-90,164,75);fill(g,'#a77a5b',x-87,y-95,175,12);for(let i=0;i<3;i++){fill(g,'#d8b58b',x-72+i*55,y-67,47,52);fill(g,'#f4d6a6',x-65+i*55,y-62,34,43)}fill(g,'#474c57',x+34,y-91,13,8);
+ }else if(a==='books'){
+  fill(g,'#765545',x-45,y-144,90,143);fill(g,'#d3a56e',x-40,y-138,80,133);for(let i=0;i<4;i++){fill(g,'#895d48',x-35,y-128+i*30,70,5);for(let j=0;j<6;j++){const c=['#ba7779','#65a79c','#e4c471','#7793b3'][j%4];fill(g,c,x-30+j*11,y-121+i*30,8,20)}}
+ }else if(a==='chair'){fill(g,'#806957',x-28,y-65,55,62);fill(g,'#dcaa77',x-27,y-62,52,30);fill(g,'#b17d5f',x-24,y-29,48,16)}
+ else if(a==='plant'){fill(g,'#aa7864',x-17,y-28,34,30);for(let j=0;j<7;j++)ellipse(g,j%2?'#4b9c67':'#6cbe73',x+Math.sin(j*2.4)*19,y-44+Math.cos(j)*10,17,16)}
+ else if(a==='lamp'){fill(g,'#9e7b55',x-5,y-80,10,83);poly(g,'#ffdeb0',[[x-32,y-82],[x-23,y-112],[x+23,y-112],[x+32,y-82]])}
+ else if(a==='rug'){ellipse(g,'#d17d8f',x,y,67,36);ellipse(g,'#ffe1b3',x,y,55,26);ellipse(g,'#add5b6',x,y,45,20)}
+ else if(a==='flowers'){fill(g,'#82a7bd',x-11,y-35,22,30);for(let j=0;j<5;j++){line(g,'#4c9c64',[[x,y-31],[x+(j-2)*12,y-53]],2);ellipse(g,['#f98ca8','#fff1a0','#c8a8ea'][j%3],x+(j-2)*12,y-56,7,6)}}
+}
+
+function drawCharacter(g,o,x,y,dir='front',moving=false,expression='neutral'){
+ ellipse(g,'#21474468',x,y-2,30,8);
+ const frame=moving?Math.floor(tick*8)%2:0;
+ drawArt(g,charArt(o,dir,frame,expression),x,y-(moving?Math.abs(Math.sin(tick*13))*3:Math.sin(tick*2+(o.x||0)*.001)*1.2),1.55);
+}
+function drawScene(){if(!W||!H)return;
+ ctx.setTransform(DPR,0,0,DPR,0,0);ctx.imageSmoothingEnabled=false;
+ ctx.fillStyle=scene==='town'?'#74b470':'#7cb58c';ctx.fillRect(0,0,W,H);
+ ctx.save();ctx.translate(W/2,H*.54);ctx.scale(worldScale,worldScale);ctx.translate(-cam.x,-cam.y);
+ if(scene==='town')drawTownGround(ctx);else drawHomeGround(ctx);
+ if(scene==='town'){
+  const ordered=objects.map(o=>({...o,draw:0})).concat(NPCS.map(o=>({...o,type:'npc',draw:1})),[{type:'player',x:player.x,y:player.y,draw:2}]).sort((a,b)=>a.y-b.y);
+  for(const o of ordered){if(Math.abs(o.x-cam.x)>W/worldScale*.85+230||Math.abs(o.y-cam.y)>H/worldScale*.85+230)continue;
+   if(o.type==='npc'){
+    const original=NPCS.find(n=>n.id===o.id);
+    drawCharacter(ctx,original,o.x,o.y,original.moving>0?original.facing||'front':'front',original.moving>0,original.emotionUntil>tick?original.emotion:'neutral');
+    if(Math.hypot(player.x-o.x,player.y-o.y)<145)drawName(ctx,o.name,o.x,o.y-144);
+   }else if(o.type==='player')drawCharacter(ctx,playerDef(),player.x,player.y,player.facing,!!player.target);
+   else drawStatic(o,ctx);
+  }
  }else{
-  for(let k=0;k<6;k++){const a=k*Math.PI/3;const pet=sphere(.135,col,Math.cos(a)*.13,height+.04,Math.sin(a)*.13,10,8);pet.scale.set(.95,.5,.83);g.add(pet)}
-  g.add(sphere(.085,mat(0xffd741),0,height+.07,0,10,8));
+  drawHomeFurniture(ctx);drawCharacter(ctx,playerDef(),player.x,player.y,player.facing,!!player.target);
  }
- root.add(g);return g;
+ ctx.restore();
+ // soft late-afternoon/night vignette never obscures pixel art.
+ const hour=state.minute/60;if(hour>=19||hour<6){const alpha=hour>=19?Math.min(.24,(hour-19)*.055):.19;ctx.fillStyle=`rgba(32,48,87,${alpha})`;ctx.fillRect(0,0,W,H)}
+ if(talk){const n=NPCS.find(n=>n.id===talk);if(n){const sx=screenX(n.x),sy=screenY(n.y-156);$('emote').style.left=sx+'px';$('emote').style.top=sy+'px'}}
 }
-function bush(x,z,s=1){let g=groupAt(x,z);shadow(g,.6*s);const shades=[0x39bd54,0x69dd64,0x28ae62,0x92ed6e];for(let i=0;i<5;i++){let a=i*Math.PI*2/5;leafCluster(g,Math.cos(a)*.24*s,(.38+hash(i+x)*.1)*s,Math.sin(a)*.25*s,.34*s,shades[i%4])}leafCluster(g,0,.65*s,0,.36*s,0x5bd467);if(hash(x+z)>.45){for(let j=0;j<4;j++)g.add(sphere(.075,mat(0xffa4c1),Math.sin(j*1.9)*.42*s,.70*s,Math.cos(j*1.9)*.32*s,7,6))}world.add(g);return g}
-function tree(x,z,scale=1,flower=false){
- const g=groupAt(x,z);g.scale.setScalar(scale);shadow(g,1.5);
- const bark=mat(0x9c7653),barkLit=mat(0xb68a60);g.add(cyl(.23,.35,2.7,bark,0,1.27,0,9));
- for(let t=0;t<3;t++){let a=t*Math.PI*2/3;const br=cyl(.085,.14,1.15,bark,Math.sin(a)*.40,2.41,Math.cos(a)*.35,7);br.rotation.z=Math.cos(a)*.7;br.rotation.x=Math.sin(a)*.62;g.add(br)}
- g.add(cyl(.26,.31,.11,barkLit,0,.24,0,10));
- const shades=flower?[0xff81ba,0xffa7d5,0xff69aa,0xffb4d4]:[0x31b951,0x61d35e,0x94e76e,0x37c36b];
- leafCluster(g,0,3.22,0,1.25,shades[0]);
- for(let i=0;i<9;i++){const a=i*2.39996,r=.65+(i%3)*.18;leafCluster(g,Math.cos(a)*r,3.2+Math.sin(i*2.4)*.42,Math.sin(a)*r*.85,.67+(i%3)*.08,shades[i%4])}
- for(let i=0;i<5;i++){let a=i*Math.PI*2/5;leafCluster(g,Math.cos(a)*.46,4.03+Math.sin(i)*.1,Math.sin(a)*.5,.60,shades[(i+2)%4])}
- for(let i=0;i<10;i++){let a=i*2.399,r=.76+(i%3)*.22;const m=mat(flower?0xfff4e3:(hash(x+i)>.55?0xff8a4d:0xffd04f));const fruit=sphere(flower?.093:.115,m,Math.sin(a)*r,3.10+Math.cos(i*1.6)*.58,Math.cos(a)*r,9,7);g.add(fruit)}
- // Layered leaf highlights, trunk ridges and hanging blossom/fruit clusters.
- for(let i=0;i<23;i++){
-  let a=hash(i*5.12+x)*Math.PI*2, h=3.10+hash(i*3.17+z)*1.10;
-  let r=1.02+hash(i*6.22+x)*.40;
-  const col=flower?0xffd8ea:(i%3===0?0xc6ef82:0x85df72);
-  const b=sphere(.15+hash(i)*.11,mat(col),Math.cos(a)*r,h,Math.sin(a)*r*.82,9,7);
-  b.scale.set(1.35,.32,.97);g.add(b);
+function drawName(g,name,x,y){g.font='900 13px monospace';let textW=g.measureText(name).width;fill(g,'#295955',x-textW/2-8,y-14,textW+16,22);fill(g,'#fff7d7',x-textW/2-4,y-11,textW+8,17);g.textAlign='center';g.fillStyle='#3a6551';g.fillText(name,x,y+1);g.textAlign='left'}
+function resize(){W=Math.max(280,innerWidth);H=Math.max(350,innerHeight);DPR=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);canvas.style.width=W+'px';canvas.style.height=H+'px';worldScale=clamp(W/530,.69,1.17);ctx.imageSmoothingEnabled=false}
+function goTo(dest,after){player.target={x:dest.x,y:dest.y,after};if(Math.hypot(dest.x-player.x,dest.y-player.y)<28){const t=player.target;player.target=null;if(t.after)t.after()}}
+function goScene(next){if(talk)closeTalk();closeModal();scene=next;player.target=null;if(next==='home'){player.x=575;player.y=670;cam.x=575;cam.y=570;}else{player.x=566;player.y=621;cam.x=566;cam.y=620;}updateUI();save();notify(next==='home'?'Home sweet home! 🏡':'Out into the sunshine! 🌷')}
+function clickWorld(x,y){if(modal||talk)return;
+ const wx=(x-W/2)/worldScale+cam.x,wy=(y-H*.54)/worldScale+cam.y;
+ if(scene==='home'){
+  if(wy<220){notify('A lovely sunny view out of the window!');return}
+  const bounds={x:clamp(wx,225,947),y:clamp(wy,275,738)};
+  const fixed=[{kind:'bed',x:332,y:430,act:()=>{changeNeed('energy',70);notify('A wonderful nap! 💤')}},{kind:'sofa',x:803,y:489,act:()=>{changeNeed('fun',25);notify('Cozy sofa time! 💗')}},{kind:'kitchen',x:840,y:309,act:()=>{if(state.coins<10)return notify('A small meal costs 10 coins.');coins(-10);changeNeed('hunger',42);notify('Homemade comfort food! 🍞')}},{kind:'books',x:342,y:314,act:()=>{changeNeed('fun',15);notify('A lovely story! 📚')}}];
+  const near=fixed.find(o=>Math.hypot(wx-o.x,wy-(o.y-35))<80);
+  goTo(near?{x:near.x+54,y:near.y+28}:bounds,near?.act);return;
  }
- for(let i=0;i<4;i++){
-  const ridge=cyl(.032,.044,1.36,mat(0xc89b6d),Math.sin(i*1.57)*.234,1.08,Math.cos(i*1.57)*.234,6);
-  g.add(ridge);
+ const character=NPCS.map(n=>({n,dist:Math.hypot(wx-n.x,wy-(n.y-60))})).sort((a,b)=>a.dist-b.dist)[0];
+ if(character&&character.dist<84){const n=character.n;goTo({x:n.x-46,y:n.y+23},()=>openTalk(n.id));return}
+ const actions=objects.filter(o=>o.action).map(o=>({o,dist:Math.hypot(wx-o.x,(wy-(o.type==='house'?o.y-100:o.y-30)))})).sort((a,b)=>a.dist-b.dist);
+ const hit=actions[0];if(hit&&hit.dist<(hit.o.type==='house'?150:hit.o.type==='pond'?135:90)){
+  const o=hit.o,approach={x:o.x-50,y:o.y+14};goTo(approach,()=>perform(o.action));return;
  }
- g.add(sphere(.32,mat(0x7eae51),0,.07,0,12,8));
- world.add(g);return g;
+ goTo({x:clamp(wx,65,1460),y:clamp(wy,200,1440)});
 }
-function signLabel(text,w=2.1){const cv=document.createElement('canvas');cv.width=512;cv.height=140;let ct=cv.getContext('2d');ct.fillStyle='#fff8e5';ct.beginPath();ct.roundRect(8,6,496,128,36);ct.fill();ct.strokeStyle='#e7ceac';ct.lineWidth=9;ct.stroke();ct.fillStyle='#315e50';ct.font='900 57px Nunito, sans-serif';ct.textAlign='center';ct.textBaseline='middle';ct.fillText(text,256,74);let sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true}));sp.scale.set(w,.54,1);return sp}
-function chibi(opts={}){
- const c=new THREE.Group();
- const skin=mat(opts.skin||0xf6c6aa), hair=mat(opts.hair||0x654332), outfit=mat(opts.outfit||0xe9a9aa);
- const eyesWhite=mat(0xffffff), irisMat=mat(0x5f4b78), pupilMat=mat(0x1f2128), shoes=mat(0x6a5149),
-       blush=mat(0xffb0bc), lip=mat(0xa56a67), sockMat=mat(0xfff8ef), shortMat=mat(0xf4ead7);
- shadow(c,.68);
-
- // Clean, readable human-chibi proportions: oversized head, compact torso, slimmer limbs.
- const torso=cyl(.37,.43,.82,outfit,0,1.02,0,18);torso.scale.set(1.06,1,.86);c.add(torso);
- const bodyHem=sphere(.45,mat(new THREE.Color(opts.outfit||0xe9a9aa).offsetHSL(0,-.05,-.1).getHex()),0,.67,0,18,12);bodyHem.scale.set(1.06,.32,.95);c.add(bodyHem);
- const collar=mat(0xfff8e9);c.add(cyl(.26,.24,.09,collar,0,1.47,.03,14));
- const head=sphere(.88,skin,0,2.22,.02,30,22);head.scale.set(1.0,1.03,.95);c.add(head);
- c.add(cyl(.14,.16,.16,skin,0,1.58,.02,10));
-
- const faceEyes=[], faceClosed=[];
- const mouth = new THREE.Mesh(new THREE.TorusGeometry(.11,.013,6,18,Math.PI), lip); mouth.position.set(0,1.94,.81); mouth.rotation.z=Math.PI; c.add(mouth);
- const smileMouth = new THREE.Mesh(new THREE.TorusGeometry(.16,.021,6,20,Math.PI), mat(0x9d5c58)); smileMouth.position.set(0,1.965,.815); smileMouth.rotation.z=Math.PI; smileMouth.visible=false; c.add(smileMouth);
- const surprisedMouth=sphere(.082,mat(0x8d4545),0,1.92,.80,12,9);surprisedMouth.scale.set(.75,1.20,.18);surprisedMouth.visible=false;c.add(surprisedMouth);
- c.add(sphere(.055,mat(0xe9b19b),0,2.07,.83,10,8));
-
- // Cleaner Animal Crossing-style face placement: large forward eyes with white sclera and simple brows.
- for(const side of [-1,1]){
-  const eyeBase=sphere(.162,eyesWhite,side*.305,2.14,.79,16,12);eyeBase.scale.set(.78,1.14,.28);c.add(eyeBase);faceEyes.push(eyeBase);
-  const iris=sphere(.102,irisMat,side*.305,2.115,.818,14,11);iris.scale.set(.66,1.02,.24);c.add(iris);faceEyes.push(iris);
-  const pupil=sphere(.060,pupilMat,side*.305,2.09,.836,12,10);pupil.scale.set(.70,1.02,.22);c.add(pupil);faceEyes.push(pupil);
-  const shine=sphere(.030,mat(0xffffff),side*.278,2.17,.848,10,8);c.add(shine);faceEyes.push(shine);
-  const brow=sphere(.09,hair,side*.305,2.36,.745,10,7);brow.scale.set(1.20,.17,.16);c.add(brow);
-  const cheek=sphere(.12,blush,side*.47,1.97,.69,10,8);cheek.scale.set(1,.30,.18);c.add(cheek);
-  const closedEye=new THREE.Mesh(new THREE.TorusGeometry(.125,.017,6,18,Math.PI*.93),mat(0x4c3434));closedEye.position.set(side*.305,2.12,.80);closedEye.rotation.z=Math.PI*.07;closedEye.visible=false;c.add(closedEye);faceClosed.push(closedEye);
- }
-
- // Hair: reset to cleaner, intentional silhouettes instead of lumpy blobs.
- const styleName=String(opts.name||opts.id||'Poppy');let seed=0;for(let j=0;j<styleName.length;j++)seed=(seed*31+styleName.charCodeAt(j))%5;
- const cap=sphere(.90,hair,0,2.56,-.07,28,20);cap.scale.set(1.02,.67,.99);c.add(cap);
- const backHair=sphere(.86,hair,0,2.15,-.20,24,18);backHair.scale.set(1.00,1.04,.78);c.add(backHair);
- for(let j=0;j<5;j++){
-  const x=-.50+j*.25;
-  const bang=sphere(.21,hair,x,2.54+(Math.abs(j-2)===2?-.05:0),.54-(Math.abs(x)*.10),12,9);
-  bang.scale.set(1.0,.82,.78);c.add(bang);
- }
- for(const side of [-1,1]){
-  const sideLock=sphere(.20,hair,side*.71,2.16,.04,12,9);sideLock.scale.set(.62,1.95,.74);c.add(sideLock);
-  c.add(sphere(.11,skin,side*.82,2.06,.02,10,8));
- }
- if(seed===0){
-  // soft bob
-  for(const side of [-1,1]){const bob=sphere(.30,hair,side*.56,1.82,-.12,15,10);bob.scale.set(.74,1.6,.82);c.add(bob)}
- }else if(seed===1){
-  // side-swept longer hair
-  const sweep=sphere(.36,hair,-.42,2.58,.26,16,11);sweep.scale.set(1.25,.52,.78);sweep.rotation.z=-.28;c.add(sweep);
-  const tail=sphere(.32,hair,.58,2.00,-.18,15,10);tail.scale.set(.68,1.9,.78);c.add(tail);
- }else if(seed===2){
-  // rounded short cut
-  for(let j=0;j<3;j++){const puff=sphere(.22,hair,-.28+j*.28,2.72,.02,12,8);puff.scale.set(1.0,.72,.92);c.add(puff)}
- }else if(seed===3){
-  // ponytail
-  c.add(sphere(.16,mat(0xffe4a5),.36,2.52,-.10,10,8));
-  const tail=sphere(.28,hair,.60,2.32,-.38,16,11);tail.scale.set(.74,1.65,.68);tail.rotation.x=.28;c.add(tail);
- }else{
-  // twin bun / rounded top
-  for(const side of [-1,1]){const bun=sphere(.24,hair,side*.38,2.84,.0,14,10);bun.scale.set(1.0,.90,.92);c.add(bun)}
- }
-
- // Outfit reads as clothing: sleeves, cuffs, skirt/shorts and small details.
- const accent=mat(0xfff1d0);
- c.add(cube(.56,.10,.14,accent,0,1.20,.42));
- for(let j=0;j<3;j++)c.add(sphere(.028,accent,0,1.28-j*.12,.44,8,6));
- const lower=seed%2===0;
- if(lower){
-  const skirt=sphere(.46,mat(new THREE.Color(opts.outfit||0xe9a9aa).offsetHSL(0,-.02,-.05).getHex()),0,.70,.01,18,12);skirt.scale.set(1.12,.42,1.0);c.add(skirt);
- }else{
-  c.add(cube(.62,.26,.52,shortMat,0,.62,.02));
- }
-
- const arms=[], legs=[];
- for(const side of [-1,1]){
-  const arm=new THREE.Group(); arm.position.set(side*.47,1.28,.03); arm.rotation.z=side*.24;
-  const upper=sphere(.18,outfit,side*.04,-.10,.02,12,9);upper.scale.set(.92,1.28,.88);arm.add(upper);
-  const fore=cyl(.095,.11,.34,skin,side*.06,-.36,.03,10); fore.rotation.z=side*.05; arm.add(fore);
-  arm.add(sphere(.118,skin,side*.07,-.58,.05,10,8));
-  arm.add(cube(.10,.05,.06,accent,side*.02,-.22,.33));
-  c.add(arm); arms.push(arm);
-
-  const leg=new THREE.Group(); leg.position.set(side*.19,.74,.02);
-  leg.add(cyl(.115,.12,.42,seed%2===0?shortMat:outfit,0,-.02,0,10));
-  leg.add(cyl(.105,.10,.34,skin,0,-.38,0,10));
-  leg.add(cyl(.10,.10,.08,sockMat,0,-.54,0,10));
-  const shoe=sphere(.23,shoes,0,-.62,.14,14,10); shoe.scale.set(.92,.52,1.36); leg.add(shoe);
-  c.add(leg); legs.push(leg);
- }
-
- // Small personal accessory for charm rather than clutter.
- const marker=(opts.name||opts.id||'').toLowerCase();
- if(marker==='mabel'||marker==='bea'||marker==='rosie'){
-  const bowCol=mat(marker==='bea'?0xffdb59:marker==='mabel'?0xff8bb9:0x8ed1ff);
-  c.add(sphere(.08,mat(0xfff2cb),-.56,2.62,.40,10,8));
-  for(const t of [-1,1]){const l=sphere(.15,bowCol,-.56+t*.14,2.63,.40,11,8);l.scale.set(1,.62,.30);l.rotation.z=t*.25;c.add(l)}
- }else if(marker==='oliver'){
-  const capWhite=mat(0xfff8ed);c.add(cyl(.42,.47,.18,capWhite,0,2.82,-.05,14));
-  for(let j=-1;j<=1;j++)c.add(sphere(.22,capWhite,j*.20,2.90,-.06,11,9));
- }else if(marker==='finn'){
-  const hat=mat(0xf5d46f);c.add(cyl(.56,.56,.07,hat,0,2.64,0,20));
-  c.add(cyl(.40,.48,.25,hat,0,2.80,0,18));
- }
-
- c.userData={arms,legs,outfit,skin,hair,cap,head,faceEyes,faceClosed,mouth,surprisedMouth,smileMouth,expression:'neutral',reactionUntil:0};
- return c;
-}
-
-function applyExpression(character,expression='neutral'){
- if(!character?.userData?.faceEyes)return;
- const f=character.userData;f.expression=expression;
- const closed=expression==='happy'||expression==='shy';
- for(const m of f.faceEyes)m.visible=!closed;
- for(const m of f.faceClosed)m.visible=closed;
- f.mouth.visible=!['happy','excited','surprised','shy'].includes(expression);
- f.smileMouth.visible=['happy','excited','shy'].includes(expression);
- f.surprisedMouth.visible=expression==='surprised';
- // Face shapes stay anchored to the head; reactions tilt the entire model.
-}
-function makeHouse(x,z,bodyColor,roofColor,label,tag,id){
- const g=groupAt(x,z);shadow(g,3.6);
- const wall=mat(bodyColor),roof=mat(roofColor),trim=mat(0xfff9ec),timber=mat(0xb57f5c),stone=mat(0xf4d8aa),windowMat=mat(0x6addf4);
- g.add(cube(6.6,.40,5.9,stone,0,.08,0));
- g.add(cube(6.5,3.9,5.5,wall,0,2.08,0));
- // Distinct horizontal siding strips create scale without repeated texture tiles.
- for(let j=0;j<11;j++)g.add(cube(6.55,.027,5.56,mat(j%3===0?0xfff1dd:bodyColor),0,.40+j*.32,0));
- // Gable roof, painted fascias and overlapping shingles.
- const tilt=.55;const roofAccent=new THREE.Color(roofColor).offsetHSL(0,0,.095).getHex(),roofDeep=new THREE.Color(roofColor).offsetHSL(0,0,-.065).getHex();
- for(const side of [-1,1]){
-  const panel=cube(4.05,.34,6.55,roof,side*1.69,5.00,0);panel.rotation.z=-side*tilt;g.add(panel);
-  for(let row=0;row<13;row++){
-   const zz=-3.08+row*.52;const shingle=cube(3.95,.047,.075,mat(row%3===0?roofAccent:row%3===1?roofColor:roofDeep),side*1.70,5.193,zz);shingle.rotation.z=-side*tilt;g.add(shingle);
-  }
-  let edge=cube(4.30,.22,.20,timber,side*1.7,5.08,3.33);edge.rotation.z=-side*tilt;g.add(edge);
- }
- // Triangular front gable under the roofline.
- const triangle=new THREE.Shape();triangle.moveTo(-3.18,3.91);triangle.lineTo(0,6.04);triangle.lineTo(3.18,3.91);triangle.closePath();
- const gable=mesh(new THREE.ShapeGeometry(triangle),mat(0xfff6df),0,0,2.78);gable.castShadow=true;g.add(gable);
- g.add(cube(6.6,.22,.22,trim,0,3.93,2.91));
- // Accent front porch with stone steps, wooden support beams and curved doorway.
- g.add(cube(3.6,.20,2.25,mat(0xffd69e),0,.20,3.65));
- g.add(cube(2.7,.18,.80,stone,0,.085,4.90));
- for(const sx of [-1,1]){g.add(cyl(.12,.14,2.9,timber,sx*1.55,1.75,4.25,10));g.add(cyl(.19,.18,.17,trim,sx*1.55,3.18,4.25,10))}
- g.add(cube(3.65,.19,1.85,roof,0,3.34,3.91));
- const door=mat(0xf17a73);g.add(cube(1.44,2.26,.15,trim,0,1.20,2.86));g.add(cube(1.22,2.09,.18,door,0,1.17,2.97));
- g.add(sphere(.10,mat(0xf9d78d),.42,1.16,3.095,10,8));
- const wreath=groupAt(0,0);wreath.position.set(0,2.01,3.104);const circle=new THREE.Mesh(new THREE.TorusGeometry(.23,.070,8,18),mat(0x3fc665));wreath.add(circle);for(let k=0;k<4;k++){let a=k*Math.PI*.5;wreath.add(sphere(.078,mat(0xf5c6b5),Math.sin(a)*.23,Math.cos(a)*.23,.02,8,6))}g.add(wreath);
- // Shuttered windows, crossbars, sill and flower boxes.
- for(const sx of [-2.27,2.27]){
-  g.add(cube(1.40,1.50,.19,trim,sx,2.40,2.85),cube(1.17,1.28,.19,windowMat,sx,2.40,2.96));
-  g.add(cube(.085,1.30,.23,trim,sx,2.40,3.09),cube(1.20,.085,.24,trim,sx,2.41,3.09));
-  for(let a of [-1,1]){g.add(cube(.26,1.43,.13,mat(0x61c9aa),sx+a*.87,2.4,2.90));for(let j=0;j<3;j++)g.add(cube(.28,.032,.15,trim,sx+a*.87,2.04+j*.33,3.01))}
-  g.add(cube(1.50,.19,.49,timber,sx,1.66,3.08));for(let f=0;f<4;f++){
-   g.add(sphere(.19,mat(f%2===0?0x7fb678:0x9ac987),sx-.51+f*.35,1.90,3.12,10,8));g.add(sphere(.085,mat(f%2===0?0xff7d9a:0xffe067),sx-.51+f*.35,2.03,3.17,8,6))
+function perform(action){if(action==='home')return goScene('home');if(action==='cafe')return cafe();if(action==='library'){changeNeed('fun',16);notify('You found a beautiful new story! 📖');return}if(action==='hall')return townHall();if(action==='market')return market();if(action==='garden')return garden();if(action==='fish')return fishing();}
+function update(dt){tick+=dt;
+ if(!talk&&!modal){let next=player.target;if(next){const dx=next.x-player.x,dy=next.y-player.y,d=Math.hypot(dx,dy),step=Math.min(d,dt*178);if(d>step+3){player.x+=dx/d*step;player.y+=dy/d*step;player.facing=dy< -25?'back':Math.abs(dx)>Math.abs(dy)*1.1?'side':'front';}else{player.x=next.x;player.y=next.y;player.target=null;player.facing='front';if(next.after)next.after()}}}
+ if(scene==='town'){
+  for(let i=0;i<NPCS.length;i++){const n=NPCS[i];if(talk===n.id)continue;n.wanderDelay-=dt;
+   if(n.wanderDelay<=0){n.wanderDelay=2+hash(Math.floor(tick*.5+i)*3.2)*4;n.wanderAngle=hash(tick*2.3+i*5)*TAU;n.moving=.8+hash(i+tick)*1.3}
+   if(n.moving>0){n.moving-=dt;let dx=Math.cos(n.wanderAngle),dy=Math.sin(n.wanderAngle);n.x+=dx*dt*14;n.y+=dy*dt*14;
+    if(Math.hypot(n.x-n.cx,n.y-n.cy)>60){n.wanderAngle+=Math.PI;n.x-=dx*dt*28;n.y-=dy*dt*28};n.facing=dy<-.15?'back':Math.abs(dx)>Math.abs(dy)?'side':'front';}
   }
  }
- g.add(cube(.88,1.43,.84,mat(0xc68e79),2.32,5.65,-1.20));g.add(cube(1.08,.13,.98,stone,2.32,6.43,-1.20));
- // Small dormer beneath the ridge and readable sign over the porch.
- g.add(cube(.88,.63,.12,mat(0xffedcc),0,4.67,3.02),cube(.55,.45,.14,windowMat,0,4.68,3.14));
- const sign=signLabel(label,Math.min(3.06,1.52+label.length*.095));sign.position.set(0,3.7,4.50);g.add(sign);
- for(const sx of [-1,1]){g.add(cyl(.36,.27,.47,mat(0xd49a74),sx*2.82,.29,3.04,10));leafCluster(g,sx*2.82,.77,3.04,.42,0x4fc864);for(let f=0;f<4;f++)g.add(sphere(.065,mat(0xff74aa),sx*2.82+Math.sin(f*1.57)*.27,.89,3.04+Math.cos(f*1.57)*.26,8,6))}
- // Front façade art: raised stone foundation, colorful gable beams, and carved timber corners.
- const mortar=mat(0xf1e2c5),edge=mat(0xfff8e6);
- for(const sx of [-3.16,3.16]){
-  g.add(cube(.22,3.35,.25,edge,sx,2.12,2.86));
-  for(let j=0;j<5;j++){const nail=sphere(.035,mat(0xe9c28c),sx,1.0+j*.54,3.005,8,6);g.add(nail)}
- }
- for(let i=0;i<7;i++){
-  let xx=-2.83+i*.94;
-  const block=cube(.84,.28,.16,mat(i%3===0?0xffe8bf:0xfff4e1),xx,.38,2.95);g.add(block);
- }
- // A softer gable: pitched trim and scalloped eaves (not another box roof).
- for(const sx of [-1,1]){
-  const beam=cube(3.70,.21,.23,edge,sx*1.60,4.99,3.22);beam.rotation.z=-sx*.555;g.add(beam);
-  for(let k=0;k<11;k++){
-   const x=sx*(.26+k*.27), y=6.01-k*.177;
-   const scallop=sphere(.17,mat(k%2?roofAccent:roofColor),x,y,3.24,9,7);scallop.scale.set(1.03,.45,.54);g.add(scallop);
-  }
- }
- // Shingle studs along ridge, chunky rounded ridge caps, and a porch lantern.
- for(let k=0;k<12;k++){
-  const zz=-3.12+k*.54;
-  const ridge=sphere(.16,mat(k%3===0?roofAccent:roofColor),0,6.09,zz,9,8);ridge.scale.set(.85,.57,1.45);g.add(ridge);
- }
- for(const sx of [-1,1]){
-  const brass=mat(0xc99048),glow=mat(0xffeaa8);
-  g.add(cyl(.055,.065,.44,brass,sx*1.21,2.63,4.32,10));
-  g.add(sphere(.20,glow,sx*1.21,2.43,4.33,14,9));
-  g.add(cone(.29,.19,brass,sx*1.21,2.75,4.33,14));
- }
- // Real window sills, bright striped awnings, flower-box leaves.
- for(const sx of [-2.27,2.27]){
-  g.add(cube(1.64,.12,.48,edge,sx,1.73,3.14));
-  for(let k=0;k<5;k++){
-   const awning=cube(.29,.075,.69,mat(k%2===0?roofAccent:0xfffaf0),sx+(k-2)*.28,3.28,3.12);awning.rotation.x=-.18;g.add(awning);
-  }
-  for(let i=0;i<6;i++){
-   const p=sphere(.16,mat(i%2?0x49bc6b:0x89dd81),sx-.57+i*.23,1.88,3.24,9,7);p.scale.set(1,.56,.78);g.add(p)
-  }
- }
- // A mailbox, entrance doormat, and flower basket make each building feel used.
- const signpost=cyl(.075,.105,1.16,mat(0xa17957),2.40,.60,4.97,10);g.add(signpost);
- g.add(cube(.64,.41,.52,mat(0xffeee2),2.40,1.23,4.97));
- g.add(cube(.12,.23,.04,mat(0xe56d7c),2.70,1.45,5.06));
- const doormat=cube(1.56,.04,.71,mat(0xcc9273),0,.205,5.27);g.add(doormat);
- for(let j=0;j<4;j++)g.add(cube(1.34,.014,.04,mat(0xffd5a7),0,.232,5.06+j*.15));
- world.add(g);if(tag)setTagGroup(g,tag,id);return g;
+ if(speed>0){state.minute+=dt*speed*2.0;while(state.minute>=1440){state.minute-=1440;state.day++;if(state.day%7===1)state.season=(state.season+1)%4;notify('A bright new day begins! 🌞');save()}
+  if(Math.floor(tick)%3===0){const rate=dt*speed*.015;state.needs.hunger=clamp(state.needs.hunger-rate*2.2,0,100);state.needs.energy=clamp(state.needs.energy-rate*1.4,0,100)}}
+ const focus=talk?NPCS.find(n=>n.id===talk):null;const aimX=focus?(focus.x+player.x)/2:player.x,aimY=focus?focus.y-26:player.y;
+ cam.x+=(aimX-cam.x)*clamp(dt*4,0,1);cam.y+=(aimY-cam.y)*clamp(dt*4,0,1);
 }
-function path(x,z,w,d){
- // Soft, hand-worn winding paths with slightly irregular borders, never grid tiles.
- const horizontal=w>d,half=(horizontal?w:d)/2,breadth=(horizontal?d:w)/2;
- const pts=[];const steps=Math.max(8,Math.ceil(half*4));
- const edge=(t,sign)=>{const bend=Math.sin(t*.47+x*.9+z*.2)*.13+Math.sin(t*1.11+z*.36)*.052;const width=breadth+Math.sin(t*.78+x*.2)*.07;return sign*width+bend};
- for(let i=0;i<=steps;i++){const t=-half+2*half*i/steps,a=edge(t,1);pts.push(horizontal?[t,a]:[a,t])}
- for(let i=steps;i>=0;i--){const t=-half+2*half*i/steps,a=edge(t,-1);pts.push(horizontal?[t,a]:[a,t])}
- const sh=new THREE.Shape();pts.forEach(([xx,yy],i)=>i?sh.lineTo(xx,yy):sh.moveTo(xx,yy));sh.closePath();
- if(!soilTexture)soilTexture=texturePaint('path');const m=new THREE.MeshStandardMaterial({map:soilTexture,color:0xfff1cb,roughness:1});
- const surface=new THREE.Mesh(new THREE.ShapeGeometry(sh),m);surface.rotation.x=-Math.PI/2;surface.position.set(x,.046,z);surface.receiveShadow=true;world.add(surface);
- // Organic scatter of tiny stones in the soil, instanced in a single draw call later.
- const n=Math.floor(2*half*2.3);for(let i=0;i<n;i++){const t=-half+hash(i*3.23+w*8)*half*2,across=(hash(i*5.43+z)-.5)*breadth*1.65;
- pathPebbles.push({x:x+(horizontal?t:across),z:z+(horizontal?across:t),s:.038+hash(i*3.45)*.12,r:hash(i*.89)*6})}
+function loop(now){if(!last)last=now;const dt=Math.min(.046,(now-last)/1000);last=now;try{update(dt);drawScene()}catch(e){console.error(e);notify('A scene error occurred: '+e.message)}requestAnimationFrame(loop)}
+function closeModal(){modal=null;$('modal').classList.add('hidden')}
+function showModal(kind,body){closeTalk();modal=kind;$('modalContent').innerHTML=body;$('modal').classList.remove('hidden')}
+function btn(label,fn){return `<button class="btn" data-act="${fn}">${label}</button>`}
+function buttonClick(e){const b=e.target.closest('[data-act]');if(!b)return;handleAction(b.dataset.act,b.dataset.id||'')}
+function openTalk(id){const n=NPCS.find(a=>a.id===id);if(!n)return;closeModal();talk=id;n.emotion='happy';n.emotionUntil=tick+1.2;const r=state.relations[id]||0;
+ $('talkName').textContent=n.name;$('talkRole').textContent=n.job+' • ♥ '+r;$('talkPortrait').textContent=n.emoji;
+ $('talkText').textContent=n.lines[Math.floor(rand(0,n.lines.length))];$('conversation').classList.remove('hidden');$('game').classList.add('talking');
+ $('talkActions').innerHTML='<button data-act="chat">💬 Chat</button><button data-act="compliment">💗 Compliment</button><button data-act="gift">🎁 Gift</button><button data-act="bye">See you!</button>';
+ $('emote').textContent='💗';$('emote').hidden=false;state.met=state.met||[];if(!state.met.includes(id)){state.met.push(id);task('meet')}changeNeed('social',7);save()}
+function closeTalk(){talk=null;$('conversation').classList.add('hidden');$('game').classList.remove('talking');$('emote').hidden=true}
+function respond(kind){const n=NPCS.find(o=>o.id===talk);if(!n)return;
+ const r=state.relations[n.id]||0;let gain=0;
+ if(kind==='chat'){gain=7;task('chat');$('talkText').textContent=n.lines[Math.floor(rand(0,n.lines.length))];n.emotion='happy';$('emote').textContent='✨';changeNeed('social',13)}
+ else if(kind==='compliment'){gain=12;n.emotion='happy';$('talkText').textContent=['Aw, you just made my whole day!','You are so sweet. I might blush!','That means the world to me!'][Math.floor(rand(0,3))];$('emote').textContent='💕'}
+ else if(kind==='gift'){if(state.coins<20){$('talkText').textContent='Even a friendly hello is a gift, you know!';return}coins(-20);gain=20;n.emotion='surprised';$('talkText').textContent='For me?! Oh my goodness, I love it!';$('emote').textContent='🎁'}
+ state.relations[n.id]=Math.min(100,r+gain);state.hearts+=gain;n.emotionUntil=tick+2.1;$('talkRole').textContent=n.job+' • ♥ '+state.relations[n.id];$('heartText').textContent=state.hearts;save();
 }
-function pond(x,z){const g=groupAt(x,z);
- const shore=disk(4.45,mat(0x84dd69),0,.055,0,48);shore.scale.y=.69;g.add(shore);
- const sand=disk(4.10,mat(0xffdc8e),0,.070,0,48);sand.scale.y=.69;g.add(sand);
- const water=disk(3.77,new THREE.MeshStandardMaterial({color:0x36cbf1,roughness:.23,metalness:.05}),0,.083,0,48);water.scale.y=.69;g.add(water);
- const deep=disk(3.42,new THREE.MeshBasicMaterial({color:0x7be7ff,transparent:true,opacity:.31,depthWrite:false}),0,.088,0,48);deep.scale.y=.69;g.add(deep);
- for(let k=0;k<36;k++){let a=k*Math.PI*2/36,dist=3.92+hash(k*2.4)*.15;let b=sphere(.20+hash(k)*.13,mat(k%3===0?0xd5cab0:0xb5b9a2),Math.cos(a)*dist,.11,Math.sin(a)*dist*.69,12,8);b.scale.set(1,.45,.65);g.add(b)}
- for(let k=0;k<7;k++){const a=k*2.43,px=Math.cos(a)*(1.0+hash(k)*1.1),pz=Math.sin(a)*1.3;const leaf=disk(.24,mat(k%2?0x41c573:0x28b46a),px,.111,pz,14);leaf.scale.y=.65;g.add(leaf);if(k%2===0){g.add(sphere(.12,mat(0xff82bd),px,.19,pz,10,7));g.add(sphere(.065,mat(0xffffff),px,.28,pz,8,6))}}
- for(let i=0;i<4;i++){const a=i*.75+.4;const ring=new THREE.Mesh(new THREE.RingGeometry(.25+i*.035,.274+i*.035,32),new THREE.MeshBasicMaterial({color:0xf5ffff,transparent:true,opacity:.30,side:THREE.DoubleSide,depthWrite:false}));ring.rotation.x=-Math.PI/2;ring.position.set(Math.cos(a)*1.8,.115,Math.sin(a)*.85);g.add(ring);decorMotion.push({o:ring,base:ring.position.y,phase:i*.9,kind:'ripple'})}
- for(let i=0;i<9;i++){let a=i*2.8;const px=Math.cos(a)*4.34,pz=Math.sin(a)*2.74;if(i%3===0)tinyFlower(g,px,pz,i);else{for(let k=0;k<3;k++){const stalk=cyl(.045,.055,.70+hash(i+k)*.4,mat(0x44b96c),px+(k-1)*.10,.40,pz,6);g.add(stalk);g.add(cyl(.084,.068,.25,mat(0xa77b50),px+(k-1)*.10,.87,pz,7))}}}
- const sign=signLabel('Fishing Pond',2.25);sign.position.set(0,1.45,3.52);g.add(sign);world.add(g);setTagGroup(g,'fish','pond');
+function people(){showModal('people',`<h2>💌 Meet the Neighbors</h2><p>Everyone has a life, a story, and a friendship to build. Find a neighbor to chat in the actual village.</p>${NPCS.map(n=>`<div class="card"><div><b>${n.emoji} ${n.name} · ♥ ${state.relations[n.id]||0}</b><small>${n.job} · ${n.trait}</small></div><button data-act="find" data-id="${n.id}">Find</button></div>`).join('')}`)}
+function journal(){const done=questDefs.filter(q=>(state.quests[q.id]||0)>=q.max).length;showModal('journal',`<h2>📜 Your Little Journal</h2><p>${done} of ${questDefs.length} village adventures completed. Claim your rewards to grow your little life!</p>${questDefs.map(q=>{const n=state.quests[q.id]||0,claimed=state.quests[q.id+'_claimed'];return `<div class="card"><div><b>${q.text}</b><small>${Math.min(q.max,n)} / ${q.max} · 🪙 ${q.reward}</small></div><button data-act="claim" data-id="${q.id}" ${n<q.max||claimed?'disabled':''}>${claimed?'✓ Done':'Claim'}</button></div>`}).join('')}`)}
+function cafe(){showModal('cafe',`<h2>🥐 Honeybun Café</h2><p>Oliver needs help serving the lunchtime crowd. A short shift earns coins and lifts your spirits.</p><div class="card"><b>1 cozy café shift</b><b>🪙 +45</b></div>${btn('Work a shift 🥐','work')} ${btn('Have a treat (10 🪙)','eat')}`)}
+function townHall(){showModal('hall',`<h2>🏛️ Maplewood Town Hall</h2><p>The village is growing around you. Meet six neighbors, spruce up your home, and complete the journal to become part of its story.</p>${btn('View your journal','journal')}`)}
+function market(){showModal('market',`<h2>🍓 Rosie’s Little Market</h2><p>Fresh fruit and lovely things for a cozy home.</p><div class="grid"><div class="item"><span class="emoji">🍑</span><strong>Peach snack</strong><small>10 coins</small>${btn('Eat','eat')}</div><div class="item"><span class="emoji">🌻</span><strong>Flower seed</strong><small>8 coins</small>${btn('Buy','seed')}</div><div class="item"><span class="emoji">🪴</span><strong>Plant</strong><small>25 coins</small>${btn('Buy','buy-plant')}</div></div>`)}
+function garden(){showModal('garden',`<h2>🌱 Community Garden</h2><p>Plant little flowers, care for them, and harvest blooms for your cottage.</p><div class="grid">${(state.garden||[0,0,0,0]).map((n,i)=>`<div class="item"><span class="emoji">${n===2?'🌸':n===1?'🌱':'🟫'}</span><strong>Plot ${i+1}</strong><small>${n===2?'Ready!':n===1?'Growing':'Empty'}</small><button class="btn" data-act="plot" data-id="${i}">${n===2?'Harvest':n===1?'Water':'Plant'}</button></div>`).join('')}</div><p>Planting is free in the community garden!</p>`)}
+function fishing(){showModal('fish',`<h2>🎣 Fishing at Lily Pond</h2><p>Watch the bobber and tap when it crosses the green zone!</p><div style="margin:24px 0 18px;height:30px;background:#b5d2bd;border:3px solid #91b1a6;position:relative"><div style="height:100%;width:26%;margin-left:38%;background:#7ddda4;border-left:3px solid white;border-right:3px solid white"></div><div id="bobber" style="position:absolute;top:-4px;bottom:-4px;width:6px;background:#ed7091;left:0"></div></div><button class="btn" data-act="catch" style="width:100%">🎣 Reel it in!</button>`);}
+function decorate(){if(scene!=='home'){notify('Head home to decorate! 🏡');goScene('home')}
+ showModal('decor',`<h2>🪑 Your Cozy Furniture</h2><p>Buy furniture and it will appear inside your home. Your choices are saved!</p><div class="grid">${furnitureTypes.map(f=>`<div class="item"><span class="emoji">${f.emoji}</span><strong>${f.name}</strong><small>🪙 ${f.cost}</small><button class="btn" data-act="buy" data-id="${f.id}">Buy</button></div>`).join('')}</div>`)}
+function style(){const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
+ showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Pixel Village v0.7.0 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
+function handleAction(action,id){
+ if(action==='chat'||action==='compliment'||action==='gift')return respond(action);
+ if(action==='bye')return closeTalk();
+ if(action==='find'){closeModal();if(scene==='home')goScene('town');const n=NPCS.find(n=>n.id===id);if(n)goTo({x:n.x-50,y:n.y+20},()=>openTalk(id));return}
+ if(action==='journal')return journal();
+ if(action==='claim'){const q=questDefs.find(q=>q.id===id);if(!q||state.quests[q.id+'_claimed']||(state.quests[q.id]||0)<q.max)return;state.quests[q.id+'_claimed']=true;coins(q.reward);notify(`Quest complete! +${q.reward} coins ✨`);return journal()}
+ if(action==='work'){task('work');coins(45);changeNeed('energy',-13);changeNeed('fun',9);notify('Delicious work! +45 coins 🥐');return cafe()}
+ if(action==='eat'){if(state.coins<10)return notify('You need 10 coins!');coins(-10);changeNeed('hunger',35);notify('Sweet and delicious! 🍑');return}
+ if(action==='seed'){if(state.coins<8)return notify('You need 8 coins!');coins(-8);state.inventory.push('flower-seed');save();notify('A packet of seeds! 🌻');return}
+ if(action==='buy-plant')return handleAction('buy','plant');
+ if(action==='buy'){const f=furnitureTypes.find(f=>f.id===id);if(!f)return;if(state.coins<f.cost)return notify('Not enough coins yet!');coins(-f.cost);state.placed.push({kind:f.id,x:450+(state.placed.length%4)*80,z:600+Math.floor(state.placed.length/4)*38});save();notify(`${f.name} is waiting at home! 🪑`);return}
+ if(action==='plot'){const i=Number(id),v=state.garden[i]||0;if(v===0){state.garden[i]=1;notify('Little sprouts planted! 🌱')}else if(v===1){state.garden[i]=2;notify('Your flowers are blooming! 🌸')}else{state.garden[i]=0;coins(24);task('garden');changeNeed('fun',12);notify('Beautiful harvest! +24 coins 🌼')}save();return garden()}
+ if(action==='catch'){const zone=Math.abs(Math.sin(tick*4));if(zone<.60){const names=['Sunfish','Rainbow guppy','Golden carp','Lilyfish'];const n=names[Math.floor(rand(0,names.length))];state.fish.push(n);task('fish');coins(15);changeNeed('fun',16);notify(`You caught a ${n}! 🐟 +15`);closeModal()}else notify('Almost! The fish got away — try again!');return}
+ if(action==='set-outfit'||action==='set-hair'||action==='set-skin'){const n=parseInt(id.slice(1),16);if(action==='set-outfit')state.outfit=n;else if(action==='set-hair')state.hair=n;else state.skin=n;save();return}
+ if(action==='save-look'){const n=$('nameInput')?.value?.trim();if(n)state.name=n.slice(0,18);save();updateUI();closeModal();notify('Your new look is lovely! 🎀');return}
+ if(action==='save'){save();notify('Your little world is saved! 💾');closeModal();return}
+ if(action==='export'){save();const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hearth-and-harbor-save.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);return}
+ if(action==='import'){const input=document.createElement('input');input.type='file';input.accept='application/json';input.onchange=async()=>{try{const v=JSON.parse(await input.files[0].text());if(typeof v.coins!=='number'||!v.needs)throw Error('Invalid save');state={...DEF(),...v};save();location.reload()}catch(e){notify('That backup was not valid.')}};input.click()}
 }
-function garden(){const g=groupAt(-5.7,-10);g.add(shapeRect(5.4,3.8,mat(0xd99058),0,0));for(let i=0;i<4;i++){let x=-1.82+(i%2)*2.43,z=-.9+Math.floor(i/2)*1.75;let plot=groupAt(x,z);plot.add(cube(1.7,.16,1.25,mat(0xa66b48),0,.09,0));plot.add(cube(1.6,.06,1.13,mat(0x965d3b),0,.2,0));g.add(plot);gardenMeshes[i]=plot;setTagGroup(plot,'garden',i)}const tag=signLabel('Community Garden',2.9);tag.position.set(0,1.4,-2.5);g.add(tag);world.add(g);paintGarden()}
-function paintGarden(){gardenMeshes.forEach((plot,i)=>{if(!plot)return;if(plot.userData.plantObj)plot.remove(plot.userData.plantObj);if(!state.garden[i])return;const flowers=new THREE.Group();let grow=state.garden[i]===1?.55:1;for(let k=0;k<5;k++){const xx=((k%3)-1)*.41,zz=(Math.floor(k/3)-.5)*.5;tinyFlower(flowers,xx,zz,i)}flowers.scale.setScalar(grow);flowers.position.y=.20;plot.add(flowers);plot.userData.plantObj=flowers})}
-function bench(x,z){const g=groupAt(x,z),wood=mat(0xc18b67),metal=mat(0x617e6a);shadow(g,1.25);
- for(let k=0;k<3;k++)g.add(cube(2.15,.13,.20,wood,0,.91,-.20+k*.24));
- for(let k=0;k<3;k++)g.add(cube(2.15,.14,.13,wood,0,1.19+k*.28,-.42));
- for(let side of [-1,1]){g.add(cube(.14,.95,.14,metal,side*.92,.45,-.18),cube(.14,1.4,.14,metal,side*.92,.70,-.41));g.add(cube(.47,.14,.18,metal,side*.98,1.02,-.10))}
- world.add(g);setTagGroup(g,'bench','rest')}
-function stall(x,z){const g=groupAt(x,z),wood=mat(0xba8a66),rose=mat(0xff6792),linen=mat(0xffefbb);shadow(g,1.8);
- g.add(cube(3.35,1.16,1.62,wood,0,.83,0),cube(3.49,.16,1.82,mat(0xf9debb),0,1.48,0));
- for(let a=-1;a<=1;a++){const piece=cube(1.17,.20,2.03,a===0?linen:rose,a*1.12,2.91,0);g.add(piece)}
- for(let a=-1;a<=1;a++){for(const z of [-.84,-.45,.02,.51,.92]){const frill=sphere(.18,a===0?linen:rose,a*1.12,2.82,z,10,7);frill.scale.set(3.0,.37,.73);g.add(frill)}}
- for(let side of [-1,1])g.add(cyl(.085,.085,1.46,wood,side*1.52,2.22,-.66));
- for(let j=0;j<5;j++){const x=-1.15+j*.57;g.add(sphere(.22,mat(j%2?0xff966f:0xffd350),x,1.72,.08,12,9));g.add(sphere(.095,mat(0x45bd69),x,1.95,.07,10,7))}
- const label=signLabel('Rosie’s Market',2.35);label.position.set(0,2.39,-1.08);g.add(label);
- world.add(g);setTagGroup(g,'market','market')}
-function fence(x,z,w){for(let i=-w/2;i<=w/2;i+=.85){let post=cube(.15,.6,.15,mat(0xf1e3c5),x+i,.32,z);world.add(post)}world.add(cube(w,.12,.15,mat(0xf1e3c5),x,.48,z),cube(w,.10,.15,mat(0xf1e3c5),x,.18,z))}
-// A small library of custom-designed village props, separate from interaction hitboxes.
-function flowerCluster(x,z,seed=0,scale=1){
- const g=groupAt(x,z);g.scale.setScalar(scale);
- const earth=disk(.81,mat(0x4cbd61),0,.051,0,22);earth.scale.y=.57;g.add(earth);
- // Four instanced meshes instead of hundreds of individual petals per flower bed.
- const count=10,spokes=6, dummy=new THREE.Object3D(),petalGeo=new THREE.SphereGeometry(1,9,7);
- const stems=new THREE.InstancedMesh(new THREE.CylinderGeometry(.022,.029,.40,6),mat(0x39a764),count);
- const blossoms=new THREE.InstancedMesh(petalGeo,mat(0xffffff),count*spokes);
- const cores=new THREE.InstancedMesh(new THREE.SphereGeometry(.085,9,7),mat(0xffd741),count);
- const leaves=new THREE.InstancedMesh(petalGeo,mat(0x63c86b),count*2);
- const palette=[0xff75ae,0xffc457,0xba84ed,0xfff0bd,0xff8c70,0xe99bcf];
- for(let j=0;j<count;j++){
-  const angle=j*2.39996,r=.16+Math.sqrt(hash(seed*4+j*1.31))*.63;
-  const fx=Math.cos(angle)*r,fz=Math.sin(angle)*r, h=.4+(j%3)*.06;
-  dummy.position.set(fx,h/2,fz);dummy.scale.set(1,h/.40,1);dummy.rotation.set(0,0,0);dummy.updateMatrix();stems.setMatrixAt(j,dummy.matrix);
-  dummy.position.set(fx,h+.07,fz);dummy.scale.set(1,1,1);dummy.updateMatrix();cores.setMatrixAt(j,dummy.matrix);
-  for(let k=0;k<spokes;k++){
-   let a=k*Math.PI*2/spokes;
-   dummy.position.set(fx+Math.cos(a)*.125,h+.06,fz+Math.sin(a)*.125);
-   dummy.scale.set(.126,.063,.115);dummy.rotation.set(0,a,0);dummy.updateMatrix();
-   blossoms.setMatrixAt(j*spokes+k,dummy.matrix);blossoms.setColorAt(j*spokes+k,new THREE.Color(palette[(j+seed)%palette.length]));
-  }
-  for(let k=0;k<2;k++){
-   dummy.position.set(fx+(k?-.105:.105),h*.44,fz);
-   dummy.scale.set(.14,.044,.085);dummy.rotation.set(0,0,k?.3:-.3);dummy.updateMatrix();leaves.setMatrixAt(j*2+k,dummy.matrix);
-  }
- }
- for(const m of [stems,blossoms,cores,leaves]){m.instanceMatrix.needsUpdate=true;m.frustumCulled=false;m.castShadow=false;g.add(m)}
- world.add(g);
+function bind(){
+ canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture?.(e.pointerId);canvas._start={x:e.clientX,y:e.clientY}});
+ canvas.addEventListener('pointerup',e=>{const a=canvas._start||{x:e.clientX,y:e.clientY};if(Math.hypot(a.x-e.clientX,a.y-e.clientY)>25)return;clickWorld(e.clientX,e.clientY)});
+ $('townBtn').onclick=()=>goScene('town');$('homeBtn').onclick=()=>goScene('home');$('peopleBtn').onclick=people;$('journalBtn').onclick=journal;$('decorateBtn').onclick=decorate;$('styleBtn').onclick=style;$('menuBtn').onclick=menu;
+ $('timeBtn').onclick=()=>{speed=({0:1,1:2,2:3,3:0})[speed];updateUI()};$('talkClose').onclick=closeTalk;$('talkActions').addEventListener('click',buttonClick);
+ $('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();else buttonClick(e)});$('closeModal').onclick=closeModal;
+ addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});setInterval(save,18000);
 }
-function gardenArch(x,z){
- const g=groupAt(x,z),wood=mat(0xf9ecd1),leaf=mat(0x59b968);
- for(const sx of [-1,1]){
-  g.add(cyl(.11,.13,3.0,wood,sx*1.13,1.55,0,10));
-  for(let j=0;j<4;j++){
-   const l=sphere(.27,leaf,sx*(1.0+Math.sin(j)*.2),1.20+j*.48,.02,9,8);l.scale.set(1,.75,.58);g.add(l);
-   g.add(sphere(.08,mat(j%2?0xff80ab:0xffd76e),sx*.98,1.30+j*.49,.19,9,7));
-  }
- }
- // arch is a curved set of repeated short garden-trellis pieces.
- for(let j=0;j<=10;j++){
-  const a=Math.PI*j/10;
-  const bar=cyl(.09,.095,.38,wood,Math.cos(a)*1.13,3.02+Math.sin(a)*.62,0,9);bar.rotation.z=a+Math.PI/2;g.add(bar);
- }
- for(let j=-3;j<=3;j++){
-  const leafp=sphere(.19,mat(j%2?0x89d36a:0x55c56b),j*.30,3.64-Math.abs(j)*.09,.04,9,7);leafp.scale.set(.95,.61,.65);g.add(leafp);
- }
- world.add(g);
-}
-function streetLamp(x,z){
- const g=groupAt(x,z),brown=mat(0x548a7c),gold=mat(0xe5b55c);
- shadow(g,.45);g.add(cyl(.08,.12,2.75,brown,0,1.37,0,10));
- g.add(cyl(.28,.23,.12,brown,0,.08,0,12));
- g.add(sphere(.20,gold,0,2.68,0,12,8));
- g.add(cyl(.29,.34,.47,mat(0xfff1bb),0,3.03,0,8));
- g.add(cone(.46,.40,brown,0,3.48,0,8));
- g.add(sphere(.105,mat(0xffde8c),0,3.72,0,12,8));
- world.add(g);
-}
-function outdoorFurniture(x,z,type='picnic'){
- const g=groupAt(x,z);shadow(g,1.55);
- const wood=mat(0xe4a06f),trim=mat(0xffedcf),red=mat(0xff809c);
- if(type==='picnic'){
-  g.add(cube(2.4,.23,1.3,wood,0,1.13,0));
-  g.add(cube(2.18,.035,1.02,trim,0,1.27,0));
-  for(const sx of [-.85,.85])for(const sz of [-.43,.43])g.add(cyl(.095,.105,1.05,wood,sx,.56,sz,10));
-  for(const sz of [-1,1]){
-   g.add(cube(2.35,.19,.43,red,0,.71,sz*1.03));
-   for(const sx of [-.82,.82])g.add(cyl(.075,.075,.67,wood,sx,.37,sz*1.03,9));
-  }
-  g.add(cyl(.31,.31,.09,mat(0xffffff),-.35,1.36,-.2,16));
-  g.add(cyl(.19,.19,.24,mat(0xf7d56b),.38,1.39,.17,12));
- }else{
-  g.add(cyl(.22,.27,.57,mat(0xc88964),0,.29,0,12));
-  g.add(cyl(.60,.59,.10,wood,0,.65,0,18));
-  g.add(sphere(.23,trim,0,.79,0,12,8));
-  for(let j=0;j<5;j++){const a=j*2.4;g.add(sphere(.21,mat(j%2?0xff8caf:0xffeb88),Math.cos(a)*.23,.99,Math.sin(a)*.24,11,8))}
- }
- world.add(g);
-}
-function sunflower(x,z){
- const g=groupAt(x,z),stem=mat(0x4aab56),yellow=mat(0xffcf3e);
- g.add(cyl(.046,.06,1.10,stem,0,.55,0,7));
- for(const sx of [-1,1]){const leaf=sphere(.25,mat(0x55bc56),sx*.20,.59,.05,9,7);leaf.scale.set(1,.32,.57);leaf.rotation.z=sx*.28;g.add(leaf)}
- const flower=g;
- for(let k=0;k<10;k++){
-  const a=k*Math.PI/5;const p=sphere(.18,yellow,Math.cos(a)*.22,1.12+Math.sin(a)*.23,.11,10,7);p.scale.set(.67,1.20,.37);p.rotation.z=a-Math.PI/2;flower.add(p)
- }
- flower.add(sphere(.18,mat(0x8d543c),0,1.13,.24,14,10));world.add(g);
-}
-function sceneDressing(){
- // Concentrated, authored composition rather than evenly scattered noise.
- for(const [x,z,seed] of [[-16.5,-5.2,1],[-11.2,-5.25,3],[-17.7,-7.1,5],[-9.9,-7.1,2],
-  [11.1,-5.5,0],[17.25,-5.4,3],[10.0,-7.6,1],[18.1,-7.6,4],
-  [-17.5,17.8,2],[-10.2,17.6,4],[10.5,17.7,1],[17.5,17.8,5],
-  [-5.5,5.8,0],[-4.9,-2.9,3],[3.0,-4.7,4],[3.1,7.4,1],
-  [-6.2,10.7,2],[7.4,8.5,4],[1.5,15.1,5]])flowerCluster(x,z,seed,.86);
- for(const [x,z] of [[-6.3,-13.8],[-6.7,-3.7],[18.9,2.8],[-18.1,4.9]])streetLamp(x,z);
- gardenArch(-5.7,-13.25);
- outdoorFurniture(-1.3,10.9,'picnic');outdoorFurniture(20.2,6.7,'tea');
- for(const [x,z] of [[-3.65,-10.15],[-8.0,-10.1],[-16.8,5.5],[17.0,6.6]])sunflower(x,z);
- // A bright entry lane of stepping stones, placed only in open space.
- for(let i=0;i<8;i++){
-  const x=-8.3+i*.68,z=-5.95+Math.sin(i*.55)*.22;
-  const s=sphere(.30,mat(i%2?0xf3e3c8:0xfff5df),x,.081,z,12,8);s.scale.set(1,.19,.70);world.add(s);
- }
- // Mailbox garden: flowers and little terracotta pots by walkways.
- for(const [x,z] of [[-19.2,-10.5],[-8.8,-11.3],[8.8,-11.2],[19.2,-10.9],[-19.1,12.2],[-8.9,11.6],[8.8,11.5],[19,12.1]]){
-  const g=groupAt(x,z);
-  g.add(cyl(.34,.27,.45,mat(0xe99469),0,.23,0,12));
-  g.add(cyl(.39,.39,.095,mat(0xf6aa7a),0,.49,0,12));
-  for(let k=0;k<3;k++){
-   const p=sphere(.27,mat(k%2?0x52c875:0x81d571),Math.sin(k*2)*.17,.68,Math.cos(k*2)*.14,12,9);g.add(p);
-   tinyFlower(g,Math.sin(k*2)*.16,Math.cos(k*2)*.17,k+Math.round(x));
-  }
-  world.add(g);
- }
- // A few soft rolling boundary hedges give the world depth without boxing in the player.
- for(let i=0;i<11;i++){
-  const x=-27.5+i*5.4;
-  const z=25.4+Math.sin(i*.9)*.4;
-  if(Math.abs(x-8)<5)continue;
-  bush(x,z,1.25+hash(i)*.30);
- }
-}
-function decorateTown(){
- if(!grassTexture)grassTexture=texturePaint('grass');
- const groundSurface=mesh(new THREE.PlaneGeometry(70,55),new THREE.MeshStandardMaterial({map:grassTexture,color:0xffffff,roughness:1}),0,-.021,0,true);groundSurface.rotation.x=-Math.PI/2;world.add(groundSurface);
- // Low-cost tufts: each is an instance, not hundreds of separate WebGL draw calls.
- const items=[];for(let i=0;i<980;i++){
-  const x=-32+hash(i*1.73)*64,z=-26+hash(i*2.91)*52;
-  if(Math.abs(x)<2.8||Math.abs(z-1.9)<2.6||Math.abs(x+12)<2.1&&z>-12&&z<-1||Math.abs(x-12)<2.1&&z>-12&&z<-1||Math.hypot(x+14,z+11)<5.7||Math.hypot(x-14,z+11)<5.7||Math.hypot(x+14,z-12)<5.6||Math.hypot(x-14,z-12)<5.6||Math.hypot(x-8,z-16)<5.5||x>-9&&x<-2&&z>-13&&z<-7)continue;
-  items.push({x,z,s:.58+hash(i*.72)*.75,rot:hash(i*5.2)*6.28});
- }
- const bladeGeo=new THREE.ConeGeometry(.095,.36,3),bladeMat=new THREE.MeshStandardMaterial({color:0x74ad6b,roughness:1,side:THREE.DoubleSide});
- const blades=new THREE.InstancedMesh(bladeGeo,bladeMat,items.length);const dummy=new THREE.Object3D();
- items.forEach((it,i)=>{dummy.position.set(it.x,.16*it.s,it.z);dummy.scale.set(.85,it.s,.8);dummy.rotation.set(.16,0,it.rot);dummy.updateMatrix();blades.setMatrixAt(i,dummy.matrix)});blades.instanceMatrix.needsUpdate=true;blades.frustumCulled=false;world.add(blades);
- const stoneGeo=new THREE.DodecahedronGeometry(1,0),stoneMat=new THREE.MeshStandardMaterial({color:0xe2d0af,roughness:1});
- const pebbles=new THREE.InstancedMesh(stoneGeo,stoneMat,pathPebbles.length);
- pathPebbles.forEach((it,i)=>{dummy.position.set(it.x,.081,it.z);dummy.scale.set(it.s*1.35,it.s*.19,it.s*.89);dummy.rotation.set(0,it.r,0);dummy.updateMatrix();pebbles.setMatrixAt(i,dummy.matrix)});pebbles.instanceMatrix.needsUpdate=true;pebbles.frustumCulled=false;world.add(pebbles);
- // Curved garden borders, soft plantings and stepping stones around buildings.
- for(const [cx,cz,col] of [[-14,-11,0xf6c6a8],[14,-11,0xf8d48f],[-14,12,0xc4d6ea],[14,12,0xf2bccc]]){
-  for(let side of [-1,1]){
-   for(let i=0;i<5;i++){const px=cx+side*(3.9+i*.17),pz=cz-2.3+i*1.18;
-    if(i%2===0)bush(px,pz,.40);else tinyFlower(world,px,pz,(i+Math.round(cx))&3)}
-  }
-  for(let k=0;k<4;k++){const s=addSoftStone(world,cx,0.09,cz+5.15+k*.63,.37+k*.015,0xeadcc1);s.scale.z*=1.8}
- }
- // Colorful mixed flower beds near the cottage porches. The larger groupings stay legible on a phone.
- for(const [bx,bz,phase] of [[-17.8,-6.65,0],[-10.15,-6.65,1],[10.2,-6.65,2],[17.8,-6.65,3],[-17.9,16.45,1],[-10.2,16.45,0],[10.2,16.45,3],[17.8,16.45,2]]){
-  const patch=groupAt(bx,bz);const bed=disk(1.02,mat(0x42bc5e),0,.07,0,18);bed.scale.y=.52;patch.add(bed);
-  for(let j=0;j<7;j++){const a=j*2.4,r=.26+(j%3)*.19;tinyFlower(patch,Math.cos(a)*r,Math.sin(a)*r,(j+phase)%4)}
-  world.add(patch);
- }
- // Public square: sweet planters and small stone details.
- for(let i=0;i<8;i++){const a=i*Math.PI/4;
-  if(i%2===0){bush(Math.cos(a)*4.35,1.9+Math.sin(a)*4.35,.60)}
-  else{tinyFlower(world,Math.cos(a)*4.28,1.9+Math.sin(a)*4.28,i)}
- }
- // Scattered mushrooms tucked beneath trees, bees and drifting blossom motes.
- for(let k=0;k<20;k++){const x=-25+hash(k*3.9)*50,z=-20+hash(k*5.1)*42;if(Math.abs(x)<4||Math.abs(z-2)<4)continue;
-  const gg=groupAt(x,z);gg.add(cyl(.065,.09,.24,mat(0xffe7c5),0,.13,0,7));gg.add(sphere(.24,mat(k%4===0?0xd89c89:0xf5cf9e),0,.29,0,10,8));gg.children[gg.children.length-1].scale.y=.48;world.add(gg);
- }
-}
-function decorateHome(){
- if(!woodTexture)woodTexture=texturePaint('wood');
- const floor=mesh(new THREE.PlaneGeometry(21.9,16.9),new THREE.MeshStandardMaterial({map:woodTexture,roughness:.94}),0,.056,0,true);floor.rotation.x=-Math.PI/2;world.add(floor);
- const trim=mat(0xfff2de);world.add(cube(22,.22,.21,trim,0,.24,-8.12));
- for(let x=-9;x<=9;x+=3.5){world.add(cube(.095,4.6,.14,trim,x,2.65,-8.10))}
- // Warm framed wall illustrations and curtains.
- for(const x of [-3.3,3.2]){
-  world.add(cube(2.2,1.6,.14,mat(0xc69b74),x,3.22,-8.17));
-  world.add(cube(1.95,1.35,.15,mat(0xf4eee0),x,3.22,-8.06));
-  const art=sphere(.58,mat(x<0?0x8ebca4:0xdba9a6),x,3.23,-7.96,18,12);art.scale.set(1.1,.66,.08);world.add(art);
- }
- for(const x of [-7,7])for(const side of [-1,1]){
-  world.add(cube(.52,2.8,.22,mat(0xff92b7),x+side*2.03,2.95,-7.83));
- }
- // A round center rug, cozy ceiling light, and a tidy reading corner.
- const rug=disk(2.85,mat(0xffd7ae),.9,.088,.45,40);rug.scale.y=.64;world.add(rug);
- const rugInside=disk(2.40,mat(0xffaac6),.9,.090,.45,40);rugInside.scale.y=.62;world.add(rugInside);
- const lightFixture=groupAt(-1,0);lightFixture.add(cyl(.09,.09,1.6,mat(0xbd9a75),0,4.18,0));lightFixture.add(sphere(.72,new THREE.MeshStandardMaterial({color:0xfff4c7,emissive:0xffd969,emissiveIntensity:.22,roughness:1}),0,3.48,0,18,12));world.add(lightFixture);
- const bookshelf=furniture('books',-9.25,-6);world.add(bookshelf);
- world.add(furniture('table',-1.7,1.4));
- for(const z of [-5,4]){world.add(furniture('plant',9,z))}
-}
-
-function init3d(){scene=new THREE.Scene();scene.background=new THREE.Color(0x79d4f9);scene.fog=new THREE.Fog(0xa6e8fc,78,160);renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.65));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;$('viewport').appendChild(renderer.domElement);camera=new THREE.OrthographicCamera(-14,14,9,-9,.1,300);camera.position.set(22,27,36);camera.lookAt(0,0,0);scene.add(new THREE.HemisphereLight(0xfff9ec,0x75ae87,1.52));light=new THREE.DirectionalLight(0xffefd3,1.66);light.position.set(-12,26,15);light.castShadow=true;light.shadow.mapSize.set(1024,1024);light.shadow.camera.left=-32;light.shadow.camera.right=32;light.shadow.camera.top=32;light.shadow.camera.bottom=-32;light.shadow.camera.near=1;light.shadow.camera.far=75;light.shadow.bias=-.0002;scene.add(light);scene.add(world);window.addEventListener('resize',resize);resize();renderer.domElement.addEventListener('pointerup',tapGame);renderer.domElement.addEventListener('pointerdown',e=>{startX=e.clientX;startY=e.clientY});window.addEventListener('contextmenu',e=>e.preventDefault());}
-let startX=0,startY=0;
-function resize(){if(!camera)return;const w=innerWidth,h=innerHeight,aspect=w/h;const halfHeight=aspect<1?14.3:10.7;camera.left=-halfHeight*aspect;camera.right=halfHeight*aspect;camera.top=halfHeight;camera.bottom=-halfHeight;camera.updateProjectionMatrix();renderer.setSize(w,h)}
-function buildTown(){world.clear();clickable=[];npcs=[];gardenMeshes=[];decorMotion.length=0;pathPebbles=[];const plane=cube(70,.55,55,MATERIAL.grass,0,-.33,0);plane.receiveShadow=true;plane.castShadow=false;world.add(plane);world.add(cube(76,.5,10,mat(0xffdf90),0,-.31,31));world.add(cube(76,.14,9,mat(0x3cc9f3),0,-.13,36));path(0,0,3.4,42);path(0,1.9,38,3.3);path(-12,-5,3,9);path(12,-5,3,9);path(-12,9,3,11);path(12,9,3,11);path(-6,-10,7,2.2);
- makeHouse(-14,-11,0xffb7a1,0xf16e78,'Your Home','enterHome','home');makeHouse(14,-11,0xffdc82,0x43bfcc,'Honeybun Café','cafe','work');makeHouse(-14,12,0x9ee5cc,0x788ee7,'Little Library','library','book');makeHouse(14,12,0xffdf92,0xc771c2,'Town Hall','hall','hall');stall(-9,1);pond(7.8,15.8);garden();bench(5.1,-4.8);bench(-4.8,9);fence(-19,-5,7);fence(14,-4,8);
- // Paths and clusters are intentionally hand-shaped, not obvious repeated tiles.
- for(const [x,z,s,f] of [[-23,-17,1.3,0],[-22,-6,1.1,1],[-21,6,1.4,0],[-21,21,1.3,0],[-8,18,1.2,1],[0,20,1.25,0],[22,19,1.4,1],[24,5,1.2,0],[24,-5,1.5,0],[22,-17,1.2,1],[4,-17,1.25,0],[-5,-18,1.15,0],[-1,13,.9,1]])tree(x,z,s,!!f);
- for(let i=0;i<120;i++){let x=rand(-27,27),z=rand(-23,26);if(Math.abs(x)<3.2||Math.abs(z-2)<3.5||Math.hypot(x+14,z+11)<5||Math.hypot(x-14,z+11)<5||Math.hypot(x-8,z-15)<5||Math.hypot(x+14,z-12)<5||Math.hypot(x-14,z-12)<5||x>-12&&x<-7&&z>-1&&z<4||x>-8&&x<-3&&z>-13&&z<-7)continue;if(i%3===0)tinyFlower(world,x,z,i);else{const leaf=sphere(.09,mat(i%2?0x48be5d:0x72d876),x,.07,z,6,4);leaf.scale.set(1.3,.65,.7);world.add(leaf)}}
- for(let i=0;i<20;i++){let x=rand(-25,25),z=rand(-24,25);if(Math.abs(x)<4||Math.abs(z-2)<4)continue;bush(x,z,rand(.55,.9))}
- decorateTown();
- // The little plaza fountain, with gently animated ripples and a sculpted blossom top.
- const center=groupAt(0,2);const rim=mat(0xffefce),interior=mat(0x59d6f4);
- center.add(cyl(1.78,1.86,.36,rim,0,.16,0,32));
- center.add(cyl(1.52,1.52,.075,interior,0,.36,0,32));
- center.add(cyl(.65,.78,.58,rim,0,.68,0,24));
- center.add(cyl(.22,.28,.82,rim,0,1.30,0,18));
- for(let j=0;j<8;j++){const a=j*Math.PI/4;const spray=sphere(.10,new THREE.MeshStandardMaterial({color:0x8defff,transparent:true,opacity:.84,roughness:.2}),Math.cos(a)*.79,1.04,Math.sin(a)*.79,9,8);center.add(spray);decorMotion.push({o:spray,base:spray.position.y,phase:j*.45,kind:'ripple'})}
- for(let j=0;j<6;j++){const a=j*Math.PI/3;const petal=sphere(.31,mat(0xff79ab),Math.cos(a)*.22,1.82,Math.sin(a)*.22,12,9);petal.scale.set(1,.42,.70);center.add(petal)}
- center.add(sphere(.15,mat(0xffd13b),0,1.94,0,12,9));world.add(center);
- sceneDressing();
- NPCS.forEach((n,i)=>{const g=chibi(n);g.position.set(n.x,0,n.z);world.add(g);npcs.push({info:n,object:g,origin:new THREE.Vector3(n.x,0,n.z),wander:rand(0,7),phase:i*1.9});setTagGroup(g,'npc',n.id)});
- player=chibi(state);player.position.set(-9,0,-6.9);world.add(player);playerBody=player.userData;ground=plane;
-}
-function furniture(kind,x,z){const g=groupAt(x,z);shadow(g,.8);const brown=mat(0xb68666),cream=mat(0xf5e3c7),pink=mat(0xff87ab),green=mat(0x66ca87),blue=mat(0x59cdeb);switch(kind){
- case 'bed':g.add(cube(3.3,.45,2.3,mat(0xb6815f),0,.4,0),cube(3.05,.24,1.9,cream,0,.73,0),cube(2.9,.13,1.3,pink,0,.89,.4),cube(2.6,.3,.5,mat(0xfcf4df),0,.91,-.65));break;
- case 'sofa':g.add(cube(2.9,.9,1.1,green,0,.6,0),cube(2.9,1.2,.37,green,0,1.16,-.56),cube(.36,.7,1.2,green,-1.37,.80,0),cube(.36,.7,1.2,green,1.37,.80,0));break;
- case 'kitchen':g.add(cube(3.8,1.18,.85,cream,0,.66,0),cube(3.9,.16,.98,brown,0,1.3,0));for(let i=-1;i<=1;i++)g.add(cube(.85,.73,.07,mat(0xd8bba0),i*1.0,.74,.47));g.add(cyl(.21,.21,.015,mat(0x55514d),.8,1.41,-.05));break;
- case 'rug':g.add(cube(3,.04,2,mat(0xff90ae),0,.065,0),cube(2.65,.05,1.65,mat(0xffd3b6),0,.085,0));break;
- case 'plant':g.add(cyl(.4,.32,.75,mat(0xc98964),0,.37,0));for(let i=0;i<5;i++)g.add(sphere(.47,green,Math.sin(i*2)*.3,1.05+Math.cos(i)*.18,Math.cos(i*2)*.32));break;
- case 'chair':g.add(cube(.9,.17,.9,mat(0xc7926d),0,.65,0),cube(.9,.9,.14,mat(0xe0ada3),0,1.06,-.4));for(let s of [-1,1])for(let t of [-1,1])g.add(cube(.11,.7,.11,brown,s*.34,.34,t*.32));break;
- case 'lamp':g.add(cyl(.18,.22,1.5,brown,0,.8,0),cone(.68,.72,mat(0xf8e6b9),0,1.78,0,14));break;
- case 'books':g.add(cube(1.6,2.5,.51,brown,0,1.26,0));for(let i=0;i<3;i++){g.add(cube(1.47,.09,.59,cream,0,.65+i*.76,.09));for(let b=0;b<5;b++)g.add(cube(.16,.46,.36,mat([0x92afaf,0xdca7a4,0x91b88e,0xebc789,0xb5a3bf][b]),-.53+b*.25,.93+i*.76,.05))}break;
- case 'table':g.add(cyl(.94,.94,.13,brown,0,1.08,0,24),cyl(.17,.20,.98,brown,0,.55,0));g.add(cyl(.24,.22,.20,cream,0,1.27,0));break;
- case 'flowers':g.add(cyl(.27,.19,.45,blue,0,.31,0));for(let j=0;j<4;j++){g.add(cyl(.02,.02,.44,green,Math.sin(j*1.5)*.15,.68,Math.cos(j*1.5)*.14,5));g.add(sphere(.17,mat([0xf6afad,0xf5dc9d,0xe99dff,0xffffef][j]),Math.sin(j*1.5)*.24,.91,Math.cos(j*1.5)*.23,10,8))}break;
- }g.userData.furniture=kind;return g}
-function buildHome(){world.clear();clickable=[];npcs=[];gardenMeshes=[];placedGroups=[];decorMotion.length=0;
- const base=cube(24,.6,19,mat(0xc9b092),0,-.35,0);base.receiveShadow=true;world.add(base);world.add(cube(22,.08,17,mat([0xffd29c,0xe3addb,0xa8e2b5,0xffd38e][state.homeStyle]),0,.01,0));const wall=mat([0xfff0d9,0xffe0f2,0xe1ffe0,0xffebbf][state.homeStyle]);world.add(cube(22,5,.35,wall,0,2.46,-8.42),cube(.35,5,17,wall,-11,2.46,0),cube(.35,5,17,wall,11,2.46,0));world.add(cube(22,.30,.6,mat(0xfff7e9),0,5,-8.4));for(let x of [-7,7]){world.add(cube(3.6,2.5,.1,mat(0xfff8dc),x,3,-8.13),cube(3.18,2.15,.13,mat(0x88e6ff),x,3,-8.04),cube(.14,2.22,.15,mat(0xfff8dc),x,3,-7.95),cube(3.2,.13,.14,mat(0xfff8dc),x,3,-7.95))}
- let g=furniture('bed',-7.4,-4.8);world.add(g);setTagGroup(g,'furniture','bed');g=furniture('sofa',1,-3.5);world.add(g);setTagGroup(g,'furniture','sofa');g=furniture('kitchen',6.8,-6);world.add(g);setTagGroup(g,'furniture','kitchen');g=furniture('rug',1,-2.1);world.add(g);g=furniture('plant',9,-4);world.add(g);for(const o of state.placed){const obj=furniture(o.kind,o.x,o.z);world.add(obj);placedGroups.push(obj);setTagGroup(obj,'furniture',o.kind)}
- decorateHome();
- player=chibi(state);player.position.set(0,0,4);world.add(player);playerBody=player.userData;ground=base;
- // windows cast warm decoration, open front for dollhouse-like view
-}
-function updateAvatar(){if(!player)return;let p=player.position.clone();let rot=player.rotation.y;let old=player;world.remove(old);player=chibi(state);player.position.copy(p);player.rotation.y=rot;world.add(player);playerBody=player.userData}
-function updateHud(){const m=Math.floor(state.minute);const hh=Math.floor(m/60)%24,mm=m%60;const h=hh%12||12;$('clockText').textContent=`${h}:${String(mm).padStart(2,'0')} ${hh>=12?'PM':'AM'}`;$('dateText').textContent=`${['Spring','Summer','Autumn','Winter'][state.season]} · Day ${state.day}`;$('weather').textContent=['🌸','☀️','🍂','❄️'][state.season];$('coinText').textContent=state.coins;$('heartText').textContent=state.hearts;$('characterText').textContent=state.name;const avg=Object.values(state.needs).reduce((a,b)=>a+b,0)/4;$('moodText').textContent=avg>75?'Feeling lovely':avg>45?'Doing okay':'Needs a little care';for(const k of ['hunger','fun','social','energy'])$('need'+k[0].toUpperCase()+k.slice(1)).style.width=clamp(state.needs[k],0,100)+'%';$('locationText').textContent=currentScene==='town'?'🌷 Maplewood Village':'🏠 Your Cozy Cottage';$('homeBtn').classList.toggle('active',currentScene==='home');$('townBtn').classList.toggle('active',currentScene==='town');for(const [id,v] of [['pauseBtn',0],['playBtn',1],['fastBtn',4]])$(id).classList.toggle('selected',speed===v)}
-function save(){try{localStorage.setItem('hearth-harbor-save-v1',JSON.stringify(state))}catch(e){toast('Could not save on this browser')} }
-function chime(){if(!state.sound)return;try{const ctx=chime.ctx||(chime.ctx=new (window.AudioContext||window.webkitAudioContext)());if(ctx.state==='suspended')ctx.resume();[0,.09].forEach((offset,i)=>{const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type='sine';osc.frequency.value=i?698:523;gain.gain.setValueAtTime(.0001,ctx.currentTime+offset);gain.gain.exponentialRampToValueAtTime(.035,ctx.currentTime+offset+.015);gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+offset+.20);osc.connect(gain).connect(ctx.destination);osc.start(ctx.currentTime+offset);osc.stop(ctx.currentTime+offset+.22)})}catch{}}
-function toast(t){chime();clearTimeout(toastTimer);$('toast').textContent=t;$('toast').classList.add('show');toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2700)}
-function goal(id,amount=1){const q=QUESTS.find(q=>q.id===id);if(!q||state.quests[id]==='done')return;state.quests[id]=Math.min(q.target,(state.quests[id]||0)+amount);if(state.quests[id]>=q.target){state.quests[id]='done';state.coins+=q.reward;state.hearts+=1;toast(`✨ ${q.name} complete! +${q.reward} coins`)}updateHud();save()}
-function changeScene(where){endConversation();if(where===currentScene)return;placement=null;pending=null;currentScene=where;if(where==='town')buildTown();else buildHome();camTarget.copy(player.position);updateHud();save();toast(where==='home'?'🏡 Home sweet home!':'🌷 Fresh air, fresh possibilities!')}
-function approach(object,target,cb){pending={x:target.x,z:target.z,cb,tag:object?.tag};}
-function tapGame(e){if(modal||conversation||Math.hypot(e.clientX-startX,e.clientY-startY)>18)return;const rect=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-rect.left)/rect.width)*2-1;pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(pointer,camera);let hits=raycaster.intersectObjects(clickable,true);const interact=hits.find(h=>findAction(h.object));if(interact&&!placement){const action=findAction(interact.object);let obj=interact.object;while(obj.parent&&!obj.userData.action)obj=obj.parent;const loc=new THREE.Vector3();obj.getWorldPosition(loc);approach(action,loc,()=>interactAction(action));return}
- const floorY=new THREE.Plane(new THREE.Vector3(0,1,0),0),pt=new THREE.Vector3();if(raycaster.ray.intersectPlane(floorY,pt)){
- if(placement){if(currentScene!=='home')return;placeItem(pt.x,pt.z);return}
- const maxX=currentScene==='home'?9.7:26,maxZ=currentScene==='home'?7.3:24;const dest={x:clamp(pt.x,-maxX,maxX),z:clamp(pt.z,-maxZ,maxZ)};pending={...dest,cb:null};$('hint').style.opacity=.2;
- }}
-function findAction(o){while(o){if(o.userData?.action)return o.userData.action;o=o.parent}return null}
-function interactAction({tag,id}){if(tag==='npc')talk(id);if(tag==='enterHome')changeScene('home');if(tag==='cafe')cafe();if(tag==='garden')gardenAction(id);if(tag==='fish')startFishing();if(tag==='bench'){state.needs.fun=clamp(state.needs.fun+18,0,100);state.needs.energy=clamp(state.needs.energy+12,0,100);toast('🌿 A lovely moment in the sunshine');save();updateHud()}if(tag==='market')market();if(tag==='library'){state.needs.fun=clamp(state.needs.fun+16,0,100);toast('📚 You borrowed a lovely novel');updateHud()}if(tag==='hall')townHall();if(tag==='furniture')furnitureAction(id)}
-function animate(now){requestAnimationFrame(animate);let dt=Math.min((now-(animate.last||now))/1000,.07);animate.last=now;const t=now*.001;if(player&&scene){if(pending){const dx=pending.x-player.position.x,dz=pending.z-player.position.z,dist=Math.hypot(dx,dz);let buffer=pending.cb?.45:.1;if(dist>buffer){let step=Math.min(dist-buffer,dt*4.2);player.position.x+=dx/dist*step;player.position.z+=dz/dist*step;const dir=Math.atan2(dx,dz);let delta=((dir-player.rotation.y+3*Math.PI)%(2*Math.PI))-Math.PI;player.rotation.y+=delta*.20;for(let i=0;i<2;i++){playerBody.legs[i].rotation.x=Math.sin(t*12+i*Math.PI)*.42;playerBody.arms[i].rotation.x=-Math.sin(t*12+i*Math.PI)*.36}player.children[1].position.y=1.01+Math.abs(Math.sin(t*12))*.06}else{const done=pending;pending=null;for(let a of [...playerBody.legs,...playerBody.arms])a.rotation.x=0;player.children[1].position.y=1.01;if(done.cb)done.cb()}}else{playerBody.arms[0].rotation.x=Math.sin(t*1.8)*.045;playerBody.arms[1].rotation.x=-Math.sin(t*1.8)*.045}
- for(const n of npcs){n.wander+=dt;const obj=n.object;const isTalking=conversation?.id===n.info.id;
-  if(!isTalking){obj.position.x=n.origin.x+Math.sin(t*.35+n.phase)*.42;obj.position.z=n.origin.z+Math.cos(t*.28+n.phase)*.38;obj.rotation.y=Math.sin(t*.32+n.phase)*.65;}
-  else {const angle=Math.atan2(player.position.x-obj.position.x,player.position.z-obj.position.z);obj.rotation.y+=Math.atan2(Math.sin(angle-obj.rotation.y),Math.cos(angle-obj.rotation.y))*Math.min(1,dt*6);}
-  const f=obj.userData;const reaction=isTalking&&conversationEmoteEnd>t;
-  f.arms[0].rotation.z=reaction?-.55-Math.sin(t*15)*.14:-.26;
-  f.arms[1].rotation.z=reaction?.55+Math.sin(t*14)*.14:.26;
-  f.arms[0].rotation.x=(reaction?-.55:Math.sin(t*2+n.phase)*.13);
-  f.arms[1].rotation.x=(reaction?-.7:Math.sin(t*2+n.phase+1)*.13);
-  obj.rotation.z=isTalking?(f.expression==='shy'?.08:Math.sin(t*2.5)*.025):0;
-  f.head.position.y=isTalking&&reaction?Math.max(0,Math.sin(t*11))*.055:0;
- }
- const focus=conversation?npcs.find(n=>n.info.id===conversation.id):null;
- const aim=focus?new THREE.Vector3(focus.object.position.x*.78+player.position.x*.22,0,focus.object.position.z*.78+player.position.z*.22):new THREE.Vector3(player.position.x,0,player.position.z);
- camTarget.lerp(aim,dt*(focus?5.8:2.3));const off=currentScene==='town'?new THREE.Vector3(20,25,34):new THREE.Vector3(16,24,31);const desired=camTarget.clone().add(off);camera.position.lerp(desired,dt*(focus?4.5:2));camera.lookAt(camTarget.x,focus?1.85:1.0,camTarget.z);
- const zoomGoal=focus?(innerWidth<innerHeight?2.1:1.8):1;
- conversationZoom+=(zoomGoal-conversationZoom)*Math.min(1,dt*5);
- if(Math.abs(camera.zoom-conversationZoom)>.002){camera.zoom=conversationZoom;camera.updateProjectionMatrix();}
- if(focus){const marker=focus.object.position.clone().add(new THREE.Vector3(0,3.5,0)).project(camera);const bubble=$('conversationEmote');
-   const x=(marker.x*.5+.5)*innerWidth,y=(-marker.y*.5+.5)*innerHeight;
-   bubble.style.left=`${clamp(x,34,innerWidth-34)}px`;bubble.style.top=`${clamp(y,118,innerHeight*.57)}px`;
-   const emojiVisible=conversation.emote&&conversationEmoteEnd>t;
-   bubble.textContent=emojiVisible?conversation.emote:'';bubble.classList.toggle('visible',!!emojiVisible);
- }else{$('conversationEmote').classList.remove('visible')}
- light.position.set(camTarget.x-13,26,camTarget.z+15);light.target.position.set(camTarget.x,0,camTarget.z);light.target.updateMatrixWorld();
- for(const a of decorMotion){if(a.kind==='ripple'){a.o.scale.setScalar(1+Math.sin(t*.7+a.phase)*.08);a.o.position.y=a.base+Math.sin(t*1.7+a.phase)*.003}}
- renderer.render(scene,camera);
- }
- if(speed&&!modal&&!conversation){clockAccumulator+=dt*speed*2.4;while(clockAccumulator>=1){clockAccumulator--;state.minute+=1;state.needs.hunger=clamp(state.needs.hunger-.007,0,100);state.needs.energy=clamp(state.needs.energy-.005,0,100);state.needs.fun=clamp(state.needs.fun-.002,0,100);state.needs.social=clamp(state.needs.social-.003,0,100);if(state.minute>=1440){state.minute-=1440;state.day++;if(state.day%7===0)state.season=(state.season+1)%4;state.garden=state.garden.map(x=>x===1?2:x);if(currentScene==='town')paintGarden();toast('🌅 A new day begins!')} }updateHud()}
- autoSaveT+=dt;if(autoSaveT>25){save();autoSaveT=0}
-}
-function showModal(name,html){endConversation();modal=name;placement=null;const shade=$('modalShade');shade.classList.remove('hidden');$('modalBody').innerHTML=html;cancelAnimationFrame(fishRaf)}
-function closeModal(){modal='';$('modalShade').classList.add('hidden');$('modalBody').innerHTML='';cancelAnimationFrame(fishRaf)}
-function intro(){showModal('welcome',`<div style="text-align:center;font-size:54px">🏡🌸</div><h2 style="text-align:center;margin-right:0">Welcome to Hearth & Harbor!</h2><p class="subtitle" style="text-align:center">A tiny town with a whole lot of heart. This is the first playable slice of your very own cozy life simulator.</p><div class="card-row"><span>👆</span><div><b>Tap to walk</b><br><small>Tap a path, person, house, or interesting place.</small></div></div><div class="card-row"><span>💌</span><div><b>Make connections</b><br><small>Talk, compliment, and give gifts to your neighbors.</small></div></div><div class="card-row"><span>🏡</span><div><b>Make a little life</b><br><small>Decorate your home, fish, garden, and earn coins.</small></div></div><button class="btn full" data-action="begin">Let's go explore! 🌷</button>`)}
-// In-world conversations deliberately never use the full-screen modal.
-// The person stays rendered in the town, faces you, and changes expression as you talk.
-const REACTIONS={
- oliver:{chat:['I baked an extra cinnamon roll today. I think it has your name on it!','You know, a warm pastry is even better with a friend nearby.'],compliment:['Oh! You just made my entire morning sweeter.','You are as kind as the first batch of fresh bread!'],gift:['For me? I wish I had baked you something in return!','Oh, my goodness! This is so thoughtful!']},
- mabel:{chat:['I was wondering what color flowers you like most. I vote for EVERY color!','The little sprouts are finally waking up. Isn’t that magical?'],compliment:['Eeee! You have made my heart bloom!','That was lovely of you to say. I feel like a sunflower!'],gift:['You picked this for me? I will treasure it!','It is perfect! I know just where to put it.']},
- jun:{chat:['I found a story about a lighthouse that grants wishes. Maybe we have one too.','Do you ever get so lost in a book that you forget the time?'],compliment:['Oh! Um… thank you. I needed to hear that.','You really think so? That means a lot.'],gift:['A gift? I… wow. I will take very good care of it.','You remembered me. That is the nicest surprise.']},
- bea:{chat:['I am painting a picture of the clouds. Every cloud looks like a new idea!','I think this town could use a giant mural. What would you paint?'],compliment:['Stop, you are making me blush! Well, don’t actually stop.','That calls for a HAPPY DANCE!'],gift:['Incredible! This deserves its own painting!','What a beautiful surprise! You are my muse today.']},
- finn:{chat:['I saw a fish jump clear out of the water this morning. It waved at me!','Sometimes the best plan is to sit by the pond and watch the sky.'],compliment:['Heh, thanks, pal. That made my day.','You are a good egg, you know that?'],gift:['No way! This is a keeper!','That is mighty kind of you. Thanks, friend!']},
- rosie:{chat:['I think the town market needs a pancake festival. Pancakes for everybody!','Guess what? I have a secret special planned for the next market day!'],compliment:['Oh, sweetie! You are an absolute ray of sunshine!','That calls for a celebration!'],gift:['Oh, this is adorable! You shouldn’t have!','I LOVE it! I am telling everyone how thoughtful you are.']}
-};
-function endConversation(){
- if(!conversation)return;
- const neighbor=npcs.find(n=>n.info.id===conversation.id);
- if(neighbor)applyExpression(neighbor.object,'neutral');
- conversation=null;conversationEmoteEnd=0;
- $('conversationLayer').classList.add('hidden');$('conversationEmote').classList.remove('visible');
- $('game').classList.remove('talking');
-}
-function dialogueText(line){$('dialogueText').textContent=line;chime()}
-function updateDialogueChoices(){
- const d=$('dialogueActions');if(!conversation)return;
- if(conversation.stage==='greeting'){
-  d.innerHTML='<button data-talk="next" class="dialogue-next">Keep talking <span>➜</span></button>';
- }else if(conversation.stage==='choices'){
-  d.innerHTML='<button data-talk="chat">💬 Chat</button><button data-talk="compliment">💗 Compliment</button><button data-talk="gift">🎁 Gift · 15 🪙</button><button data-talk="bye" class="dialogue-bye">👋 Bye!</button>';
- }else{
-  d.innerHTML='<button data-talk="next" class="dialogue-next">One more thing <span>➜</span></button><button data-talk="bye" class="dialogue-bye">Say goodbye</button>';
- }
-}
-function talk(id){
- const npc=NPCS.find(n=>n.id===id),neighbor=npcs.find(n=>n.info.id===id);if(!npc||!neighbor)return;
- if(modal)closeModal();
- endConversation();pending=null;
- conversation={id,stage:'greeting',emote:'👋'};conversationEmoteEnd=performance.now()/1000+1.45;
- const toward=Math.atan2(neighbor.object.position.x-player.position.x,neighbor.object.position.z-player.position.z);
- player.rotation.y=toward;
- applyExpression(neighbor.object,'happy');
- $('dialogueGain').classList.remove('pop');$('dialogueGain').textContent='';
- $('dialogueName').textContent=npc.name;$('dialogueRole').textContent=npc.job;
- $('dialogueAvatar').textContent=npc.emoji;$('dialogueHearts').textContent=`♥ ${state.relations[id]||0}`;
- dialogueText(npc.lines[Math.floor(rand(0,npc.lines.length))]);updateDialogueChoices();
- $('conversationLayer').classList.remove('hidden');$('game').classList.add('talking');
-}
-function socialResponse(id,kind){
- const npc=NPCS.find(n=>n.id===id),neighbor=npcs.find(n=>n.info.id===id);if(!npc||!conversation||conversation.id!==id)return;
- if(kind==='gift'&&state.coins<15){dialogueText('Oh, no worries! A friendly visit is gift enough.');conversation.stage='response';conversation.emote='💛';conversationEmoteEnd=performance.now()/1000+1.4;updateDialogueChoices();return}
- const add=kind==='compliment'?12:kind==='gift'?20:8;
- if(kind==='gift')state.coins-=15;
- state.relations[id]=clamp((state.relations[id]||0)+add,0,100);
- state.needs.social=clamp(state.needs.social+14,0,100);
- state.needs.fun=clamp(state.needs.fun+6,0,100);
- if(!state.met.includes(id)){state.met.push(id);goal('welcome',1)}
- if(state.relations[id]>=30)goal('friend',1);
- conversation.stage='response';conversation.emote=kind==='gift'?'🎁':kind==='compliment'?'💕':'✨';
- conversationEmoteEnd=performance.now()/1000+1.85;
- applyExpression(neighbor.object,kind==='chat'?'excited':kind==='compliment'?'shy':'surprised');
- const pool=REACTIONS[id][kind];dialogueText(pool[Math.floor(rand(0,pool.length))]);
- $('dialogueHearts').textContent=`♥ ${state.relations[id]||0}`;
- $('dialogueGain').textContent=`+${add} ♥`;
- $('dialogueGain').classList.remove('pop');void $('dialogueGain').offsetWidth;$('dialogueGain').classList.add('pop');
- updateDialogueChoices();updateHud();save();
-}
-function conversationAction(action){
- if(!conversation)return;
- const {id}=conversation;
- if(action==='bye'){endConversation();return}
- if(action==='next'){conversation.stage='choices';applyExpression(npcs.find(n=>n.info.id===id)?.object,'neutral');dialogueText('It’s lovely to see you! What else is on your mind?');updateDialogueChoices();return}
- if(['chat','compliment','gift'].includes(action))socialResponse(id,action);
-}
-function people(){showModal('people',`<h2>💌 Your Neighbors</h2><p class="subtitle">Everyone has a story. The more you talk, the more you become part of it.</p>${NPCS.map(n=>`<div class="card-row"><div class="person"><div class="face">${n.emoji}</div><div><b>${n.name} <span style="font-size:10px;color:#b89184">♥ ${state.relations[n.id]||0}</span></b><br><small>${n.job} · ${n.trait}</small><div class="relation"><span style="width:${state.relations[n.id]||0}%"></span></div></div></div><button class="btn secondary" data-action="findPerson" data-id="${n.id}">Find</button></div>`).join('')}`)}
-function journal(){const qdone=QUESTS.filter(q=>state.quests[q.id]==='done').length;showModal('journal',`<h2>📖 Your Little Journal</h2><p class="subtitle">Small adventures are worth celebrating. ${qdone} of ${QUESTS.length} discoveries completed.</p><div class="progress"><b style="width:${qdone/QUESTS.length*100}%"></b></div>${QUESTS.map(q=>{const completed=state.quests[q.id]==='done',n=completed?q.target:(state.quests[q.id]||0);return `<div class="card-row ${completed?'quest-complete':''}"><div><b>${q.icon} ${q.name} ${completed?'✓':''}</b><br><small>${q.description}</small><div class="progress" style="width:160px;height:6px"><b style="width:${n/q.target*100}%"></b></div></div><span class="tag">${completed?'Done':`${n}/${q.target}`} · 🪙${q.reward}</span></div>`}).join('')}<h3>🧺 Collections</h3><div class="card-row"><div>🐟 Fish caught</div><b>${state.fish.length}</b></div><div class="card-row"><div>🪑 Furniture placed</div><b>${state.placed.length}</b></div><div class="card-row"><div>💗 Friends met</div><b>${state.met.length}/${NPCS.length}</b></div>`)}
-function market(){showModal('market',`<h2>🛒 Rosie’s Market</h2><p class="subtitle">Fresh finds, friendly prices, and everything you need for a lovely day.</p><div class="tiles"><button class="tile" data-action="buySnack"><span class="emoji">🥐</span><b>Sweet bun</b><small>20 coins · +35 Food</small></button><button class="tile" data-action="buyFun"><span class="emoji">🧸</span><b>Little toy</b><small>25 coins · +25 Fun</small></button><button class="tile" data-action="buyBouquet"><span class="emoji">💐</span><b>Flower bouquet</b><small>30 coins · +20 Fun</small></button></div><p class="subtitle" style="margin-top:15px">Tip: plant flowers and catch fish to earn extra pocket money!</p>`)}
-function cafe(){showModal('cafe',`<h2>🥐 Honeybun Café</h2><p class="subtitle">Oliver's kitchen is warm, busy, and smells of fresh bread.</p><div style="text-align:center;font-size:60px;padding:5px">🍰☕🍓</div><div class="choices"><button class="btn" data-action="work">👩‍🍳 Work a shift<br><small>Earn 75 coins · 2 hours</small></button><button class="btn secondary" data-action="eatCafe">🧁 Buy a treat<br><small>20 coins · +40 Food</small></button></div><p class="subtitle" style="margin-top:12px">More detailed active careers are planned for later versions.</p>`)}
-function townHall(){showModal('hall',`<h2>🏛️ Town Hall</h2><p class="subtitle">Welcome to the heart of your little community.</p><div class="card-row"><div><b>🌷 Neighborhood spirit</b><br><small>${state.hearts} community milestones earned</small></div><span style="font-size:28px">💗</span></div><div class="card-row"><div><b>👫 Familiar faces</b><br><small>${state.met.length} of ${NPCS.length} neighbors met</small></div><span style="font-size:28px">💌</span></div><p>As the town grows, this will become the center of community projects, new districts, seasonal festivals, and resident events.</p>`)}
-function gardenAction(id){const n=Number(id);if(!state.garden[n]){showModal('garden',`<h2>🌱 A patch of possibility</h2><p class="subtitle">Plant a flower for 12 coins. It blooms after you sleep until morning.</p><div style="text-align:center;font-size:64px;margin:12px">🌷</div><button class="btn full" data-action="plant" data-id="${n}" ${state.coins<12?'disabled':''}>Plant flower · 12 🪙</button>`)}else if(state.garden[n]===1){showModal('garden',`<h2>🌱 Growing beautifully!</h2><p class="subtitle">Your flowers are growing. Rest until tomorrow to see them bloom.</p><div style="text-align:center;font-size:60px">🌱🌼</div><button class="btn full" data-action="bye">Lovely!</button>`)}else{showModal('garden',`<h2>🌷 Ready to harvest!</h2><p class="subtitle">Your flowers bloomed! Harvest them for 35 coins.</p><div style="text-align:center;font-size:60px">💐</div><button class="btn full" data-action="harvest" data-id="${n}">Gather flowers · +35 🪙</button>`)}}
-function furnitureAction(kind){if(kind==='bed'){showModal('bed',`<h2>🛏️ Sweet dreams</h2><p class="subtitle">A little sleep restores your energy, and your garden will have time to grow.</p><div class="choices"><button class="btn" data-action="sleep">🌙 Sleep until morning</button><button class="btn secondary" data-action="nap">😴 Take a nap · +30 Energy</button></div>`)}else if(kind==='kitchen'){showModal('kitchen',`<h2>🍲 What's cooking?</h2><p class="subtitle">Make something comforting in your own kitchen.</p><div class="choices"><button class="btn" data-action="cook">🍳 Cook a meal<br><small>10 coins · +55 Food</small></button><button class="btn secondary" data-action="snack">🍎 Have a snack<br><small>5 coins · +25 Food</small></button></div>`)}else if(kind==='sofa'||kind==='chair'){showModal('sofa',`<h2>🛋️ Cozy time</h2><p class="subtitle">Home is where you can truly unwind.</p><div class="choices"><button class="btn" data-action="relax">📺 Relax · +28 Fun</button><button class="btn secondary" data-action="nap">💤 Snooze · +30 Energy</button></div>`)}else{state.needs.fun=clamp(state.needs.fun+4,0,100);toast('💛 Your home is feeling extra cozy!');updateHud()}}
-function shop(){if(currentScene!=='home'){showModal('build',`<h2>🛋️ Decorate your home</h2><p class="subtitle">You can purchase and place furniture inside your cottage.</p><button class="btn full" data-action="goHomeShop">🏠 Take me home</button>`);return}showModal('build',`<h2>🛋️ Decorate your cottage</h2><p class="subtitle">Select an item, then tap the floor to put it wherever you like. You only pay when you place it. You have 🪙 ${state.coins}.</p><div class="tiles">${SHOP.map(s=>`<button class="tile" data-action="chooseItem" data-id="${s.id}" ${state.coins<s.cost?'disabled':''}><span class="emoji">${s.icon}</span><b>${s.name}</b><small>${s.cost} 🪙</small></button>`).join('')}</div><h3>🎨 Walls and floors</h3><div class="swatches">${[0,1,2,3].map((s)=>`<button class="swatch ${state.homeStyle===s?'active':''}" data-action="homeStyle" data-id="${s}" aria-label="Room color ${s+1}" style="background:${['#e8ceaa','#d8b5d5','#b0cbbb','#eac1a1'][s]}"></button>`).join('')}</div><p class="subtitle">Move furniture by buying more pieces. More detailed editing tools are planned.</p>`)}
-function placeItem(x,z){if(!placement||currentScene!=='home')return;const p=SHOP.find(i=>i.id===placement);if(!p)return;if(state.coins<p.cost){toast('Not enough coins');placement=null;return}x=clamp(Math.round(x*2)/2,-9.5,9.5);z=clamp(Math.round(z*2)/2,-6.9,6.9);state.coins-=p.cost;state.placed.push({kind:placement,x,z});let gr=furniture(placement,x,z);world.add(gr);placedGroups.push(gr);setTagGroup(gr,'furniture',placement);goal('home',1);placement=null;save();updateHud();toast(`✨ ${p.name} placed! Your cottage looks lovely.`);$('hint').textContent='Tap objects to interact • Tap a room to walk';$('hint').style.opacity=.85}
-function style(){showModal('style',`<h2>👗 Your little self</h2><p class="subtitle">Make your own adorable chibi resident! Changes appear right away and are saved automatically.</p><label style="font-size:12px;font-weight:900">Your name</label><input class="form-input" type="text" id="nameInput" maxlength="18" value="${escapeText(state.name)}" aria-label="Character name"><h3>🎀 Outfit color</h3><div class="swatches">${[0xe3a0a8,0x89bca8,0x8daec8,0xe6bc7b,0xb2a0ce,0xf2c7ab].map(c=>`<button class="swatch ${state.outfit===c?'active':''}" data-action="outfit" data-id="${c}" aria-label="Choose outfit" style="background:#${c.toString(16)}"></button>`).join('')}</div><h3>💇 Hair color</h3><div class="swatches">${[0x5d4037,0x2f3034,0xa87a4d,0xe2b87c,0x98686d,0xc7a4ab].map(c=>`<button class="swatch ${state.hair===c?'active':''}" data-action="hair" data-id="${c}" aria-label="Choose hair" style="background:#${c.toString(16)}"></button>`).join('')}</div><h3>🌻 Skin tone</h3><div class="swatches">${[0xffdfc4,0xf4c5aa,0xd9a987,0xb98261,0x986147,0x633c30].map(c=>`<button class="swatch ${state.skin===c?'active':''}" data-action="skin" data-id="${c}" aria-label="Choose skin tone" style="background:#${c.toString(16)}"></button>`).join('')}</div><button class="btn full" data-action="saveStyle">Save my look 🌼</button>`)}
-function escapeText(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function gameMenu(){showModal('menu',`<h2>⚙️ Little Life Menu</h2><p class="subtitle">Your game auto-saves on this device. Export a backup if you want to protect your town between browsers.</p><div class="choices"><button class="btn" data-action="save">💾 Save now</button><button class="btn secondary" data-action="export">📤 Export save</button><button class="btn secondary" data-action="import">📥 Import save</button><button class="btn secondary" data-action="help">❔ How to play</button></div><hr class="mini-separator"><div class="card-row"><div><b>🧭 Simulated time</b><br><small>Pause, play, or fast-forward with the clock controls.</small></div></div><div class="card-row"><div><b>🔒 No account required</b><br><small>Your save is stored locally. Clearing Safari data may erase it.</small></div></div><p class="subtitle" style="margin-bottom:0">Prototype v0.2 · Storybook graphics pass · Free to play</p>`)}
-function help(){showModal('help',`<h2>🌷 A little guide</h2><p class="subtitle">No quests are mandatory. Explore and make your own story!</p><div class="card-row"><b>👆 Walk</b><small>Tap an open spot on the ground</small></div><div class="card-row"><b>💬 Talk</b><small>Tap a neighbor's chibi character</small></div><div class="card-row"><b>🏡 Home</b><small>Tap Home at the bottom to enter your cottage</small></div><div class="card-row"><b>🌱 Garden</b><small>Tap the brown garden plots beside your house</small></div><div class="card-row"><b>🐟 Fish</b><small>Tap the water on the east side of town</small></div><div class="card-row"><b>🥐 Work</b><small>Tap Honeybun Café to earn money</small></div><div class="card-row"><b>🛋️ Decorate</b><small>Open the Decorate menu while inside</small></div><div class="card-row"><b>⏰ Time</b><small>Use the bottom-right needs panel for pause/play/fast-forward</small></div><button class="btn full" data-action="bye">Back to my little life</button>`)}
-function startFishing(){fishValue=0;showModal('fishing',`<h2>🎣 A peaceful fishing spot</h2><p class="subtitle">Stop the moving red marker inside the green zone to reel in your fish!</p><div style="text-align:center;font-size:54px">🐟 🌊</div><div class="fish-game"><div class="fish-track"><div class="fish-zone"></div><div id="fishPointer" class="fish-pointer"></div></div><p class="subtitle" style="text-align:center;margin-top:12px">Aim for the middle!</p></div><button class="btn full" data-action="hook">🎣 REEL IT IN!</button>`);const start=performance.now();const tick=()=>{if(modal!=='fishing')return;fishValue=(Math.sin((performance.now()-start)*.004)+1)*50;const p=$('fishPointer');if(p)p.style.left=fishValue+'%';fishRaf=requestAnimationFrame(tick)};tick()}
-function doneFishing(){const good=fishValue>=40&&fishValue<=58;closeModal();if(good){let fish=['Bluebell Minnow','Sunshine Perch','Silverfin','Rosy Carp','Pebble Guppy'][Math.floor(rand(0,5))];state.fish.push(fish);state.coins+=25;state.needs.fun=clamp(state.needs.fun+12,0,100);goal('fish',1);toast(`🐠 Caught a ${fish}! +25 coins`)}else toast('💦 It slipped away! Tap the pond to try again.');updateHud();save()}
-function spend(cost,key,amount,message){if(state.coins<cost){toast('Not enough coins!');return false}state.coins-=cost;state.needs[key]=clamp(state.needs[key]+amount,0,100);closeModal();toast(message);updateHud();save();return true}
-function advanceToMorning(){state.day++;state.minute=7*60;if(state.day%7===0)state.season=(state.season+1)%4;state.needs.energy=100;state.needs.hunger=clamp(state.needs.hunger-9,0,100);state.needs.fun=clamp(state.needs.fun+9,0,100);state.garden=state.garden.map(g=>g===1?2:g);if(currentScene==='town')paintGarden();updateHud();save();toast('🌅 Good morning! The world feels brand-new.');}
-function exportSave(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hearth-harbor-save.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast('💾 Save file exported!')}
-function importSave(){const inp=document.createElement('input');inp.type='file';inp.accept='.json,application/json';inp.onchange=async()=>{try{const parsed=JSON.parse(await inp.files[0].text());if(!parsed||typeof parsed.coins!=='number'||!parsed.needs||!Array.isArray(parsed.placed))throw Error('wrong format');state={...defaultState(),...parsed,needs:{...defaultState().needs,...parsed.needs}};save();closeModal();if(currentScene==='home')buildHome();else buildTown();updateHud();toast('🌼 Your town has been restored!')}catch{toast('That does not look like a valid Hearth & Harbor save')}};inp.click()}
-function doAction(act,id){switch(act){
- case 'begin':state.seenWelcome=true;save();closeModal();toast('🌷 Welcome to your new beginning!');break;
- case 'bye':endConversation();closeModal();break;
- case 'chat':case 'compliment':case 'gift':if(!conversation)talk(id);if(conversation)conversationAction(act);break;
- case 'findPerson':{const npc=NPCS.find(x=>x.id===id);closeModal();if(currentScene==='home')changeScene('town');pending={x:npc.x-.7,z:npc.z+1,cb:()=>talk(id)};break}
- case 'work':state.coins+=75;state.minute+=120;if(state.minute>=1440){state.minute-=1440;state.day++;}state.needs.energy=clamp(state.needs.energy-25,0,100);state.needs.hunger=clamp(state.needs.hunger-12,0,100);goal('job',1);closeModal();toast('🥐 Great shift! +75 coins. Oliver says thanks!');updateHud();save();break;
- case 'eatCafe':spend(20,'hunger',40,'🧁 Delicious! You feel full and cozy.');break;
- case 'buySnack':spend(20,'hunger',35,'🥐 A warm sweet bun. Yum!');break;
- case 'buyFun':spend(25,'fun',25,'🧸 That was delightful!');break;
- case 'buyBouquet':spend(30,'fun',20,'💐 The flowers brighten your day!');break;
- case 'plant':if(state.coins>=12){state.coins-=12;state.garden[Number(id)]=1;paintGarden();goal('flower',1);closeModal();toast('🌱 A tiny seed, a lovely beginning!');updateHud();save()}break;
- case 'harvest':state.garden[Number(id)]=0;state.coins+=35;paintGarden();closeModal();toast('🌷 Fresh flowers! +35 coins');updateHud();save();break;
- case 'sleep':closeModal();advanceToMorning();break;
- case 'nap':state.needs.energy=clamp(state.needs.energy+30,0,100);closeModal();toast('💤 What a refreshing nap!');updateHud();save();break;
- case 'cook':spend(10,'hunger',55,'🍲 A homemade meal! So comforting.');break;
- case 'snack':spend(5,'hunger',25,'🍎 A quick and tasty snack!');break;
- case 'relax':state.needs.fun=clamp(state.needs.fun+28,0,100);state.needs.energy=clamp(state.needs.energy+6,0,100);closeModal();toast('🛋️ You feel relaxed and happy.');updateHud();save();break;
- case 'goHomeShop':closeModal();changeScene('home');shop();break;
- case 'chooseItem':placement=id;closeModal();$('hint').style.opacity=1;$('hint').textContent='👆 Tap an empty spot on the floor to place your item';toast('🛋️ Tap the floor to place your '+SHOP.find(x=>x.id===id).name);break;
- case 'homeStyle':state.homeStyle=Number(id);save();buildHome();shop();toast('🎨 Your cottage colors have changed!');break;
- case 'hair':case 'outfit':case 'skin':state[act]=Number(id);updateAvatar();save();style();break;
- case 'saveStyle':state.name=($('nameInput')?.value||'Poppy').trim().slice(0,18)||'Poppy';save();updateHud();closeModal();toast(`✨ Looking adorable, ${state.name}!`);break;
- case 'hook':doneFishing();break;
- case 'save':save();toast('💾 Little world saved!');break;
- case 'export':exportSave();break;
- case 'import':importSave();break;
- case 'help':help();break;
- }}
-function button(id,fn){$(id).addEventListener('click',fn)}
-function connectUI(){button('closeModal',closeModal);$('dialogueActions').addEventListener('click',e=>{const b=e.target.closest('[data-talk]');if(b)conversationAction(b.dataset.talk)});button('dialogueClose',endConversation);$('modalShade').addEventListener('click',e=>{if(e.target===$('modalShade'))closeModal()});$('modalBody').addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(b)doAction(b.dataset.action,b.dataset.id)});button('homeBtn',()=>{endConversation();closeModal();changeScene('home')});button('townBtn',()=>{endConversation();closeModal();changeScene('town')});button('peopleBtn',people);button('journalBtn',journal);button('buildBtn',shop);button('styleBtn',style);button('menuBtn',gameMenu);button('helpBtn',help);button('pauseBtn',()=>{speed=0;updateHud()});button('playBtn',()=>{speed=1;updateHud()});button('fastBtn',()=>{speed=4;updateHud()});button('soundBtn',()=>{state.sound=!state.sound;save();$('soundBtn').textContent=state.sound?'♫':'♪';toast(state.sound?'Sound enabled':'Sound disabled')});document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(conversation)endConversation();else if(modal)closeModal()}else if(conversation&&['Enter',' '].includes(e.key)){e.preventDefault();if(conversation.stage!=='choices')conversationAction('next')}});document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});}
-try{init3d();buildTown();connectUI();updateHud();requestAnimationFrame(animate);setTimeout(()=>{$('loading').classList.add('hidden');setTimeout(()=>$('loading').remove(),700);if(!state.seenWelcome)intro();else toast('🌸 Welcome back to Hearth & Harbor!')},550);if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{})}catch(err){console.error(err);$('loading').innerHTML=`<div class="loading-card"><div class="loading-icon">🌦️</div><h1>Couldn't open the town</h1><p>Make sure you're online and open this game from GitHub Pages.</p><small style="display:block;max-width:360px">${escapeText(err.message)}</small></div>`}
+function start(){buildTown();resize();bind();updateUI();cam.x=player.x;cam.y=player.y;requestAnimationFrame(loop);setTimeout(()=>$('loading').classList.add('hidden'),150);if(!state.seenWelcome){state.seenWelcome=true;save();setTimeout(()=>notify('Welcome to your pixel-perfect little life! 🌷'),800)}}
+start();
+})();
