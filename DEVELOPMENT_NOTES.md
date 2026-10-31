@@ -1,9 +1,9 @@
-# v1.7 development notes — Friendship Visits
+# v1.8 — Household Foundations: development notes
 
-This version extends the neighbor encounters and tension systems with two daily friend visits. Pair choices depend on compatibility, existing bonds and tensions, plus a deterministic small variation. A selected plan is persisted immediately so reopening the game does not reroll partners. Completion identifiers prevent duplicate event rewards.
-
-An optional player action, **Arrange visit**, allows one future afternoon visit each day for two compatible residents. Tense pairs will not accept an invitation until their disagreement is resolved. Visiting Hours lists active events, plans and visit history.
-
-16 local Chromium automated checks passed at portrait and landscape phone sizes: saves/migration, pair selection, once-only visit rewards, invitations, tension gating, conversation UI, visiting panel and existing navigation.
-
-Limitations: these are social visits to shared outdoor facilities, not yet actual indoor household visits. Full housing and cohabitation are a future milestone. No offline simulation while the browser is closed.
+- Save state adds residentHomes, householdFunds, householdMoves, and housingDay. Imported data is validated and overfilled homes are repaired.
+- Three residential sprites are clickable in town, each representing two addressable flats.
+- When a new in-game day begins, residents receive wages and their households pay upkeep once. Older saves do not retroactively pay wages for past days.
+- Eligible close neighbors can decide to share a home; the player may encourage an earlier move with the stated prerequisites.
+- Each move updates addresses and finances, records a Town Story, and raises both residents' social needs.
+- 14 initial Chromium checks passed on mobile and landscape viewports, including save compatibility, finances, interactions, movement, and move-in safeguards.
+- Known limitation: no NPC interior scenes or player household switching.
