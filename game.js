@@ -59,7 +59,22 @@ function groupAt(x=0,z=0){const g=new THREE.Group();g.position.set(x,0,z);return
 function setTag(obj,tag,id){obj.userData.action={tag,id};clickable.push(obj);return obj}
 function setTagGroup(gr,tag,id){gr.userData.action={tag,id};gr.traverse(o=>{if(o.isMesh)clickable.push(o)});return gr}
 function shadow(g,r=1){const s=disk(r,MATERIAL.shadow,0,.021,0);s.scale.y=.6;g.add(s)}
-function tinyFlower(root,x,z,palette=0){const g=groupAt(x,z);const petal=mat([0xff61a1,0xffa849,0xb578ed,0xffdd47][palette%4]);g.add(cyl(.024,.025,.36,mat(0x42aa43),0,.18,0,5));for(let k=0;k<5;k++){let a=k*Math.PI*2/5;g.add(sphere(.095,petal,Math.cos(a)*.12,.42,Math.sin(a)*.12,8,6))}g.add(sphere(.075,mat(0xffd437),0,.43,0,8,6));root.add(g);return g}
+// Flowers use soft, rounded petals that read clearly on a phone instead of tiny dots.
+function tinyFlower(root,x,z,palette=0){
+ const g=groupAt(x,z), petals=[0xff70ab,0xffc65c,0xb88af5,0xfff3be,0xff8f76,0xf5b0db];
+ const col=mat(petals[Math.abs(palette)%petals.length]);const stem=mat(0x39a764),leaves=mat(0x5ac55e);
+ const height=.40+(Math.abs(palette)%3)*.08;
+ g.add(cyl(.022,.028,height,stem,0,height/2,0,6));
+ for(const side of [-1,1]){const leaf=sphere(.13,leaves,side*.095,height*.44,.012,9,7);leaf.scale.set(1.05,.35,.55);leaf.rotation.z=side*.35;g.add(leaf)}
+ if((Math.abs(palette)%5)===3){
+  for(let k=0;k<5;k++){const a=k*Math.PI*2/5;const pet=sphere(.16,col,Math.cos(a)*.075,height+.075,Math.sin(a)*.075,10,8);pet.scale.set(.55,1.2,.65);pet.rotation.z=-Math.cos(a)*.33;pet.rotation.x=Math.sin(a)*.33;g.add(pet)}
+  g.add(sphere(.055,mat(0xffe65e),0,height+.115,0));
+ }else{
+  for(let k=0;k<6;k++){const a=k*Math.PI/3;const pet=sphere(.135,col,Math.cos(a)*.13,height+.04,Math.sin(a)*.13,10,8);pet.scale.set(.95,.5,.83);g.add(pet)}
+  g.add(sphere(.085,mat(0xffd741),0,height+.07,0,10,8));
+ }
+ root.add(g);return g;
+}
 function bush(x,z,s=1){let g=groupAt(x,z);shadow(g,.6*s);const shades=[0x39bd54,0x69dd64,0x28ae62,0x92ed6e];for(let i=0;i<5;i++){let a=i*Math.PI*2/5;leafCluster(g,Math.cos(a)*.24*s,(.38+hash(i+x)*.1)*s,Math.sin(a)*.25*s,.34*s,shades[i%4])}leafCluster(g,0,.65*s,0,.36*s,0x5bd467);if(hash(x+z)>.45){for(let j=0;j<4;j++)g.add(sphere(.075,mat(0xffa4c1),Math.sin(j*1.9)*.42*s,.70*s,Math.cos(j*1.9)*.32*s,7,6))}world.add(g);return g}
 function tree(x,z,scale=1,flower=false){
  const g=groupAt(x,z);g.scale.setScalar(scale);shadow(g,1.5);
@@ -71,9 +86,22 @@ function tree(x,z,scale=1,flower=false){
  for(let i=0;i<9;i++){const a=i*2.39996,r=.65+(i%3)*.18;leafCluster(g,Math.cos(a)*r,3.2+Math.sin(i*2.4)*.42,Math.sin(a)*r*.85,.67+(i%3)*.08,shades[i%4])}
  for(let i=0;i<5;i++){let a=i*Math.PI*2/5;leafCluster(g,Math.cos(a)*.46,4.03+Math.sin(i)*.1,Math.sin(a)*.5,.60,shades[(i+2)%4])}
  for(let i=0;i<10;i++){let a=i*2.399,r=.76+(i%3)*.22;const m=mat(flower?0xfff4e3:(hash(x+i)>.55?0xff8a4d:0xffd04f));const fruit=sphere(flower?.093:.115,m,Math.sin(a)*r,3.10+Math.cos(i*1.6)*.58,Math.cos(a)*r,9,7);g.add(fruit)}
+ // Layered leaf highlights, trunk ridges and hanging blossom/fruit clusters.
+ for(let i=0;i<23;i++){
+  let a=hash(i*5.12+x)*Math.PI*2, h=3.10+hash(i*3.17+z)*1.10;
+  let r=1.02+hash(i*6.22+x)*.40;
+  const col=flower?0xffd8ea:(i%3===0?0xc6ef82:0x85df72);
+  const b=sphere(.15+hash(i)*.11,mat(col),Math.cos(a)*r,h,Math.sin(a)*r*.82,9,7);
+  b.scale.set(1.35,.32,.97);g.add(b);
+ }
+ for(let i=0;i<4;i++){
+  const ridge=cyl(.032,.044,1.36,mat(0xc89b6d),Math.sin(i*1.57)*.234,1.08,Math.cos(i*1.57)*.234,6);
+  g.add(ridge);
+ }
+ g.add(sphere(.32,mat(0x7eae51),0,.07,0,12,8));
  world.add(g);return g;
 }
-function signLabel(text,w=2.1){const cv=document.createElement('canvas');cv.width=512;cv.height=140;let ct=cv.getContext('2d');ct.fillStyle='#fff8e5';ct.beginPath();ct.roundRect(8,6,496,128,36);ct.fill();ct.strokeStyle='#e7ceac';ct.lineWidth=9;ct.stroke();ct.fillStyle='#5b8671';ct.font='bold 57px Nunito, sans-serif';ct.textAlign='center';ct.textBaseline='middle';ct.fillText(text,256,74);let sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true}));sp.scale.set(w,.54,1);return sp}
+function signLabel(text,w=2.1){const cv=document.createElement('canvas');cv.width=512;cv.height=140;let ct=cv.getContext('2d');ct.fillStyle='#fff8e5';ct.beginPath();ct.roundRect(8,6,496,128,36);ct.fill();ct.strokeStyle='#e7ceac';ct.lineWidth=9;ct.stroke();ct.fillStyle='#315e50';ct.font='900 57px Nunito, sans-serif';ct.textAlign='center';ct.textBaseline='middle';ct.fillText(text,256,74);let sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true}));sp.scale.set(w,.54,1);return sp}
 function chibi(opts={}){
  const c=new THREE.Group();const skin=mat(opts.skin||0xf6c6aa),hair=mat(opts.hair||0x654332),outfit=mat(opts.outfit||0xe9a9aa),shoes=mat(0x745e56),eyes=mat(0x302e35),blush=mat(0xeb9e9d);shadow(c,.63);
  // Tiny, slightly pear-shaped body; the oversized face carries the expression.
@@ -87,7 +115,7 @@ function chibi(opts={}){
   const lock=sphere(.21,hair,side*.69,2.14,-.045,12,9);lock.scale.set(.67,1.70,.75);c.add(lock);
   c.add(sphere(.14,skin,side*.79,1.99,0,12,9));
   // Flat glossy button eyes rather than round protruding balls.
-  let e=sphere(.115,eyes,side*.314,2.07,.739,14,11);e.scale.set(.78,1.12,.28);c.add(e);
+  let e=sphere(.139,eyes,side*.314,2.07,.739,14,11);e.scale.set(.78,1.12,.28);c.add(e);
   c.add(sphere(.037,mat(0xffffff),side*.338-.02,2.122,.776,9,7));
   const cheek=sphere(.15,blush,side*.53,1.84,.66,11,8);cheek.scale.set(1.1,.36,.20);c.add(cheek);
   let brow=sphere(.09,hair,side*.315,2.285,.731,9,5);brow.scale.set(1.25,.20,.18);c.add(brow);
@@ -105,6 +133,47 @@ function chibi(opts={}){
   const sock=cyl(.147,.15,.10,mat(0xfff8e7),0,-.45,0,10);leg.add(sock);
   const shoe=sphere(.235,shoes,0,-.515,.15,16,11);shoe.scale.set(.96,.58,1.38);leg.add(shoe);
   leg.add(sphere(.09,mat(0xeedfc8),0,-.475,.414,9,6));c.add(leg);legs.push(leg);
+ }
+ // Big animated-film-style irises and a shiny expression, shaped for the camera-facing front.
+ const iris=mat(0x584744),pupil=mat(0x1d292c),catchlight=mat(0xffffff);
+ for(const side of [-1,1]){
+  const ir=sphere(.105,iris,side*.313,2.065,.788,16,12);ir.scale.set(.78,1.12,.25);c.add(ir);
+  const pup=sphere(.070,pupil,side*.317,2.058,.809,13,10);pup.scale.set(.77,1.08,.24);c.add(pup);
+  c.add(sphere(.026,catchlight,side*.312-.025,2.112,.832,10,8));
+  const lash=sphere(.078,hair,side*.381,2.184,.755,9,7);lash.scale.set(.56,.18,.22);lash.rotation.z=side*.35;c.add(lash);
+ }
+ // Tiny cardigan hem, pockets, embroidered flower, and warm-colored scarf ribbon.
+ const hem=mat(new THREE.Color(opts.outfit||0xe9a9aa).offsetHSL(0,-.055,-.075).getHex());
+ const skirt=sphere(.49,hem,0,.79,.015,18,12);skirt.scale.set(1.09,.35,1.04);c.add(skirt);
+ for(const side of [-1,1]){
+  c.add(sphere(.115,mat(0xfff1db),side*.315,.97,.442,10,8));
+  const rosy=sphere(.09,mat(0xffa8ad),side*.53,1.86,.678,12,8);rosy.scale.set(.86,.30,.22);c.add(rosy);
+ }
+ const embroidered=mat(0xfff7da);
+ for(let j=0;j<5;j++){
+  const a=j*Math.PI*2/5;
+  c.add(sphere(.045,embroidered,.255+Math.cos(a)*.064,1.155+Math.sin(a)*.064,.456,9,7));
+ }
+ c.add(sphere(.035,mat(0xffd356),.255,1.155,.49));
+ // The top of the head is deliberately asymmetrical, giving each villager a distinct silhouette.
+ const seed=Math.round((opts.hair||0x654332)%17);
+ if(seed%4===0){
+  for(let j=0;j<3;j++){const curl=sphere(.195,hair,-.35+j*.34,2.68+Math.sin(j*1.4)*.05,.04,14,10);curl.scale.set(1.1,.64,1.18);c.add(curl)}
+ }else if(seed%4===1){
+  const sidePart=sphere(.31,hair,-.44,2.61,.29,16,10);sidePart.scale.set(1.3,.48,.9);sidePart.rotation.z=-.24;c.add(sidePart);
+ }
+ // A small accessory distinguishes each neighbor without changing the shared outfit-color system.
+ const marker=(opts.name||opts.id||'').toLowerCase();
+ if(marker==='mabel'||marker==='bea'||marker==='rosie'){
+  const bow=mat(marker==='bea'?0xffdb59:0xff7db4);
+  const pin=sphere(.10,mat(0xfff2cb),-.62,2.60,.44,10,8);c.add(pin);
+  for(const t of [-1,1]){const l=sphere(.18,bow,-.62+t*.17,2.61,.43,12,8);l.scale.set(1,.65,.33);l.rotation.z=t*.24;c.add(l)}
+ }else if(marker==='oliver'){
+  const capWhite=mat(0xfff8ed);c.add(cyl(.44,.49,.24,capWhite,0,2.79,-.055,14));
+  for(let j=-1;j<=1;j++)c.add(sphere(.24,capWhite,j*.22,2.91,-.06,11,9));
+ }else if(marker==='finn'){
+  const hat=mat(0xf5d46f);c.add(cyl(.60,.60,.08,hat,0,2.59,0,20));
+  c.add(cyl(.43,.51,.32,hat,0,2.77,0,18));
  }
  // Embroidered buttons and a little pouch create detail at gameplay distance.
  for(let j=0;j<2;j++)c.add(sphere(.043,collar,0,1.13-j*.18,.49,9,7));
@@ -152,6 +221,51 @@ function makeHouse(x,z,bodyColor,roofColor,label,tag,id){
  g.add(cube(.88,.63,.12,mat(0xffedcc),0,4.67,3.02),cube(.55,.45,.14,windowMat,0,4.68,3.14));
  const sign=signLabel(label,Math.min(3.06,1.52+label.length*.095));sign.position.set(0,3.7,4.50);g.add(sign);
  for(const sx of [-1,1]){g.add(cyl(.36,.27,.47,mat(0xd49a74),sx*2.82,.29,3.04,10));leafCluster(g,sx*2.82,.77,3.04,.42,0x4fc864);for(let f=0;f<4;f++)g.add(sphere(.065,mat(0xff74aa),sx*2.82+Math.sin(f*1.57)*.27,.89,3.04+Math.cos(f*1.57)*.26,8,6))}
+ // Front façade art: raised stone foundation, colorful gable beams, and carved timber corners.
+ const mortar=mat(0xf1e2c5),edge=mat(0xfff8e6);
+ for(const sx of [-3.16,3.16]){
+  g.add(cube(.22,3.35,.25,edge,sx,2.12,2.86));
+  for(let j=0;j<5;j++){const nail=sphere(.035,mat(0xe9c28c),sx,1.0+j*.54,3.005,8,6);g.add(nail)}
+ }
+ for(let i=0;i<7;i++){
+  let xx=-2.83+i*.94;
+  const block=cube(.84,.28,.16,mat(i%3===0?0xffe8bf:0xfff4e1),xx,.38,2.95);g.add(block);
+ }
+ // A softer gable: pitched trim and scalloped eaves (not another box roof).
+ for(const sx of [-1,1]){
+  const beam=cube(3.70,.21,.23,edge,sx*1.60,4.99,3.22);beam.rotation.z=-sx*.555;g.add(beam);
+  for(let k=0;k<11;k++){
+   const x=sx*(.26+k*.27), y=6.01-k*.177;
+   const scallop=sphere(.17,mat(k%2?roofAccent:roofColor),x,y,3.24,9,7);scallop.scale.set(1.03,.45,.54);g.add(scallop);
+  }
+ }
+ // Shingle studs along ridge, chunky rounded ridge caps, and a porch lantern.
+ for(let k=0;k<12;k++){
+  const zz=-3.12+k*.54;
+  const ridge=sphere(.16,mat(k%3===0?roofAccent:roofColor),0,6.09,zz,9,8);ridge.scale.set(.85,.57,1.45);g.add(ridge);
+ }
+ for(const sx of [-1,1]){
+  const brass=mat(0xc99048),glow=mat(0xffeaa8);
+  g.add(cyl(.055,.065,.44,brass,sx*1.21,2.63,4.32,10));
+  g.add(sphere(.20,glow,sx*1.21,2.43,4.33,14,9));
+  g.add(cone(.29,.19,brass,sx*1.21,2.75,4.33,14));
+ }
+ // Real window sills, bright striped awnings, flower-box leaves.
+ for(const sx of [-2.27,2.27]){
+  g.add(cube(1.64,.12,.48,edge,sx,1.73,3.14));
+  for(let k=0;k<5;k++){
+   const awning=cube(.29,.075,.69,mat(k%2===0?roofAccent:0xfffaf0),sx+(k-2)*.28,3.28,3.12);awning.rotation.x=-.18;g.add(awning);
+  }
+  for(let i=0;i<6;i++){
+   const p=sphere(.16,mat(i%2?0x49bc6b:0x89dd81),sx-.57+i*.23,1.88,3.24,9,7);p.scale.set(1,.56,.78);g.add(p)
+  }
+ }
+ // A mailbox, entrance doormat, and flower basket make each building feel used.
+ const signpost=cyl(.075,.105,1.16,mat(0xa17957),2.40,.60,4.97,10);g.add(signpost);
+ g.add(cube(.64,.41,.52,mat(0xffeee2),2.40,1.23,4.97));
+ g.add(cube(.12,.23,.04,mat(0xe56d7c),2.70,1.45,5.06));
+ const doormat=cube(1.56,.04,.71,mat(0xcc9273),0,.205,5.27);g.add(doormat);
+ for(let j=0;j<4;j++)g.add(cube(1.34,.014,.04,mat(0xffd5a7),0,.232,5.06+j*.15));
  world.add(g);if(tag)setTagGroup(g,tag,id);return g;
 }
 function path(x,z,w,d){
@@ -195,6 +309,131 @@ function stall(x,z){const g=groupAt(x,z),wood=mat(0xba8a66),rose=mat(0xff6792),l
  const label=signLabel('Rosie’s Market',2.35);label.position.set(0,2.39,-1.08);g.add(label);
  world.add(g);setTagGroup(g,'market','market')}
 function fence(x,z,w){for(let i=-w/2;i<=w/2;i+=.85){let post=cube(.15,.6,.15,mat(0xf1e3c5),x+i,.32,z);world.add(post)}world.add(cube(w,.12,.15,mat(0xf1e3c5),x,.48,z),cube(w,.10,.15,mat(0xf1e3c5),x,.18,z))}
+// A small library of custom-designed village props, separate from interaction hitboxes.
+function flowerCluster(x,z,seed=0,scale=1){
+ const g=groupAt(x,z);g.scale.setScalar(scale);
+ const earth=disk(.81,mat(0x4cbd61),0,.051,0,22);earth.scale.y=.57;g.add(earth);
+ // Four instanced meshes instead of hundreds of individual petals per flower bed.
+ const count=10,spokes=6, dummy=new THREE.Object3D(),petalGeo=new THREE.SphereGeometry(1,9,7);
+ const stems=new THREE.InstancedMesh(new THREE.CylinderGeometry(.022,.029,.40,6),mat(0x39a764),count);
+ const blossoms=new THREE.InstancedMesh(petalGeo,mat(0xffffff),count*spokes);
+ const cores=new THREE.InstancedMesh(new THREE.SphereGeometry(.085,9,7),mat(0xffd741),count);
+ const leaves=new THREE.InstancedMesh(petalGeo,mat(0x63c86b),count*2);
+ const palette=[0xff75ae,0xffc457,0xba84ed,0xfff0bd,0xff8c70,0xe99bcf];
+ for(let j=0;j<count;j++){
+  const angle=j*2.39996,r=.16+Math.sqrt(hash(seed*4+j*1.31))*.63;
+  const fx=Math.cos(angle)*r,fz=Math.sin(angle)*r, h=.4+(j%3)*.06;
+  dummy.position.set(fx,h/2,fz);dummy.scale.set(1,h/.40,1);dummy.rotation.set(0,0,0);dummy.updateMatrix();stems.setMatrixAt(j,dummy.matrix);
+  dummy.position.set(fx,h+.07,fz);dummy.scale.set(1,1,1);dummy.updateMatrix();cores.setMatrixAt(j,dummy.matrix);
+  for(let k=0;k<spokes;k++){
+   let a=k*Math.PI*2/spokes;
+   dummy.position.set(fx+Math.cos(a)*.125,h+.06,fz+Math.sin(a)*.125);
+   dummy.scale.set(.126,.063,.115);dummy.rotation.set(0,a,0);dummy.updateMatrix();
+   blossoms.setMatrixAt(j*spokes+k,dummy.matrix);blossoms.setColorAt(j*spokes+k,new THREE.Color(palette[(j+seed)%palette.length]));
+  }
+  for(let k=0;k<2;k++){
+   dummy.position.set(fx+(k?-.105:.105),h*.44,fz);
+   dummy.scale.set(.14,.044,.085);dummy.rotation.set(0,0,k?.3:-.3);dummy.updateMatrix();leaves.setMatrixAt(j*2+k,dummy.matrix);
+  }
+ }
+ for(const m of [stems,blossoms,cores,leaves]){m.instanceMatrix.needsUpdate=true;m.frustumCulled=false;m.castShadow=false;g.add(m)}
+ world.add(g);
+}
+function gardenArch(x,z){
+ const g=groupAt(x,z),wood=mat(0xf9ecd1),leaf=mat(0x59b968);
+ for(const sx of [-1,1]){
+  g.add(cyl(.11,.13,3.0,wood,sx*1.13,1.55,0,10));
+  for(let j=0;j<4;j++){
+   const l=sphere(.27,leaf,sx*(1.0+Math.sin(j)*.2),1.20+j*.48,.02,9,8);l.scale.set(1,.75,.58);g.add(l);
+   g.add(sphere(.08,mat(j%2?0xff80ab:0xffd76e),sx*.98,1.30+j*.49,.19,9,7));
+  }
+ }
+ // arch is a curved set of repeated short garden-trellis pieces.
+ for(let j=0;j<=10;j++){
+  const a=Math.PI*j/10;
+  const bar=cyl(.09,.095,.38,wood,Math.cos(a)*1.13,3.02+Math.sin(a)*.62,0,9);bar.rotation.z=a+Math.PI/2;g.add(bar);
+ }
+ for(let j=-3;j<=3;j++){
+  const leafp=sphere(.19,mat(j%2?0x89d36a:0x55c56b),j*.30,3.64-Math.abs(j)*.09,.04,9,7);leafp.scale.set(.95,.61,.65);g.add(leafp);
+ }
+ world.add(g);
+}
+function streetLamp(x,z){
+ const g=groupAt(x,z),brown=mat(0x548a7c),gold=mat(0xe5b55c);
+ shadow(g,.45);g.add(cyl(.08,.12,2.75,brown,0,1.37,0,10));
+ g.add(cyl(.28,.23,.12,brown,0,.08,0,12));
+ g.add(sphere(.20,gold,0,2.68,0,12,8));
+ g.add(cyl(.29,.34,.47,mat(0xfff1bb),0,3.03,0,8));
+ g.add(cone(.46,.40,brown,0,3.48,0,8));
+ g.add(sphere(.105,mat(0xffde8c),0,3.72,0,12,8));
+ world.add(g);
+}
+function outdoorFurniture(x,z,type='picnic'){
+ const g=groupAt(x,z);shadow(g,1.55);
+ const wood=mat(0xe4a06f),trim=mat(0xffedcf),red=mat(0xff809c);
+ if(type==='picnic'){
+  g.add(cube(2.4,.23,1.3,wood,0,1.13,0));
+  g.add(cube(2.18,.035,1.02,trim,0,1.27,0));
+  for(const sx of [-.85,.85])for(const sz of [-.43,.43])g.add(cyl(.095,.105,1.05,wood,sx,.56,sz,10));
+  for(const sz of [-1,1]){
+   g.add(cube(2.35,.19,.43,red,0,.71,sz*1.03));
+   for(const sx of [-.82,.82])g.add(cyl(.075,.075,.67,wood,sx,.37,sz*1.03,9));
+  }
+  g.add(cyl(.31,.31,.09,mat(0xffffff),-.35,1.36,-.2,16));
+  g.add(cyl(.19,.19,.24,mat(0xf7d56b),.38,1.39,.17,12));
+ }else{
+  g.add(cyl(.22,.27,.57,mat(0xc88964),0,.29,0,12));
+  g.add(cyl(.60,.59,.10,wood,0,.65,0,18));
+  g.add(sphere(.23,trim,0,.79,0,12,8));
+  for(let j=0;j<5;j++){const a=j*2.4;g.add(sphere(.21,mat(j%2?0xff8caf:0xffeb88),Math.cos(a)*.23,.99,Math.sin(a)*.24,11,8))}
+ }
+ world.add(g);
+}
+function sunflower(x,z){
+ const g=groupAt(x,z),stem=mat(0x4aab56),yellow=mat(0xffcf3e);
+ g.add(cyl(.046,.06,1.10,stem,0,.55,0,7));
+ for(const sx of [-1,1]){const leaf=sphere(.25,mat(0x55bc56),sx*.20,.59,.05,9,7);leaf.scale.set(1,.32,.57);leaf.rotation.z=sx*.28;g.add(leaf)}
+ const flower=g;
+ for(let k=0;k<10;k++){
+  const a=k*Math.PI/5;const p=sphere(.18,yellow,Math.cos(a)*.22,1.12+Math.sin(a)*.23,.11,10,7);p.scale.set(.67,1.20,.37);p.rotation.z=a-Math.PI/2;flower.add(p)
+ }
+ flower.add(sphere(.18,mat(0x8d543c),0,1.13,.24,14,10));world.add(g);
+}
+function sceneDressing(){
+ // Concentrated, authored composition rather than evenly scattered noise.
+ for(const [x,z,seed] of [[-16.5,-5.2,1],[-11.2,-5.25,3],[-17.7,-7.1,5],[-9.9,-7.1,2],
+  [11.1,-5.5,0],[17.25,-5.4,3],[10.0,-7.6,1],[18.1,-7.6,4],
+  [-17.5,17.8,2],[-10.2,17.6,4],[10.5,17.7,1],[17.5,17.8,5],
+  [-5.5,5.8,0],[-4.9,-2.9,3],[3.0,-4.7,4],[3.1,7.4,1],
+  [-6.2,10.7,2],[7.4,8.5,4],[1.5,15.1,5]])flowerCluster(x,z,seed,.86);
+ for(const [x,z] of [[-6.3,-13.8],[-6.7,-3.7],[18.9,2.8],[-18.1,4.9]])streetLamp(x,z);
+ gardenArch(-5.7,-13.25);
+ outdoorFurniture(-1.3,10.9,'picnic');outdoorFurniture(20.2,6.7,'tea');
+ for(const [x,z] of [[-3.65,-10.15],[-8.0,-10.1],[-16.8,5.5],[17.0,6.6]])sunflower(x,z);
+ // A bright entry lane of stepping stones, placed only in open space.
+ for(let i=0;i<8;i++){
+  const x=-8.3+i*.68,z=-5.95+Math.sin(i*.55)*.22;
+  const s=sphere(.30,mat(i%2?0xf3e3c8:0xfff5df),x,.081,z,12,8);s.scale.set(1,.19,.70);world.add(s);
+ }
+ // Mailbox garden: flowers and little terracotta pots by walkways.
+ for(const [x,z] of [[-19.2,-10.5],[-8.8,-11.3],[8.8,-11.2],[19.2,-10.9],[-19.1,12.2],[-8.9,11.6],[8.8,11.5],[19,12.1]]){
+  const g=groupAt(x,z);
+  g.add(cyl(.34,.27,.45,mat(0xe99469),0,.23,0,12));
+  g.add(cyl(.39,.39,.095,mat(0xf6aa7a),0,.49,0,12));
+  for(let k=0;k<3;k++){
+   const p=sphere(.27,mat(k%2?0x52c875:0x81d571),Math.sin(k*2)*.17,.68,Math.cos(k*2)*.14,12,9);g.add(p);
+   tinyFlower(g,Math.sin(k*2)*.16,Math.cos(k*2)*.17,k+Math.round(x));
+  }
+  world.add(g);
+ }
+ // A few soft rolling boundary hedges give the world depth without boxing in the player.
+ for(let i=0;i<11;i++){
+  const x=-27.5+i*5.4;
+  const z=25.4+Math.sin(i*.9)*.4;
+  if(Math.abs(x-8)<5)continue;
+  bush(x,z,1.25+hash(i)*.30);
+ }
+}
 function decorateTown(){
  if(!grassTexture)grassTexture=texturePaint('grass');
  const groundSurface=mesh(new THREE.PlaneGeometry(70,55),new THREE.MeshStandardMaterial({map:grassTexture,color:0xffffff,roughness:1}),0,-.021,0,true);groundSurface.rotation.x=-Math.PI/2;world.add(groundSurface);
@@ -257,7 +496,7 @@ function decorateHome(){
  for(const z of [-5,4]){world.add(furniture('plant',9,z))}
 }
 
-function init3d(){scene=new THREE.Scene();scene.background=new THREE.Color(0x79d4f9);scene.fog=new THREE.Fog(0xa6e8fc,78,160);renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.65));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.00;$('viewport').appendChild(renderer.domElement);camera=new THREE.OrthographicCamera(-14,14,9,-9,.1,300);camera.position.set(22,27,36);camera.lookAt(0,0,0);scene.add(new THREE.HemisphereLight(0xffffff,0x84bd79,1.3));light=new THREE.DirectionalLight(0xfff2d3,1.95);light.position.set(-12,26,15);light.castShadow=true;light.shadow.mapSize.set(1024,1024);light.shadow.camera.left=-32;light.shadow.camera.right=32;light.shadow.camera.top=32;light.shadow.camera.bottom=-32;light.shadow.camera.near=1;light.shadow.camera.far=75;light.shadow.bias=-.0002;scene.add(light);scene.add(world);window.addEventListener('resize',resize);resize();renderer.domElement.addEventListener('pointerup',tapGame);renderer.domElement.addEventListener('pointerdown',e=>{startX=e.clientX;startY=e.clientY});window.addEventListener('contextmenu',e=>e.preventDefault());}
+function init3d(){scene=new THREE.Scene();scene.background=new THREE.Color(0x79d4f9);scene.fog=new THREE.Fog(0xa6e8fc,78,160);renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.65));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;$('viewport').appendChild(renderer.domElement);camera=new THREE.OrthographicCamera(-14,14,9,-9,.1,300);camera.position.set(22,27,36);camera.lookAt(0,0,0);scene.add(new THREE.HemisphereLight(0xfff9ec,0x75ae87,1.52));light=new THREE.DirectionalLight(0xffefd3,1.66);light.position.set(-12,26,15);light.castShadow=true;light.shadow.mapSize.set(1024,1024);light.shadow.camera.left=-32;light.shadow.camera.right=32;light.shadow.camera.top=32;light.shadow.camera.bottom=-32;light.shadow.camera.near=1;light.shadow.camera.far=75;light.shadow.bias=-.0002;scene.add(light);scene.add(world);window.addEventListener('resize',resize);resize();renderer.domElement.addEventListener('pointerup',tapGame);renderer.domElement.addEventListener('pointerdown',e=>{startX=e.clientX;startY=e.clientY});window.addEventListener('contextmenu',e=>e.preventDefault());}
 let startX=0,startY=0;
 function resize(){if(!camera)return;const w=innerWidth,h=innerHeight,aspect=w/h;const halfHeight=aspect<1?14.3:10.7;camera.left=-halfHeight*aspect;camera.right=halfHeight*aspect;camera.top=halfHeight;camera.bottom=-halfHeight;camera.updateProjectionMatrix();renderer.setSize(w,h)}
 function buildTown(){world.clear();clickable=[];npcs=[];gardenMeshes=[];decorMotion.length=0;pathPebbles=[];const plane=cube(70,.55,55,MATERIAL.grass,0,-.33,0);plane.receiveShadow=true;plane.castShadow=false;world.add(plane);world.add(cube(76,.5,10,mat(0xffdf90),0,-.31,31));world.add(cube(76,.14,9,mat(0x3cc9f3),0,-.13,36));path(0,0,3.4,42);path(0,1.9,38,3.3);path(-12,-5,3,9);path(12,-5,3,9);path(-12,9,3,11);path(12,9,3,11);path(-6,-10,7,2.2);
@@ -276,6 +515,7 @@ function buildTown(){world.clear();clickable=[];npcs=[];gardenMeshes=[];decorMot
  for(let j=0;j<8;j++){const a=j*Math.PI/4;const spray=sphere(.10,new THREE.MeshStandardMaterial({color:0x8defff,transparent:true,opacity:.84,roughness:.2}),Math.cos(a)*.79,1.04,Math.sin(a)*.79,9,8);center.add(spray);decorMotion.push({o:spray,base:spray.position.y,phase:j*.45,kind:'ripple'})}
  for(let j=0;j<6;j++){const a=j*Math.PI/3;const petal=sphere(.31,mat(0xff79ab),Math.cos(a)*.22,1.82,Math.sin(a)*.22,12,9);petal.scale.set(1,.42,.70);center.add(petal)}
  center.add(sphere(.15,mat(0xffd13b),0,1.94,0,12,9));world.add(center);
+ sceneDressing();
  NPCS.forEach((n,i)=>{const g=chibi(n);g.position.set(n.x,0,n.z);world.add(g);npcs.push({info:n,object:g,origin:new THREE.Vector3(n.x,0,n.z),wander:rand(0,7),phase:i*1.9});setTagGroup(g,'npc',n.id)});
  player=chibi(state);player.position.set(-9,0,-6.9);world.add(player);playerBody=player.userData;ground=plane;
 }
