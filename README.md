@@ -1,14 +1,20 @@
-# Hearth & Harbor v1.7 — Friendship Visits
+# Hearth & Harbor v1.8 — Household Foundations
 
-A save-compatible update to the original free 2.5D iPhone life simulator.
+Free iPhone-first 2.5D life-simulation prototype on GitHub Pages.
 
-- Two daily friendship visiting windows: 1–3:33 PM and 7–8:42 PM (game time).
-- Visits influenced by existing friendship, personality chemistry, social needs and tensions.
-- Villagers walk together to four outdoor locations; visits strengthen relationships and improve their moods.
-- New Visiting Hours panel in People, Journal, and Menu displays relationships and tomorrow's plans.
-- **Arrange visit** from a conversation (friendship ≥20): help a resident make tomorrow's plans.
-- Repeated visits can unlock a "Best friends" milestone.
-- Saved visit schedules, social history and cooldowns migrate from v1.6.
-- No backend, payments or advertisements.
+## New in this version
+- Three visible residential cottages containing six addressable flats.
+- Persistent independent household addresses and savings for all six residents.
+- Daily wages and upkeep, including reduced per-person expenses for shared households.
+- Residents return home in the evening and when exhausted.
+- Two close friends can choose to share a home after building closeness (34), visiting three times, and resolving serious tensions.
+- The player can suggest an earlier move with sufficient friendship (25), mutual closeness (16), one visit, and 8 energy.
+- A move transfers household savings, creates a persistent Town Story, and updates routines.
+- View residents and their finances in Little Households from People, Journal, Menu, or by tapping a residential cottage.
+- Existing local save key and old saves remain supported.
 
-Open index.html through GitHub Pages. Game time advances only while running.
+## Not yet implemented
+Resident home interiors, playable household switching, weddings, and children are not in this prototype. No offline progression: time passes while the game is open.
+
+## Deployment
+Serve repository root from GitHub Pages (main branch). Open on iPhone in Safari.
