@@ -1,23 +1,16 @@
-## v0.9 — Hairline and face silhouette correction
+# Hearth & Harbor v1.0 — Quality Edition
 
-- Fixed the heavy dark hair mass around villagers' cheeks and jaw that looked like beards.
-- Front-facing characters now have a crown/temple hairline and visible skin-colored chins.
-- Reduced bob side-lock length and moved the ponytail away from the jaw.
-- Kept game state, local saves, actions and interactions unchanged.
+Free iPhone-first 2.5D life-sim vertical slice. GitHub Pages static hosting. Existing `hearth-harbor-save-v1` local saves remain compatible.
 
-# Hearth & Harbor — Storybook Village v0.8
-
-An iPhone-first, original 2.5D pixel-art life simulator. This edition overhauls character sprites, house graphics, foliage and neighborhood decoration while preserving gameplay and local saves.
-
-## What's new
-- Redrawn 96×132 human-chibi sprites with expressive eyes, hairstyling, outfit types and personality details
-- Redesigned layered tree canopies, fruit and blossoms
-- Rebuilt storybook cottages with arched doors, shutters, layered roofs and flower boxes
-- Custom flower gardens, picket fences, picnic furniture and a flower arch
-- Refreshed mobile HUD palette
+## QA and repairs
+- In-game clock and four needs bars now update continuously and needs decay at an even rate. Time is suspended while talking, shopping, decorating or placing furniture.
+- Rebuilt furniture shopping into a genuine touch-to-place flow; no coins spent until placement is completed. Moved furniture can be repositioned; placed items can be sold for half price.
+- Cottage framing and scale improved to show more of the room without cropping furniture off-screen.
+- Fixed cosmetic character styles so the selected haircut is actually represented on the player and saved.
+- Flower seeds purchased at the market now affect garden harvest rewards.
+- Save import is validated and sanitized to protect from malformed or incompatible files.
+- Restyled small-screen controls and added a cancel affordance for placement mode.
+- Retained the storybook/pixel aesthetic and gameplay features (neighbors, conversations, fishing, gardening, quests, time, market, home).
 
 ## Publishing
-Static files: deploy the repository root with GitHub Pages (main branch, root directory). No Vercel or build process.
-
-## Playing
-Open the GitHub Pages link in iPhone Safari. Tap to move, tap neighbors to chat, enter the cottage, fish, garden, work at the cafe, decorate, and manage needs. Saved progress is stored in localStorage under `hearth-harbor-save-v1`; export backups from Menu. No purchases, adverts, subscriptions or server required.
+Upload repository contents to GitHub Pages `main` branch root. This is a prototype and does not claim the content breadth or art production quality of commercial life sims.
