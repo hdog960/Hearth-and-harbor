@@ -1,29 +1,17 @@
-# Hearth & Harbor v1.9 — Open Doors
+# Hearth & Harbor v2.0 — The Hearth Kitchen (C1)
 
-Free iPhone-first 2.5D life-simulation prototype on GitHub Pages.
+A free original 2.5D life simulator, playable in iPhone Safari and hosted through GitHub Pages. No ads, accounts, or paid features.
 
-## New in this version
-- Three visible residential cottages containing six addressable flats.
-- Persistent independent household addresses and savings for all six residents.
-- Daily wages and upkeep, including reduced per-person expenses for shared households.
-- Residents return home in the evening and when exhausted.
-- Two close friends can choose to share a home after building closeness (34), visiting three times, and resolving serious tensions.
-- The player can suggest an earlier move with sufficient friendship (25), mutual closeness (16), one visit, and 8 energy.
-- A move transfers household savings, creates a persistent Town Story, and updates routines.
-- View residents and their finances in Little Households from People, Journal, Menu, or by tapping a residential cottage.
-- Existing local save key and old saves remain supported.
+## New: first playable cooking loop
+- Tap the kitchen in your own cottage, or open **Menu → Hearth Kitchen**.
+- Choose one of four recipes: Cinnamon Toast, Orchard Fruit Salad, Garden Vegetable Soup, or Berry Pancakes.
+- Ingredients come from your starter pantry or Rosie's Market → Pantry ingredients.
+- Complete swipe-to-slice, circle-to-stir, and time-to-flip touch steps. Each has a large tap alternative.
+- Prepared meals earn cooking experience and can be eaten immediately or stored for later.
+- Dishes, pantry ingredients, cooking skill and relaxed cooking preference save to your original local save.
+- A recipe can be cancelled from the cooking board; its ingredients were consumed when you pressed Cook. Cancelling before Cook uses nothing.
 
-## Not yet implemented
-Direct control of other households, weddings, children, and an integrated cooking minigame system are not yet in this prototype. No offline progression: time passes while the game is open.
+## Compatibility and limitations
+Original flower gardening, housing, friendships, fishing and village stories remain. Old saves receive a starter pantry. This is milestone C1, **not** the full proposed cooking system: collaborative meals, more recipes, vegetable gardening and food preferences are next.
 
-## Deployment
-Serve repository root from GitHub Pages (main branch). Open on iPhone in Safari.
-
-## v1.9 Open Doors
-Six residential units are now enterable via People → Little Households → Visit. Interiors show the current occupants (including roommates after moves), use distinct palettes, and offer furniture interactions and conversations. Room-comfort upgrades cost 45, 75, then 110 player coins; upgrade levels and once-daily visiting boosts persist to existing local saves. Leave by tapping the door or Town. Resident interiors are a first-pass feature, not full household control.
-
-## Upcoming cooking milestone — The Hearth Kitchen
-
-Cooking is planned as a substantial part of household life, not a detached minigame. The first milestone will add an illustrated recipe book, pantry ingredients, hands-on touch preparation, serving, and meal effects. Later milestones will connect cooking to gardening, fishing, resident preferences, friendship dinners, Oliver’s bakery, and seasonal festivals. The current playable build does **not** contain these new cooking systems yet.
-
-See [COOKING_SYSTEM_DESIGN.md](COOKING_SYSTEM_DESIGN.md) for the approved feature design, original Cooking Mama-inspired technique ideas, implementation stages, economy safeguards, and mobile QA requirements.
+See [COOKING_SYSTEM_DESIGN.md](COOKING_SYSTEM_DESIGN.md) for the full cooking feature roadmap. To publish, deploy the root directory through GitHub Pages on `main`.
