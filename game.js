@@ -46,7 +46,7 @@ function tone(hex,amount){const n=parseInt(String(hex).replace('#',''),16)||0;re
 function smoothLine(g,c,a,w=2){g.strokeStyle=c;g.lineWidth=w;g.lineJoin='round';g.lineCap='round';g.beginPath();g.moveTo(...a[0]);for(let i=1;i<a.length;i++)g.lineTo(...a[i]);g.stroke()}
 
 function charArt(o,dir='front',frame=0,emote='neutral'){
- const key=['C8',o.id,o.name,o.skin,o.hair,o.outfit,o.kind,o.style,dir,frame,emote].join(':');
+ const key=['C9',o.id,o.name,o.skin,o.hair,o.outfit,o.kind,o.style,dir,frame,emote].join(':');
  return makeArt(key,96,132,g=>{
  const skin=o.skin||'#edbb9c',hair=o.hair||'#594038',coat=o.outfit||'#ec96ad',deep=tone(hair,-.28),shine=tone(hair,.27),darkCoat=tone(coat,-.22),lightCoat=tone(coat,.23),step=frame%2?3:0;
  for(const sign of [-1,1]){let x=48+sign*12,y=sign*step;
@@ -70,10 +70,15 @@ function charArt(o,dir='front',frame=0,emote='neutral'){
   rr(g,skin,x-5,95+move,10,9,4);fill(g,lightCoat,x-6,92+move,12,3);
  }
  rr(g,skin,43,66,10,15,4);ov(g,'#fff4e6',48,79,11,5);ov(g,'#ffe1a1',48,91,3,3);
- ov(g,deep,48,47,38,40);ov(g,hair,48,46,35,38);ov(g,shine,41,29,19,7);
- if(dir==='back'){ov(g,hair,48,50,32,34);smoothLine(g,shine,[[30,29],[45,23],[60,29]],3)}
- else{
-  ov(g,'#a77970',48,49,32,35);ov(g,skin,48,47,30,33);
+ // 0.9 hairline reset: hair is limited to the crown and temples in front view.
+ // The lower face is fully visible skin; the back view retains full hair coverage.
+ if(dir==='back'){
+  ov(g,deep,48,47,38,40);ov(g,hair,48,46,35,38);
+  ov(g,shine,41,29,19,7);ov(g,hair,48,50,32,34);
+  smoothLine(g,shine,[[30,29],[45,23],[60,29]],3);
+ } else {
+  ov(g,deep,48,33,36,24);ov(g,hair,48,31,34,21);
+  ov(g,tone(skin,-.17),48,49,31,34);ov(g,skin,48,47,30,33);
   ov(g,tone(skin,.17),40,39,23,22);
   for(const side of [-1,1])ov(g,skin,48+side*30,49,5,7);
   for(const x of dir==='side'?[39,56]:[36,60]){
@@ -88,10 +93,10 @@ function charArt(o,dir='front',frame=0,emote='neutral'){
   else smoothLine(g,'#a46270',emote==='happy'?[[40,69],[48,75],[56,69]]:[[43,70],[48,72],[53,70]],2.3);
   poly(g,deep,[[15,37],[21,21],[34,12],[57,12],[74,22],[81,36],[70,37],[59,32],[48,28],[36,36],[23,42]]);
   poly(g,hair,[[18,34],[23,22],[37,16],[57,15],[71,22],[78,34],[68,35],[59,30],[47,29],[35,35],[25,38]]);
-  if(o.style===0){ov(g,hair,20,62,9,19);ov(g,hair,76,62,9,19);smoothLine(g,shine,[[26,27],[42,20],[57,21]],3)}
+  if(o.style===0){ov(g,hair,20,49,6,13);ov(g,hair,76,49,6,13);smoothLine(g,shine,[[26,27],[42,20],[57,21]],3)}
   else if(o.style===1){poly(g,hair,[[20,27],[40,15],[68,21],[78,32],[63,28],[47,35],[29,37]]);smoothLine(g,shine,[[26,25],[42,19],[58,23]],3)}
   else if(o.style===2){poly(g,hair,[[19,35],[25,21],[35,18],[42,11],[50,18],[59,12],[74,23],[80,36],[68,33],[57,28],[48,33],[35,38]]);smoothLine(g,shine,[[29,23],[42,17],[49,19]],2.5)}
-  else if(o.style===3){ov(g,deep,83,51,14,21);ov(g,hair,83,51,11,18);ov(g,'#f9daa2',74,35,6,4);smoothLine(g,shine,[[27,26],[44,20],[57,22]],2.8)}
+  else if(o.style===3){ov(g,deep,86,48,11,18);ov(g,hair,85,47,8,15);ov(g,'#f9daa2',74,35,6,4);smoothLine(g,shine,[[27,26],[44,20],[57,22]],2.8)}
   else{for(let x of [21,75]){ov(g,deep,x,18,15,15);ov(g,hair,x,17,12,12);ov(g,shine,x-4,12,5,3)}}
   if(['mabel','rosie','bea'].includes(o.id)){const ribbon=o.id==='bea'?'#f2d47e':'#f6a0bc';ov(g,ribbon,72,29,7,4);ov(g,ribbon,84,27,7,4);ov(g,'#fff4db',78,28,4,4)}
   if(o.id==='oliver'){rr(g,'#fff6e7',26,8,44,15,7,'#d4bdab');for(let x of [34,48,62])ov(g,'#fffefa',x,8,12,9)}
