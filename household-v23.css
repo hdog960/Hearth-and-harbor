@@ -1,0 +1,24 @@
+/* Hearth & Harbor v2.3 — cozy household controls */
+.house-header{display:flex;align-items:center;gap:12px;background:linear-gradient(125deg,#fff2d4,#f7dae1);border:2px solid #d5b7a4;border-radius:17px;padding:13px;margin:0 0 15px;color:#426b59}
+.house-header>span{font-size:30px}.house-header h2{margin:0 0 4px;font-size:22px;line-height:1.18;color:#365f53}.house-header p{margin:0;font-size:12px}
+.house-comfort{background:#f7f0dc;border:2px solid #c9d4b5;border-radius:16px;padding:12px;display:grid;gap:9px;margin-bottom:14px;color:#3f745b}
+.house-comfort strong{font-size:15px}.house-comfort span{height:13px;background:#e6d9c6;border-radius:20px;border:2px solid #d4c8af;overflow:hidden}
+.house-comfort i{display:block;height:100%;background:linear-gradient(90deg,#8bd4a2,#f4c46a);border-radius:20px}
+.house-comfort small,.house-help{font-size:12px;color:#697c6d;line-height:1.4}
+.house-roster{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px}
+.house-roster button{flex:1 0 100px;min-width:100px;background:#fff6e8;color:#416c5c;border:2px solid #c8d6b9;border-radius:14px;padding:11px 8px;font-size:14px;line-height:1.5;min-height:74px;white-space:normal}
+.house-roster button.selected{background:#d8f4d4;border-color:#529e81;box-shadow:0 3px 0 #8ec9ad}
+.house-roster small{display:block;font-size:10px;color:#678473}
+.house-action-panel{border:2px solid #b7d0be;background:linear-gradient(#f5fbee,#ecf4e9);padding:12px;border-radius:15px;margin:10px 0 16px}
+.house-action-panel h3{color:#396b5c;margin:0 0 8px}.house-action-panel p{font-size:12px;color:#637c73;line-height:1.4;margin:5px 0 10px}
+.house-action-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.house-action-grid button{display:flex;flex-direction:column;align-items:center;gap:5px;justify-content:center;min-height:98px;padding:10px;border-radius:12px;border:2px solid #c8d8c1;background:#fffdf2;color:#385f57;white-space:normal}
+.house-action-grid button>span{font-size:24px}.house-action-grid button b{font-size:12px;line-height:1.25}.house-action-grid button small{font-size:10px;line-height:1.3;color:#6a8978}
+.house-themes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:4px 0 12px}
+.house-themes button{min-width:0;min-height:74px;border-radius:14px;border:2px solid #b8bdb1;background:linear-gradient(150deg,var(--theme) 0 57%,#fffaf0 57%);padding:8px 2px 4px;color:#304d4d;font-size:21px;text-align:center;white-space:normal}
+.house-themes button.selected{border-color:#368f70;box-shadow:inset 0 0 0 2px #f8fff4,0 2px 0 #6aa891}
+.house-themes small{display:block;font-size:10px;font-weight:700;margin-top:6px;line-height:1.15;overflow-wrap:anywhere}
+.house-shop{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-bottom:14px}
+.house-shop button{padding:10px 7px;border:2px solid #d4c8ad;border-radius:12px;background:#fff8e7;color:#44635c;min-height:64px;font-size:12px;white-space:normal}
+.house-shop button small{display:block;font-size:10px;color:#987e62;margin-top:5px}.house-shop button:disabled{opacity:.48}
+@media(max-width:360px){.house-themes{grid-template-columns:repeat(2,minmax(0,1fr))}.house-roster button{flex-basis:90px}}
