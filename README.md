@@ -1,15 +1,14 @@
-# Hearth & Harbor v1.6 — Neighbor Bonds
+# Hearth & Harbor v1.7 — Friendship Visits
 
-A save-compatible social-system update to the original, free 2.5D mobile life simulator.
+A save-compatible update to the original free 2.5D iPhone life simulator.
 
-- Twelve authored community encounter pairings with three possible outcomes: warm meetings, misunderstandings, or reconciliation.
-- Friendships and disagreements are tracked separately. An argument does not erase friendship history.
-- Individual temperament compatibility and residents' needs influence meeting outcomes.
-- Unresolved disagreements change their mood, gossip, and immediate post-meeting routines.
-- New **Make peace** option in conversations lets players mediate a dispute, using energy, once per pair each in-game day. You must know the neighbor well enough first.
-- Town Stories records both positive encounters and difficulties, and keeps mediation stories through saves.
-- The previous v1.5 save storage key is unchanged, with migration and validation for older data.
+- Two daily friendship visiting windows: 1–3:33 PM and 7–8:42 PM (game time).
+- Visits influenced by existing friendship, personality chemistry, social needs and tensions.
+- Villagers walk together to four outdoor locations; visits strengthen relationships and improve their moods.
+- New Visiting Hours panel in People, Journal, and Menu displays relationships and tomorrow's plans.
+- **Arrange visit** from a conversation (friendship ≥20): help a resident make tomorrow's plans.
+- Repeated visits can unlock a "Best friends" milestone.
+- Saved visit schedules, social history and cooldowns migrate from v1.6.
+- No backend, payments or advertisements.
 
-Run by opening `index.html` through a web server (including GitHub Pages). No npm, no backend, no payment required.
-
-This remains a small scripted social simulation; not an autonomous Sims-scale relationship engine. Events happen only while the game is open and its clock is advancing.
+Open index.html through GitHub Pages. Game time advances only while running.
