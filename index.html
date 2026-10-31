@@ -50,6 +50,17 @@
       </nav>
     </div>
     <div class="hint glass" id="hint">Tap anywhere to stroll • Tap neighbors & places to interact</div>
+    <div id="conversationEmote" class="conversation-emote" aria-hidden="true"></div>
+    <section id="conversationLayer" class="conversation-layer hidden" aria-label="Talking with your neighbor" aria-live="polite">
+      <div class="dialogue-card">
+        <div class="dialogue-header"><div id="dialogueAvatar" class="dialogue-avatar" aria-hidden="true">🌼</div>
+          <div class="dialogue-heading"><strong id="dialogueName">Neighbor</strong><small id="dialogueRole">Friend</small></div>
+          <div id="dialogueHearts" class="dialogue-hearts">♥ 0</div><button id="dialogueClose" class="dialogue-x" aria-label="End conversation">✕</button></div>
+        <div id="dialogueText" class="dialogue-text">Hello there!</div>
+        <div id="dialogueGain" class="dialogue-gain" aria-hidden="true"></div>
+        <div id="dialogueActions" class="dialogue-actions"></div>
+      </div>
+    </section>
     <div id="modalShade" class="modal-shade hidden" role="presentation">
       <section class="panel glass" role="dialog" aria-modal="true" aria-label="Game menu">
         <button id="closeModal" class="close-modal" aria-label="Close">✕</button>
