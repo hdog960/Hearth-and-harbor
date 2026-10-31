@@ -1,3 +1,10 @@
+## v0.9 — Hairline and face silhouette correction
+
+- Fixed the heavy dark hair mass around villagers' cheeks and jaw that looked like beards.
+- Front-facing characters now have a crown/temple hairline and visible skin-colored chins.
+- Reduced bob side-lock length and moved the ponytail away from the jaw.
+- Kept game state, local saves, actions and interactions unchanged.
+
 # Hearth & Harbor — Storybook Village v0.8
 
 An iPhone-first, original 2.5D pixel-art life simulator. This edition overhauls character sprites, house graphics, foliage and neighborhood decoration while preserving gameplay and local saves.
