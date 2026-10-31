@@ -1,0 +1,14 @@
+/* v2.2 cooking variety refinement */
+.k-book .k-section-heading{letter-spacing:1.1px}.k-recipe{min-height:116px}.k-recipe-art{background:radial-gradient(ellipse,#fff6e0,#f3dfc5)}
+.k-recipe:nth-of-type(3n+2) .k-recipe-art{background:radial-gradient(ellipse,#ffe9de,#f1d5cc)}
+.k-recipe:nth-of-type(3n+3) .k-recipe-art{background:radial-gradient(ellipse,#e4f2dc,#cee7cf)}
+.k-stage-top span:last-child{letter-spacing:.55px}.k-stage-tip{max-width:95%;overflow:hidden;text-overflow:ellipsis;font-size:clamp(7px,2.1vw,10px)}
+.k-gesture.k-crack,.k-gesture.k-fill,.k-gesture.k-stamp{background:linear-gradient(135deg,#f6ddbd,#f2e2cb)}
+.k-gesture.k-steam,.k-gesture.k-simmer,.k-gesture.k-bake{background:linear-gradient(135deg,#badacb,#f2e1c6)}
+.k-gesture.k-season,.k-gesture.k-garnish,.k-gesture.k-thread{background:linear-gradient(135deg,#e3efc6,#f4dfb9)}
+.k-gesture.k-knead,.k-gesture.k-pour{background:linear-gradient(135deg,#f7dbbc,#f2eccf)}
+.k-variation{filter:drop-shadow(0 7px 3px #73513c33)}
+.k-recipe-copy .k-recipe-eyebrow{color:#a57358}
+@media(max-width:370px){.k-stage-top{font-size:7px}.k-stage-tip{font-size:7px}.k-recipe-copy .k-recipe-ingredients span{padding:2px 4px}}
+.k-household-prompt{background:linear-gradient(110deg,#f8e7d3,#e3efdb);border:1px solid #e6cda8;border-radius:14px;padding:12px;font-size:11px;line-height:1.5;color:#627b62;font-weight:800;margin:12px 0}
+.k-plate{flex-wrap:wrap}.k-plate button{min-height:38px}.k-plate button:last-child:not(:first-of-type){background:#e1aa87;color:#fff6e9}

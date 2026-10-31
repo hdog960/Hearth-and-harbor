@@ -1,25 +1,22 @@
-# Hearth & Harbor v2.1 — The Hearth Kitchen Atelier (Visual Overhaul)
+# Hearth & Harbor v2.2 — Around the Table
 
-A free original 2.5D life simulator, playable in iPhone Safari and hosted through GitHub Pages. No ads, accounts, or paid features.
+An original, free, iPhone-first 2.5D cozy life simulator with household and village systems.
 
-## New: first playable cooking loop
-- Tap the kitchen in your own cottage, or open **Menu → Hearth Kitchen**.
-- Choose one of four recipes: Cinnamon Toast, Orchard Fruit Salad, Garden Vegetable Soup, or Berry Pancakes.
-- Ingredients come from your starter pantry or Rosie's Market → Pantry ingredients.
-- Complete swipe-to-slice, circle-to-stir, and time-to-flip touch steps. Each has a large tap alternative.
-- Prepared meals earn cooking experience and can be eaten immediately or stored for later.
-- Dishes, pantry ingredients, cooking skill and relaxed cooking preference save to your original local save.
-- A recipe can be cancelled from the cooking board; its ingredients were consumed when you pressed Cook. Cancelling before Cook uses nothing.
+## New in v2.2
+- **12 interactive recipes** and a more varied 15-technique cooking library: slicing, stirring, flipping, cracking, kneading, pouring, seasoning, baking, garnishing, filling, stamping, simmering, threading, grilling and steaming.
+- Eight new dishes with custom illustrations, ingredient requirements, distinctive preparation sequences, new pantry staples, and a 12-item recipe book.
+- Accessible button alternatives for all actions and optional relaxed timing.
+- **Resident favorite foods and meal sharing** when visiting a home: food and social needs improve; once-per-day friendship bonuses prevent unlimited farming.
+- Backwards-compatible cooking data and pantry migration from v2.1 saves.
 
-## Compatibility and limitations
-Original flower gardening, housing, friendships, fishing and village stories remain. Old saves receive a starter pantry. This is milestone C1, **not** the full proposed cooking system: collaborative meals, more recipes, vegetable gardening and food preferences are next.
+Existing 2.5D exploration, cottage decoration, households, neighbors, relationships, stories, and local saves are preserved.
 
-See [COOKING_SYSTEM_DESIGN.md](COOKING_SYSTEM_DESIGN.md) for the full cooking feature roadmap. To publish, deploy the root directory through GitHub Pages on `main`.
+## Start cooking
+From your cottage, tap the kitchen; or choose **Menu → Hearth Kitchen**. Select a recipe. Buy missing ingredients from Rosie's ingredient market. After cooking, eat or save a dish; if visiting a neighbor's home, use **Share** to serve that household.
 
-## v2.1 cooking artwork overhaul
-- All four recipe cards now use original illustrated food art, not a system emoji placeholder.
-- Three interactive steps have distinct detailed kitchen illustrations (cutting board with ingredients and knife, mixing bowl and whisk, and stovetop skillet with a timing meter).
-- Redesigned recipe book, stage navigation, preparation progress, plated-food result, colors and typography with touch-friendly buttons.
-- Reduced-motion support preserved.
-- Game-state schema and existing save key are unchanged.
-- Cooking gestures and regression checks must pass before publishing; physical iPhone Safari testing remains a recommended final check.
+**Notes:** Kitchen techniques have distinct visual scenes and combinations, but a few are variations on the same accessible timing or tap interaction. Visuals and actions are still prototype-quality, and physical iPhone Safari testing remains necessary. This is not the whole game roadmap delivered at once.
+
+See [ROADMAP_V22_V30.md](ROADMAP_V22_V30.md) for the approved deep, paced v2.3–v3.0 development plan and quality gates. See [COOKING_SYSTEM_DESIGN.md](COOKING_SYSTEM_DESIGN.md) for broader kitchen design.
+
+## Publish
+Deploy the repository root to GitHub Pages (main branch), then open in iPhone Safari. Saved progress stays in browser localStorage; export backups before major revisions.

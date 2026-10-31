@@ -1,11 +1,107 @@
-# Hearth Kitchen C1 — development notes
+# v2.2 Development and QA
 
-Implementation: a separate `kitchen.js` and `kitchen.css` plus small hooks in `game.js`. The renderer, world navigation and save key are preserved. Changes include food inventory validation in `cleanSave`, kitchen interaction, recipe menu entry, Rosie pantry purchases, cooking input, dish storage/eating and a new service-worker cache name.
+# Hearth & Harbor v2.2 — Around the Table
 
-### Test priorities
-1. Existing save migration and starter ingredients.
-2. Buy ingredients, cook each recipe, cancel without duplication, prepare/eat stored dish, export/import/reload.
-3. Touch slicing and stirring on Safari; tap alternatives, relaxed flip timing; mobile portrait and landscape layout.
-4. Confirm existing gardening, furniture, resident conversations, housing and friendship systems work.
+An original, free, iPhone-first 2.5D cozy life simulator with household and village systems.
 
-Known scope: four authored recipes; cooking skill is XP-only. No NPC cooked meals, dinner parties or crop cooking yet.
+## New in v2.2
+- **12 interactive recipes** and a more varied 15-technique cooking library: slicing, stirring, flipping, cracking, kneading, pouring, seasoning, baking, garnishing, filling, stamping, simmering, threading, grilling and steaming.
+- Eight new dishes with custom illustrations, ingredient requirements, distinctive preparation sequences, new pantry staples, and a 12-item recipe book.
+- Accessible button alternatives for all actions and optional relaxed timing.
+- **Resident favorite foods and meal sharing** when visiting a home: food and social needs improve; once-per-day friendship bonuses prevent unlimited farming.
+- Backwards-compatible cooking data and pantry migration from v2.1 saves.
+
+Existing 2.5D exploration, cottage decoration, households, neighbors, relationships, stories, and local saves are preserved.
+
+## Start cooking
+From your cottage, tap the kitchen; or choose **Menu → Hearth Kitchen**. Select a recipe. Buy missing ingredients from Rosie's ingredient market. After cooking, eat or save a dish; if visiting a neighbor's home, use **Share** to serve that household.
+
+**Notes:** Kitchen techniques have distinct visual scenes and combinations, but a few are variations on the same accessible timing or tap interaction. Visuals and actions are still prototype-quality, and physical iPhone Safari testing remains necessary. This is not the whole game roadmap delivered at once.
+
+See [ROADMAP_V22_V30.md](ROADMAP_V22_V30.md) for the approved deep, paced v2.3–v3.0 development plan and quality gates. See [COOKING_SYSTEM_DESIGN.md](COOKING_SYSTEM_DESIGN.md) for broader kitchen design.
+
+## Publish
+Deploy the repository root to GitHub Pages (main branch), then open in iPhone Safari. Saved progress stays in browser localStorage; export backups before major revisions.
+
+## Automated QA
+
+{
+  "checks": [
+    [
+      "startup and all recipes",
+      true,
+      "['toast', 'salad', 'soup', 'pancakes', 'eggs', 'noodles', 'fishplate', 'tart', 'biscuits', 'jam', 's"
+    ],
+    [
+      "old save migration and new pantry",
+      true,
+      "[2, 0]"
+    ],
+    [
+      "corrupt save sanitization",
+      true,
+      "sanitized"
+    ],
+    [
+      "each recipe completes via accessible touch alternative",
+      true,
+      "[12, 215, 12]"
+    ],
+    [
+      "new recipes persist through save loader",
+      true,
+      "toast, salad, soup, pancakes, eggs, noodles, fishplate, tart, biscuits, jam, skewers, dumplings"
+    ],
+    [
+      "all fifteen technique scenes",
+      true,
+      "15"
+    ],
+    [
+      "twelve illustrated recipe plates",
+      true,
+      "12"
+    ],
+    [
+      "market can purchase new pantry foods",
+      true,
+      "245"
+    ],
+    [
+      "household meal restores resident hunger and friendship",
+      true,
+      "['mabel', 54, 3]"
+    ],
+    [
+      "abandon does not duplicate food",
+      true,
+      "ok"
+    ],
+    [
+      "eat once and restore hunger",
+      true,
+      "54"
+    ],
+    [
+      "cookbook visible 320x740",
+      true,
+      "270"
+    ],
+    [
+      "cookbook visible 390x844",
+      true,
+      "340"
+    ],
+    [
+      "cookbook visible 430x932",
+      true,
+      "372"
+    ],
+    [
+      "cookbook visible 844x390",
+      true,
+      "656"
+    ]
+  ],
+  "errors": []
+}
