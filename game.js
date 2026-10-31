@@ -111,48 +111,46 @@ function foliageArt(kind=0){return makeArt('tree8'+kind,130,185,g=>{
  for(let i=0;i<48;i++){let a=i*2.399,r=18+hash(i*13+kind)*44,x=65+Math.cos(a)*r,y=64+Math.sin(a)*r*.58;if(x<8||x>122||y<16||y>112)continue;let z=2+hash(i*7)*4;ov(g,i%4===0?colors[3]:colors[2],x,y,z*1.8,z*.7)}
  for(let i=0;i<11;i++){let a=i*2.4,x=65+Math.cos(a)*(20+hash(i+7)*31),y=61+Math.sin(a)*29;if(blossom){ov(g,'#ffe6ea',x,y,5,4);ov(g,'#e7c46e',x+1,y,2,2)}else if(i%2===0){ov(g,kind===1?'#f9a65e':'#f6d267',x,y,4,5);ov(g,'#fff5cb',x-1,y-2,1,2)}}
  });}
-function houseArt(kind){return makeArt('house'+kind,198,180,g=>{
- const schemes=[['#f5bca0','#d96c7a','#a95660'],['#ffe0a1','#679ac8','#3f75aa'],['#b2d9cb','#a992d1','#846aaf'],['#fad0c3','#da9eb3','#af7b9c']];const [wall,roof,deep]=schemes[kind%4];
- ellipse(g,'#294c4050',96,165,90,12);
- // deep side elevation, with clear isometric pitch
- poly(g,'#8f736c',[[150,62],[185,44],[184,135],[151,153]]);
- poly(g,'#d29c86',[[150,64],[182,46],[183,132],[151,151]]);
- poly(g,wall,[[23,70],[148,70],[148,150],[23,150]]);
- poly(g,'#fff2d2',[[19,147],[150,147],[153,155],[16,155]]);
- // vertical clapboards and shaded edges
- for(let y=78;y<148;y+=10){fill(g,'#e9b7a055',25,y,120,1);fill(g,'#fff6de88',27,y+2,118,1)}
- fill(g,'#e6f0d4',22,71,4,79);fill(g,'#e6f0d4',145,71,4,79);
- // unique 2.5D roof: distinct front and side facets
- poly(g,'#603d50',[[10,75],[52,25],[128,23],[170,73],[153,78],[126,43],[54,41],[28,79]]);
- poly(g,deep,[[126,26],[172,63],[184,51],[147,14]]);
- poly(g,roof,[[13,72],[53,24],[128,24],[161,71],[148,71],[124,41],[53,40],[27,77]]);
- poly(g,'#f6d6b6',[[53,40],[124,40],[147,72],[28,72]]);
- poly(g,roof,[[13,70],[53,23],[127,23],[147,31],[52,31],[26,79]]);
- for(let i=0;i<10;i++){line(g,i%3===0?'#fff2d777':'#a95e6955',[[22+i*12,66],[53+i*8,31]],1)}
- line(g,'#fff5df',[[22,72],[53,38],[128,38],[154,72]],3);
- // little gable window
- fill(g,'#fff2d7',75,49,21,16);fill(g,'#81c9cb',78,52,15,10);fill(g,'#fff9df',84,52,2,11);
- // two windows, curtains, shutters, planter boxes
- for(const x of [36,118]){
-  fill(g,'#6c6b69',x-3,93,25,30);fill(g,'#fff9d7',x-4,90,26,31);fill(g,'#74b7c4',x,94,18,22);
-  fill(g,'#b2e7db',x+2,95,6,15);fill(g,'#fff4de',x+8,94,2,23);fill(g,'#fff4de',x,104,18,2);
-  fill(g,deep,x-9,92,5,29);fill(g,deep,x+22,92,5,29);
-  fill(g,'#795e5c',x-5,117,31,6);fill(g,'#3e8d5c',x-4,115,30,5);
-  for(let j=0;j<5;j++)fill(g,['#fa7fa6','#ffe18e','#fff7d5'][j%3],x-3+j*6,114-(j%2)*3,4,4);
+function houseArt(kind){return makeArt('house8'+kind,224,207,g=>{
+ const pal=[['#f4c2a6','#d86e86','#a74f70','#fff0d8'],['#ffe2a6','#5da5bb','#377d94','#fff5db'],['#bddcd1','#a18bbd','#76699b','#fff3e3'],['#f5c4ae','#da98af','#ad6b8d','#ffeed8']][kind%4];
+ const [wall,roof,shade,white]=pal,edge='#735c58',wood='#a47558';
+ ov(g,'#28534b44',114,187,95,12);
+ poly(g,'#b99b84',[[18,85],[171,75],[207,66],[206,175],[170,192],[17,187]]);
+ poly(g,'#b68e79',[[170,82],[204,67],[204,174],[169,188]]);
+ for(let i=0;i<8;i++)smoothLine(g,'#edb69b',[[173,89+i*11],[202,76+i*11]],1);
+ poly(g,wall,[[20,84],[170,84],[170,185],[20,185]]);
+ for(let i=0;i<11;i++){fill(g,white+'90',23,93+i*8,144,1);fill(g,shade+'40',25,96+i*8,140,1)}
+ fill(g,'#fff8e5',18,83,153,6);fill(g,'#fff8e5',19,181,153,8);
+ fill(g,white,20,89,6,93);fill(g,white,164,89,6,94);
+ poly(g,'#5a4552',[[8,86],[47,29],[142,24],[181,77],[212,58],[162,7],[52,16]]);
+ poly(g,shade,[[140,26],[168,5],[217,57],[184,82]]);
+ poly(g,roof,[[13,80],[51,25],[142,24],[177,78],[169,84],[142,46],[54,45],[21,90]]);
+ poly(g,'#edccaa',[[54,45],[140,45],[169,85],[22,85]]);
+ poly(g,roof,[[13,80],[52,24],[140,24],[152,38],[56,38],[21,89]]);
+ for(let i=0;i<10;i++){const x=26+i*12;smoothLine(g,i%2?'#fff2e477':'#713e5c55',[[x,70],[x+23,37]],1)}
+ smoothLine(g,'#fff4d5',[[20,86],[53,43],[140,43],[168,85]],4);
+ for(let i=0;i<12;i++){fill(g,i%3===0?'#fff0c9':shade,22+i*12,84+(i%2),7,3)}
+ rr(g,'#b77f6c',159,14,17,30,2,edge);fill(g,'#e1b69a',164,16,5,22);rr(g,'#f5cba7',155,12,25,5,2);
+ rr(g,white,84,55,26,20,7,edge);rr(g,'#87cde0',89,58,16,15,4);
+ fill(g,'#fff4d8',96,58,3,14);fill(g,'#fff4d8',89,65,16,2);
+ for(const x of [31,139]){
+  rr(g,edge,x-6,112,37,43,3);rr(g,white,x-9,108,41,43,4);
+  rr(g,'#76bed1',x-4,113,31,32,3);
+  poly(g,'#b5e7db',[[x-3,115],[x+8,114],[x-1,135]]);
+  fill(g,white,x+10,114,3,30);fill(g,white,x-4,127,31,3);
+  rr(g,shade,x-13,109,6,40,2);rr(g,shade,x+31,109,6,40,2);
+  for(let i=0;i<3;i++){fill(g,white,x-12,115+i*11,5,2);fill(g,white,x+32,115+i*11,4,2)}
+  rr(g,wood,x-14,147,50,8,2);ov(g,'#368b5b',x+10,146,21,8);
+  for(let i=0;i<7;i++)ov(g,['#f783a9','#fee5a3','#fcf5e6'][i%3],x-8+i*7,140+(i%2)*3,3,4);
  }
- // door has actual trim & window
- fill(g,'#ae755f',78,105,30,45);fill(g,'#fff6dd',75,102,35,49);fill(g,deep,80,108,25,41);fill(g,'#e8ad87',83,111,19,35);
- fill(g,'#85c6d1',87,113,11,12);fill(g,'#fff3dd',92,113,2,12);
- fill(g,'#ffe3a5',99,132,3,3);
- fill(g,'#c8b395',64,151,58,7);fill(g,'#f4dec0',58,156,70,7);
- // awning over door: scalloped canvas
- fill(g,roof,70,93,42,7);for(let i=0;i<5;i++)fill(g,i%2?'#fff2d0':roof,71+i*8,98,8,5);
- // chimneys and aerial details
- fill(g,'#735561',126,13,14,25);fill(g,'#cc9888',129,14,12,20);fill(g,'#edc5ab',124,13,17,5);
- fill(g,'#f8e5ba',18,75,10,4);fill(g,'#f8e5ba',146,75,10,4);
- // mailbox and flower pot
- fill(g,'#785b58',155,126,4,28);fill(g,'#fff5cc',151,123,14,10);fill(g,'#f0849e',162,124,3,6);
- fill(g,'#c97b6c',31,142,10,11);fill(g,'#378d62',28,135,16,9);fill(g,'#f6b68e',30,132,5,4);fill(g,'#ff93ad',36,130,4,4);
+ rr(g,'#fff0d8',72,111,51,77,13,edge);rr(g,shade,77,116,41,70,10);
+ rr(g,'#eaa47e',81,119,33,64,8);rr(g,'#a3d9d2',88,127,19,18,5,white);
+ fill(g,'#fff9e2',96,127,3,18);ov(g,'#ffe4a8',107,156,3,3);
+ rr(g,shade,68,109,59,7,2);for(let i=0;i<6;i++)rr(g,i%2?white:roof,70+i*9,109,9,8,1);
+ rr(g,'#d3bba1',69,186,60,5,2);rr(g,'#f1d6b5',60,191,78,6,3);
+ for(const x of [63,131]){fill(g,edge,x,119,4,8);ov(g,'#fff1b1',x+2,121,6,9);ov(g,'#c99a66',x+2,116,7,3)}
+ rr(g,'#b66e65',28,171,18,13,3);ov(g,'#36865d',37,170,13,8);ov(g,'#eaa9bd',31,164,5,5);
+ fill(g,'#876454',181,158,4,26);rr(g,white,174,153,20,12,3,edge);fill(g,'#d57f9c',191,154,3,5);
  });}
 function stallArt(){return makeArt('stall',104,88,g=>{ellipse(g,'#285e4b66',51,80,43,6);fill(g,'#875a47',10,36,5,42);fill(g,'#875a47',90,36,5,42);fill(g,'#a57453',10,60,85,17);fill(g,'#eac58d',14,60,78,4);poly(g,'#5a5260',[[7,37],[21,12],[84,12],[97,37]]);for(let j=0;j<6;j++){const x=8+j*15;poly(g,j%2?'#fff2d4':'#f88ba3',[[21+j*11,13],[28+j*10,13],[x+16,37],[x,37]])}for(let j=0;j<6;j++){fill(g,['#ffbd5f','#ff796c','#a6d67b'][j%3],22+j*11,57-(j%2)*3,7,7);fill(g,'#4b945a',24+j*11,52-(j%2)*3,3,4)}fill(g,'#e6b47b',13,69,75,5)})}
 function lampArt(){return makeArt('lamp',42,106,g=>{ellipse(g,'#315a4d77',21,101,18,4);fill(g,'#315a61',17,21,8,78);fill(g,'#44787b',19,26,3,72);fill(g,'#37565e',9,21,24,5);poly(g,'#31525b',[[10,24],[12,12],[20,7],[30,12],[33,24]]);poly(g,'#e9bd74',[[14,21],[17,13],[26,13],[29,21]]);fill(g,'#fff5bc',18,15,7,6);fill(g,'#31525b',17,6,9,3);fill(g,'#f9d28a',19,1,5,6)})}
@@ -225,7 +223,7 @@ function drawHomeGround(g){
 }
 function drawStatic(obj,g){
  const {type,x,y}=obj;
- if(type==='house')drawArt(g,houseArt(obj.kind),x,y,1.50);
+ if(type==='house')drawArt(g,houseArt(obj.kind),x,y,1.38);
  if(type==='stall')drawArt(g,stallArt(),x,y,1.60);
  if(type==='tree')drawArt(g,foliageArt(obj.kind),x,y,1.14);
  if(type==='shrub')drawArt(g,shrubArt(obj.kind),x,y,.85);
