@@ -231,7 +231,7 @@ function drawHomeGround(g){
  // dollhouse-like 2.5D room with thick sidewalls and papered interior.
  fill(g,'#4d675a',160,195,860,956);fill(g,'#eed09b',170,207,841,926);
  for(let y=207;y<1130;y+=floorTile().height)for(let x=170;x<1011;x+=floorTile().width)g.drawImage(floorTile(),x,y);
- fill(g,'#5e6b73',158,180,864,25);fill(g,'#c5daba',169,120,840,87);
+ fill(g,'#5e6b73',158,180,864,25);fill(g,['#c5daba','#f2ccdf','#a5cedb','#f3dab2'][state.homeStyle%4],169,120,840,87);
  for(let x=175;x<1000;x+=34){fill(g,'#9bbb9a',x,128,2,75);fill(g,'#f5f7d7',x+3,131,2,71)}
  fill(g,'#f3e2ac',165,195,850,14);fill(g,'#af9779',169,1133,845,13);
  for(const x of [300,820]){fill(g,'#b89d7a',x-55,125,111,90);fill(g,'#fff7d9',x-48,128,97,78);fill(g,'#8ac7d9',x-42,134,86,66);fill(g,'#fef6cd',x,134,6,66);fill(g,'#fef6cd',x-42,165,86,6);for(let k=0;k<3;k++)fill(g,'#fff5c6',x-36+k*30,142,15,2)}
@@ -256,7 +256,7 @@ function drawStatic(obj,g){
 function drawHomeFurniture(g){
  // All the pieces are painted sprites with thickness and drop shadows.
  drawFurniture(g,'bed',332,430);drawFurniture(g,'sofa',803,489);drawFurniture(g,'kitchen',840,309);drawFurniture(g,'books',342,314);
- for(let i=0;i<state.placed.length;i++){const f=state.placed[i];drawFurniture(g,f.kind,f.x||540,f.z||500)}
+ for(let i=0;i<state.placed.length;i++){const f=state.placed[i];drawFurniture(g,f.kind,Math.abs(f.x||0)<40?575+(f.x||0)*28:(f.x||540),Math.abs(f.z||0)<40?600+(f.z||0)*25:(f.z||500))}
 }
 function drawFurniture(g,kind,x,y){const a=kind;
  ellipse(g,'#355e4b44',x,y+3,50,11);
@@ -302,6 +302,7 @@ function drawScene(){if(!W||!H)return;
  // soft late-afternoon/night vignette never obscures pixel art.
  const hour=state.minute/60;if(hour>=19||hour<6){const alpha=hour>=19?Math.min(.24,(hour-19)*.055):.19;ctx.fillStyle=`rgba(32,48,87,${alpha})`;ctx.fillRect(0,0,W,H)}
  if(talk){const n=NPCS.find(n=>n.id===talk);if(n){const sx=screenX(n.x),sy=screenY(n.y-156);$('emote').style.left=sx+'px';$('emote').style.top=sy+'px'}}
+ if(modal==='fish'&&$('bobber'))$('bobber').style.left=(((Math.sin(tick*4)+1)/2)*98)+'%';
 }
 function drawName(g,name,x,y){g.font='900 13px monospace';let textW=g.measureText(name).width;fill(g,'#295955',x-textW/2-8,y-14,textW+16,22);fill(g,'#fff7d7',x-textW/2-4,y-11,textW+8,17);g.textAlign='center';g.fillStyle='#3a6551';g.fillText(name,x,y+1);g.textAlign='left'}
 function resize(){W=Math.max(280,innerWidth);H=Math.max(350,innerHeight);DPR=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);canvas.style.width=W+'px';canvas.style.height=H+'px';worldScale=clamp(W/530,.69,1.17);ctx.imageSmoothingEnabled=false}
@@ -365,7 +366,7 @@ function market(){showModal('market',`<h2>🍓 Rosie’s Little Market</h2><p>Fr
 function garden(){showModal('garden',`<h2>🌱 Community Garden</h2><p>Plant little flowers, care for them, and harvest blooms for your cottage.</p><div class="grid">${(state.garden||[0,0,0,0]).map((n,i)=>`<div class="item"><span class="emoji">${n===2?'🌸':n===1?'🌱':'🟫'}</span><strong>Plot ${i+1}</strong><small>${n===2?'Ready!':n===1?'Growing':'Empty'}</small><button class="btn" data-act="plot" data-id="${i}">${n===2?'Harvest':n===1?'Water':'Plant'}</button></div>`).join('')}</div><p>Planting is free in the community garden!</p>`)}
 function fishing(){showModal('fish',`<h2>🎣 Fishing at Lily Pond</h2><p>Watch the bobber and tap when it crosses the green zone!</p><div style="margin:24px 0 18px;height:30px;background:#b5d2bd;border:3px solid #91b1a6;position:relative"><div style="height:100%;width:26%;margin-left:38%;background:#7ddda4;border-left:3px solid white;border-right:3px solid white"></div><div id="bobber" style="position:absolute;top:-4px;bottom:-4px;width:6px;background:#ed7091;left:0"></div></div><button class="btn" data-act="catch" style="width:100%">🎣 Reel it in!</button>`);}
 function decorate(){if(scene!=='home'){notify('Head home to decorate! 🏡');goScene('home')}
- showModal('decor',`<h2>🪑 Your Cozy Furniture</h2><p>Buy furniture and it will appear inside your home. Your choices are saved!</p><div class="grid">${furnitureTypes.map(f=>`<div class="item"><span class="emoji">${f.emoji}</span><strong>${f.name}</strong><small>🪙 ${f.cost}</small><button class="btn" data-act="buy" data-id="${f.id}">Buy</button></div>`).join('')}</div>`)}
+ showModal('decor',`<h2>🪑 Your Cozy Furniture</h2><p>Buy furniture and it will appear inside your home. Your choices are saved!</p><h3>Wallpaper</h3><div class="swatches">${['#c5daba','#f2ccdf','#a5cedb','#f3dab2'].map((s,i)=>`<button data-act="wall" data-id="${i}" class="swatch" style="background:${s}" aria-label="Wallpaper ${i+1}"></button>`).join('')}</div><div class="grid">${furnitureTypes.map(f=>`<div class="item"><span class="emoji">${f.emoji}</span><strong>${f.name}</strong><small>🪙 ${f.cost}</small><button class="btn" data-act="buy" data-id="${f.id}">Buy</button></div>`).join('')}</div>`)}
 function style(){const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
  showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
@@ -380,9 +381,10 @@ function handleAction(action,id){
  if(action==='eat'){if(state.coins<10)return notify('You need 10 coins!');coins(-10);changeNeed('hunger',35);notify('Sweet and delicious! 🍑');return}
  if(action==='seed'){if(state.coins<8)return notify('You need 8 coins!');coins(-8);state.inventory.push('flower-seed');save();notify('A packet of seeds! 🌻');return}
  if(action==='buy-plant')return handleAction('buy','plant');
+ if(action==='wall'){state.homeStyle=Number(id)%4;save();notify('A fresh coat of cottage color! 🎨');return}
  if(action==='buy'){const f=furnitureTypes.find(f=>f.id===id);if(!f)return;if(state.coins<f.cost)return notify('Not enough coins yet!');coins(-f.cost);state.placed.push({kind:f.id,x:450+(state.placed.length%4)*80,z:600+Math.floor(state.placed.length/4)*38});save();notify(`${f.name} is waiting at home! 🪑`);return}
  if(action==='plot'){const i=Number(id),v=state.garden[i]||0;if(v===0){state.garden[i]=1;notify('Little sprouts planted! 🌱')}else if(v===1){state.garden[i]=2;notify('Your flowers are blooming! 🌸')}else{state.garden[i]=0;coins(24);task('garden');changeNeed('fun',12);notify('Beautiful harvest! +24 coins 🌼')}save();return garden()}
- if(action==='catch'){const zone=Math.abs(Math.sin(tick*4));if(zone<.60){const names=['Sunfish','Rainbow guppy','Golden carp','Lilyfish'];const n=names[Math.floor(rand(0,names.length))];state.fish.push(n);task('fish');coins(15);changeNeed('fun',16);notify(`You caught a ${n}! 🐟 +15`);closeModal()}else notify('Almost! The fish got away — try again!');return}
+ if(action==='catch'){const zone=(Math.sin(tick*4)+1)/2;if(zone>=.38&&zone<=.64){const names=['Sunfish','Rainbow guppy','Golden carp','Lilyfish'];const n=names[Math.floor(rand(0,names.length))];state.fish.push(n);task('fish');coins(15);changeNeed('fun',16);notify(`You caught a ${n}! 🐟 +15`);closeModal()}else notify('Almost! The fish got away — try again!');return}
  if(action==='set-outfit'||action==='set-hair'||action==='set-skin'){const n=parseInt(id.slice(1),16);if(action==='set-outfit')state.outfit=n;else if(action==='set-hair')state.hair=n;else state.skin=n;save();return}
  if(action==='save-look'){const n=$('nameInput')?.value?.trim();if(n)state.name=n.slice(0,18);save();updateUI();closeModal();notify('Your new look is lovely! 🎀');return}
  if(action==='save'){save();notify('Your little world is saved! 💾');closeModal();return}
