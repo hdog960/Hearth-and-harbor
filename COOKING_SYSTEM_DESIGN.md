@@ -1,3 +1,5 @@
+> **Updated direction — Hearth & Harbor v2.2 (October 31, 2026):** The approved starting cookbook is **12 recipes**, not 8. The playable v2.2 release includes 15 illustrated preparation types/cues, varied recipe sequences, pantry ingredients, resident favorite foods, and household meal sharing. Some actions use shared touch/timing foundations; deeper skill-specific interactions and greater art polish remain ongoing work. For all later milestones—especially the deliberately large v2.5 village and v3.0 generations expansions—follow [ROADMAP_V22_V30.md](ROADMAP_V22_V30.md). Sections below retain the original C1 planning history and should not override the newer roadmap.
+
 # Hearth & Harbor — The Hearth Kitchen
 ## Cooking system design and phased implementation plan
 **Status:** Approved feature direction / design specification. Not yet implemented in the playable build.
