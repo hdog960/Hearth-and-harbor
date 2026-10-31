@@ -1,11 +1,11 @@
-/* Hearth & Harbor — Household Foundations v1.8.0
+/* Hearth & Harbor — Open Doors v1.9.0
    A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),rand=(a,b)=>a+Math.random()*(b-a);
 const hash=(n)=>{const x=Math.sin(n*127.1+8.45)*43758.5453;return x-Math.floor(x)};
 const SAVE='hearth-harbor-save-v1';
-const DEF=()=>({residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
+const DEF=()=>({residenceDecor:{},residenceVisits:{},residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
 function cleanSave(raw){
  const d=DEF();if(!raw||typeof raw!=='object'||Array.isArray(raw))return d;
  const number=(v,f,min,max)=>typeof v==='number'&&Number.isFinite(v)?clamp(v,min,max):f;
@@ -36,7 +36,9 @@ function cleanSave(raw){
  const friendVisits=Object.fromEntries(Object.entries(obj(raw.friendVisits)).filter(([key,r])=>/^([1-9]\d{0,3}):[01]$/.test(key)&&validPair(r?.pair)&&Number.isInteger(r.place)&&r.place>=0&&r.place<=3).slice(-32).map(([key,r])=>[key,{pair:r.pair.slice(),place:r.place}]));
  const invitedVisits=Object.fromEntries(Object.entries(obj(raw.invitedVisits)).filter(([day,p])=>safeDay.test(day)&&validPair(p)).slice(-8).map(([day,p])=>[day,p.slice()]));
  const visitCounts=Object.fromEntries(Object.entries(obj(raw.visitCounts)).filter(([key])=>safePair.test(key)&&key.split('|')[0]!==key.split('|')[1]).slice(0,15).map(([key,v])=>[key,number(v,0,0,999)|0]));
- const res={...d,residentHomes:savedHomes,householdFunds:savedFunds,housingDay:number(raw.housingDay,number(raw.day,1,1,9999)|0,0,9999)|0,householdMoves:houseMoves,friendVisits,invitedVisits,visitCounts,visitSeen:Array.isArray(raw.visitSeen)?[...new Set(raw.visitSeen.filter(x=>typeof x==='string'&&safeVisit.test(x)))].slice(-35):[],residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
+ const residenceDecor=Object.fromEntries(Array.from({length:6},(_,i)=>['h'+i,number(obj(raw.residenceDecor)['h'+i],0,0,3)|0]));
+ const residenceVisits=Object.fromEntries(Array.from({length:6},(_,i)=>['h'+i,number(obj(raw.residenceVisits)['h'+i],0,0,9999)|0]));
+ const res={...d,residenceDecor,residenceVisits,residentHomes:savedHomes,householdFunds:savedFunds,housingDay:number(raw.housingDay,number(raw.day,1,1,9999)|0,0,9999)|0,householdMoves:houseMoves,friendVisits,invitedVisits,visitCounts,visitSeen:Array.isArray(raw.visitSeen)?[...new Set(raw.visitSeen.filter(x=>typeof x==='string'&&safeVisit.test(x)))].slice(-35):[],residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
    hair:safeColor(raw.hair,d.hair),outfit:safeColor(raw.outfit,d.outfit),skin:safeColor(raw.skin,d.skin),
    hairStyle:number(raw.hairStyle,d.hairStyle,0,4)|0,coins:number(raw.coins,d.coins,0,1000000),hearts:number(raw.hearts,0,0,1000000),
    day:number(raw.day,1,1,9999)|0,minute:number(raw.minute,d.minute,0,1439.999),season:number(raw.season,0,0,3)|0,
@@ -72,7 +74,7 @@ const NPCS=[
 const HEX=n=>'#'+((n>>>0)&0xffffff).toString(16).padStart(6,'0');
 const color=n=>typeof n==='number'?HEX(n):n;
 const playerDef=()=>({id:'player',name:state.name,skin:color(state.skin),hair:color(state.hair),outfit:color(state.outfit),kind:'dress',style:state.hairStyle??1});
-let scene='town',speed=1,modal=null,talk=null,placement=null,toastTimer=0,uiTimer=0;
+let scene='town',activeResidence=null,previousTownSpot=null,speed=1,modal=null,talk=null,placement=null,toastTimer=0,uiTimer=0;
 let player={x:597,y:654,target:null,facing:'front',walk:0,bodyBob:0},cam={x:597,y:654},W=0,H=0,DPR=1,last=0,tick=0;
 let displayScale=1;let worldScale=1;
 const furnitureTypes=[{id:'bed',name:'Cloud-soft bed',emoji:'🛏️',cost:95},{id:'sofa',name:'Peach sofa',emoji:'🛋️',cost:75},{id:'plant',name:'Fern in pot',emoji:'🪴',cost:25},{id:'books',name:'Storybook shelf',emoji:'📚',cost:70},{id:'lamp',name:'Honey lamp',emoji:'💡',cost:40},{id:'rug',name:'Patchwork rug',emoji:'🧶',cost:35},{id:'chair',name:'Wooden chair',emoji:'🪑',cost:30},{id:'flowers',name:'Flower vase',emoji:'💐',cost:20}];
@@ -81,7 +83,7 @@ try{state=cleanSave(JSON.parse(localStorage.getItem(SAVE)||'{}')||{})}catch(e){s
 function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch(e){}};
 function notify(message){$('toast').textContent=message;$('toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('visible'),2900)}
 function drawBar(id,v){$(id).style.width=clamp(v,0,100)+'%';$(id).style.background=v<25?'#ef7e79':v<50?'#e7ba65':'#67bd88'}
-function updateUI(){const seasons=['SPRING','SUMMER','AUTUMN','WINTER'],h=Math.floor((state.minute%1440)/60),m=Math.floor(state.minute%60);$('dateText').textContent=`${seasons[state.season%4]} · DAY ${state.day} · ${((h+11)%12+1)}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;$('coinText').textContent=Math.floor(state.coins);$('heartText').textContent=state.hearts;$('playerName').textContent=state.name;drawBar('needFood',state.needs.hunger);drawBar('needFun',state.needs.fun);drawBar('needSocial',state.needs.social);drawBar('needEnergy',state.needs.energy);$('locationText').textContent=scene==='town'?'✦ MAPLEWOOD VILLAGE ✦':'✦ YOUR LITTLE COTTAGE ✦';$('prompt').textContent=scene==='town'?'TAP TO WALK · TAP A NEIGHBOR TO CHAT':'TAP TO WALK · TAP FURNITURE TO USE';$('townBtn').classList.toggle('active',scene==='town');$('homeBtn').classList.toggle('active',scene==='home');$('timeBtn').textContent=speed===0?'Ⅱ':speed===1?'▶':speed===2?'▶▶':'▶▶▶'}
+function updateUI(){const seasons=['SPRING','SUMMER','AUTUMN','WINTER'],h=Math.floor((state.minute%1440)/60),m=Math.floor(state.minute%60);$('dateText').textContent=`${seasons[state.season%4]} · DAY ${state.day} · ${((h+11)%12+1)}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;$('coinText').textContent=Math.floor(state.coins);$('heartText').textContent=state.hearts;$('playerName').textContent=state.name;drawBar('needFood',state.needs.hunger);drawBar('needFun',state.needs.fun);drawBar('needSocial',state.needs.social);drawBar('needEnergy',state.needs.energy);$('locationText').textContent=scene==='town'?'✦ MAPLEWOOD VILLAGE ✦':scene==='residence'?`✦ ${apartmentName(activeResidence).toUpperCase()} ✦`:'✦ YOUR LITTLE COTTAGE ✦';$('prompt').textContent=scene==='town'?'TAP TO WALK · TAP A NEIGHBOR TO CHAT':scene==='residence'?'TAP RESIDENTS OR FURNITURE · DOOR TO LEAVE':'TAP TO WALK · TAP FURNITURE TO USE';$('townBtn').classList.toggle('active',scene==='town');$('homeBtn').classList.toggle('active',scene==='home');$('timeBtn').textContent=speed===0?'Ⅱ':speed===1?'▶':speed===2?'▶▶':'▶▶▶'}
 function changeNeed(id,v){state.needs[id]=clamp(state.needs[id]+v,0,100);updateUI();save()}
 function coins(v){state.coins=Math.max(0,state.coins+v);updateUI();save()}
 function task(id){state.quests[id]=(state.quests[id]||0)+1;save()}
@@ -381,10 +383,52 @@ function encourageHousemate(n){
 }
 function housingBoard(){
  const sites=RESIDENCES.map((site,i)=>[0,1].map(slot=>{
-  const key=`h${i*2+slot}`,members=householdMembers(key),funds=state.householdFunds[key]||0;
-  return `<div class="card"><div><b>${site.emoji} ${escapeHtml(apartmentName(key))}</b><small>${members.length?members.map(n=>escapeHtml(n.name)).join(' & '):'Vacant'} · 🪙 ${Math.round(funds)} household savings<br>${members.length===2?'Shared household · reduced upkeep per person':members.length?'Independent household':'Available address'}</small></div></div>`;
+  const key='h'+(i*2+slot),members=householdMembers(key),funds=state.householdFunds[key]||0;
+  const decor=state.residenceDecor[key]||0;
+  return '<div class="card"><div><b>'+site.emoji+' '+escapeHtml(apartmentName(key))+'</b><small>'+(members.length?members.map(n=>escapeHtml(n.name)).join(' & '):'Vacant')+' · 🪙 '+Math.round(funds)+' household savings<br>'+(members.length===2?'Shared household':members.length?'Independent household':'Available address')+' · '+['Cozy starter','Personal touches','Welcoming room','Beautiful home'][decor]+'</small></div><button data-act="visit-home" data-id="'+key+'">Visit</button></div>';
  }).join('')).join('');
- showModal('housing',`<h2>🏡 Little Households</h2><p>Neighbors earn their own wages and share household expenses. Close friends can choose to live together after several visits. Their savings are separate from your coins.</p>${sites}<h3>Recent moves</h3>${state.householdMoves.slice(-5).reverse().map(r=>`<div class="card"><div><b>${escapeHtml(NPCS.find(n=>n.id===r.who)?.name||'A neighbor')} & ${escapeHtml(NPCS.find(n=>n.id===r.with)?.name||'a friend')}</b><small>Moved in on Day ${r.day} · ${escapeHtml(apartmentName(r.home))}</small></div></div>`).join('')||'<p>No moves yet. Help friends grow closer, or let relationships develop naturally.</p>'}<p>Residential interiors and household switching are planned for later versions.</p>`);
+ showModal('housing','<h2>🏡 Little Households</h2><p>Six visitable living spaces, each with furniture, residents and their own character. Drop in, chat and help make a place feel like home.</p>'+sites+'<h3>Recent moves</h3>'+(state.householdMoves.slice(-5).reverse().map(r=>'<div class="card"><div><b>'+escapeHtml(NPCS.find(n=>n.id===r.who)?.name||'A neighbor')+' & '+escapeHtml(NPCS.find(n=>n.id===r.with)?.name||'a friend')+'</b><small>Moved in on Day '+r.day+' · '+escapeHtml(apartmentName(r.home))+'</small></div></div>').join('')||'<p>No moves yet. Help friends grow closer.</p>'));
+}
+function roomResidents(){return activeResidence?householdMembers(activeResidence):[]}
+function roomPositions(){return [{x:580,y:690},{x:729,y:740}]}
+function enterResidence(home){
+ if(!/^h[0-5]$/.test(home))return;
+ if(scene==='town')previousTownSpot={x:player.x,y:player.y};
+ if(talk)closeTalk();closeModal();stopPlacement();
+ scene='residence';activeResidence=home;player.target=null;player.x=565;player.y=840;player.facing='back';cam.x=575;cam.y=650;
+ const members=roomResidents();
+ if(state.residenceVisits[home]!==state.day){state.residenceVisits[home]=state.day;
+  if(members.length){state.needs.social=clamp(state.needs.social+7,0,100);notify('A cozy visit with '+members.map(n=>n.name).join(' and ')+'! 💗')}
+  else notify('A quiet room — perhaps a new neighbor will move in.');
+ }
+ resize();updateUI();save();
+}
+function leaveResidence(){
+ if(scene!=='residence')return;
+ if(talk)closeTalk();closeModal();stopPlacement();
+ const home=activeResidence;scene='town';activeResidence=null;player.target=null;
+ const site=RESIDENCES[Math.floor(Number(home.slice(1))/2)]||RESIDENCES[0];
+ const pos=previousTownSpot||{x:site.front[0],y:site.front[1]};
+ const safe=nearestWalkable(pos,'town',true)||{x:600,y:650};player.x=safe.x;player.y=safe.y;
+ cam.x=player.x;cam.y=player.y;player.facing='front';resize();updateUI();save();notify('Back to the village! 🌷');
+}
+function residenceRoomMenu(){
+ if(scene!=='residence'||!activeResidence)return housingBoard();
+ const members=roomResidents(),decor=state.residenceDecor[activeResidence]||0;
+ const labels=['Cozy starter','Personal touches','Welcoming room','Beautiful home'];
+ const costs=[0,45,75,110];
+ const people=members.map(n=>'<div class="card"><div><b>'+n.emoji+' '+escapeHtml(n.name)+'</b><small>'+escapeHtml(personalMood(n).name)+' · '+friendshipRank(state.relations[n.id]||0)+'</small></div><button data-act="room-chat" data-id="'+n.id+'">Talk</button></div>').join('');
+ const upgrade=decor<3?'<button class="btn" data-act="room-upgrade">🎁 Add home comforts · '+costs[decor+1]+' 🪙</button>':'';
+ showModal('room','<h2>🏡 '+escapeHtml(apartmentName(activeResidence))+'</h2><p>'+(members.length?members.map(n=>n.name).join(' & ')+' live here.':'This room is vacant, but ready for a neighbor.')+' Households keep their own finances, while your gifts come from your coins.</p><div class="card"><div><b>🛋️ Room comfort: '+labels[decor]+'</b><small>'+(decor===3?'Fully decorated!':'Next improvement: '+costs[decor+1]+' coins')+'<br>Decor and comfort are saved for this address, even if residents move.</small></div></div>'+people+upgrade+btn('🚪 Leave this home','leave-home'));
+}
+function upgradeRoom(){
+ if(scene!=='residence'||!activeResidence)return;
+ const home=activeResidence,level=state.residenceDecor[home]||0;
+ if(level>=3)return notify('This room is already beautiful! 🌷');
+ const cost=[0,45,75,110][level+1];if(state.coins<cost)return notify('You need '+cost+' coins for the next upgrade.');
+ state.coins-=cost;state.residenceDecor[home]=level+1;
+ for(const n of roomResidents()){const life=lifeFor(n.id);life.needs.fun=clamp(life.needs.fun+10,0,100);life.needs.energy=clamp(life.needs.energy+5,0,100)}
+ save();updateUI();notify('A lovely housewarming improvement! ✨');residenceRoomMenu();
 }
 const VISIT_WINDOWS=[{from:13.0,to:15.55},{from:19.0,to:20.7}];
 const VISIT_PLACES=[
@@ -964,6 +1008,45 @@ function drawHomeGround(g){
  oval(g,'#eccb9e',581,150,24,18);oval(g,'#e88fb0',579,148,15,12);oval(g,'#fff8e2',588,142,5,4);
 
 }
+function drawResidenceGround(g){
+ const unit=Number(activeResidence?.slice(1)||0),dec=state.residenceDecor[activeResidence]||0;
+ const colors=[['#f7e7d6','#e4b5b6','#ae727a'],['#f3e5c6','#aac5a3','#61998b'],['#f1e0db','#b8b3dd','#847cba'],['#f9e4bf','#b4cfdd','#7dacc8'],['#f4dedb','#dbb29b','#ac806c'],['#f2e9cd','#c1d1a2','#8ba96e']][unit];
+ const wall=colors[1],deep=colors[2];
+ fill(g,'#618b74',-100,-100,1600,1500);
+ round(g,'#4d6b62',159,120,864,1044,15,'#2d645d',6);
+ fill(g,colors[0],175,250,830,885);
+ for(let y=252;y<1130;y+=64)for(let x=175;x<1000;x+=64)g.drawImage(floorTile(),x,y);
+ fill(g,wall,176,139,827,116);
+ for(let x=190;x<990;x+=42){fill(g,deep,x,142,2,104);fill(g,'#fff3df',x+3,145,3,98)}
+ fill(g,'#f8e9c9',169,246,836,13);fill(g,deep,171,1130,836,14);
+ for(const x of [310,829]){
+  round(g,'#a76e62',x-63,155,126,85,5);fill(g,'#f8f1d2',x-56,159,112,74);fill(g,'#88cada',x-49,165,97,62);
+  fill(g,'#ffefbf',x-3,165,6,62);fill(g,'#ffefbf',x-49,193,97,6);
+  for(let j=0;j<3;j++)fill(g,'#f6fbdf',x-44+j*34,175,20,3);
+ }
+ round(g,'#794e4b',536,141,91,110,4);round(g,'#d69872',543,146,77,102,3);ellipse(g,'#ffe6ac',602,197,4,5);
+ round(g,'#fff3dd',489,116,187,33,8,'#b68a79',2);g.fillStyle='#365f53';g.font='bold 17px sans-serif';g.textAlign='center';g.fillText('VISITING HOURS',582,139);g.textAlign='left';
+ ellipse(g,deep,585,626,242,108);ellipse(g,'#fff4e2',585,620,227,96);ellipse(g,wall,585,619,203,79);
+ for(let i=0;i<22;i++){const a=i*TAU/22;ellipse(g,'#ffe5c3',585+Math.cos(a)*215,619+Math.sin(a)*85,3,3)}
+ round(g,'#9a715c',677,167,80,65,5,'#e0bc90',4);round(g,'#fff1d5',683,172,67,55,3);ellipse(g,'#f6acac',717,193,22,14);ellipse(g,'#79b676',714,188,12,7);
+ for(const [x,y] of [[211,490],[948,405],[203,890],[949,920]]){
+  round(g,'#ae795c',x-23,y,46,36,5);for(let j=0;j<5;j++)ellipse(g,j%2?'#63b67a':'#399767',x+Math.sin(j*2)*21,y-16-Math.cos(j)*13,16,14);
+ }
+ if(dec>=1){drawFurniture(g,'flowers',466,424);drawFurniture(g,'plant',909,682)}
+ if(dec>=2){drawFurniture(g,'lamp',464,834);drawFurniture(g,'rug',760,877);
+  for(let i=0;i<6;i++){const x=290+i*115;ellipse(g,'#fff6de',x,258,11,5);fill(g,'#dfb17b',x,261,4,6)}}
+ if(dec>=3){drawFurniture(g,'flowers',742,334);drawFurniture(g,'chair',892,825);drawFurniture(g,'books',410,896);
+  for(let j=0;j<4;j++)ellipse(g,['#f7a8c3','#fff0a7','#bcaaf6','#a5dbb4'][j],441+j*67,221,8,7)}
+}
+function drawResidenceFurniture(g){
+ const isDouble=roomResidents().length>1;
+ drawFurniture(g,'bed',311,465);if(isDouble)drawFurniture(g,'bed',350,757);
+ drawFurniture(g,'sofa',805,515);drawFurniture(g,'kitchen',822,327);
+ drawFurniture(g,'books',338,307);drawFurniture(g,'chair',786,801);drawFurniture(g,'flowers',695,554);
+ const members=roomResidents();
+ members.forEach((n,i)=>{const p=roomPositions()[i];drawCharacter(g,n,p.x,p.y,'front',false,personalMood(n).name==='Cheerful'?'happy':'neutral');drawName(g,n.name,p.x,p.y-145)});
+ if(!members.length){g.fillStyle='#547367';g.textAlign='center';g.font='bold 28px sans-serif';g.fillText('Waiting for new neighbors…',580,706);g.textAlign='left'}
+}
 function drawStatic(obj,g){
  const {type,x,y}=obj;
  if(type==='house')drawArt(g,houseArt(obj.kind),x,y,1.38);
@@ -1017,7 +1100,7 @@ function drawScene(){if(!W||!H)return;
  ctx.setTransform(DPR,0,0,DPR,0,0);ctx.imageSmoothingEnabled=false;
  ctx.fillStyle=scene==='town'?'#74b470':'#7cb58c';ctx.fillRect(0,0,W,H);
  ctx.save();ctx.translate(W/2,H*.54);ctx.scale(worldScale,worldScale);ctx.translate(-cam.x,-cam.y);
- if(scene==='town')drawTownGround(ctx);else drawHomeGround(ctx);
+ if(scene==='town')drawTownGround(ctx);else if(scene==='residence')drawResidenceGround(ctx);else drawHomeGround(ctx);
  if(scene==='town'){
   const ordered=objects.map(o=>({...o,draw:0})).concat(NPCS.map(o=>({...o,type:'npc',draw:1})),[{type:'player',x:player.x,y:player.y,draw:2}]).sort((a,b)=>a.y-b.y);
   for(const o of ordered){if(Math.abs(o.x-cam.x)>W/worldScale*.85+230||Math.abs(o.y-cam.y)>H/worldScale*.85+230)continue;
@@ -1038,20 +1121,21 @@ function drawScene(){if(!W||!H)return;
    else drawStatic(o,ctx);
   }
  }else{
-  drawHomeFurniture(ctx);drawCharacter(ctx,playerDef(),player.x,player.y,player.facing,!!player.target);
+  if(scene==='residence')drawResidenceFurniture(ctx);else drawHomeFurniture(ctx);
+  drawCharacter(ctx,playerDef(),player.x,player.y,player.facing,!!player.target);
  }
  ctx.restore();
  // soft late-afternoon/night vignette never obscures pixel art.
  const hour=state.minute/60;if(hour>=19||hour<6){const alpha=hour>=19?Math.min(.24,(hour-19)*.055):.19;ctx.fillStyle=`rgba(32,48,87,${alpha})`;ctx.fillRect(0,0,W,H)}
- if(talk){const n=NPCS.find(n=>n.id===talk);if(n){const sx=screenX(n.x),sy=screenY(n.y-156);$('emote').style.left=sx+'px';$('emote').style.top=sy+'px'}}
+ if(talk){const n=NPCS.find(n=>n.id===talk);if(n){const rp=scene==='residence'?roomPositions()[roomResidents().findIndex(m=>m.id===n.id)]:null;const sx=screenX(rp?.x??n.x),sy=screenY((rp?.y??n.y)-156);$('emote').style.left=sx+'px';$('emote').style.top=sy+'px'}}
  if(modal==='fish'&&$('bobber'))$('bobber').style.left=(((Math.sin(tick*4)+1)/2)*98)+'%';
 }
 function drawName(g,name,x,y){g.font='900 13px monospace';let textW=g.measureText(name).width;fill(g,'#295955',x-textW/2-8,y-14,textW+16,22);fill(g,'#fff7d7',x-textW/2-4,y-11,textW+8,17);g.textAlign='center';g.fillStyle='#3a6551';g.fillText(name,x,y+1);g.textAlign='left'}
-function resize(){W=Math.max(280,innerWidth);H=Math.max(350,innerHeight);DPR=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);canvas.style.width=W+'px';canvas.style.height=H+'px';worldScale=scene==='home'?clamp(W/770,.47,.86):clamp(W/530,.69,1.17);ctx.imageSmoothingEnabled=false}
+function resize(){W=Math.max(280,innerWidth);H=Math.max(350,innerHeight);DPR=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);canvas.style.width=W+'px';canvas.style.height=H+'px';worldScale=scene!=='town'?clamp(W/770,.47,.86):clamp(W/530,.69,1.17);ctx.imageSmoothingEnabled=false}
 // Characters navigate walkable corridors; scenery is no longer intangible.
 const NAV_STEP=35;
 function isWalkable(x,y,where=scene,ignoreNpc=false){
- if(where==='home'){
+ if(where==='home'||where==='residence'){
   if(x<215||x>958||y<260||y>1070)return false;
   for(const [fx,fy,rx,ry] of [[332,430,95,62],[803,489,85,67],[840,309,100,64],[342,314,72,70]])
    if(Math.abs(x-fx)<rx&&Math.abs(y-fy)<ry)return false;
@@ -1075,7 +1159,7 @@ function isWalkable(x,y,where=scene,ignoreNpc=false){
  return true;
 }
 function nearestWalkable(dest,where=scene,ignoreNpc=false){
- const b=where==='home'?{minx:225,maxx:947,miny:270,maxy:1055}:{minx:90,maxx:1430,miny:200,maxy:1450};
+ const b=where!=='town'?{minx:225,maxx:947,miny:270,maxy:1055}:{minx:90,maxx:1430,miny:200,maxy:1450};
  const point={x:clamp(dest.x,b.minx,b.maxx),y:clamp(dest.y,b.miny,b.maxy)};
  if(isWalkable(point.x,point.y,where,ignoreNpc))return point;
  for(let r=16;r<=250;r+=16)for(let i=0;i<24;i++){
@@ -1085,7 +1169,7 @@ function nearestWalkable(dest,where=scene,ignoreNpc=false){
  return null;
 }
 function findPath(start,dest,where=scene){
- const b=where==='home'?{minx:215,maxx:960,miny:260,maxy:1070}:{minx:80,maxx:1440,miny:190,maxy:1460};
+ const b=where!=='town'?{minx:215,maxx:960,miny:260,maxy:1070}:{minx:80,maxx:1440,miny:190,maxy:1460};
  const width=Math.floor((b.maxx-b.minx)/NAV_STEP)+1,height=Math.floor((b.maxy-b.miny)/NAV_STEP)+1;
  const idx=(cx,cy)=>cy*width+cx;
  const coord=(x,y)=>({x:b.minx+x*NAV_STEP,y:b.miny+y*NAV_STEP});
@@ -1132,7 +1216,7 @@ function approachObject(o){
 }
 function approachNeighbor(n){return nearestWalkable({x:n.x-51,y:n.y+35},scene,true)||{x:n.x-55,y:n.y+38}}
 
-function goScene(next){if(talk)closeTalk();closeModal();stopPlacement();scene=next;player.target=null;
+function goScene(next){if(scene==='residence'&&next==='town')return leaveResidence();if(talk)closeTalk();closeModal();stopPlacement();scene=next;activeResidence=null;player.target=null;
  if(next==='home'){player.x=575;player.y=670;cam.x=575;cam.y=650;}else{player.x=566;player.y=621;cam.x=566;cam.y=620;}
  resize();updateUI();save();notify(next==='home'?'Home sweet home! 🏡':'Out into the sunshine! 🌷')}
 function beginPlacement(obj){placement={...obj,x:575,y:660};closeModal();$('placementHint').classList.remove('hidden');$('placementText').textContent=obj.moveIndex!==undefined?'Tap the floor to move this item':'Tap a clear spot to place your new furniture';notify('Choose a spot inside your cottage 🌷')}
@@ -1149,6 +1233,21 @@ function clickWorld(x,y){if(modal||talk)return;
   if(placement.moveIndex!==undefined){state.placed[placement.moveIndex].x=pos.x;state.placed[placement.moveIndex].z=pos.y;}
   else{const item=furnitureTypes.find(t=>t.id===f.kind);if(state.coins<item.cost)return notify('Not enough coins!');state.coins-=item.cost;state.placed.push({kind:f.kind,x:pos.x,z:pos.y});}
   stopPlacement();save();updateUI();notify('Perfect! Your room is coming together! ✨');return;
+ }
+ if(scene==='residence'){
+  if(wx>510&&wx<660&&wy>90&&wy<290){leaveResidence();return}
+  const members=roomResidents(),spots=roomPositions();
+  const near=members.map((n,i)=>({n,p:spots[i],dist:Math.hypot(wx-spots[i].x,wy-(spots[i].y-68))})).sort((a,b)=>a.dist-b.dist)[0];
+  if(near&&near.dist<95){goTo(nearestWalkable({x:near.p.x-80,y:near.p.y+25},'residence',true)||{x:555,y:700},()=>openTalk(near.n.id));return}
+  const furn=[{x:311,y:465,word:'A soft, welcoming guest bed. 💤',fun:0},
+   {x:805,y:515,word:'A lovely chat on the sofa! 💗',fun:8},
+   {x:822,y:327,word:'The kitchen smells like fresh bread. 🍞',fun:4},
+   {x:338,y:307,word:'A shelf of favorite stories! 📚',fun:9},
+   {x:786,y:801,word:'A quiet corner to relax. 🌿',fun:6}];
+  const f=furn.find(f=>Math.hypot(wx-f.x,wy-(f.y-40))<85);
+  if(f){goTo(nearestWalkable({x:f.x+(f.x>600?-105:105),y:f.y+55},'residence',true)||{x:560,y:695},()=>{if(f.fun)changeNeed('fun',f.fun);notify(f.word)});return}
+  if(wx>795&&wy>965){residenceRoomMenu();return}
+  goTo({x:clamp(wx,228,945),y:clamp(wy,275,1000)});return;
  }
  if(scene==='home'){
   if(wy<220){notify('A lovely sunny view out of the window!');return}
@@ -1213,8 +1312,8 @@ function update(dt){tick+=dt;
   const rate=dt*speed*.013;state.needs.hunger=clamp(state.needs.hunger-rate*1.9,0,100);state.needs.energy=clamp(state.needs.energy-rate*1.3,0,100);
   state.needs.social=clamp(state.needs.social-rate*.6,0,100);state.needs.fun=clamp(state.needs.fun-rate*.7,0,100);
  }
- const focus=talk?NPCS.find(n=>n.id===talk):null;const aimX=scene==='home'?575:focus?(focus.x+player.x)/2:player.x;
- const aimY=scene==='home'?650:focus?focus.y-26:player.y;
+ const focus=talk?NPCS.find(n=>n.id===talk):null;const aimX=scene!=='town'?575:focus?(focus.x+player.x)/2:player.x;
+ const aimY=scene!=='town'?650:focus?focus.y-26:player.y;
  cam.x+=(aimX-cam.x)*clamp(dt*4,0,1);cam.y+=(aimY-cam.y)*clamp(dt*4,0,1);
  uiTimer+=dt;if(uiTimer>.5){uiTimer=0;updateUI();}
 
@@ -1282,11 +1381,16 @@ function decorate(){if(scene!=='home')goScene('home');
 function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
  showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(pendingName??state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair color</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Haircut</h3><div class="haircuts">${['Bob','Side-part','Tousled','Ponytail','Buns'].map((n,i)=>`<button data-act="set-style" data-id="${i}" aria-pressed="${state.hairStyle===i}" class="haircut ${state.hairStyle===i?'selected':''}">${n}</button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Household Foundations v1.8.0 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💌 Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
+function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Open Doors v1.9.0 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💌 Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${scene==='residence'?btn('🛋️ About this home','room-info'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
 function handleAction(action,id){
  if(action==='chat'||action==='compliment'||action==='gift'||action==='ask'||action==='join'||action==='news'||action==='help'||action==='mediate'||action==='invite'||action==='housemate')return respond(action);
  if(action==='bye')return closeTalk();
- if(action==='find'){closeModal();if(scene==='home')goScene('town');const n=NPCS.find(n=>n.id===id);if(n){goTo(approachNeighbor(n),()=>openTalk(id));if(player.target)player.target.npcId=n.id;}return}
+ if(action==='find'){closeModal();if(scene!=='town')goScene('town');const n=NPCS.find(n=>n.id===id);if(n){goTo(approachNeighbor(n),()=>openTalk(id));if(player.target)player.target.npcId=n.id;}return}
+ if(action==='visit-home')return enterResidence(id);
+ if(action==='leave-home')return leaveResidence();
+ if(action==='room-info')return residenceRoomMenu();
+ if(action==='room-upgrade')return upgradeRoom();
+ if(action==='room-chat'){if(scene==='residence'&&roomResidents().some(n=>n.id===id))return openTalk(id);return}
  if(action==='visits')return visitPlans();
  if(action==='housing')return housingBoard();
  if(action==='journal')return journal();
