@@ -19,3 +19,34 @@
 #game.talking .bottom-wrap{visibility:hidden;opacity:0;pointer-events:none}#game.talking .location-pill{opacity:.5}
 @media(max-width:580px){.talk-card{border-radius:22px;padding:10px 12px}.talk-avatar{height:36px;width:36px;font-size:21px}.talk-name strong{font-size:15px}.talk-actions button{font-size:11px;min-height:40px}}
 @media(orientation:landscape) and (max-height:520px){.talk-layer{width:min(525px,calc(100% - 18px))}.talk-card{padding:7px 12px}.talk-head{height:30px}.talk-avatar{height:29px;width:29px;font-size:19px}#talkText{font-size:12px;min-height:25px;margin:3px 0 5px}.talk-actions button{min-height:31px;padding:3px 5px;font-size:11px}}
+
+
+/* v0.6 — NPC conversations keep the scene visible while the character reacts. */
+.conversation-layer{position:absolute;left:50%;bottom:max(12px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:7;width:min(570px,calc(100% - 20px));pointer-events:none}
+.conversation-layer.hidden{display:none}
+.dialogue-card{pointer-events:auto;position:relative;background:linear-gradient(140deg,#fffdf1,#fff2dc);border:3px solid white;border-radius:25px;padding:13px 15px;color:#345b49;box-shadow:0 10px 0 #b2a87a4c,0 18px 44px #295c3e50;animation:hh-dialogue-in .22s ease-out}
+@keyframes hh-dialogue-in{from{opacity:0;transform:translateY(15px) scale(.97)}to{opacity:1;transform:none}}
+.dialogue-card::before{content:"";position:absolute;top:-12px;left:18%;height:20px;width:20px;transform:rotate(45deg);border:3px solid white;border-right:0;border-bottom:0;background:#fffdf1}
+.dialogue-header{display:flex;align-items:center;gap:9px;min-height:42px;margin-bottom:6px}
+.dialogue-avatar{display:grid;place-items:center;flex:none;width:40px;height:40px;background:#ffe6b6;border-radius:14px;border:2px solid white;font-size:24px}
+.dialogue-heading{display:flex;flex-direction:column;min-width:0;flex:1;line-height:1.08}
+.dialogue-heading strong{font-size:17px;font-weight:900;color:#247652}
+.dialogue-heading small{font-size:11px;color:#738d7d;margin-top:3px}
+.dialogue-hearts{font-size:13px;color:#ec6f92;font-weight:900;white-space:nowrap}
+.dialogue-x{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#f6e9da;color:#987d73;font-weight:900}
+.dialogue-text{min-height:43px;padding:2px 1px 10px;font-size:clamp(14px,3.3vw,17px);font-weight:800;line-height:1.4;overflow-wrap:anywhere}
+.dialogue-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.dialogue-actions button{min-height:41px;padding:8px 5px;background:#e8f8db;color:#357553;border:2px solid #d2ebc3;border-radius:13px;font-size:12px;font-weight:900}
+.dialogue-actions button:nth-child(2){background:#ffe6ec;border-color:#ffd4df;color:#a84e70}
+.dialogue-actions button:nth-child(3){background:#fff1c9;border-color:#f4dcaa;color:#916c35}
+.dialogue-actions button.dialogue-bye{background:#f3f0eb;border-color:#e5ded5;color:#827f7b}
+.dialogue-actions button.dialogue-next{grid-column:1 / -1;background:#43c78d;border-color:#20b676;color:white;font-size:14px}
+.dialogue-gain{position:absolute;right:26px;top:45px;opacity:0;color:#e9588c;font-size:16px;font-weight:900;pointer-events:none}
+.dialogue-gain.pop{animation:hh-heart .9s ease-out forwards}
+@keyframes hh-heart{0%{opacity:0;transform:translateY(6px)}20%{opacity:1;transform:translateY(-4px) scale(1.1)}100%{opacity:0;transform:translateY(-30px)}}
+.conversation-emote{position:absolute;z-index:6;display:none;transform:translate(-50%,-115%);align-items:center;justify-content:center;width:58px;height:58px;border-radius:50%;border:3px solid white;background:#fffdf0;box-shadow:0 6px 16px #356d4a55;font-size:30px;pointer-events:none;animation:hh-emote .65s ease-in-out infinite alternate}
+.conversation-emote.visible{display:flex}
+@keyframes hh-emote{from{transform:translate(-50%,-108%) rotate(-6deg)}to{transform:translate(-50%,-128%) rotate(6deg)}}
+#game.talking .bottom-wrap{visibility:hidden;opacity:0;pointer-events:none}
+@media(max-width:580px){.conversation-layer{width:calc(100% - 18px)}.dialogue-card{padding:10px 12px 12px;border-radius:22px}.dialogue-text{min-height:38px}.dialogue-actions button{min-height:39px;font-size:11px}.dialogue-heading strong{font-size:15px}.dialogue-avatar{width:36px;height:36px;font-size:22px}}
+@media(orientation:landscape) and (max-height:520px){.conversation-layer{width:min(520px,calc(100% - 16px))}.dialogue-card{padding:7px 12px}.dialogue-text{min-height:24px;font-size:12px;padding-bottom:4px}.dialogue-header{min-height:30px;margin-bottom:2px}.dialogue-actions button{min-height:31px;padding:4px}}
