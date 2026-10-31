@@ -1,80 +1,19 @@
-# Hearth & Harbor · Playable Prototype v0.6
+# Hearth & Harbor — Pixel Village v0.7.0
 
-An original cozy chibi life simulator designed first for iPhone Safari and GitHub Pages. Free to play; no accounts, paid services, advertisements, subscriptions, or backend required.
+A ground-up 2.5D retro-styled art reset of Hearth & Harbor, with original pixel-sprite characters and scenery. Runs directly on GitHub Pages and iPhone Safari. No Three.js, no API keys, no hosting fees, no paid content.
 
-## What's playable
+## What's different
 
-- Original procedural 3D low-poly town and chibi avatar with visible shoes, limbs, and walking animation.
-- Six named neighbors with personalities, conversations, and persistent friendship scores.
-- Touch-to-walk navigation, interactive homes, market, café, library, hall, garden, benches, and fishing pond.
-- Customizable character name, skin, hair, and clothes.
-- Dollhouse-style home interior with interactive bed, sofa, and kitchen.
-- Purchase and **place** six furniture types anywhere on the home floor; four interior paint palettes.
-- Four needs (food, fun, social, energy), 3 simulation speeds, day/night progression, and 4 short seasons.
-- Fishing timing minigame, plant/harvest gardening loop, café shift earning, shopping, and journal quests.
-- Local auto-save, manual save, export/import backup, touch-friendly UI, Home Screen PWA manifest.
+The old 3D renderer, procedural sphere characters, floating bodies and boxy buildings have been replaced with a canvas 2.5D painter's-order engine and a consistent original 64-era-inspired pixel-art style. Characters have distinct outfits, hair, skin, eyes, expressions and animated walking. Scenery includes a town plaza, winding paths, cottages, garden beds, fruit stand, leafy trees, spring flowers, furniture and fishing pond.
 
-## How to run
+## Gameplay
 
-Open `index.html` from a **local web server** or deploy to GitHub Pages. Because it uses JavaScript modules and imports Three.js from jsDelivr, direct `file://` opening is not supported.
+Walk by tapping the ground. Tap characters to approach and talk without a full-screen modal. Compliment or gift neighbors to gain friendship. Tap buildings and locations to enter the house, work at the café, browse the market, tend the garden or play a fishing minigame. Style your avatar, buy and place furniture, and claim journal rewards. Auto-save uses the same key as before: `hearth-harbor-save-v1`. Saves are still local to the browser, so use Menu → Export save for backup.
 
-### Publish with GitHub Pages (no command line)
+## Deployment
 
-1. Create a **new public repository** on GitHub named `hearth-and-harbor`. Leave your existing game repos alone.
-2. Upload **the contents of this folder** at the root of the new repository: `index.html`, `style.css`, `game.js`, `sw.js`, `manifest.webmanifest`, `assets/`, and `README.md`.
-3. In the repo, open **Settings → Pages → Build and deployment**, select **Deploy from a branch**, `main`, `/ (root)`, then **Save**.
-4. The game URL will be `https://YOUR-USERNAME.github.io/hearth-and-harbor/` after deployment. Open in Safari and use **Share → Add to Home Screen**.
+Static site only. Commit `index.html`, `game.js`, `style.css`, `manifest.webmanifest`, `sw.js` and `assets/` at the repository root. In GitHub Settings → Pages, choose main / root. No build step.
 
-The game needs an internet connection to initially load the Three.js library and web font. Saved progress stays in the same browser/device, not in GitHub. Use **Menu → Export save** for backups.
+## Scope
 
-### Local testing
-
-From this folder: `python -m http.server 8000` then open `http://localhost:8000` in a browser with network access.
-
-## Scope / known limitations
-
-This is a **vertical slice**, not the full Sims-like game: no autonomous household simulation, multi-character households, weddings, careers beyond the café shift, building walls, true resident schedules, online multiplayer, or cloud saves yet. NPCs wander in a small range, and character movement is simple rather than full obstacle-aware pathfinding. Furniture placement is direct but doesn't yet include move/sell tools. The goal is validating the character style, navigation, life-sim loop, and mobile UI.
-
-## Technical notes
-
-- No build step; ES modules, Three.js 0.160.1 CDN, and procedural mesh artwork.
-- Local state key: `hearth-harbor-save-v1`.
-- iPhone optimization: capped device pixel ratio, simple geometry, orthographic camera, responsive touch UI.
-- Site source is original, using no copyrighted Sims or Animal Crossing assets.
-
-## Visual overhaul v0.2 (October 31, 2026)
-
-- Richer original rounded chibi character heads, expressive glossy eyes, shaped hairstyles, sleeves and proper shoes.
-- Organic hand-shaped sandy paths instead of hard rectangle tiles, with instanced stones.
-- Procedurally painted grass and wood plank textures (generated in browser, no heavy texture downloads).
-- Layered trees, tinted foliage, blossoms, fruit, garden beds, wild grass, mushrooms and natural landscaping.
-- Rebuilt cottages with gable roofs, scalloped shingle lines, dormers, porches, shutters, flower boxes and wreaths.
-- Upgraded pond, lily pads, reeds, reflective ripples, market stall, benches, town fountain and warmer home decor.
-- Shared 3D materials, instanced detail meshes and retained mobile resolution cap for iPhone performance.
-
-Existing local saves remain compatible. This is original stylized art inspired by the feel of cozy life sims, not a reuse of Nintendo or EA assets. The team should continue toward art-directed 3D models and hand-painted textures for a production-quality finish.
-
-## v0.3 Sunshine Color Update
-
-Brighter grass and textures, saturated orchard greens and colorful flower beds, sparkling cyan pond, warm sunshine with reduced tone-mapping washout, vivid coral / butter-yellow / mint / violet cottages, cheerful in-game UI. Existing save data is preserved.
-
-## v0.4 Village & Character Art Rebuild
-
-- Sculpted faces with larger irises, glossy highlights, eyebrows, cheeks and tiny smiles; more distinctive hairstyles and accessories for named residents.
-- Additional clothing features, rounded hems, decorated pockets, embroidery, hat, hair bows, and baker's cap.
-- Detailed cottage front façades with roof edge trim, shaped roof-tile details, colorful awnings, porch lights, mailboxes and doorstep patterns.
-- Soft foliage highlights, bark detailing, blossom/fruit colors and more decorative treetop layering.
-- Art-directed flower beds, sunflower stands, trellis arch, streetlights, potted bouquets, small seating areas and picnic tables.
-- Replaced the new flower beds with instanced geometry to keep decorative density inexpensive on iPhone.
-- Updated warm daylight and sign contrast, while leaving gameplay rules and save-key unchanged.
-
-**Art direction note:** This is still a hand-built procedural art prototype, not a commercial console game's custom-model and hand-painted texture pipeline. All added assets are original.
-
-## v0.6 — Living conversations
-
-Neighbor dialogue is now in-world: no full-screen talk menu, resident-visible camera framing, head/arm gestures and face changes, floating emotes, and a compact mobile conversation panel. Existing local saves remain compatible.
-
-
-## v0.6 — Character reset
-
-Rebuilt the 3D human villagers with cleaner proportions, face layout, distinct hair silhouettes, proper shoe height, and preserved conversation expressions. Existing saves remain compatible.
+This is a playable vertical slice and a replacement art direction, not a completed Sims-like life simulator or a recreation of Nintendo IP. All art is original. Character drawing is generated locally on offscreen canvases. There is no cloud sync, detailed pathfinding, generational simulation or house-wall editing yet. Fine-tuning mobile look and performance will continue after device playtests.
