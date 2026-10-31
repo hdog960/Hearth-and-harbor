@@ -1,22 +1,17 @@
-# Hearth & Harbor v1.2 — Village Life
+# Hearth & Harbor v1.3 — Village at Work
 
-A free, original 2.5D storybook life-sim for GitHub Pages and iPhone Safari.
+Original free iPhone-first 2.5D life simulator hosted on GitHub Pages.
 
-## Quality improvements
+## New
+- Each neighbor visibly performs a contextual task at their daily station: watering flowers, arranging fruit, baking, reading, painting, and fishing. These use original pixel-art props, particles, and subtle animation.
+- New **Join in** dialogue option for daily shared activities. Each has a unique response, boosts social/fun, and grants a small one-per-day friendship bonus.
+- Activity dialogue follows the in-game clock, and all interactions preserve the bottom conversation card without obscuring the villager.
+- Existing saves are compatible. New daily activity limits are sanitized during import.
 
-- Grid-based, obstacle-aware navigation around buildings, garden, trees, fences, and pond.
-- Neighbors stop before colliding with scenery or each other.
-- Character movement routes around obstacles rather than cutting through them.
-- More individual dialogue reactions, original small character portraits, and daily friendship-gain limits.
-- Furniture cannot be placed directly over the player.
-- Existing v1.0 saves remain compatible; new daily conversation metadata is validated.
+## Run
 
-## Deployment
+Upload all files at root of public GitHub repository and configure Pages from main / (root). No build system, app store, or backend required. Opening an older Home Screen shortcut may require refreshing Safari.
 
-Publish this folder to the `main` branch of the public `hdog960/Hearth-and-harbor` repository. GitHub Pages serves from `main` / `(root)`. No server or build process. For a clean cache use `?v=1.1.0`.
+## Scope
 
-The artwork is still a work in progress, and mobile Safari testing is required.
-
-## Little Lives (v1.2)
-
-Villagers now have game-clock daily routines, route around scenery to meaningful destinations, display an activity icon, and explain what they are doing in the new **Their day** conversation action. Friendship ranks and persistent milestone moments unlock at 25, 60 and 90 hearts per villager. A paused clock, menu or conversation pauses wandering. Current save key remains unchanged; older saves are normalized.
+Activities are animated vignettes, not physically simulated tasks or a complete autonomous Sims-style economy. This is still a prototype, with more bespoke sprites and world behavior to come.
