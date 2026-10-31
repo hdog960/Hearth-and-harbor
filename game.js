@@ -160,12 +160,45 @@ function flowerArt(n=0){return makeArt('flower'+n,32,36,g=>{fill(g,'#4a944d',15,
 function grassTile(){return makeArt('grass',96,96,g=>{fill(g,'#78ba70',0,0,96,96);for(let i=0;i<34;i++){const x=hash(i*28)*95,y=hash(i*11+6)*95;fill(g,['#86c579','#68ad68','#95ce7a','#71b369'][i%4],x,y,4+(i%4)*2,2+(i%3))}for(let i=0;i<13;i++){const x=hash(i*48+4)*95,y=hash(i*8+34)*95;fill(g,'#4f9761',x,y,2,5);fill(g,'#b3d78e',x+2,y-1,2,3)}return g})}
 function floorTile(){return makeArt('floor',64,64,g=>{fill(g,'#e6bc80',0,0,64,64);for(let j=0;j<4;j++)for(let i=0;i<3;i++){const y=j*16,x=i*24-(j%2)*12;fill(g,'#b78962',x,y,23,1);fill(g,'#f7d59c',x+1,y+2,20,2);fill(g,'#dbab72',x+18,y+7,2,6)}})}
 
+
+function flowerbedArt(seed=0){return makeArt('bed8'+seed,136,65,g=>{
+ ov(g,'#315a4947',68,59,66,7);ov(g,'#3b915f',68,45,63,18);
+ for(let j=0;j<17;j++){const x=12+(j%9)*14+(j%3)*2,y=29+Math.floor(j/9)*14+hash(j+seed)*5;
+ smoothLine(g,'#477c42',[[x,y+16],[x,y-7]],2);
+ ov(g,'#5fa85b',x-3,y+8,6,3);
+ const c=['#ffa7b9','#f9e2a1','#bcaff4','#f9f5df','#f9bc80'][(j+seed)%5];
+ for(const [px,py] of [[-3,0],[3,0],[0,-4],[0,4]])ov(g,c,x+px,y+py,4,4);
+ ov(g,'#f1c663',x,y,2.6,2.6);
+ }});}
+function fenceArt(){return makeArt('fence8',170,68,g=>{
+ for(let x=6;x<168;x+=21){rr(g,'#d6a875',x,13,11,50,3,'#8f6f58');poly(g,'#f4d7a1',[[x,13],[x+6,5],[x+11,13]]);fill(g,'#fff2cc',x+2,19,2,28)}
+ for(const y of [29,49])rr(g,'#e2b982',0,y,170,8,2,'#937358');
+ });}
+function flowerArchArt(){return makeArt('arch8',160,187,g=>{
+ ov(g,'#295f4a55',80,174,69,10);
+ for(const x of [25,133]){rr(g,'#a47962',x-6,63,13,109,4,'#654f45');smoothLine(g,'#d7a78a',[[x-2,80],[x-2,162]],2)}
+ smoothLine(g,'#785b58',[[22,84],[29,40],[48,22],[80,13],[113,22],[133,43],[139,85]],10);
+ smoothLine(g,'#56946b',[[22,84],[29,40],[48,22],[80,13],[113,22],[133,43],[139,85]],7);
+ for(let i=0;i<28;i++){const a=Math.PI*1.05+i/27*Math.PI*.9,x=80+Math.cos(a)*63,y=89+Math.sin(a)*70;
+ ov(g,i%2?'#5ab675':'#8acc76',x,y,11,6);
+ if(i%3===0){ov(g,i%2?'#ffe4a3':'#f29db9',x,y-2,6,6);ov(g,'#fff4d0',x,y-2,2,2)}
+ }});}
+function picnicArt(){return makeArt('picnic8',160,103,g=>{
+ ov(g,'#315a4944',79,96,72,8);
+ for(const x of [23,126]){rr(g,'#b98965',x,45,12,39,3,'#775b57');rr(g,'#e7b484',x-5,34,24,11,3)}
+ rr(g,'#987258',22,31,117,20,8,'#65524e');rr(g,'#fff1d8',19,24,123,16,7);
+ for(let x=26;x<138;x+=19)fill(g,'#e6a0a3',x,25,9,14);
+ rr(g,'#e7ba83',29,48,103,8,2);rr(g,'#b88663',70,56,17,32,2);
+ for(const x of [49,100]){ov(g,'#fff9e9',x,29,15,5);ov(g,'#f2bd8d',x,28,5,4)}
+ rr(g,'#d4a487',71,12,23,16,3);ov(g,'#fff2d3',83,11,10,6);
+ });}
+
 const objects=[];
 function put(type,x,y,opts={}){const obj={type,x,y,...opts};objects.push(obj);return obj}
 function buildTown(){objects.length=0;
  for(const [x,y,type] of [[385,470,0],[925,455,1],[385,1070,2],[1060,970,3]])put('house',x,y,{kind:type,label:['Your Cottage','Honeybun Café','Storybook Library','Town Hall'][type],action:['home','cafe','library','hall'][type]});
  put('stall',530,752,{action:'market'});put('pond',940,1250,{action:'fish'});put('garden',763,416,{action:'garden'});
- put('bench',730,780);put('bench',375,812);put('bench',1050,615);
+ put('bench',730,780);put('bench',375,812);put('bench',1050,615);put('picnic',1125,830);put('arch',820,1025);put('fence',475,525);put('fence',1120,1080);for(const [x,y,k] of [[445,560,0],[780,810,1],[900,900,2],[320,925,3],[700,1125,4],[1040,550,1],[1080,895,0],[550,1010,2]])put('flowerbed',x,y,{kind:k});
  for(const [x,y] of [[610,530],[890,775],[495,1095],[1080,1165],[350,675]])put('lamp',x,y);
  for(const [x,y,n] of [[270,430,0],[265,830,1],[230,1100,0],[920,240,2],[1100,335,0],[1190,650,1],[1210,1100,0],[660,290,0],[560,1120,2],[870,1160,1],[1300,1250,0],[580,980,1],[147,650,0]])put('tree',x,y,{kind:n});
  const shrubs=[[250,590],[486,544],[1080,525],[630,405],[905,600],[1032,790],[300,995],[805,920],[1160,850],[650,1025],[1054,1087],[765,1071],[1180,1300]];
@@ -228,7 +261,7 @@ function drawStatic(obj,g){
  if(type==='tree')drawArt(g,foliageArt(obj.kind),x,y,1.14);
  if(type==='shrub')drawArt(g,shrubArt(obj.kind),x,y,.85);
  if(type==='flower')drawArt(g,flowerArt(obj.kind),x,y,obj.scale||.8);
- if(type==='bench')drawArt(g,benchArt(),x,y,1.24);
+ if(type==='bench')drawArt(g,benchArt(),x,y,1.24);if(type==='picnic')drawArt(g,picnicArt(),x,y,1.05);if(type==='arch')drawArt(g,flowerArchArt(),x,y,1.15);if(type==='fence')drawArt(g,fenceArt(),x,y,1);if(type==='flowerbed')drawArt(g,flowerbedArt(obj.kind),x,y,1);
  if(type==='lamp')drawArt(g,lampArt(),x,y,1.1);
  if(type==='pond'){const s=Math.sin(tick*2)*2;ellipse(g,'#d8fcf3',x+30,y-40+s,26,2)}
  if(type==='garden'){
