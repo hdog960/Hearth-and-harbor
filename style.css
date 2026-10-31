@@ -13,3 +13,7 @@
 /* Quality Edition: small-screen readability, placement and persistent status affordances */
 .placement-hint{position:absolute;top:145px;left:50%;transform:translateX(-50%);width:min(370px,calc(100vw - 32px));background:#fff8e5;border:3px solid #fffef5;border-radius:14px;padding:12px;box-shadow:0 5px 0 #344e4966;display:flex;gap:8px;align-items:center;justify-content:space-between;z-index:8;color:#325b50;font-weight:800;font-size:13px}.placement-hint.hidden{display:none}.placement-hint button,.furniture-actions button,.haircut{background:#e7f0d5;border:2px solid #93b796;border-radius:10px;padding:7px 10px;color:#305c4e;font-weight:850}.furniture-actions{display:flex;gap:5px}.haircuts{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 16px}.haircut.selected{background:#65be9d;color:white;border-color:#31886b}.modal-card{overscroll-behavior:contain}.world-toast{pointer-events:none}.nav button:focus-visible,.modal button:focus-visible,.conversation button:focus-visible{outline:3px solid #ef8aa9;outline-offset:2px}
 @media(max-width:390px){.furniture-actions button{padding:6px}.placement-hint{font-size:12px}}
+/* v1.1 • portraits are actual pixel sprites, not emoji placeholders */
+.portrait-canvas{display:block;width:40px;height:40px;image-rendering:pixelated;image-rendering:crisp-edges}
+.tiny-avatar{background:linear-gradient(155deg,#d6efbf,#fae2bb);overflow:hidden}
+@media(max-width:360px){.speech-head strong{font-size:15px}.talk-actions button{padding:8px 5px;font-size:11px}}
