@@ -1,16 +1,18 @@
-# Hearth & Harbor v1.0 — Quality Edition
+# Hearth & Harbor v1.1 — Village Life
 
-Free iPhone-first 2.5D life-sim vertical slice. GitHub Pages static hosting. Existing `hearth-harbor-save-v1` local saves remain compatible.
+A free, original 2.5D storybook life-sim for GitHub Pages and iPhone Safari.
 
-## QA and repairs
-- In-game clock and four needs bars now update continuously and needs decay at an even rate. Time is suspended while talking, shopping, decorating or placing furniture.
-- Rebuilt furniture shopping into a genuine touch-to-place flow; no coins spent until placement is completed. Moved furniture can be repositioned; placed items can be sold for half price.
-- Cottage framing and scale improved to show more of the room without cropping furniture off-screen.
-- Fixed cosmetic character styles so the selected haircut is actually represented on the player and saved.
-- Flower seeds purchased at the market now affect garden harvest rewards.
-- Save import is validated and sanitized to protect from malformed or incompatible files.
-- Restyled small-screen controls and added a cancel affordance for placement mode.
-- Retained the storybook/pixel aesthetic and gameplay features (neighbors, conversations, fishing, gardening, quests, time, market, home).
+## Quality improvements
 
-## Publishing
-Upload repository contents to GitHub Pages `main` branch root. This is a prototype and does not claim the content breadth or art production quality of commercial life sims.
+- Grid-based, obstacle-aware navigation around buildings, garden, trees, fences, and pond.
+- Neighbors stop before colliding with scenery or each other.
+- Character movement routes around obstacles rather than cutting through them.
+- More individual dialogue reactions, original small character portraits, and daily friendship-gain limits.
+- Furniture cannot be placed directly over the player.
+- Existing v1.0 saves remain compatible; new daily conversation metadata is validated.
+
+## Deployment
+
+Publish this folder to the `main` branch of the public `hdog960/Hearth-and-harbor` repository. GitHub Pages serves from `main` / `(root)`. No server or build process. For a clean cache use `?v=1.1.0`.
+
+The artwork is still a work in progress, and mobile Safari testing is required.
