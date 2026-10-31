@@ -14,10 +14,16 @@ Free iPhone-first 2.5D life-simulation prototype on GitHub Pages.
 - Existing local save key and old saves remain supported.
 
 ## Not yet implemented
-Resident home interiors, playable household switching, weddings, and children are not in this prototype. No offline progression: time passes while the game is open.
+Direct control of other households, weddings, children, and an integrated cooking minigame system are not yet in this prototype. No offline progression: time passes while the game is open.
 
 ## Deployment
 Serve repository root from GitHub Pages (main branch). Open on iPhone in Safari.
 
 ## v1.9 Open Doors
 Six residential units are now enterable via People → Little Households → Visit. Interiors show the current occupants (including roommates after moves), use distinct palettes, and offer furniture interactions and conversations. Room-comfort upgrades cost 45, 75, then 110 player coins; upgrade levels and once-daily visiting boosts persist to existing local saves. Leave by tapping the door or Town. Resident interiors are a first-pass feature, not full household control.
+
+## Upcoming cooking milestone — The Hearth Kitchen
+
+Cooking is planned as a substantial part of household life, not a detached minigame. The first milestone will add an illustrated recipe book, pantry ingredients, hands-on touch preparation, serving, and meal effects. Later milestones will connect cooking to gardening, fishing, resident preferences, friendship dinners, Oliver’s bakery, and seasonal festivals. The current playable build does **not** contain these new cooking systems yet.
+
+See [COOKING_SYSTEM_DESIGN.md](COOKING_SYSTEM_DESIGN.md) for the approved feature design, original Cooking Mama-inspired technique ideas, implementation stages, economy safeguards, and mobile QA requirements.
