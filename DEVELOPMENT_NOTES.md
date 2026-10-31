@@ -1,21 +1,14 @@
-# Hearth & Harbor v1.5 — Little Households: development & QA
+# Hearth & Harbor v1.6 — Neighbor Bonds
 
-## Completed
-- Resident state for all six neighbors (food, energy, social, fun), saved under the existing key.
-- Needs change only as **in-game time** advances. They recover while neighbors participate in relevant activities and during self-care.
-- Residents can temporarily deviate from scheduled routes to rest, visit the café, or seek company. Scheduled community meetings still take precedence.
-- Mood appears in the People menu and relevant conversation and in-world icons.
-- Distinct three-step aspirations for every villager. Helping costs player energy, advances once per in-game day, boosts friendship and resident needs, and completes with a 65-coin bonus plus a Town Stories entry.
-- Community meeting interactions lift social/fun needs for participating neighbors.
-- Existing saved progress and v1.4 friend relationships remain compatible. Imported values are clamped and sanitized.
+## Implemented
+- Resident meeting outcomes can now be warm, awkward, or reconciliatory. The outcome is deterministic for a given in-game day and event slot.
+- Previous friendship progress is preserved. A new independent tension score retains unresolved disagreements instead of erasing friendships outright.
+- Persistent stories describe disagreements and reconciliations, with custom beats for each scheduled pair.
+- Unresolved tension changes resident moods, town gossip, their day response, and post-event destinations.
+- Player can mediate disputes in conversation; energy cost, friendship prerequisite, and once-per-pair-per-day limit prevent spamming.
+- Old saves migrate with zero tensions. No online services added.
 
-## Testing (headless Chromium, 390×844 emulated mobile viewport)
-- 13/13 isolated-browser integration checks passed, including menus, needs, older saves, mood, aspiration progress, finding a neighbor, dream completion, journal, and persistence.
-- Zero JavaScript exceptions in the test harness.
-- Syntax validated with `node --check`.
-
-## Limits
-- This is a lightweight life-simulation layer, **not** full autonomous households, marriage, children, careers, or elaborate NPC decision-making.
-- No simulation when the game is closed.
-- Mobile testing is Chromium emulation, not physical iPhone Safari.
-- Further art, narrative variety, progression balancing, and device performance work are needed.
+## Boundaries
+- Small authored social simulator: six residents, 12 event templates, not a generative relationship AI.
+- Events progress only while the game is open. The renderer remains pixel-art canvas, preserving the current aesthetic.
+- Physical iPhone Safari testing remains required.
