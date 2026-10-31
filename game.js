@@ -1,12 +1,37 @@
-/* Hearth & Harbor — Storybook Village v0.8.0
+/* Hearth & Harbor — Quality Edition v1.0.0
    A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),rand=(a,b)=>a+Math.random()*(b-a);
 const hash=(n)=>{const x=Math.sin(n*127.1+8.45)*43758.5453;return x-Math.floor(x)};
 const SAVE='hearth-harbor-save-v1';
-const DEF=()=>({name:'Poppy',hair:0x5d4037,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],fish:[],homeStyle:0,sound:false,seenWelcome:false});
-let state=DEF();try{const raw=JSON.parse(localStorage.getItem(SAVE)||'null');if(raw){state={...state,...raw,needs:{...state.needs,...raw.needs},relations:raw.relations||{},garden:raw.garden||[0,0,0,0],placed:raw.placed||[],quests:raw.quests||{}}}}catch(e){}
+const DEF=()=>({name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
+function cleanSave(raw){
+ const d=DEF();if(!raw||typeof raw!=='object'||Array.isArray(raw))return d;
+ const number=(v,f,min,max)=>typeof v==='number'&&Number.isFinite(v)?clamp(v,min,max):f;
+ const safeColor=(v,f)=>typeof v==='number'&&Number.isInteger(v)&&v>=0&&v<=0xffffff?v:f;
+ const obj=(v)=>v&&typeof v==='object'&&!Array.isArray(v)?v:{};
+ const npcIds=new Set(NPCS.map(n=>n.id));
+ // No imported save may inject HTML, NaN or enormous collections into the UI.
+ const needs=obj(raw.needs),relationships=obj(raw.relations),quests=obj(raw.quests);
+ const res={...d,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
+   hair:safeColor(raw.hair,d.hair),outfit:safeColor(raw.outfit,d.outfit),skin:safeColor(raw.skin,d.skin),
+   hairStyle:number(raw.hairStyle,d.hairStyle,0,4)|0,coins:number(raw.coins,d.coins,0,1000000),hearts:number(raw.hearts,0,0,1000000),
+   day:number(raw.day,1,1,9999)|0,minute:number(raw.minute,d.minute,0,1439.999),season:number(raw.season,0,0,3)|0,
+   homeStyle:number(raw.homeStyle,0,0,3)|0,seenWelcome:!!raw.seenWelcome,
+   needs:Object.fromEntries(Object.entries(d.needs).map(([k,v])=>[k,number(needs[k],v,0,100)])),
+   relations:Object.fromEntries(Object.entries(relationships).filter(([k])=>npcIds.has(k)).map(([k,v])=>[k,number(v,0,0,100)])),
+   quests:Object.fromEntries(Object.entries(quests).filter(([k])=>/^(meet|chat|fish|garden|work)(_claimed)?$/.test(k)).map(([k,v])=>[k,k.endsWith('_claimed')?!!v:number(v,0,0,100000)])),
+   met:Array.isArray(raw.met)?raw.met.filter(x=>npcIds.has(x)).slice(0,6):[],
+   garden:Array.from({length:4},(_,i)=>number(Array.isArray(raw.garden)?raw.garden[i]:null,0,0,2)|0),
+   gardenBoost:Array.from({length:4},(_,i)=>!!(Array.isArray(raw.gardenBoost)&&raw.gardenBoost[i])),
+   inventory:Array.isArray(raw.inventory)?raw.inventory.filter(x=>x==='flower-seed').slice(0,100):[],
+   fish:Array.isArray(raw.fish)?raw.fish.filter(x=>typeof x==='string').slice(0,1000):[],
+   placed:Array.isArray(raw.placed)?raw.placed.filter(f=>f&&furnitureTypes.some(t=>t.id===f.kind)).slice(0,80).map(f=>({kind:f.kind,x:number(f.x,550,220,940),z:number(f.z,610,300,1030)})):[]};
+ return res;
+}
+let state=DEF();
+
 const NPCS=[
  {id:'mabel',name:'Mabel',job:'Florist',trait:'Creative · Loves flowers',skin:'#c48b67',hair:'#523b31',outfit:'#f08fbd',kind:'dress',style:0,emoji:'🌸',x:720,y:594,lines:['I was just admiring the daisies. They seem extra happy today!','Do you think flowers have favorite neighbors? I think they do.','A pink blossom is like a tiny hello from spring.']},
  {id:'rosie',name:'Rosie',job:'Market owner',trait:'Cheerful · Ambitious',skin:'#e7ae85',hair:'#9b5143',outfit:'#e786a1',kind:'overalls',style:3,emoji:'🍓',x:396,y:757,lines:['Fresh peaches, just for you! Well, if you have a few coins.','I want this market to be the heart of the whole village.','I heard someone is planning a picnic by the river!']},
@@ -17,11 +42,13 @@ const NPCS=[
 ];
 const HEX=n=>'#'+((n>>>0)&0xffffff).toString(16).padStart(6,'0');
 const color=n=>typeof n==='number'?HEX(n):n;
-const playerDef=()=>({id:'player',name:state.name,skin:color(state.skin),hair:color(state.hair),outfit:color(state.outfit),kind:'dress',style:1});
-let scene='town',speed=1,modal=null,talk=null,paused=false,placement=null,painted=[],toastTimer=0;
+const playerDef=()=>({id:'player',name:state.name,skin:color(state.skin),hair:color(state.hair),outfit:color(state.outfit),kind:'dress',style:state.hairStyle??1});
+let scene='town',speed=1,modal=null,talk=null,placement=null,toastTimer=0,uiTimer=0;
 let player={x:597,y:654,target:null,facing:'front',walk:0,bodyBob:0},cam={x:597,y:654},W=0,H=0,DPR=1,last=0,tick=0;
 let displayScale=1;let worldScale=1;
 const furnitureTypes=[{id:'bed',name:'Cloud-soft bed',emoji:'🛏️',cost:95},{id:'sofa',name:'Peach sofa',emoji:'🛋️',cost:75},{id:'plant',name:'Fern in pot',emoji:'🪴',cost:25},{id:'books',name:'Storybook shelf',emoji:'📚',cost:70},{id:'lamp',name:'Honey lamp',emoji:'💡',cost:40},{id:'rug',name:'Patchwork rug',emoji:'🧶',cost:35},{id:'chair',name:'Wooden chair',emoji:'🪑',cost:30},{id:'flowers',name:'Flower vase',emoji:'💐',cost:20}];
+try{state=cleanSave(JSON.parse(localStorage.getItem(SAVE)||'null'))}catch(e){state=DEF()}
+
 function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch(e){}};
 function notify(message){$('toast').textContent=message;$('toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('visible'),2900)}
 function drawBar(id,v){$(id).style.width=clamp(v,0,100)+'%';$(id).style.background=v<25?'#ef7e79':v<50?'#e7ba65':'#67bd88'}
@@ -40,162 +67,279 @@ function line(g,c,pts,width=2){g.strokeStyle=c;g.lineWidth=width;g.lineCap='squa
 function strokeRect(g,c,x,y,w,h,s=2){g.strokeStyle=c;g.lineWidth=s;g.strokeRect(x,y,w,h)}
 function specks(g,seed,w,h,count,colors){for(let i=0;i<count;i++){const a=hash(seed*11+i*13.18),b=hash(seed*17+i*67.1);fill(g,colors[i%colors.length],a*w,b*h,1+Math.floor(hash(i+seed)*3),1+Math.floor(hash(i*7+seed)*2))}}
 
-function rr(g,c,x,y,w,h,r=5,edge=null){g.fillStyle=c;g.beginPath();g.roundRect(x,y,w,h,r);g.fill();if(edge){g.strokeStyle=edge;g.lineWidth=2;g.stroke()}}
-function ov(g,c,x,y,rx,ry,edge=null){g.fillStyle=c;g.beginPath();g.ellipse(x,y,rx,ry,0,0,TAU);g.fill();if(edge){g.strokeStyle=edge;g.lineWidth=2;g.stroke()}}
-function tone(hex,amount){const n=parseInt(String(hex).replace('#',''),16)||0;return '#'+[n>>16&255,n>>8&255,n&255].map(v=>Math.min(255,Math.max(0,Math.round(amount>0?v+(255-v)*amount:v*(1+amount)))).toString(16).padStart(2,'0')).join('')}
-function smoothLine(g,c,a,w=2){g.strokeStyle=c;g.lineWidth=w;g.lineJoin='round';g.lineCap='round';g.beginPath();g.moveTo(...a[0]);for(let i=1;i<a.length;i++)g.lineTo(...a[i]);g.stroke()}
+function round(g,c,x,y,w,h,r=8,stroke=null,sw=1){g.fillStyle=c;g.beginPath();g.roundRect(x,y,w,h,r);g.fill();if(stroke){g.strokeStyle=stroke;g.lineWidth=sw;g.stroke()}}
+function curved(g,c,points,width=2){g.strokeStyle=c;g.lineWidth=width;g.lineCap='round';g.lineJoin='round';g.beginPath();g.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)g.lineTo(points[i][0],points[i][1]);g.stroke()}
+function oval(g,c,x,y,rx,ry,outline=null,lw=2){g.fillStyle=c;g.beginPath();g.ellipse(x,y,rx,ry,0,0,TAU);g.fill();if(outline){g.strokeStyle=outline;g.lineWidth=lw;g.stroke()}}
+function lighter(hex,f=.14){const c=String(hex).replace('#','');const n=parseInt(c,16)||0;let a=[n>>16&255,n>>8&255,n&255].map(v=>clamp(Math.round(v+(255-v)*f),0,255));return '#'+a.map(v=>v.toString(16).padStart(2,'0')).join('')}
+function darker(hex,f=.22){const c=String(hex).replace('#','');const n=parseInt(c,16)||0;let a=[n>>16&255,n>>8&255,n&255].map(v=>clamp(Math.round(v*(1-f)),0,255));return '#'+a.map(v=>v.toString(16).padStart(2,'0')).join('')}
 
 function charArt(o,dir='front',frame=0,emote='neutral'){
- const key=['C9',o.id,o.name,o.skin,o.hair,o.outfit,o.kind,o.style,dir,frame,emote].join(':');
+ const key=`C9:${o.id||o.name}:${o.skin}:${o.hair}:${o.outfit}:${o.kind}:${o.style}:${dir}:${frame}:${emote}`;
  return makeArt(key,96,132,g=>{
- const skin=o.skin||'#edbb9c',hair=o.hair||'#594038',coat=o.outfit||'#ec96ad',deep=tone(hair,-.28),shine=tone(hair,.27),darkCoat=tone(coat,-.22),lightCoat=tone(coat,.23),step=frame%2?3:0;
- for(const sign of [-1,1]){let x=48+sign*12,y=sign*step;
-  rr(g,skin,x-5,99+y,10,19,3,'#b88877');rr(g,'#fff3df',x-6,113+y,12,5,2);
-  rr(g,'#68536a',x-10,117+y,21,8,4,'#433a50');fill(g,'#bea8b9',x-6,120+y,10,2);
- }
- if(o.kind==='overalls'){rr(g,darkCoat,29,76,38,36,9,'#654e60');rr(g,coat,32,77,32,32,7);
-  rr(g,'#699cc3',35,87,26,24,5,'#467393');rr(g,'#8fc4dd',39,88,18,12,3);
-  for(let x of [37,57]){smoothLine(g,'#ffe4a2',[[x,80],[x,89]],3);ov(g,'#ffdb8f',x,90,2,2)}
- }else if(o.kind==='apron'){rr(g,darkCoat,30,76,36,38,9);rr(g,coat,33,78,30,33,7);
-  poly(g,'#f8ecd8',[[39,85],[57,85],[61,110],[35,110]]);rr(g,'#d7b48e',42,99,12,8,2);
- }else if(o.kind==='sweater'){rr(g,darkCoat,29,77,38,34,9);rr(g,coat,32,78,32,31,7);
-  rr(g,lightCoat,35,79,26,8,3);for(let j=0;j<3;j++)smoothLine(g,darkCoat,[[36,92+j*5],[59,92+j*5]],1);
- }else{poly(g,'#705762',[[38,78],[58,78],[69,112],[27,112]]);
-  poly(g,darkCoat,[[38,78],[58,78],[66,110],[30,110]]);poly(g,coat,[[39,79],[57,79],[63,108],[33,108]]);
-  poly(g,lightCoat,[[39,82],[44,82],[39,105],[34,105]]);
-  smoothLine(g,'#fff0d8',[[34,107],[62,107]],2);
- }
- for(const side of [-1,1]){let x=48+side*24,move=side*step;
-  rr(g,darkCoat,x-8,77+move,16,22,6,'#795b65');rr(g,coat,x-6,79+move,12,17,5);
-  rr(g,skin,x-5,95+move,10,9,4);fill(g,lightCoat,x-6,92+move,12,3);
- }
- rr(g,skin,43,66,10,15,4);ov(g,'#fff4e6',48,79,11,5);ov(g,'#ffe1a1',48,91,3,3);
- // 0.9 hairline reset: hair is limited to the crown and temples in front view.
- // The lower face is fully visible skin; the back view retains full hair coverage.
- if(dir==='back'){
-  ov(g,deep,48,47,38,40);ov(g,hair,48,46,35,38);
-  ov(g,shine,41,29,19,7);ov(g,hair,48,50,32,34);
-  smoothLine(g,shine,[[30,29],[45,23],[60,29]],3);
- } else {
-  ov(g,deep,48,33,36,24);ov(g,hair,48,31,34,21);
-  ov(g,tone(skin,-.17),48,49,31,34);ov(g,skin,48,47,30,33);
-  ov(g,tone(skin,.17),40,39,23,22);
-  for(const side of [-1,1])ov(g,skin,48+side*30,49,5,7);
-  for(const x of dir==='side'?[39,56]:[36,60]){
-   ov(g,'#71545e',x,52,8,10);ov(g,'#fff9f4',x,51,7,9);
-   ov(g,o.id==='jun'?'#5b9289':o.id==='bea'?'#9472ab':'#68536c',x,53,4.5,7);
-   ov(g,'#292a3a',x,54,3.4,5.5);ov(g,'#fff',x-2,49,2.2,2.2);fill(g,'#fff',x+2,56,2,2);
-   if(emote==='happy'){ov(g,skin,x,51,9,11);smoothLine(g,'#78535f',[[x-7,51],[x,48],[x+7,51]],2.5)}
-   smoothLine(g,deep,[[x-6,39],[x+1,38],[x+6,40]],2.2);
+  const skin=o.skin||'#f3c3a0',hair=o.hair||'#54382d',dress=o.outfit||'#ef96ae';
+  const outline=darker(hair,.30), hairLight=lighter(hair,.23), hairDeep=darker(hair,.24);
+  const skinLight=lighter(skin,.22),skinShadow=darker(skin,.12),dressDeep=darker(dress,.23),dressLight=lighter(dress,.24);
+  const isBack=dir==='back',isSide=dir==='side',walking=frame%2!==0,dy=walking?3:0;
+  // tiny contact shadows, natural shoes and legs: separate shapes, no floating skirt.
+  for(const side of [-1,1]){
+   const xx=48+side*12,yshift=side*dy;
+   round(g,'#795e59',xx-8,116+yshift,16,7,3,'#543e4b',2);
+   round(g,'#c8ab98',xx-5,101+yshift,10,17,3,skinShadow,1);
+   round(g,skin,xx-5,99+yshift,10,13,3);
+   fill(g,'#fff3df',xx-6,114+yshift,12,3);
+   round(g,side===-1?'#7e5b73':'#7e5b73',xx-10,117+yshift,22,8,4,'#544253',2);
+   fill(g,'#cdbbc4',xx-6,119+yshift,9,2);
   }
-  ov(g,'#edacaa',25,63,7,3);ov(g,'#edacaa',71,63,7,3);ov(g,'#ba8a7b',48,61,3,2);
-  if(emote==='surprised')ov(g,'#a75c67',48,71,4,5);
-  else smoothLine(g,'#a46270',emote==='happy'?[[40,69],[48,75],[56,69]]:[[43,70],[48,72],[53,70]],2.3);
-  poly(g,deep,[[15,37],[21,21],[34,12],[57,12],[74,22],[81,36],[70,37],[59,32],[48,28],[36,36],[23,42]]);
-  poly(g,hair,[[18,34],[23,22],[37,16],[57,15],[71,22],[78,34],[68,35],[59,30],[47,29],[35,35],[25,38]]);
-  if(o.style===0){ov(g,hair,20,49,6,13);ov(g,hair,76,49,6,13);smoothLine(g,shine,[[26,27],[42,20],[57,21]],3)}
-  else if(o.style===1){poly(g,hair,[[20,27],[40,15],[68,21],[78,32],[63,28],[47,35],[29,37]]);smoothLine(g,shine,[[26,25],[42,19],[58,23]],3)}
-  else if(o.style===2){poly(g,hair,[[19,35],[25,21],[35,18],[42,11],[50,18],[59,12],[74,23],[80,36],[68,33],[57,28],[48,33],[35,38]]);smoothLine(g,shine,[[29,23],[42,17],[49,19]],2.5)}
-  else if(o.style===3){ov(g,deep,86,48,11,18);ov(g,hair,85,47,8,15);ov(g,'#f9daa2',74,35,6,4);smoothLine(g,shine,[[27,26],[44,20],[57,22]],2.8)}
-  else{for(let x of [21,75]){ov(g,deep,x,18,15,15);ov(g,hair,x,17,12,12);ov(g,shine,x-4,12,5,3)}}
-  if(['mabel','rosie','bea'].includes(o.id)){const ribbon=o.id==='bea'?'#f2d47e':'#f6a0bc';ov(g,ribbon,72,29,7,4);ov(g,ribbon,84,27,7,4);ov(g,'#fff4db',78,28,4,4)}
-  if(o.id==='oliver'){rr(g,'#fff6e7',26,8,44,15,7,'#d4bdab');for(let x of [34,48,62])ov(g,'#fffefa',x,8,12,9)}
-  if(o.id==='finn'){ov(g,'#ecc980',48,16,34,7);rr(g,'#eace8e',29,0,38,18,7)}
- }
- if(o.kind==='dress'){for(const [x,y] of [[46,94],[51,91],[54,95],[50,98]])ov(g,'#fff4d7',x,y,2,2);ov(g,'#eeb85b',50,94,2,2)}
+  // Dress, sweater, overalls and apron are truly different silhouettes.
+  if(o.kind==='overalls'){
+   round(g,dressDeep,30,77,36,37,9,'#6e515d',2);
+   round(g,dress,33,75,30,33,7);
+   round(g,'#5988af',34,85,28,25,4,'#466d94',2);
+   round(g,'#6da7d0',38,88,20,16,3);
+   for(const x of [36,58]){curved(g,'#ffdfaa',[[x,80],[x,90]],3);oval(g,'#f8dd9a',x,92,2,2)}
+   round(g,'#4e7d9a',41,94,14,12,2);curved(g,'#8ec9e0',[[44,98],[52,98]],1);
+  }else if(o.kind==='apron'){
+   round(g,dressDeep,30,76,36,38,10,'#865b62',2);round(g,dress,33,76,30,35,8);
+   poly(g,'#f5e4ca',[[39,86],[57,86],[62,110],[34,110]]);
+   round(g,'#fff7e4',40,85,16,11,3);round(g,'#e2bb94',41,100,14,8,3);
+   curved(g,'#bc936f',[[41,100],[55,100]],1);
+  }else if(o.kind==='sweater'){
+   round(g,dressDeep,30,76,36,35,10,'#5e5a64',2);round(g,dress,32,76,32,32,8);
+   round(g,dressLight,35,80,26,8,3);
+   for(let j=0;j<3;j++)curved(g,dressDeep,[[34,91+j*4],[61,91+j*4]],1);
+   round(g,'#fff1d9',33,105,30,6,2);
+  }else{
+   // shaped A-line skirt with moving hem and layered seam.
+   poly(g,'#5f5360',[[37,76],[59,76],[68,113],[28,113]]);
+   poly(g,dressDeep,[[37,78],[59,78],[66,110],[30,110]]);
+   poly(g,dress,[[37,78],[59,78],[63,108],[33,108]]);
+   poly(g,dressLight,[[38,81],[44,81],[38,106],[34,106]]);
+   curved(g,'#fff2d1',[[35,107],[61,107]],2);
+  }
+  // Petite articulated sleeves and independent hands.
+  for(const side of [-1,1]){
+   const ax=side===-1?25:71,drop=walking?side*2:0;
+   round(g,dressDeep,ax-7,78+drop,14,21,6,'#695466',2);
+   round(g,dress,ax-6,78+drop,12,17,6);
+   round(g,skinShadow,ax-5,94+drop,10,9,4);
+   round(g,skin,ax-4,95+drop,8,7,3);
+   fill(g,dressLight,ax-6,92+drop,12,3);
+  }
+  // Neck and ribbon soften torso-to-head transition.
+  round(g,skinShadow,43,68,10,15,4);round(g,skin,44,68,8,12,3);
+  oval(g,'#fff5df',48,80,12,6);oval(g,dressLight,48,79,8,3);
+  if(o.kind!=='overalls'){oval(g,'#fff7e8',47,91,4,5);oval(g,'#ffe2a0',47,91,2,3)}
+  // v0.9 HAIRLINE RESET: hair covers the crown, NOT the jaw or lower face.
+  // Back-facing hair can retain its full silhouette; forward-facing hair
+  // gets a separate crown and temples so the entire chin stays skin-colored.
+  if(isBack){
+   oval(g,outline,48,48,37,39);
+   oval(g,hairDeep,48,46,35,38);
+   oval(g,hair,46,42,33,34);
+   oval(g,hairLight,38,30,17,5);
+   curved(g,hairDeep,[[26,45],[27,62],[34,75]],3);
+   curved(g,hairLight,[[61,31],[67,43]],2);
+  }else{
+   // Hair sits ABOVE the cheeks, with small separate locks at the temples.
+   oval(g,hairDeep,48,32,36,23);
+   oval(g,hair,48,31,33,21);
+   // Face has a clean skin-colored jawline and visible ears.
+   oval(g,skinShadow,48,49,31,34,darker(skin,.19),1.4);
+   oval(g,skin,48,47,30,33);
+   oval(g,skinLight,42,41,24,23);
+   for(const side of [-1,1]){oval(g,skinShadow,48+side*30,49,6,9);oval(g,skin,48+side*30,48,5,7)}
+   // Large expressive eyes with visible sclera, irises and light reflections.
+   const centers=isSide?[38,55]:[36,60];
+   for(const ex of centers){
+    oval(g,'#654c55',ex,52,7,9);
+    oval(g,'#fff9f1',ex,51,6,8);
+    oval(g,o.id==='jun'?'#508b88':o.id==='bea'?'#9670b0':'#594851',ex,53,4,6);
+    oval(g,'#25283b',ex,54,3,5);
+    oval(g,'#ffffff',ex-2,49,2,2);
+    fill(g,'#ffffff',ex+2,56,1,2);
+    if(emote==='happy'){oval(g,skin,ex,52,9,9);curved(g,'#66404b',[[ex-6,51],[ex,48],[ex+6,51]],2.4)}
+    if(emote==='surprised'){oval(g,'#fff9f1',ex,51,7,10);oval(g,'#25283b',ex,52,3,5)}
+    curved(g,hairDeep,[[ex-6,39],[ex+2,38],[ex+6,40]],2);
+   }
+   oval(g,'#eda7aa',25,64,8,4);oval(g,'#eda7aa',71,64,8,4);
+   oval(g,skinLight,25,62,5,2);oval(g,skinLight,71,62,5,2);
+   oval(g,skinShadow,48,62,3,2);
+   if(emote==='surprised')oval(g,'#a64f65',48,70,4,6);
+   else if(emote==='happy'){curved(g,'#ae5e6e',[[40,69],[46,74],[51,74],[57,69]],2.2);oval(g,'#e7898d',49,74,4,2)}
+   else{curved(g,'#995765',[[43,70],[48,72],[54,70]],2);fill(g,'#fff0e2',46,72,4,1)}
+   // Four intentional haircuts, with highlights and shaped tapered bangs.
+   poly(g,hairDeep,[[15,37],[20,20],[34,13],[54,12],[72,19],[81,34],[79,42],[66,34],[61,36],[47,27],[33,38],[23,42]]);
+   poly(g,hair,[[17,35],[21,23],[37,15],[55,14],[72,21],[78,33],[70,36],[61,31],[50,28],[37,35],[24,39]]);
+   if(o.style===0){ // tidy bob with distinctive side swoop
+    poly(g,hair,[[19,29],[29,22],[48,19],[68,24],[75,36],[69,37],[53,27],[39,32],[25,41]]);
+    oval(g,hair,20,49,6,13);oval(g,hair,76,49,6,13);
+    curved(g,hairLight,[[25,27],[35,20],[54,19]],2.7);
+   }else if(o.style===1){ // side-part bob
+    poly(g,hair,[[20,26],[40,16],[67,19],[78,30],[62,28],[47,35],[29,35],[23,43]]);
+    curved(g,hairLight,[[25,26],[40,18],[56,20]],2.5);
+    oval(g,hair,21,46,6,12);
+   }else if(o.style===2){ // boyish tuft with uneven fringe
+    poly(g,hair,[[17,34],[23,21],[35,16],[43,10],[51,18],[58,11],[73,21],[80,34],[69,34],[61,28],[54,32],[45,29],[34,39],[24,37]]);
+    curved(g,hairLight,[[28,23],[39,17],[45,18]],2.5);
+   }else if(o.style===3){ // ponytail silhouette
+    oval(g,outline,86,48,11,18);oval(g,hair,85,47,8,15);
+    oval(g,'#ffe2ad',74,36,6,4);
+    poly(g,hair,[[17,36],[24,22],[38,17],[59,19],[76,30],[71,37],[61,32],[46,30],[33,39],[22,41]]);
+    curved(g,hairLight,[[26,26],[44,21],[55,24]],2.5);
+   }else { // double buns with shaped fringe
+    oval(g,outline,20,18,14,14);oval(g,outline,76,18,14,14);
+    oval(g,hair,20,17,12,12);oval(g,hair,76,17,12,12);
+    oval(g,hairLight,17,12,5,3);oval(g,hairLight,72,12,5,3);
+    poly(g,hair,[[22,35],[29,22],[50,20],[70,24],[76,34],[68,37],[52,31],[39,36],[27,40]]);
+   }
+   // individual accessories tie people to their roles.
+   if(o.id==='mabel'||o.id==='rosie'||o.id==='bea'){
+    const a=o.id==='bea'?'#fbd573':o.id==='rosie'?'#9ed8d9':'#f18eb5';
+    oval(g,a,72,30,7,4);oval(g,a,83,28,7,4);oval(g,'#fff6df',78,29,4,4);
+   }
+   if(o.id==='oliver'){
+    oval(g,'#fff7e7',47,16,30,8);round(g,'#fff9ef',26,8,44,13,7,'#d8bfab',2);
+    for(const ex of [33,47,60])oval(g,'#fffdf2',ex,7,12,9);
+   }
+   if(o.id==='finn'){oval(g,'#ddbd76',48,15,35,7);round(g,'#edce83',28,0,40,18,7);fill(g,'#8db89b',30,14,36,4)}
+  }
+  if(isBack){curved(g,hairLight,[[31,27],[41,20],[58,23]],3)}
+  // embroidery and stitching stay legible at phone scale.
+  if(o.kind==='dress'){for(const [xx,yy] of [[46,94],[50,96],[54,94],[50,91]])oval(g,'#fff0bd',xx,yy,2,2);oval(g,'#f4b758',50,94,2,2)}
  });
 }
 function foliageArt(kind=0){return makeArt('tree8'+kind,130,185,g=>{
- const blossom=kind===2,colors=blossom?['#ae5a89','#e18cb5','#f4bcd6','#ffdfeb']:kind===1?['#28694c','#399a64','#76c680','#c3eaa0']:['#296751','#3c9761','#70c578','#b6e795'];
- ov(g,'#37625055',65,177,46,8);
- poly(g,'#6e5244',[[54,89],[73,89],[75,174],[53,174]]);poly(g,'#a77953',[[58,90],[68,88],[69,172],[58,172]]);
- smoothLine(g,'#d4ae7a',[[61,102],[61,163]],3);
- poly(g,'#795c4a',[[60,124],[29,92],[33,84],[65,111],[96,86],[103,92],[68,133]]);
- const clusters=[[33,90,25],[81,91,26],[26,65,22],[108,68,24],[48,62,32],[79,62,30],[63,37,31],[33,42,20],[100,40,20],[65,78,30]];
- clusters.forEach(([x,y,r])=>{ov(g,colors[0],x+2,y+5,r+3,r*.8);ov(g,colors[1],x,y,r,r*.79);ov(g,colors[2],x-4,y-6,r*.88,r*.64)});
- for(let i=0;i<48;i++){let a=i*2.399,r=18+hash(i*13+kind)*44,x=65+Math.cos(a)*r,y=64+Math.sin(a)*r*.58;if(x<8||x>122||y<16||y>112)continue;let z=2+hash(i*7)*4;ov(g,i%4===0?colors[3]:colors[2],x,y,z*1.8,z*.7)}
- for(let i=0;i<11;i++){let a=i*2.4,x=65+Math.cos(a)*(20+hash(i+7)*31),y=61+Math.sin(a)*29;if(blossom){ov(g,'#ffe6ea',x,y,5,4);ov(g,'#e7c46e',x+1,y,2,2)}else if(i%2===0){ov(g,kind===1?'#f9a65e':'#f6d267',x,y,4,5);ov(g,'#fff5cb',x-1,y-2,1,2)}}
+ const bloom=kind===2;
+ const pal=bloom?['#c85f91','#e88bb3','#f3b9d4','#ffe5df']:kind===1?['#245e51','#368864','#6bbd74','#bce39a']:['#286b54','#388b5d','#65b96e','#afe08a'];
+ oval(g,'#31554b44',64,177,49,8);
+ // tapered trunk with visible grain and a low branch fork
+ poly(g,'#685244',[[55,87],[73,87],[76,172],[53,172]]);
+ poly(g,'#a77950',[[57,84],[69,83],[70,171],[57,171]]);
+ curved(g,'#d3a774',[[61,104],[61,156]],3);
+ poly(g,'#795f4a',[[63,128],[30,95],[32,85],[64,112],[99,86],[104,94],[67,131]]);
+ // clustered foliage has convincing volume: shadow at bottom, sunlit tier on top.
+ const lumps=[[39,92,25],[78,95,24],[23,70,23],[108,71,22],[47,62,32],[81,62,31],[60,37,31],[32,43,20],[99,42,19],[65,77,31]];
+ lumps.forEach(([x,y,r],i)=>{oval(g,pal[0],x+2,y+5,r+3,r*.79);oval(g,pal[1],x,y,r,r*.78);oval(g,pal[2],x-4,y-6,r*.85,r*.63)});
+ for(let i=0;i<51;i++){
+  const a=i*2.399,r=18+hash(i*13+kind)*44,x=64+Math.cos(a)*r,y=65+Math.sin(a)*r*.58;
+  if(x<9||x>119||y<17||y>112)continue;
+  const sz=2+hash(i*7)*4;
+  oval(g,i%4===0?pal[3]:i%3===0?pal[1]:pal[2],x,y,sz*1.8,sz*.7);
+ }
+ // fruit and blossoms help every tree tell a story
+ for(let i=0;i<10;i++){
+  const a=i*2.4,x=64+Math.cos(a)*(18+hash(i+7)*30),y=61+Math.sin(a)*29;
+  if(bloom){oval(g,'#ffe5ed',x,y,4,3);oval(g,'#f8cf72',x+1,y,1.5,1.5)}
+  else if(i%2===0){oval(g,kind===1?'#f1a762':'#ffd169',x,y,4,5);oval(g,'#fff4c8',x-1,y-2,1,2)}
+ }
  });}
 function houseArt(kind){return makeArt('house8'+kind,224,207,g=>{
  const pal=[['#f4c2a6','#d86e86','#a74f70','#fff0d8'],['#ffe2a6','#5da5bb','#377d94','#fff5db'],['#bddcd1','#a18bbd','#76699b','#fff3e3'],['#f5c4ae','#da98af','#ad6b8d','#ffeed8']][kind%4];
- const [wall,roof,shade,white]=pal,edge='#735c58',wood='#a47558';
- ov(g,'#28534b44',114,187,95,12);
+ const [wall,roof,roofShade,white]=pal;const edge='#735c58',wood='#a47558';
+ oval(g,'#28534b44',114,187,95,12);
+ // Raised stonework and distinct right-hand facade for proper 2.5D depth.
  poly(g,'#b99b84',[[18,85],[171,75],[207,66],[206,175],[170,192],[17,187]]);
- poly(g,'#b68e79',[[170,82],[204,67],[204,174],[169,188]]);
- for(let i=0;i<8;i++)smoothLine(g,'#edb69b',[[173,89+i*11],[202,76+i*11]],1);
+ poly(g,'#bb917e',[[170,82],[204,67],[204,174],[169,188]]);
+ for(let i=0;i<8;i++)curved(g,'#f0bd9d',[[172,89+i*11],[201,76+i*11]],1);
  poly(g,wall,[[20,84],[170,84],[170,185],[20,185]]);
- for(let i=0;i<11;i++){fill(g,white+'90',23,93+i*8,144,1);fill(g,shade+'40',25,96+i*8,140,1)}
+ for(let i=0;i<11;i++){fill(g,white+'90',23,93+i*8,144,1);fill(g,roofShade+'40',25,96+i*8,140,1)}
+ // Crown molding, chunky corner posts and stone skirting.
  fill(g,'#fff8e5',18,83,153,6);fill(g,'#fff8e5',19,181,153,8);
- fill(g,white,20,89,6,93);fill(g,white,164,89,6,94);
+ fill(g,'#fff3d3',20,89,6,93);fill(g,'#fff3d3',164,89,6,94);
+ for(let i=0;i<5;i++)fill(g,'#d5bda7',27+i*29,185,26,3);
+ // Roof facets and curved eaves, colored slate shingles with warm specular accents.
  poly(g,'#5a4552',[[8,86],[47,29],[142,24],[181,77],[212,58],[162,7],[52,16]]);
- poly(g,shade,[[140,26],[168,5],[217,57],[184,82]]);
+ poly(g,roofShade,[[140,26],[168,5],[217,57],[184,82]]);
  poly(g,roof,[[13,80],[51,25],[142,24],[177,78],[169,84],[142,46],[54,45],[21,90]]);
  poly(g,'#edccaa',[[54,45],[140,45],[169,85],[22,85]]);
  poly(g,roof,[[13,80],[52,24],[140,24],[152,38],[56,38],[21,89]]);
- for(let i=0;i<10;i++){const x=26+i*12;smoothLine(g,i%2?'#fff2e477':'#713e5c55',[[x,70],[x+23,37]],1)}
- smoothLine(g,'#fff4d5',[[20,86],[53,43],[140,43],[168,85]],4);
- for(let i=0;i<12;i++){fill(g,i%3===0?'#fff0c9':shade,22+i*12,84+(i%2),7,3)}
- rr(g,'#b77f6c',159,14,17,30,2,edge);fill(g,'#e1b69a',164,16,5,22);rr(g,'#f5cba7',155,12,25,5,2);
- rr(g,white,84,55,26,20,7,edge);rr(g,'#87cde0',89,58,16,15,4);
- fill(g,'#fff4d8',96,58,3,14);fill(g,'#fff4d8',89,65,16,2);
+ for(let i=0;i<10;i++){
+  const x=26+i*12;
+  curved(g,i%2?'#fff2e477':'#713e5c55',[[x,70],[x+23,37]],1);
+ }
+ curved(g,'#fff4d5',[[20,86],[53,43],[140,43],[168,85]],4);
+ for(let i=0;i<12;i++){const x=22+i*12;fill(g,i%3===0?'#fff0c9':roofShade,x,84+(i%2),7,3)}
+ // Chimney with cap
+ round(g,'#b77f6c',159,14,17,30,2,edge,2);fill(g,'#e1b69a',164,16,5,22);round(g,'#f5cba7',155,12,25,5,2);
+ // Gable attic window with a flower-shaped rosette.
+ round(g,white,84,55,26,20,7,edge,2);round(g,'#87cde0',89,58,16,15,4);fill(g,'#fff4d8',96,58,3,14);fill(g,'#fff4d8',89,65,16,2);
+ // Symmetrical shaded windows, curtains and actual flowerboxes.
  for(const x of [31,139]){
-  rr(g,edge,x-6,112,37,43,3);rr(g,white,x-9,108,41,43,4);
-  rr(g,'#76bed1',x-4,113,31,32,3);
+  round(g,edge,x-6,112,37,43,3);
+  round(g,white,x-9,108,41,43,4);
+  round(g,'#76bed1',x-4,113,31,32,3);
   poly(g,'#b5e7db',[[x-3,115],[x+8,114],[x-1,135]]);
   fill(g,white,x+10,114,3,30);fill(g,white,x-4,127,31,3);
-  rr(g,shade,x-13,109,6,40,2);rr(g,shade,x+31,109,6,40,2);
+  round(g,roofShade,x-13,109,6,40,2);round(g,roofShade,x+31,109,6,40,2);
   for(let i=0;i<3;i++){fill(g,white,x-12,115+i*11,5,2);fill(g,white,x+32,115+i*11,4,2)}
-  rr(g,wood,x-14,147,50,8,2);ov(g,'#368b5b',x+10,146,21,8);
-  for(let i=0;i<7;i++)ov(g,['#f783a9','#fee5a3','#fcf5e6'][i%3],x-8+i*7,140+(i%2)*3,3,4);
+  round(g,wood,x-14,147,50,8,2);
+  oval(g,'#368b5b',x+10,146,21,8);
+  for(let i=0;i<7;i++)oval(g,['#f783a9','#fee5a3','#fcf5e6'][i%3],x-8+i*7,140+(i%2)*3,3,4);
  }
- rr(g,'#fff0d8',72,111,51,77,13,edge);rr(g,shade,77,116,41,70,10);
- rr(g,'#eaa47e',81,119,33,64,8);rr(g,'#a3d9d2',88,127,19,18,5,white);
- fill(g,'#fff9e2',96,127,3,18);ov(g,'#ffe4a8',107,156,3,3);
- rr(g,shade,68,109,59,7,2);for(let i=0;i<6;i++)rr(g,i%2?white:roof,70+i*9,109,9,8,1);
- rr(g,'#d3bba1',69,186,60,5,2);rr(g,'#f1d6b5',60,191,78,6,3);
- for(const x of [63,131]){fill(g,edge,x,119,4,8);ov(g,'#fff1b1',x+2,121,6,9);ov(g,'#c99a66',x+2,116,7,3)}
- rr(g,'#b66e65',28,171,18,13,3);ov(g,'#36865d',37,170,13,8);ov(g,'#eaa9bd',31,164,5,5);
- fill(g,'#876454',181,158,4,26);rr(g,white,174,153,20,12,3,edge);fill(g,'#d57f9c',191,154,3,5);
+ // Recessed arched doorway with window, threshold, lantern and curved front steps.
+ round(g,'#fff0d8',72,111,51,77,13,edge,2);
+ round(g,roofShade,77,116,41,70,10);
+ round(g,'#eaa47e',81,119,33,64,8);
+ round(g,'#a3d9d2',88,127,19,18,5,white,2);
+ fill(g,'#fff9e2',96,127,3,18);oval(g,'#ffe4a8',107,156,3,3);
+ round(g,roofShade,68,109,59,7,2);
+ for(let i=0;i<6;i++)round(g,i%2===0?roof: white,70+i*9,109,9,8,1);
+ round(g,'#d3bba1',69,186,60,5,2);round(g,'#f1d6b5',60,191,78,6,3);
+ for(const x of [63,131]){fill(g,edge,x,119,4,8);oval(g,'#fff1b1',x+2,121,6,9);oval(g,'#c99a66',x+2,116,7,3)}
+ // Entry pot + doorstep tile
+ round(g,'#b66e65',28,171,18,13,3);oval(g,'#36865d',37,170,13,8);oval(g,'#eaa9bd',31,164,5,5);oval(g,'#ffdb9c',43,162,4,5);
+ // Mail slot and address sign give a lived-in feeling.
+ fill(g,'#876454',181,158,4,26);round(g,white,174,153,20,12,3,edge,1);fill(g,'#d57f9c',191,154,3,5);
  });}
 function stallArt(){return makeArt('stall',104,88,g=>{ellipse(g,'#285e4b66',51,80,43,6);fill(g,'#875a47',10,36,5,42);fill(g,'#875a47',90,36,5,42);fill(g,'#a57453',10,60,85,17);fill(g,'#eac58d',14,60,78,4);poly(g,'#5a5260',[[7,37],[21,12],[84,12],[97,37]]);for(let j=0;j<6;j++){const x=8+j*15;poly(g,j%2?'#fff2d4':'#f88ba3',[[21+j*11,13],[28+j*10,13],[x+16,37],[x,37]])}for(let j=0;j<6;j++){fill(g,['#ffbd5f','#ff796c','#a6d67b'][j%3],22+j*11,57-(j%2)*3,7,7);fill(g,'#4b945a',24+j*11,52-(j%2)*3,3,4)}fill(g,'#e6b47b',13,69,75,5)})}
 function lampArt(){return makeArt('lamp',42,106,g=>{ellipse(g,'#315a4d77',21,101,18,4);fill(g,'#315a61',17,21,8,78);fill(g,'#44787b',19,26,3,72);fill(g,'#37565e',9,21,24,5);poly(g,'#31525b',[[10,24],[12,12],[20,7],[30,12],[33,24]]);poly(g,'#e9bd74',[[14,21],[17,13],[26,13],[29,21]]);fill(g,'#fff5bc',18,15,7,6);fill(g,'#31525b',17,6,9,3);fill(g,'#f9d28a',19,1,5,6)})}
 function benchArt(){return makeArt('bench',100,64,g=>{ellipse(g,'#335b4b66',52,57,41,6);for(let x of [19,74])fill(g,'#546360',x,33,5,27);fill(g,'#4a5c57',17,18,64,7);fill(g,'#c78c59',14,16,70,7);fill(g,'#e4b876',14,16,70,3);fill(g,'#c78c59',16,26,68,6);fill(g,'#805742',18,36,66,7);fill(g,'#dba675',18,34,63,6);fill(g,'#ecbe8a',19,34,62,2)})}
 function shrubArt(type=0){return makeArt('shrub'+type,56,43,g=>{ellipse(g,'#315b4944',27,38,24,4);for(let j=0;j<7;j++){const x=12+(j*11)%34,y=20+hash(j+type)*11;ellipse(g,'#2f6e4d',x,y,11,9);ellipse(g,(['#79ba65','#8ccc77','#63ac5f'][j%3]),x,y-3,10,7)}for(let j=0;j<5;j++){const x=9+j*9,y=14+(j%2)*12;fill(g,type===1?'#f3b0d1':j%2?'#ffcd75':'#f9a6ab',x,y,4,4)}})}
 function flowerArt(n=0){return makeArt('flower'+n,32,36,g=>{fill(g,'#4a944d',15,14,3,18);fill(g,'#77be5b',10,23,5,4);fill(g,'#77be5b',18,27,5,4);const c=['#ff7fa5','#fee088','#a698ea','#f3f0dc','#ffae61'][n%5];for(const [x,y] of [[11,8],[18,8],[11,15],[18,15],[14,5]])fill(g,c,x,y,6,6);fill(g,'#f8b84a',14,11,7,7);fill(g,'#fff3d4',15,12,2,2)})}
-function grassTile(){return makeArt('grass',96,96,g=>{fill(g,'#78ba70',0,0,96,96);for(let i=0;i<34;i++){const x=hash(i*28)*95,y=hash(i*11+6)*95;fill(g,['#86c579','#68ad68','#95ce7a','#71b369'][i%4],x,y,4+(i%4)*2,2+(i%3))}for(let i=0;i<13;i++){const x=hash(i*48+4)*95,y=hash(i*8+34)*95;fill(g,'#4f9761',x,y,2,5);fill(g,'#b3d78e',x+2,y-1,2,3)}return g})}
+function grassTile(){return makeArt('grass',96,96,g=>{fill(g,'#79b879',0,0,96,96);for(let i=0;i<34;i++){const x=hash(i*28)*95,y=hash(i*11+6)*95;fill(g,['#85c37c','#6eae70','#92cb88','#75b879'][i%4],x,y,4+(i%4)*2,2+(i%3))}for(let i=0;i<13;i++){const x=hash(i*48+4)*95,y=hash(i*8+34)*95;fill(g,'#4f9761',x,y,2,5);fill(g,'#b3d78e',x+2,y-1,2,3)}return g})}
 function floorTile(){return makeArt('floor',64,64,g=>{fill(g,'#e6bc80',0,0,64,64);for(let j=0;j<4;j++)for(let i=0;i<3;i++){const y=j*16,x=i*24-(j%2)*12;fill(g,'#b78962',x,y,23,1);fill(g,'#f7d59c',x+1,y+2,20,2);fill(g,'#dbab72',x+18,y+7,2,6)}})}
 
 
-function flowerbedArt(seed=0){return makeArt('bed8'+seed,136,65,g=>{
- ov(g,'#315a4947',68,59,66,7);ov(g,'#3b915f',68,45,63,18);
- for(let j=0;j<17;j++){const x=12+(j%9)*14+(j%3)*2,y=29+Math.floor(j/9)*14+hash(j+seed)*5;
- smoothLine(g,'#477c42',[[x,y+16],[x,y-7]],2);
- ov(g,'#5fa85b',x-3,y+8,6,3);
- const c=['#ffa7b9','#f9e2a1','#bcaff4','#f9f5df','#f9bc80'][(j+seed)%5];
- for(const [px,py] of [[-3,0],[3,0],[0,-4],[0,4]])ov(g,c,x+px,y+py,4,4);
- ov(g,'#f1c663',x,y,2.6,2.6);
- }});}
+function flowerbedArt(seed=0){return makeArt('flowerbed8'+seed,136,65,g=>{
+ oval(g,'#315a4947',68,59,66,7);oval(g,'#3b915f',68,45,63,18);
+ for(let j=0;j<17;j++){
+  const x=12+(j%9)*14+(j%3)*2, y=29+Math.floor(j/9)*14+hash(j+seed)*5;
+  curved(g,'#477c42',[[x,y+16],[x,y-7]],2.4);oval(g,'#5fa85b',x-3,y+8,6,3);
+  const c=['#ffa7b9','#f9e2a1','#bcaff4','#f9f5df','#f9bc80'][(j+seed)%5];
+  for(const [px,py] of [[-3,0],[3,0],[0,-4],[0,4]])oval(g,c,x+px,y+py,4,4);
+  oval(g,'#f1c663',x,y,2.6,2.6);
+ }
+ });}
+function picnicArt(){return makeArt('picnic8',160,103,g=>{
+ oval(g,'#315a4944',79,96,72,8);
+ for(const x of [23,126]){round(g,'#b98965',x,45,12,39,3,'#775b57',2);round(g,'#e7b484',x-5,34,24,11,3)}
+ round(g,'#987258',22,31,117,20,8,'#65524e',2);round(g,'#fff1d8',19,24,123,16,7);
+ for(let x=26;x<138;x+=19)fill(g,'#e6a0a3',x,25,9,14);
+ round(g,'#e7ba83',29,48,103,8,2);round(g,'#b88663',70,56,17,32,2);
+ for(let i=0;i<2;i++){const x=49+i*51;oval(g,'#fff9e9',x,29,15,5);oval(g,'#f2bd8d',x,28,5,4)}
+ round(g,'#d4a487',71,12,23,16,3);oval(g,'#fff2d3',83,11,10,6);oval(g,'#f1d18d',83,10,4,3);
+ });}
 function fenceArt(){return makeArt('fence8',170,68,g=>{
- for(let x=6;x<168;x+=21){rr(g,'#d6a875',x,13,11,50,3,'#8f6f58');poly(g,'#f4d7a1',[[x,13],[x+6,5],[x+11,13]]);fill(g,'#fff2cc',x+2,19,2,28)}
- for(const y of [29,49])rr(g,'#e2b982',0,y,170,8,2,'#937358');
+ for(let x=6;x<168;x+=21){round(g,'#d6a875',x,13,11,50,3,'#8f6f58',2);poly(g,'#f4d7a1',[[x,13],[x+6,5],[x+11,13]]);fill(g,'#fff2cc',x+2,19,2,28)}
+ for(let y of [29,49])round(g,'#e2b982',0,y,170,8,2,'#937358',1);
  });}
 function flowerArchArt(){return makeArt('arch8',160,187,g=>{
- ov(g,'#295f4a55',80,174,69,10);
- for(const x of [25,133]){rr(g,'#a47962',x-6,63,13,109,4,'#654f45');smoothLine(g,'#d7a78a',[[x-2,80],[x-2,162]],2)}
- smoothLine(g,'#785b58',[[22,84],[29,40],[48,22],[80,13],[113,22],[133,43],[139,85]],10);
- smoothLine(g,'#56946b',[[22,84],[29,40],[48,22],[80,13],[113,22],[133,43],[139,85]],7);
- for(let i=0;i<28;i++){const a=Math.PI*1.05+i/27*Math.PI*.9,x=80+Math.cos(a)*63,y=89+Math.sin(a)*70;
- ov(g,i%2?'#5ab675':'#8acc76',x,y,11,6);
- if(i%3===0){ov(g,i%2?'#ffe4a3':'#f29db9',x,y-2,6,6);ov(g,'#fff4d0',x,y-2,2,2)}
- }});}
-function picnicArt(){return makeArt('picnic8',160,103,g=>{
- ov(g,'#315a4944',79,96,72,8);
- for(const x of [23,126]){rr(g,'#b98965',x,45,12,39,3,'#775b57');rr(g,'#e7b484',x-5,34,24,11,3)}
- rr(g,'#987258',22,31,117,20,8,'#65524e');rr(g,'#fff1d8',19,24,123,16,7);
- for(let x=26;x<138;x+=19)fill(g,'#e6a0a3',x,25,9,14);
- rr(g,'#e7ba83',29,48,103,8,2);rr(g,'#b88663',70,56,17,32,2);
- for(const x of [49,100]){ov(g,'#fff9e9',x,29,15,5);ov(g,'#f2bd8d',x,28,5,4)}
- rr(g,'#d4a487',71,12,23,16,3);ov(g,'#fff2d3',83,11,10,6);
+ oval(g,'#295f4a55',80,174,69,10);
+ for(const x of [25,133]){round(g,'#a47962',x-6,63,13,109,4,'#654f45',2);curved(g,'#d7a78a',[[x-2,80],[x-2,162]],2)}
+ curved(g,'#785b58',[[22,84],[29,40],[48,22],[80,13],[113,22],[133,43],[139,85]],10);
+ curved(g,'#56946b',[[22,84],[29,40],[48,22],[80,13],[113,22],[133,43],[139,85]],7);
+ for(let i=0;i<28;i++){const a=Math.PI*1.05+i/(27)*Math.PI*.90;const x=80+Math.cos(a)*63,y=89+Math.sin(a)*70;
+  oval(g,i%2?'#5ab675':'#8acc76',x,y,11,6);
+  if(i%3===0){oval(g,i%2?'#ffe4a3':'#f29db9',x,y-2,6,6);oval(g,'#fff4d0',x,y-2,2,2)}
+ }
+ });}
+function welcomeBoardArt(){return makeArt('board8',126,112,g=>{
+ oval(g,'#315b4940',61,104,48,6);
+ fill(g,'#846450',25,49,9,53);fill(g,'#846450',93,49,9,53);
+ round(g,'#a5785c',5,13,117,70,7,'#694f4b',3);
+ round(g,'#fff2d3',12,18,103,56,6);
+ g.fillStyle='#3e725c';g.textAlign='center';g.font='bold 11px system-ui';g.fillText('MAPLEWOOD',63,39);g.font='bold 10px system-ui';g.fillText('VILLAGE',63,55);
+ for(let i=0;i<5;i++){const a=i*Math.PI*2/5;oval(g,'#ed9eb6',101+Math.cos(a)*8,12+Math.sin(a)*7,5,5)}oval(g,'#f3ca75',101,12,4,4);
  });}
 
 const objects=[];
@@ -203,7 +347,7 @@ function put(type,x,y,opts={}){const obj={type,x,y,...opts};objects.push(obj);re
 function buildTown(){objects.length=0;
  for(const [x,y,type] of [[385,470,0],[925,455,1],[385,1070,2],[1060,970,3]])put('house',x,y,{kind:type,label:['Your Cottage','Honeybun Café','Storybook Library','Town Hall'][type],action:['home','cafe','library','hall'][type]});
  put('stall',530,752,{action:'market'});put('pond',940,1250,{action:'fish'});put('garden',763,416,{action:'garden'});
- put('bench',730,780);put('bench',375,812);put('bench',1050,615);put('picnic',1125,830);put('arch',820,1025);put('fence',475,525);put('fence',1120,1080);for(const [x,y,k] of [[445,560,0],[780,810,1],[900,900,2],[320,925,3],[700,1125,4],[1040,550,1],[1080,895,0],[550,1010,2]])put('flowerbed',x,y,{kind:k});
+ put('bench',730,780);put('bench',375,812);put('bench',1050,615);put('picnic',1125,830);put('board',1032,790);put('arch',820,1025);put('fence',475,525);put('fence',1120,1080);for(const [x,y,k] of [[445,560,0],[780,810,1],[900,900,2],[320,925,3],[700,1125,4],[1040,550,1],[1080,895,0],[550,1010,2]])put('flowerbed',x,y,{kind:k});
  for(const [x,y] of [[610,530],[890,775],[495,1095],[1080,1165],[350,675]])put('lamp',x,y);
  for(const [x,y,n] of [[270,430,0],[265,830,1],[230,1100,0],[920,240,2],[1100,335,0],[1190,650,1],[1210,1100,0],[660,290,0],[560,1120,2],[870,1160,1],[1300,1250,0],[580,980,1],[147,650,0]])put('tree',x,y,{kind:n});
  const shrubs=[[250,590],[486,544],[1080,525],[630,405],[905,600],[1032,790],[300,995],[805,920],[1160,850],[650,1025],[1054,1087],[765,1071],[1180,1300]];
@@ -228,7 +372,7 @@ function drawTownGround(g){
  pathStroke(g,[[381,1030],[460,914],[570,815]],71);
  pathStroke(g,[[1044,950],[953,867],[834,739]],72);
  // Town center paved cobble motif, richer than a flat square.
- ellipse(g,'#caad82',604,650,131,99);ellipse(g,'#f5d89f',604,642,122,91);
+ ellipse(g,'#d6b690',604,650,131,99);ellipse(g,'#fae3b5',604,642,122,91);
  for(let i=0;i<43;i++){const a=i*2.4,r=28+hash(i*3)*90;const x=604+Math.cos(a)*r,y=642+Math.sin(a)*r*.65;fill(g,'#fff1c9',x,y,6,3);fill(g,'#d3b889',x+2,y+4,3,2)}
  // pond shape on the lower lane: animated gleam, lily pads, reeds, rocks.
  ellipse(g,'#527c68',940,1255,163,99);ellipse(g,'#d4bc87',939,1251,155,94);
@@ -252,12 +396,22 @@ function drawHomeGround(g){
  // dollhouse-like 2.5D room with thick sidewalls and papered interior.
  fill(g,'#4d675a',160,195,860,956);fill(g,'#eed09b',170,207,841,926);
  for(let y=207;y<1130;y+=floorTile().height)for(let x=170;x<1011;x+=floorTile().width)g.drawImage(floorTile(),x,y);
- fill(g,'#5e6b73',158,180,864,25);fill(g,['#c5daba','#f2ccdf','#a5cedb','#f3dab2'][state.homeStyle%4],169,120,840,87);
- for(let x=175;x<1000;x+=34){fill(g,'#9bbb9a',x,128,2,75);fill(g,'#f5f7d7',x+3,131,2,71)}
+ fill(g,'#5e6b73',158,180,864,25);const wallThemes=[['#c5daba','#89ad88'],['#f2ccdf','#ca99b1'],['#a5cedb','#75aabd'],['#f3dab2','#ceac79']];const theme=wallThemes[state.homeStyle%4];fill(g,theme[0],169,120,840,87);
+ for(let x=175;x<1000;x+=34){fill(g,theme[1],x,128,2,75);fill(g,'#fff9e6',x+3,131,2,71)}
  fill(g,'#f3e2ac',165,195,850,14);fill(g,'#af9779',169,1133,845,13);
  for(const x of [300,820]){fill(g,'#b89d7a',x-55,125,111,90);fill(g,'#fff7d9',x-48,128,97,78);fill(g,'#8ac7d9',x-42,134,86,66);fill(g,'#fef6cd',x,134,6,66);fill(g,'#fef6cd',x-42,165,86,6);for(let k=0;k<3;k++)fill(g,'#fff5c6',x-36+k*30,142,15,2)}
  fill(g,'#bd735c',560,152,92,61);fill(g,'#e0a16f',568,153,76,55);fill(g,'#ffe3a1',634,180,4,5);
  ellipse(g,'#d99a78',579,524,209,120);ellipse(g,'#f3d6ad',579,516,194,112);ellipse(g,'#b8cfa5',582,524,158,85);
+ // Room trim, framed keepsakes, windowsill plants and rug stitching establish depth.
+ for(const x of [183,994]){fill(g,'#f9e7bc',x,201,9,930);fill(g,'#d1ab81',x+7,202,3,928)}
+ for(const [xx,yy] of [[267,624],[908,700],[245,908],[903,946]]){
+  ellipse(g,'#765c5844',xx,yy+18,29,7);round(g,'#b97763',xx-19,yy-1,39,23,5,'#885b50',2);
+  for(let k=0;k<4;k++){oval(g,k%2?'#57985e':'#7fbf71',xx+(k-1.5)*12,yy-7-((k+1)%2)*16,17,12);}
+ }
+ for(let i=0;i<13;i++){const a=i*TAU/13;oval(g,'#f5d8a6',579+Math.cos(a)*176,524+Math.sin(a)*96,3,2)}
+ round(g,'#ad8165',530,115,102,70,5,'#79594e',3);round(g,'#fff5dc',538,122,86,54,3);
+ oval(g,'#eccb9e',581,150,24,18);oval(g,'#e88fb0',579,148,15,12);oval(g,'#fff8e2',588,142,5,4);
+
 }
 function drawStatic(obj,g){
  const {type,x,y}=obj;
@@ -266,7 +420,7 @@ function drawStatic(obj,g){
  if(type==='tree')drawArt(g,foliageArt(obj.kind),x,y,1.14);
  if(type==='shrub')drawArt(g,shrubArt(obj.kind),x,y,.85);
  if(type==='flower')drawArt(g,flowerArt(obj.kind),x,y,obj.scale||.8);
- if(type==='bench')drawArt(g,benchArt(),x,y,1.24);if(type==='picnic')drawArt(g,picnicArt(),x,y,1.05);if(type==='arch')drawArt(g,flowerArchArt(),x,y,1.15);if(type==='fence')drawArt(g,fenceArt(),x,y,1);if(type==='flowerbed')drawArt(g,flowerbedArt(obj.kind),x,y,1);
+ if(type==='bench')drawArt(g,benchArt(),x,y,1.24);if(type==='picnic')drawArt(g,picnicArt(),x,y,1.05);if(type==='board')drawArt(g,welcomeBoardArt(),x,y,1.0);if(type==='arch')drawArt(g,flowerArchArt(),x,y,1.15);if(type==='fence')drawArt(g,fenceArt(),x,y,1.0);if(type==='flowerbed')drawArt(g,flowerbedArt(obj.kind),x,y,1.0);
  if(type==='lamp')drawArt(g,lampArt(),x,y,1.1);
  if(type==='pond'){const s=Math.sin(tick*2)*2;ellipse(g,'#d8fcf3',x+30,y-40+s,26,2)}
  if(type==='garden'){
@@ -275,10 +429,16 @@ function drawStatic(obj,g){
  }
 }
 function drawHomeFurniture(g){
- // All the pieces are painted sprites with thickness and drop shadows.
+ // Keep original save positions compatible; draw all purchased items at their stored coordinates.
  drawFurniture(g,'bed',332,430);drawFurniture(g,'sofa',803,489);drawFurniture(g,'kitchen',840,309);drawFurniture(g,'books',342,314);
- for(let i=0;i<state.placed.length;i++){const f=state.placed[i];drawFurniture(g,f.kind,Math.abs(f.x||0)<40?575+(f.x||0)*28:(f.x||540),Math.abs(f.z||0)<40?600+(f.z||0)*25:(f.z||500))}
+ for(let i=0;i<state.placed.length;i++){
+  if(placement?.moveIndex===i)continue;
+  const f=state.placed[i];drawFurniture(g,f.kind,Math.abs(f.x||0)<40?575+(f.x||0)*28:(f.x||540),Math.abs(f.z||0)<40?600+(f.z||0)*25:(f.z||500));
+ }
+ if(placement){const f=placement.moveIndex!==undefined?state.placed[placement.moveIndex]:placement;
+  g.save();g.globalAlpha=.62;drawFurniture(g,f.kind,placement.x??575,placement.y??670);g.restore();}
 }
+
 function drawFurniture(g,kind,x,y){const a=kind;
  ellipse(g,'#355e4b44',x,y+3,50,11);
  if(a==='bed'){
@@ -326,11 +486,26 @@ function drawScene(){if(!W||!H)return;
  if(modal==='fish'&&$('bobber'))$('bobber').style.left=(((Math.sin(tick*4)+1)/2)*98)+'%';
 }
 function drawName(g,name,x,y){g.font='900 13px monospace';let textW=g.measureText(name).width;fill(g,'#295955',x-textW/2-8,y-14,textW+16,22);fill(g,'#fff7d7',x-textW/2-4,y-11,textW+8,17);g.textAlign='center';g.fillStyle='#3a6551';g.fillText(name,x,y+1);g.textAlign='left'}
-function resize(){W=Math.max(280,innerWidth);H=Math.max(350,innerHeight);DPR=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);canvas.style.width=W+'px';canvas.style.height=H+'px';worldScale=clamp(W/530,.69,1.17);ctx.imageSmoothingEnabled=false}
+function resize(){W=Math.max(280,innerWidth);H=Math.max(350,innerHeight);DPR=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);canvas.style.width=W+'px';canvas.style.height=H+'px';worldScale=scene==='home'?clamp(W/770,.47,.86):clamp(W/530,.69,1.17);ctx.imageSmoothingEnabled=false}
 function goTo(dest,after){player.target={x:dest.x,y:dest.y,after};if(Math.hypot(dest.x-player.x,dest.y-player.y)<28){const t=player.target;player.target=null;if(t.after)t.after()}}
-function goScene(next){if(talk)closeTalk();closeModal();scene=next;player.target=null;if(next==='home'){player.x=575;player.y=670;cam.x=575;cam.y=570;}else{player.x=566;player.y=621;cam.x=566;cam.y=620;}updateUI();save();notify(next==='home'?'Home sweet home! 🏡':'Out into the sunshine! 🌷')}
+function goScene(next){if(talk)closeTalk();closeModal();stopPlacement();scene=next;player.target=null;
+ if(next==='home'){player.x=575;player.y=670;cam.x=575;cam.y=650;}else{player.x=566;player.y=621;cam.x=566;cam.y=620;}
+ resize();updateUI();save();notify(next==='home'?'Home sweet home! 🏡':'Out into the sunshine! 🌷')}
+function beginPlacement(obj){placement={...obj,x:575,y:660};closeModal();$('placementHint').classList.remove('hidden');$('placementText').textContent=obj.moveIndex!==undefined?'Tap the floor to move this item':'Tap a clear spot to place your new furniture';notify('Choose a spot inside your cottage 🌷')}
+function stopPlacement(){placement=null;$('placementHint').classList.add('hidden')}
+function chooseFurniturePosition(wx,wy){return{x:Math.round(clamp(wx,275,905)/12)*12,y:Math.round(clamp(wy,365,965)/12)*12}}
+
 function clickWorld(x,y){if(modal||talk)return;
  const wx=(x-W/2)/worldScale+cam.x,wy=(y-H*.54)/worldScale+cam.y;
+ if(placement&&scene==='home'){
+  const pos=chooseFurniturePosition(wx,wy),f=placement.moveIndex!==undefined?state.placed[placement.moveIndex]:placement;
+  const blocked=[[332,430,95],[803,489,89],[840,309,95],[342,314,94]];
+  const occupied=blocked.some(([x,y,r])=>Math.hypot(pos.x-x,(pos.y-20)-(y-35))<r)||state.placed.some((item,i)=>i!==placement.moveIndex&&Math.hypot(pos.x-item.x,pos.y-item.z)<72);
+  if(occupied)return notify('That spot is taken. Try a clear area!');
+  if(placement.moveIndex!==undefined){state.placed[placement.moveIndex].x=pos.x;state.placed[placement.moveIndex].z=pos.y;}
+  else{const item=furnitureTypes.find(t=>t.id===f.kind);if(state.coins<item.cost)return notify('Not enough coins!');state.coins-=item.cost;state.placed.push({kind:f.kind,x:pos.x,z:pos.y});}
+  stopPlacement();save();updateUI();notify('Perfect! Your room is coming together! ✨');return;
+ }
  if(scene==='home'){
   if(wy<220){notify('A lovely sunny view out of the window!');return}
   const bounds={x:clamp(wx,225,947),y:clamp(wy,275,738)};
@@ -338,7 +513,7 @@ function clickWorld(x,y){if(modal||talk)return;
   const near=fixed.find(o=>Math.hypot(wx-o.x,wy-(o.y-35))<80);
   goTo(near?{x:near.x+54,y:near.y+28}:bounds,near?.act);return;
  }
- const character=NPCS.map(n=>({n,dist:Math.hypot(wx-n.x,wy-(n.y-60))})).sort((a,b)=>a.dist-b.dist)[0];
+ const character=NPCS.map(n=>({n,dist:Math.hypot(wx-n.x,wy-(n.y-66))})).sort((a,b)=>a.dist-b.dist)[0];
  if(character&&character.dist<84){const n=character.n;goTo({x:n.x-46,y:n.y+23},()=>openTalk(n.id));return}
  const actions=objects.filter(o=>o.action).map(o=>({o,dist:Math.hypot(wx-o.x,(wy-(o.type==='house'?o.y-100:o.y-30)))})).sort((a,b)=>a.dist-b.dist);
  const hit=actions[0];if(hit&&hit.dist<(hit.o.type==='house'?150:hit.o.type==='pond'?135:90)){
@@ -356,10 +531,15 @@ function update(dt){tick+=dt;
     if(Math.hypot(n.x-n.cx,n.y-n.cy)>60){n.wanderAngle+=Math.PI;n.x-=dx*dt*28;n.y-=dy*dt*28};n.facing=dy<-.15?'back':Math.abs(dx)>Math.abs(dy)?'side':'front';}
   }
  }
- if(speed>0){state.minute+=dt*speed*2.0;while(state.minute>=1440){state.minute-=1440;state.day++;if(state.day%7===1)state.season=(state.season+1)%4;notify('A bright new day begins! 🌞');save()}
-  if(Math.floor(tick)%3===0){const rate=dt*speed*.015;state.needs.hunger=clamp(state.needs.hunger-rate*2.2,0,100);state.needs.energy=clamp(state.needs.energy-rate*1.4,0,100)}}
- const focus=talk?NPCS.find(n=>n.id===talk):null;const aimX=focus?(focus.x+player.x)/2:player.x,aimY=focus?focus.y-26:player.y;
+ if(speed>0&&!modal&&!talk&&!placement){state.minute+=dt*speed*2.0;while(state.minute>=1440){state.minute-=1440;state.day++;if(state.day%7===1)state.season=(state.season+1)%4;notify('A bright new day begins! 🌞');save()}
+  const rate=dt*speed*.013;state.needs.hunger=clamp(state.needs.hunger-rate*1.9,0,100);state.needs.energy=clamp(state.needs.energy-rate*1.3,0,100);
+  state.needs.social=clamp(state.needs.social-rate*.6,0,100);state.needs.fun=clamp(state.needs.fun-rate*.7,0,100);
+ }
+ const focus=talk?NPCS.find(n=>n.id===talk):null;const aimX=scene==='home'?575:focus?(focus.x+player.x)/2:player.x;
+ const aimY=scene==='home'?650:focus?focus.y-26:player.y;
  cam.x+=(aimX-cam.x)*clamp(dt*4,0,1);cam.y+=(aimY-cam.y)*clamp(dt*4,0,1);
+ uiTimer+=dt;if(uiTimer>.5){uiTimer=0;updateUI();}
+
 }
 function loop(now){if(!last)last=now;const dt=Math.min(.046,(now-last)/1000);last=now;try{update(dt);drawScene()}catch(e){console.error(e);notify('A scene error occurred: '+e.message)}requestAnimationFrame(loop)}
 function closeModal(){modal=null;$('modal').classList.add('hidden')}
@@ -384,14 +564,15 @@ function journal(){const done=questDefs.filter(q=>(state.quests[q.id]||0)>=q.max
 function cafe(){showModal('cafe',`<h2>🥐 Honeybun Café</h2><p>Oliver needs help serving the lunchtime crowd. A short shift earns coins and lifts your spirits.</p><div class="card"><b>1 cozy café shift</b><b>🪙 +45</b></div>${btn('Work a shift 🥐','work')} ${btn('Have a treat (10 🪙)','eat')}`)}
 function townHall(){showModal('hall',`<h2>🏛️ Maplewood Town Hall</h2><p>The village is growing around you. Meet six neighbors, spruce up your home, and complete the journal to become part of its story.</p>${btn('View your journal','journal')}`)}
 function market(){showModal('market',`<h2>🍓 Rosie’s Little Market</h2><p>Fresh fruit and lovely things for a cozy home.</p><div class="grid"><div class="item"><span class="emoji">🍑</span><strong>Peach snack</strong><small>10 coins</small>${btn('Eat','eat')}</div><div class="item"><span class="emoji">🌻</span><strong>Flower seed</strong><small>8 coins</small>${btn('Buy','seed')}</div><div class="item"><span class="emoji">🪴</span><strong>Plant</strong><small>25 coins</small>${btn('Buy','buy-plant')}</div></div>`)}
-function garden(){showModal('garden',`<h2>🌱 Community Garden</h2><p>Plant little flowers, care for them, and harvest blooms for your cottage.</p><div class="grid">${(state.garden||[0,0,0,0]).map((n,i)=>`<div class="item"><span class="emoji">${n===2?'🌸':n===1?'🌱':'🟫'}</span><strong>Plot ${i+1}</strong><small>${n===2?'Ready!':n===1?'Growing':'Empty'}</small><button class="btn" data-act="plot" data-id="${i}">${n===2?'Harvest':n===1?'Water':'Plant'}</button></div>`).join('')}</div><p>Planting is free in the community garden!</p>`)}
+function garden(){showModal('garden',`<h2>🌱 Community Garden</h2><p>Plant little flowers, care for them, and harvest blooms for your cottage.</p><div class="grid">${(state.garden||[0,0,0,0]).map((n,i)=>`<div class="item"><span class="emoji">${n===2?'🌸':n===1?'🌱':'🟫'}</span><strong>Plot ${i+1}</strong><small>${n===2?'Ready!':n===1?'Growing':'Empty'}</small><button class="btn" data-act="plot" data-id="${i}">${n===2?'Harvest':n===1?'Water':'Plant'}</button></div>`).join('')}</div><p>Planting is free. Premium seed packets from Rosie’s market give a better harvest. 🌻 ${state.inventory.filter(x=>x==='flower-seed').length} seed packets available.</p>`)}
 function fishing(){showModal('fish',`<h2>🎣 Fishing at Lily Pond</h2><p>Watch the bobber and tap when it crosses the green zone!</p><div style="margin:24px 0 18px;height:30px;background:#b5d2bd;border:3px solid #91b1a6;position:relative"><div style="height:100%;width:26%;margin-left:38%;background:#7ddda4;border-left:3px solid white;border-right:3px solid white"></div><div id="bobber" style="position:absolute;top:-4px;bottom:-4px;width:6px;background:#ed7091;left:0"></div></div><button class="btn" data-act="catch" style="width:100%">🎣 Reel it in!</button>`);}
-function decorate(){if(scene!=='home'){notify('Head home to decorate! 🏡');goScene('home')}
- showModal('decor',`<h2>🪑 Your Cozy Furniture</h2><p>Buy furniture and it will appear inside your home. Your choices are saved!</p><h3>Wallpaper</h3><div class="swatches">${['#c5daba','#f2ccdf','#a5cedb','#f3dab2'].map((s,i)=>`<button data-act="wall" data-id="${i}" class="swatch" style="background:${s}" aria-label="Wallpaper ${i+1}"></button>`).join('')}</div><div class="grid">${furnitureTypes.map(f=>`<div class="item"><span class="emoji">${f.emoji}</span><strong>${f.name}</strong><small>🪙 ${f.cost}</small><button class="btn" data-act="buy" data-id="${f.id}">Buy</button></div>`).join('')}</div>`)}
-function style(){const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
- showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
+function decorate(){if(scene!=='home')goScene('home');
+ showModal('decor',`<h2>🪑 Your Cozy Furniture</h2><p>Pick an item, then tap the floor to place it. Tap any purchased item below to move it again. Your room saves automatically.</p><h3>Wallpaper</h3><div class="swatches">${['#c5daba','#f2ccdf','#a5cedb','#f3dab2'].map((s,i)=>`<button data-act="wall" data-id="${i}" class="swatch" style="background:${s}" aria-label="Wallpaper ${i+1}" ${state.homeStyle===i?'aria-pressed="true"':''}></button>`).join('')}</div><h3>Furniture shop</h3><div class="grid">${furnitureTypes.map(f=>`<div class="item"><span class="emoji">${f.emoji}</span><strong>${f.name}</strong><small>🪙 ${f.cost}</small><button class="btn" data-act="buy" data-id="${f.id}">Choose</button></div>`).join('')}</div>${state.placed.length?`<h3>Your placed furniture</h3>${state.placed.map((f,i)=>`<div class="card"><div><b>${furnitureTypes.find(t=>t.id===f.kind)?.emoji||'🪑'} ${furnitureTypes.find(t=>t.id===f.kind)?.name||'Furniture'}</b><small>Arrange or sell an item</small></div><div class="furniture-actions"><button data-act="move" data-id="${i}">Move</button><button data-act="sell" data-id="${i}">Sell</button></div></div>`).join('')}`:''}`)}
+
+function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
+ showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(pendingName??state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair color</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Haircut</h3><div class="haircuts">${['Bob','Side-part','Tousled','Ponytail','Buns'].map((n,i)=>`<button data-act="set-style" data-id="${i}" aria-pressed="${state.hairStyle===i}" class="haircut ${state.hairStyle===i?'selected':''}">${n}</button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Pixel Village v0.7.0 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
+function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Quality Edition v1.0.0 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
 function handleAction(action,id){
  if(action==='chat'||action==='compliment'||action==='gift')return respond(action);
  if(action==='bye')return closeTalk();
@@ -400,26 +581,36 @@ function handleAction(action,id){
  if(action==='claim'){const q=questDefs.find(q=>q.id===id);if(!q||state.quests[q.id+'_claimed']||(state.quests[q.id]||0)<q.max)return;state.quests[q.id+'_claimed']=true;coins(q.reward);notify(`Quest complete! +${q.reward} coins ✨`);return journal()}
  if(action==='work'){task('work');coins(45);changeNeed('energy',-13);changeNeed('fun',9);notify('Delicious work! +45 coins 🥐');return cafe()}
  if(action==='eat'){if(state.coins<10)return notify('You need 10 coins!');coins(-10);changeNeed('hunger',35);notify('Sweet and delicious! 🍑');return}
- if(action==='seed'){if(state.coins<8)return notify('You need 8 coins!');coins(-8);state.inventory.push('flower-seed');save();notify('A packet of seeds! 🌻');return}
+ if(action==='seed'){if(state.coins<8)return notify('You need 8 coins!');coins(-8);state.inventory.push('flower-seed');save();notify('Seeds purchased! Use them in a garden plot for a richer harvest 🌻');return}
  if(action==='buy-plant')return handleAction('buy','plant');
  if(action==='wall'){state.homeStyle=Number(id)%4;save();notify('A fresh coat of cottage color! 🎨');return}
- if(action==='buy'){const f=furnitureTypes.find(f=>f.id===id);if(!f)return;if(state.coins<f.cost)return notify('Not enough coins yet!');coins(-f.cost);state.placed.push({kind:f.id,x:450+(state.placed.length%4)*80,z:600+Math.floor(state.placed.length/4)*38});save();notify(`${f.name} is waiting at home! 🪑`);return}
- if(action==='plot'){const i=Number(id),v=state.garden[i]||0;if(v===0){state.garden[i]=1;notify('Little sprouts planted! 🌱')}else if(v===1){state.garden[i]=2;notify('Your flowers are blooming! 🌸')}else{state.garden[i]=0;coins(24);task('garden');changeNeed('fun',12);notify('Beautiful harvest! +24 coins 🌼')}save();return garden()}
+ if(action==='buy'){const f=furnitureTypes.find(f=>f.id===id);if(!f)return;if(state.coins<f.cost)return notify('Not enough coins yet!');beginPlacement({kind:f.id});return}
+ if(action==='move'){const i=Number(id);if(!Number.isInteger(i)||i<0||i>=state.placed.length)return;beginPlacement({moveIndex:i});return}
+ if(action==='sell'){const i=Number(id);if(!Number.isInteger(i)||i<0||i>=state.placed.length)return;const f=state.placed.splice(i,1)[0],item=furnitureTypes.find(t=>t.id===f.kind);coins(Math.floor((item?.cost||0)/2));save();notify('Sold for half the original price ✨');return decorate()}
+
+ if(action==='plot'){const i=Number(id);if(!Number.isInteger(i)||i<0||i>=4)return;const v=state.garden[i]||0;
+ if(v===0){state.garden[i]=1;if(state.inventory.includes('flower-seed')){state.inventory.splice(state.inventory.indexOf('flower-seed'),1);state.gardenBoost[i]=true;notify('Premium seeds planted! A richer harvest awaits 🌻')}else notify('Little sprouts planted! 🌱')}
+ else if(v===1){state.garden[i]=2;notify('Your flowers are blooming! 🌸')}
+ else{state.garden[i]=0;const reward=state.gardenBoost[i]?38:24;state.gardenBoost[i]=false;coins(reward);task('garden');changeNeed('fun',12);notify(`Beautiful harvest! +${reward} coins 🌼`)}save();return garden()}
+
  if(action==='catch'){const zone=(Math.sin(tick*4)+1)/2;if(zone>=.38&&zone<=.64){const names=['Sunfish','Rainbow guppy','Golden carp','Lilyfish'];const n=names[Math.floor(rand(0,names.length))];state.fish.push(n);task('fish');coins(15);changeNeed('fun',16);notify(`You caught a ${n}! 🐟 +15`);closeModal()}else notify('Almost! The fish got away — try again!');return}
- if(action==='set-outfit'||action==='set-hair'||action==='set-skin'){const n=parseInt(id.slice(1),16);if(action==='set-outfit')state.outfit=n;else if(action==='set-hair')state.hair=n;else state.skin=n;save();return}
+ if(action==='set-style'){state.hairStyle=clamp(Number(id)||0,0,4)|0;save();return style()}
+ if(action==='set-outfit'||action==='set-hair'||action==='set-skin'){const n=parseInt(id.slice(1),16);if(!Number.isFinite(n))return;if(action==='set-outfit')state.outfit=n;else if(action==='set-hair')state.hair=n;else state.skin=n;save();return}
+
  if(action==='save-look'){const n=$('nameInput')?.value?.trim();if(n)state.name=n.slice(0,18);save();updateUI();closeModal();notify('Your new look is lovely! 🎀');return}
  if(action==='save'){save();notify('Your little world is saved! 💾');closeModal();return}
  if(action==='export'){save();const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hearth-and-harbor-save.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);return}
- if(action==='import'){const input=document.createElement('input');input.type='file';input.accept='application/json';input.onchange=async()=>{try{const v=JSON.parse(await input.files[0].text());if(typeof v.coins!=='number'||!v.needs)throw Error('Invalid save');state={...DEF(),...v};save();location.reload()}catch(e){notify('That backup was not valid.')}};input.click()}
+ if(action==='import'){const input=document.createElement('input');input.type='file';input.accept='application/json';input.onchange=async()=>{try{if(!input.files?.[0])return;if(input.files[0].size>1500000)throw Error('Too large');const v=JSON.parse(await input.files[0].text());if(!v||typeof v!=='object'||!Number.isFinite(v.coins)||!v.needs)throw Error('Invalid save');state=cleanSave(v);save();location.reload()}catch(e){notify('That backup was not valid.')}};input.click()}
+
 }
 function bind(){
  canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture?.(e.pointerId);canvas._start={x:e.clientX,y:e.clientY}});
  canvas.addEventListener('pointerup',e=>{const a=canvas._start||{x:e.clientX,y:e.clientY};if(Math.hypot(a.x-e.clientX,a.y-e.clientY)>25)return;clickWorld(e.clientX,e.clientY)});
  $('townBtn').onclick=()=>goScene('town');$('homeBtn').onclick=()=>goScene('home');$('peopleBtn').onclick=people;$('journalBtn').onclick=journal;$('decorateBtn').onclick=decorate;$('styleBtn').onclick=style;$('menuBtn').onclick=menu;
- $('timeBtn').onclick=()=>{speed=({0:1,1:2,2:3,3:0})[speed];updateUI()};$('talkClose').onclick=closeTalk;$('talkActions').addEventListener('click',buttonClick);
+ $('timeBtn').onclick=()=>{speed=({0:1,1:2,2:3,3:0})[speed];updateUI()};$('cancelPlacement').onclick=()=>{stopPlacement();notify('Placement canceled — no coins spent')};$('talkClose').onclick=closeTalk;$('talkActions').addEventListener('click',buttonClick);
  $('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();else buttonClick(e)});$('closeModal').onclick=closeModal;
  addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});setInterval(save,18000);
 }
-function start(){buildTown();resize();bind();updateUI();cam.x=player.x;cam.y=player.y;requestAnimationFrame(loop);setTimeout(()=>$('loading').classList.add('hidden'),150);if(!state.seenWelcome){state.seenWelcome=true;save();setTimeout(()=>notify('Welcome to your pixel-perfect little life! 🌷'),800)}}
+function start(){buildTown();resize();bind();updateUI();cam.x=player.x;cam.y=player.y;requestAnimationFrame(loop);setTimeout(()=>$('loading').classList.add('hidden'),150);if(!state.seenWelcome){state.seenWelcome=true;save();setTimeout(()=>notify('Welcome to your cozy little village! 🌷'),800)}}
 start();
 })();
