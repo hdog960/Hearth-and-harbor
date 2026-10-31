@@ -7,3 +7,6 @@
 - Each move updates addresses and finances, records a Town Story, and raises both residents' social needs.
 - 14 initial Chromium checks passed on mobile and landscape viewports, including save compatibility, finances, interactions, movement, and move-in safeguards.
 - Known limitation: no NPC interior scenes or player household switching.
+
+## v1.9 QA
+Six apartment entries, old-save migration, room-decor levels, dynamic occupants after moves, room dialog, returning to town, iPhone portrait and landscape checks. Future work: roommate autonomy and editable resident furnishings.
