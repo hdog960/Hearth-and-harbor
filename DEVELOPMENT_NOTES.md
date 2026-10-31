@@ -1,12 +1,11 @@
-# v1.8 — Household Foundations: development notes
+# Hearth Kitchen C1 — development notes
 
-- Save state adds residentHomes, householdFunds, householdMoves, and housingDay. Imported data is validated and overfilled homes are repaired.
-- Three residential sprites are clickable in town, each representing two addressable flats.
-- When a new in-game day begins, residents receive wages and their households pay upkeep once. Older saves do not retroactively pay wages for past days.
-- Eligible close neighbors can decide to share a home; the player may encourage an earlier move with the stated prerequisites.
-- Each move updates addresses and finances, records a Town Story, and raises both residents' social needs.
-- 14 initial Chromium checks passed on mobile and landscape viewports, including save compatibility, finances, interactions, movement, and move-in safeguards.
-- Known limitation: no NPC interior scenes or player household switching.
+Implementation: a separate `kitchen.js` and `kitchen.css` plus small hooks in `game.js`. The renderer, world navigation and save key are preserved. Changes include food inventory validation in `cleanSave`, kitchen interaction, recipe menu entry, Rosie pantry purchases, cooking input, dish storage/eating and a new service-worker cache name.
 
-## v1.9 QA
-Six apartment entries, old-save migration, room-decor levels, dynamic occupants after moves, room dialog, returning to town, iPhone portrait and landscape checks. Future work: roommate autonomy and editable resident furnishings.
+### Test priorities
+1. Existing save migration and starter ingredients.
+2. Buy ingredients, cook each recipe, cancel without duplication, prepare/eat stored dish, export/import/reload.
+3. Touch slicing and stirring on Safari; tap alternatives, relaxed flip timing; mobile portrait and landscape layout.
+4. Confirm existing gardening, furniture, resident conversations, housing and friendship systems work.
+
+Known scope: four authored recipes; cooking skill is XP-only. No NPC cooked meals, dinner parties or crop cooking yet.
