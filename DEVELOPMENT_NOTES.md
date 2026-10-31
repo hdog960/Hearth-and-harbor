@@ -1,24 +1,21 @@
-# Hearth & Harbor v1.4 — Development & QA Notes
+# Hearth & Harbor v1.5 — Little Households: development & QA
 
 ## Completed
+- Resident state for all six neighbors (food, energy, social, fun), saved under the existing key.
+- Needs change only as **in-game time** advances. They recover while neighbors participate in relevant activities and during self-care.
+- Residents can temporarily deviate from scheduled routes to rest, visit the café, or seek company. Scheduled community meetings still take precedence.
+- Mood appears in the People menu and relevant conversation and in-world icons.
+- Distinct three-step aspirations for every villager. Helping costs player energy, advances once per in-game day, boosts friendship and resident needs, and completes with a 65-coin bonus plus a Town Stories entry.
+- Community meeting interactions lift social/fun needs for participating neighbors.
+- Existing saved progress and v1.4 friend relationships remain compatible. Imported values are clamped and sanitized.
 
-1. Two scheduled NPC meetups every in-game day: morning (10:00–12:45) and evening (16:00–18:45). Twelve authored events are selected deterministically by day and time slot.
-2. Both participating NPCs pathfind toward separate accessible spots near a real village location. Their activity label and icon change while meeting.
-3. Once both are at the location, one event journal entry is generated, their pair-specific town friendship rises by 5 (up to 100), and the user receives a short toast.
-4. Added Town Stories in Journal, Town Hall, People, and Menu; best NPC friendship appears in People; a News topic is available in conversations.
-5. Existing save key is unchanged. Missing new keys in legacy saves receive safe defaults. Imported story text is length-limited and escaped in markup.
+## Testing (headless Chromium, 390×844 emulated mobile viewport)
+- 13/13 isolated-browser integration checks passed, including menus, needs, older saves, mood, aspiration progress, finding a neighbor, dream completion, journal, and persistence.
+- Zero JavaScript exceptions in the test harness.
+- Syntax validated with `node --check`.
 
-## Tests performed
-
-- `node --check` passes for the complete source.
-- Playwright (Chromium, 390×844) offline harness: boot, journal, empty stories, People panel, Home + Decor, all without exceptions.
-- Live simulated time/pathfinding through morning and afternoon meetup schedules, verifying both participants move to their destinations and story records are generated (not just injected).
-- Tests for same-event idempotency, per-pair friendship +5, two separate daily event slots, Town Stories rendering and archive, best-friend display, and legacy save migration.
-- A screenshot was rendered at mobile size; Safari-on-device performance not tested.
-
-## Important limits
-
-- Event simulation happens only while the game is open, in town, and clock running. No offline simulation or server.
-- Events are scripted short encounters with persistent relationship consequences, **not** Sims-style general-purpose autonomous NPC decision-making.
-- NPC houses remain inaccessible; meetings are held at communal locations.
-- GitHub Pages deployment may lag behind commit; confirm index title is **Neighbors & Stories** before treating site as updated.
+## Limits
+- This is a lightweight life-simulation layer, **not** full autonomous households, marriage, children, careers, or elaborate NPC decision-making.
+- No simulation when the game is closed.
+- Mobile testing is Chromium emulation, not physical iPhone Safari.
+- Further art, narrative variety, progression balancing, and device performance work are needed.
