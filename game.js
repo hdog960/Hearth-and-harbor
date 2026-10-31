@@ -1,11 +1,11 @@
-/* Hearth & Harbor — Neighbor Bonds v1.6.0
+/* Hearth & Harbor — Friendship Visits v1.7.0
    A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),rand=(a,b)=>a+Math.random()*(b-a);
 const hash=(n)=>{const x=Math.sin(n*127.1+8.45)*43758.5453;return x-Math.floor(x)};
 const SAVE='hearth-harbor-save-v1';
-const DEF=()=>({townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
+const DEF=()=>({friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
 function cleanSave(raw){
  const d=DEF();if(!raw||typeof raw!=='object'||Array.isArray(raw))return d;
  const number=(v,f,min,max)=>typeof v==='number'&&Number.isFinite(v)?clamp(v,min,max):f;
@@ -16,14 +16,20 @@ function cleanSave(raw){
  const needs=obj(raw.needs),relationships=obj(raw.relations),quests=obj(raw.quests);
  const safePair=/^(mabel|rosie|oliver|jun|bea|finn)\|(mabel|rosie|oliver|jun|bea|finn)$/;
  const safeStory=/^\d{1,4}:[01]$/;
- const safeTownStory=/^(?:\d{1,4}:[01]|m:\d{1,4}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn))$/;
+ const safeVisit=/^v:(?:[1-9]\d{0,3}):[01]$/;
+ const safeDay=/^[1-9]\d{0,3}$/;
+ const safeTownStory=/^(?:\d{1,4}:[01]|v:[1-9]\d{0,3}:[01]|m:\d{1,4}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn))$/;
  const lifeRecord=obj(raw.residentLife);
  const savedLife=Object.fromEntries([...npcIds].map(id=>{
   const row=obj(lifeRecord[id]),ns=obj(row.needs);
   return [id,{needs:{food:number(ns.food,80,0,100),energy:number(ns.energy,85,0,100),social:number(ns.social,70,0,100),fun:number(ns.fun,80,0,100)},helpDay:number(row.helpDay,0,0,9999)|0,helpCount:number(row.helpCount,0,0,3)|0,mode:['','eat','rest','social'].includes(row.mode)?row.mode:''}];
  }));
  const moments=Array.isArray(raw.lifeMoments)?raw.lifeMoments.filter(x=>x&&typeof x==='object'&&npcIds.has(x.id)&&typeof x.title==='string'&&typeof x.text==='string').slice(-24).map(x=>({id:x.id,day:number(x.day,1,1,9999)|0,title:x.title.slice(0,80),text:x.text.slice(0,240)})):[];
- const res={...d,residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
+ const validPair=p=>Array.isArray(p)&&p.length===2&&p.every(id=>npcIds.has(id))&&p[0]!==p[1];
+ const friendVisits=Object.fromEntries(Object.entries(obj(raw.friendVisits)).filter(([key,r])=>/^([1-9]\d{0,3}):[01]$/.test(key)&&validPair(r?.pair)&&Number.isInteger(r.place)&&r.place>=0&&r.place<=3).slice(-32).map(([key,r])=>[key,{pair:r.pair.slice(),place:r.place}]));
+ const invitedVisits=Object.fromEntries(Object.entries(obj(raw.invitedVisits)).filter(([day,p])=>safeDay.test(day)&&validPair(p)).slice(-8).map(([day,p])=>[day,p.slice()]));
+ const visitCounts=Object.fromEntries(Object.entries(obj(raw.visitCounts)).filter(([key])=>safePair.test(key)&&key.split('|')[0]!==key.split('|')[1]).slice(0,15).map(([key,v])=>[key,number(v,0,0,999)|0]));
+ const res={...d,friendVisits,invitedVisits,visitCounts,visitSeen:Array.isArray(raw.visitSeen)?[...new Set(raw.visitSeen.filter(x=>typeof x==='string'&&safeVisit.test(x)))].slice(-35):[],residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
    hair:safeColor(raw.hair,d.hair),outfit:safeColor(raw.outfit,d.outfit),skin:safeColor(raw.skin,d.skin),
    hairStyle:number(raw.hairStyle,d.hairStyle,0,4)|0,coins:number(raw.coins,d.coins,0,1000000),hearts:number(raw.hearts,0,0,1000000),
    day:number(raw.day,1,1,9999)|0,minute:number(raw.minute,d.minute,0,1439.999),season:number(raw.season,0,0,3)|0,
@@ -31,7 +37,7 @@ function cleanSave(raw){
    townBonds:Object.fromEntries(Object.entries(obj(raw.townBonds)).filter(([k])=>safePair.test(k)&&k.split('|')[0]!==k.split('|')[1]).slice(0,15).map(([k,v])=>[k,number(v,0,0,100)])),
    townTensions:Object.fromEntries(Object.entries(obj(raw.townTensions)).filter(([k])=>safePair.test(k)&&k.split('|')[0]!==k.split('|')[1]).slice(0,15).map(([k,v])=>[k,number(v,0,0,100)])),
    mediationDaily:Object.fromEntries(Object.entries(obj(raw.mediationDaily)).filter(([k])=>safePair.test(k)).slice(0,15).map(([k,v])=>[k,number(v,0,0,9999)|0])),
-   townStories:Array.isArray(raw.townStories)?raw.townStories.filter(x=>x&&typeof x==='object'&&safeTownStory.test(x.id)&&typeof x.title==='string'&&typeof x.text==='string').slice(-24).map(x=>({id:x.id,day:number(x.day,1,1,9999)|0,title:x.title.slice(0,75),text:x.text.slice(0,240),pair:Array.isArray(x.pair)?x.pair.filter(k=>npcIds.has(k)).slice(0,2):[],outcome:['warm','misunderstanding','reconciled'].includes(x.outcome)?x.outcome:'warm'})):[],
+   townStories:Array.isArray(raw.townStories)?raw.townStories.filter(x=>x&&typeof x==='object'&&safeTownStory.test(x.id)&&typeof x.title==='string'&&typeof x.text==='string').slice(-24).map(x=>({id:x.id,day:number(x.day,1,1,9999)|0,title:x.title.slice(0,75),text:x.text.slice(0,240),pair:Array.isArray(x.pair)?x.pair.filter(k=>npcIds.has(k)).slice(0,2):[],outcome:['warm','misunderstanding','reconciled','visit','milestone'].includes(x.outcome)?x.outcome:'warm'})):[],
    storySeen:Array.isArray(raw.storySeen)?[...new Set(raw.storySeen.filter(k=>typeof k==='string'&&safeStory.test(k)))].slice(-40):[],
    neighborMilestones:Array.isArray(raw.neighborMilestones)?[...new Set(raw.neighborMilestones.filter(x=>typeof x==='string'&&/^(mabel|rosie|oliver|jun|bea|finn):(25|60|90)$/.test(x)))].slice(0,18):[],
    socialDaily:Object.fromEntries(Object.entries(obj(raw.socialDaily)).filter(([id])=>npcIds.has(id)).map(([id,record])=>{const r=obj(record);return [id,{day:number(r.day,0,0,9999)|0,chat:number(r.chat,0,0,2)|0,compliment:number(r.compliment,0,0,1)|0,gift:number(r.gift,0,0,1)|0,join:number(r.join,0,0,1)|0}]})),
@@ -298,12 +304,105 @@ function bestNeighborFriend(id){const bonds=Object.entries(state.townBonds).filt
  if(!bonds.length||bonds[0][1]===0)return null;
  return {name:NPCS.find(n=>n.id===bonds[0][0].split('|').find(k=>k!==id))?.name,score:bonds[0][1]};
 }
+// v1.7: recurring friendships that visibly influence where residents choose to go.
+// Visit plans are recorded when chosen so saves/reloads never reroll a pair.
+const VISIT_WINDOWS=[{from:13.0,to:15.55},{from:19.0,to:20.7}];
+const VISIT_PLACES=[
+ {name:'the café terrace',point:[895,732],icon:'☕'},
+ {name:'the market benches',point:[704,843],icon:'🍓'},
+ {name:'the library garden',point:[577,1093],icon:'📚'},
+ {name:'the flower path',point:[822,966],icon:'🌷'}
+];
+function visitSlot(minute=state.minute){const h=minute/60;return VISIT_WINDOWS.findIndex(w=>h>=w.from&&h<w.to)}
+function friendshipVisit(day=state.day,slot=visitSlot()){
+ if(slot<0)return null;
+ const visitId=`v:${day}:${slot}`,key=`${day}:${slot}`;
+ let plan=state.friendVisits[key];
+ if(!plan){
+  // Pick an affinity-driven pair: warmth, past visits and social needs matter.
+  // Strong tensions prevent visits; mediation can restore a damaged bond.
+  const choices=[];
+  for(let i=0;i<NPCS.length;i++)for(let j=i+1;j<NPCS.length;j++){
+   const pair=[NPCS[i].id,NPCS[j].id],pairId=pairKey(pair);
+   const tension=state.townTensions[pairId]||0;
+   if(tension>=17)continue;
+   const bond=state.townBonds[pairId]||0,chemistry=SOCIAL_CHEMISTRY[pairId]||0;
+   const needs=(lifeFor(pair[0]).needs.social+lifeFor(pair[1]).needs.social)/2;
+   const variation=hash(day*9.71+slot*61+i*17+j*7.3)*11;
+   choices.push({pair,score:Math.min(38,bond)*.53+chemistry*3.3+(100-needs)*.085-(tension*.6)+variation});
+  }
+  if(!choices.length)return null;
+  choices.sort((a,b)=>b.score-a.score);
+  // Avoid repeating the same pair twice in one day when alternatives exist.
+  const previous=slot===1?state.friendVisits[`${day}:0`]?.pair:null;
+  const chosen=choices.find(x=>!previous||pairKey(x.pair)!==pairKey(previous))||choices[0];
+  const pair=slot===0&&state.invitedVisits[String(day)]?state.invitedVisits[String(day)].slice():chosen.pair;
+  // Honor an invitation only when neither friend is in an unresolved dispute.
+  const approved=(state.townTensions[pairKey(pair)]||0)<17?pair:chosen.pair;
+  plan={pair:approved.slice(),place:Math.floor(hash(day*5.18+slot*13.7)*VISIT_PLACES.length)};
+  state.friendVisits[key]=plan;
+  const old=Object.keys(state.friendVisits);for(const k of old){if(Number(k.split(':')[0])<day-6)delete state.friendVisits[k]}
+  save();
+ }
+ const place=VISIT_PLACES[plan.place];
+ return {id:visitId,day,slot,pair:plan.pair,point:place.point,place:place.name,icon:place.icon,doing:'catching up',title:'A little visit'};
+}
+function activeFriendVisit(n){const ev=friendshipVisit();return ev&&ev.pair.includes(n.id)?ev:null}
+function friendshipStatus(pair){const key=pairKey(pair),score=bondScore(pair),visits=state.visitCounts[key]||0;
+ return score>=30&&visits>=3?'Best friends':score>=13&&visits>=1?'Close friends':score>=5?'Friends':'Acquaintances';}
+function settleFriendVisit(){
+ const visit=friendshipVisit();if(!visit||state.visitSeen.includes(visit.id)||!meetingReady(visit))return;
+ const key=pairKey(visit.pair),count=(state.visitCounts[key]||0)+1;
+ state.visitSeen.push(visit.id);state.visitSeen=state.visitSeen.slice(-35);
+ state.visitCounts[key]=Math.min(999,count);
+ state.townBonds[key]=clamp((state.townBonds[key]||0)+4,0,100);
+ state.townTensions[key]=Math.max(0,(state.townTensions[key]||0)-2);
+ const names=visit.pair.map(id=>NPCS.find(n=>n.id===id).name);
+ const best=friendshipStatus(visit.pair)==='Best friends'&&count===3;
+ const title=best?'An enduring friendship':count>1?'A familiar friendly face':'A surprise visit';
+ const detail=best?`${names[0]} and ${names[1]} have become close companions after many afternoons together.`:
+   `${names[0]} and ${names[1]} spent time together at ${visit.place}, sharing stories and enjoying each other's company.`;
+ state.townStories.push({id:visit.id,day:visit.day,title,text:detail,pair:visit.pair.slice(),outcome:best?'milestone':'visit'});
+ state.townStories=state.townStories.slice(-24);
+ for(const id of visit.pair){const n=NPCS.find(x=>x.id===id);n.emotion='happy';n.emotionUntil=tick+4;n.routineKey='';const a=lifeFor(id).needs;a.social=clamp(a.social+18,0,100);a.fun=clamp(a.fun+9,0,100)}
+ notify(best?'A new best-friend bond in town! 💗':`${names[0]} visited ${names[1]}! 💌`);
+ save();
+}
+function suggestVisit(n){
+ if((state.relations[n.id]||0)<20){$('talkText').textContent=`Get to know ${n.name} a little better before suggesting personal plans (20 friendship needed).`;return}
+ const tomorrow=state.day+1;
+ if(state.invitedVisits[String(tomorrow)]){$('talkText').textContent='You have already helped arrange a get-together for tomorrow afternoon!';return}
+ if(state.needs.energy<5){$('talkText').textContent='You need some energy to help arrange a visit. Rest a little first.';return}
+ const candidates=NPCS.filter(x=>x.id!==n.id&&(state.townTensions[pairKey([n.id,x.id])]||0)<17)
+  .map(x=>({other:x,score:bondScore([n.id,x.id])+(SOCIAL_CHEMISTRY[pairKey([n.id,x.id])]||0)*3}))
+  .sort((a,b)=>b.score-a.score);
+ if(!candidates.length){$('talkText').textContent='Every possible visitor has an unresolved disagreement. Helping people reconcile may open new plans.';return}
+ const other=candidates[0].other;
+ state.invitedVisits[String(tomorrow)]=[n.id,other.id];
+ changeNeed('energy',-5);
+ const before=state.relations[n.id]||0;state.relations[n.id]=clamp(before+3,0,100);state.hearts+=3;
+ checkFriendshipMoment(n,before,state.relations[n.id]);
+ $('talkRole').textContent=`${n.job} · ${friendshipRank(state.relations[n.id])} · ♥ ${state.relations[n.id]}`;
+ $('talkText').textContent=`${n.name} smiles. “I'll meet ${other.name} tomorrow afternoon! Thanks for helping us make plans.”`;
+ $('emote').textContent='💌';n.emotion='happy';n.emotionUntil=tick+3;
+ save();updateUI();notify(`A get-together is planned for Day ${tomorrow}! 💌`);
+}
+function visitPlans(){const slot=visitSlot(),live=friendshipVisit(),tomorrow=state.invitedVisits[String(state.day+1)];
+ const all=NPCS.flatMap((n,i)=>NPCS.slice(i+1).map(m=>[n,m])).filter(([a,b])=>state.townBonds[pairKey([a.id,b.id])]>0||state.visitCounts[pairKey([a.id,b.id])]>0);
+ all.sort((a,b)=>bondScore([b[0].id,b[1].id])-bondScore([a[0].id,a[1].id]));
+ showModal('visits',`<h2>💌 Visiting Hours</h2><p>Neighbors choose companions based on friendship, personality and mood. Visits happen from 1:00–3:33 PM and 7:00–8:42 PM while you're playing in town.</p>
+ ${live?`<div class="card"><div><b>${live.icon} Happening now</b><small>${escapeHtml(live.pair.map(id=>NPCS.find(n=>n.id===id).name).join(' & '))} at ${escapeHtml(live.place)}</small></div></div>`:'<p>There is no visit happening at this hour. Explore the town or speed up the clock.</p>'}
+ ${tomorrow?`<div class="card"><div><b>📅 Tomorrow's plans</b><small>${escapeHtml(tomorrow.map(id=>NPCS.find(n=>n.id===id).name).join(' & '))} · early afternoon</small></div></div>`:''}
+ <h3>Neighbor connections</h3>${all.slice(0,10).map(([a,b])=>`<div class="card"><div><b>${escapeHtml(a.name)} & ${escapeHtml(b.name)}</b><small>${friendshipStatus([a.id,b.id])} · ${Math.round(bondScore([a.id,b.id]))} closeness · ${state.visitCounts[pairKey([a.id,b.id])]||0} visits${(state.townTensions[pairKey([a.id,b.id])]||0)>=8?' · 💭 some tension':''}</small></div></div>`).join('')||'<p>More friendships will develop as neighbors meet.</p>'}`)}
+
 function currentRoutine(n){
  const meetup=activeMeeting(n);
  if(meetup){const last=state.townStories.find(x=>x.id===meetup.id);
   if(last?.outcome==='misunderstanding'){const other=NPCS.find(x=>x.id===meetup.pair.find(id=>id!==n.id));const side=meetup.pair.indexOf(n.id)===0?-1:1;return {h:`${meetup.slot}-space`,where:[meetup.point[0]+side*105,meetup.point[1]+side*38],doing:`taking a little space after talking with ${other.name}`,icon:'🌧️',mood:'peaceful'};}
   const where=meetingPosition(meetup,n);return {h:EVENT_START[meetup.slot],where,doing:meetup.doing+' with '+NPCS.find(x=>x.id===meetup.pair.find(id=>id!==n.id)).name,icon:meetup.icon,mood:'happy',eventId:meetup.id}}
 
+ const visit=activeFriendVisit(n);
+ if(visit){const other=NPCS.find(x=>x.id===visit.pair.find(id=>id!==n.id));return {h:`visit-${visit.day}-${visit.slot}`,where:meetingPosition(visit,n),doing:`visiting ${other.name} at ${visit.place}`,icon:visit.icon,mood:'happy',visitId:visit.id}}
  const care=lifeFor(n.id).mode;
  if(care==='rest')return {h:'rest-care',where:VILLAGER_ROUTINES[n.id][0].where,doing:'taking a well-earned rest',icon:'💤',mood:'sleepy'};
  if(care==='eat')return {h:'eat-care',where:[961,658],doing:'grabbing a snack at the café',icon:'🥐',mood:'happy'};
@@ -323,7 +422,7 @@ const TASK_ART={
  finn:{tool:'fishing rod',join:'Finn lets you try his lucky fishing spot. You watch the bobber dance together.',rest:'Finn teaches you to listen for the soft sounds of the pond.'}
 };
 function activityType(n){
- if(activeMeeting(n))return 'meet';
+ if(activeMeeting(n)||activeFriendVisit(n))return 'meet';
  const care=lifeFor(n.id).mode;if(care)return care;
  const stage=currentRoutine(n),hour=state.minute/60;
  if(hour>=21||hour<6)return 'rest';
@@ -1020,7 +1119,7 @@ function update(dt){tick+=dt;
     }
    }
   }
-  settleCommunityEvent();
+  settleCommunityEvent();settleFriendVisit();
  }
  if(speed>0&&!modal&&!talk&&!placement){const elapsed=dt*speed*2.0;updateResidentNeeds(elapsed);state.minute+=elapsed;while(state.minute>=1440){state.minute-=1440;state.day++;if(state.day%7===1)state.season=(state.season+1)%4;notify('A bright new day begins! 🌞');save()}
   const rate=dt*speed*.013;state.needs.hunger=clamp(state.needs.hunger-rate*1.9,0,100);state.needs.energy=clamp(state.needs.energy-rate*1.3,0,100);
@@ -1040,7 +1139,7 @@ function buttonClick(e){const b=e.target.closest('[data-act]');if(!b)return;hand
 function openTalk(id){const n=NPCS.find(a=>a.id===id);if(!n)return;closeModal();talk=id;n.emotion='happy';n.emotionUntil=tick+1.2;const r=state.relations[id]||0;
  $('talkName').textContent=n.name;$('talkRole').textContent=`${n.job} · ${friendshipRank(r)} · ♥ ${r}`;$('talkPortrait').textContent='';const portrait=document.createElement('canvas');portrait.width=54;portrait.height=54;portrait.className='portrait-canvas';const pg=portrait.getContext('2d');pg.imageSmoothingEnabled=false;pg.drawImage(charArt(n,'front',0,'happy'),4,0,88,79,0,0,54,54);$('talkPortrait').append(portrait);
  $('talkText').textContent=neighborMoment(n);$('conversation').classList.remove('hidden');$('game').classList.add('talking');
- $('talkActions').innerHTML='<button data-act="chat">💬 Chat</button><button data-act="ask">🌤 Their day</button><button data-act="news">💌 News</button><button data-act="mediate">🕊️ Make peace</button><button data-act="join">✨ Join in</button><button data-act="help">🌟 Help with dream</button><button data-act="compliment">💗 Compliment</button><button data-act="gift">🎁 Gift</button><button data-act="bye">See you!</button>';
+ $('talkActions').innerHTML='<button data-act="chat">💬 Chat</button><button data-act="ask">🌤 Their day</button><button data-act="news">💌 News</button><button data-act="invite">📅 Arrange visit</button><button data-act="mediate">🕊️ Make peace</button><button data-act="join">✨ Join in</button><button data-act="help">🌟 Help with dream</button><button data-act="compliment">💗 Compliment</button><button data-act="gift">🎁 Gift</button><button data-act="bye">See you!</button>';
  $('emote').textContent='💗';$('emote').hidden=false;state.met=state.met||[];if(!state.met.includes(id)){state.met.push(id);task('meet')}changeNeed('social',7);save()}
 function closeTalk(){talk=null;$('conversation').classList.add('hidden');$('game').classList.remove('talking');$('emote').hidden=true}
 function respond(kind){const n=NPCS.find(o=>o.id===talk);if(!n)return;
@@ -1048,6 +1147,7 @@ function respond(kind){const n=NPCS.find(o=>o.id===talk);if(!n)return;
  const daily=state.socialDaily[n.id],r=state.relations[n.id]||0,cap=kind==='chat'?2:1;
  const voices=personalityTalk[n.id]||personalityTalk.mabel;
  if(kind==='help')return helpNeighbor(n);
+ if(kind==='invite')return suggestVisit(n);
  if(kind==='mediate')return mediateNeighbor(n);
  if(kind==='join'){
   if(daily.join>=1){$('talkText').textContent=`That was a lovely time together! Let's do something again tomorrow.`;$('emote').textContent='🌼';return}
@@ -1078,10 +1178,10 @@ function respond(kind){const n=NPCS.find(o=>o.id===talk);if(!n)return;
  else if(kind==='gift'){coins(-20);gain=20;n.emotion='surprised';$('talkText').textContent=voices.gift[(state.day+daily.gift)%voices.gift.length];$('emote').textContent='🎁'}
  state.relations[n.id]=Math.min(100,r+gain);state.hearts+=gain;n.emotionUntil=tick+2.1;checkFriendshipMoment(n,r,state.relations[n.id]);$('talkRole').textContent=`${n.job} · ${friendshipRank(state.relations[n.id])} · ♥ ${state.relations[n.id]}`;$('heartText').textContent=state.hearts;save();
 }
-function people(){showModal('people',`<h2>💌 Meet the Neighbors</h2><p>Everyone has their own needs, mood and a little dream. Talk to them, help them out, and watch friendships grow.</p>${btn('💌 Town Stories','stories')}${NPCS.map(n=>{const life=lifeFor(n.id),m=personalMood(n),goal=RESIDENT_GOALS[n.id];return `<div class="card"><div><b>${n.emoji} ${n.name} · ♥ ${state.relations[n.id]||0}</b><small>${escapeHtml(n.job)} · ${escapeHtml(n.trait)}<br>${m.icon} ${m.name} · ${escapeHtml(currentRoutine(n).doing)}<br>🌟 ${escapeHtml(goal.title)} — ${life.helpCount}/3 ${life.helpCount>=3?'✓ Complete':''}<br>${friendshipRank(state.relations[n.id]||0)}${bestNeighborFriend(n.id)?`<br>Friends with ${escapeHtml(bestNeighborFriend(n.id).name)} · ♥ ${bestNeighborFriend(n.id).score}`:''}${strainedNeighbor(n.id)?`<br>🌧️ Misunderstanding with ${escapeHtml(strainedNeighbor(n.id).name)} · ${Math.round(strainedNeighbor(n.id).tension)} tension`:''}</small><div class="mini-needs"><span>🍞 ${Math.round(life.needs.food)}</span><span>💤 ${Math.round(life.needs.energy)}</span><span>💌 ${Math.round(life.needs.social)}</span><span>🎈 ${Math.round(life.needs.fun)}</span></div></div><button data-act="find" data-id="${n.id}">Find</button></div>`}).join('')}`)}
+function people(){showModal('people',`<h2>💌 Meet the Neighbors</h2><p>Everyone has their own needs, mood and a little dream. Talk to them, help them out, and watch friendships grow.</p>${btn('💌 Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${NPCS.map(n=>{const life=lifeFor(n.id),m=personalMood(n),goal=RESIDENT_GOALS[n.id];return `<div class="card"><div><b>${n.emoji} ${n.name} · ♥ ${state.relations[n.id]||0}</b><small>${escapeHtml(n.job)} · ${escapeHtml(n.trait)}<br>${m.icon} ${m.name} · ${escapeHtml(currentRoutine(n).doing)}<br>🌟 ${escapeHtml(goal.title)} — ${life.helpCount}/3 ${life.helpCount>=3?'✓ Complete':''}<br>${friendshipRank(state.relations[n.id]||0)}${bestNeighborFriend(n.id)?`<br>Friends with ${escapeHtml(bestNeighborFriend(n.id).name)} · ♥ ${bestNeighborFriend(n.id).score}`:''}${strainedNeighbor(n.id)?`<br>🌧️ Misunderstanding with ${escapeHtml(strainedNeighbor(n.id).name)} · ${Math.round(strainedNeighbor(n.id).tension)} tension`:''}</small><div class="mini-needs"><span>🍞 ${Math.round(life.needs.food)}</span><span>💤 ${Math.round(life.needs.energy)}</span><span>💌 ${Math.round(life.needs.social)}</span><span>🎈 ${Math.round(life.needs.fun)}</span></div></div><button data-act="find" data-id="${n.id}">Find</button></div>`}).join('')}`)}
 function townStories(){const stories=[...state.townStories].reverse();const e=communityEvent();const dreams=[...state.lifeMoments].reverse();
- showModal('stories',`<h2>💌 Town Stories</h2><p>The neighbors have lives of their own. Drop by the square, market, gardens, café and pond during the day to catch their little moments.</p>${e?`<div class="card"><div><b>${e.icon} Happening now: ${escapeHtml(e.title)}</b><small>${escapeHtml(e.place)} · ${escapeHtml(e.pair.map(id=>NPCS.find(n=>n.id===id).name).join(' & '))}</small></div></div>`:''}${dreams.map(moment=>`<div class="card"><div><b>🌟 ${escapeHtml(moment.title)}</b><small>Day ${moment.day} · ${escapeHtml(moment.text)}</small></div></div>`).join('')}${stories.length?stories.map(story=>`<div class="card"><div><b>${story.outcome==='misunderstanding'?'🌧️ ':story.outcome==='reconciled'?'🕊️ ':'💛 '}${escapeHtml(story.title)}</b><small>Day ${story.day} · ${escapeHtml(story.text)}</small></div></div>`).join(''):'<p>No stories yet. Spend some time exploring or help a neighbor finish a dream.</p>'}<p>Stories record automatically once both neighbors arrive. Relationships can grow, strain, and heal as residents spend time together. You can also help neighbors make peace.</p>${btn('Back to journal','journal')}`)}
-function journal(){const done=questDefs.filter(q=>(state.quests[q.id]||0)>=q.max).length;showModal('journal',`<h2>📜 Your Little Journal</h2><p>${done} of ${questDefs.length} village adventures completed. Claim your rewards to grow your little life!</p>${btn('💌 Read Town Stories','stories')}${questDefs.map(q=>{const n=state.quests[q.id]||0,claimed=state.quests[q.id+'_claimed'];return `<div class="card"><div><b>${q.text}</b><small>${Math.min(q.max,n)} / ${q.max} · 🪙 ${q.reward}</small></div><button data-act="claim" data-id="${q.id}" ${n<q.max||claimed?'disabled':''}>${claimed?'✓ Done':'Claim'}</button></div>`}).join('')}`)}
+ showModal('stories',`<h2>💌 Town Stories</h2><p>The neighbors have lives of their own, with visits between community events. Drop by the square, market, gardens, café and pond during the day to catch their little moments.</p>${e?`<div class="card"><div><b>${e.icon} Happening now: ${escapeHtml(e.title)}</b><small>${escapeHtml(e.place)} · ${escapeHtml(e.pair.map(id=>NPCS.find(n=>n.id===id).name).join(' & '))}</small></div></div>`:''}${dreams.map(moment=>`<div class="card"><div><b>🌟 ${escapeHtml(moment.title)}</b><small>Day ${moment.day} · ${escapeHtml(moment.text)}</small></div></div>`).join('')}${stories.length?stories.map(story=>`<div class="card"><div><b>${story.outcome==='misunderstanding'?'🌧️ ':story.outcome==='reconciled'?'🕊️ ':story.outcome==='visit'?'☕ ':story.outcome==='milestone'?'💗 ':'💛 '}${escapeHtml(story.title)}</b><small>Day ${story.day} · ${escapeHtml(story.text)}</small></div></div>`).join(''):'<p>No stories yet. Spend some time exploring or help a neighbor finish a dream.</p>'}<p>Stories record automatically once both neighbors arrive. Relationships can grow, strain, and heal as residents spend time together. You can also help neighbors make peace.</p>${btn('Back to journal','journal')}`)}
+function journal(){const done=questDefs.filter(q=>(state.quests[q.id]||0)>=q.max).length;showModal('journal',`<h2>📜 Your Little Journal</h2><p>${done} of ${questDefs.length} village adventures completed. Claim your rewards to grow your little life!</p>${btn('💌 Read Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${questDefs.map(q=>{const n=state.quests[q.id]||0,claimed=state.quests[q.id+'_claimed'];return `<div class="card"><div><b>${q.text}</b><small>${Math.min(q.max,n)} / ${q.max} · 🪙 ${q.reward}</small></div><button data-act="claim" data-id="${q.id}" ${n<q.max||claimed?'disabled':''}>${claimed?'✓ Done':'Claim'}</button></div>`}).join('')}`)}
 function cafe(){showModal('cafe',`<h2>🥐 Honeybun Café</h2><p>Oliver needs help serving the lunchtime crowd. A short shift earns coins and lifts your spirits. Look for Oliver working in town, too.</p><div class="card"><b>1 cozy café shift</b><b>🪙 +45</b></div>${btn('Work a shift 🥐','work')} ${btn('Have a treat (10 🪙)','eat')}`)}
 function townHall(){showModal('hall',`<h2>🏛️ Maplewood Town Hall</h2><p>The village is growing around you. Meet six neighbors, spruce up your home, and complete the journal to become part of its story.</p>${btn('View your journal','journal')} ${btn('💌 Town Stories','stories')}`)}
 function market(){showModal('market',`<h2>🍓 Rosie’s Little Market</h2><p>Fresh fruit and lovely things for a cozy home.</p><div class="grid"><div class="item"><span class="emoji">🍑</span><strong>Peach snack</strong><small>10 coins</small>${btn('Eat','eat')}</div><div class="item"><span class="emoji">🌻</span><strong>Flower seed</strong><small>8 coins</small>${btn('Buy','seed')}</div><div class="item"><span class="emoji">🪴</span><strong>Plant</strong><small>25 coins</small>${btn('Buy','buy-plant')}</div></div>`)}
@@ -1093,11 +1193,12 @@ function decorate(){if(scene!=='home')goScene('home');
 function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
  showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(pendingName??state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair color</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Haircut</h3><div class="haircuts">${['Bob','Side-part','Tousled','Ponytail','Buns'].map((n,i)=>`<button data-act="set-style" data-id="${i}" aria-pressed="${state.hairStyle===i}" class="haircut ${state.hairStyle===i?'selected':''}">${n}</button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Neighbor Bonds v1.6.0 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💌 Town Stories','stories')}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
+function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Friendship Visits v1.7.0 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💌 Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
 function handleAction(action,id){
- if(action==='chat'||action==='compliment'||action==='gift'||action==='ask'||action==='join'||action==='news'||action==='help'||action==='mediate')return respond(action);
+ if(action==='chat'||action==='compliment'||action==='gift'||action==='ask'||action==='join'||action==='news'||action==='help'||action==='mediate'||action==='invite')return respond(action);
  if(action==='bye')return closeTalk();
  if(action==='find'){closeModal();if(scene==='home')goScene('town');const n=NPCS.find(n=>n.id===id);if(n){goTo(approachNeighbor(n),()=>openTalk(id));if(player.target)player.target.npcId=n.id;}return}
+ if(action==='visits')return visitPlans();
  if(action==='journal')return journal();
  if(action==='stories')return townStories();
  if(action==='claim'){const q=questDefs.find(q=>q.id===id);if(!q||state.quests[q.id+'_claimed']||(state.quests[q.id]||0)<q.max)return;state.quests[q.id+'_claimed']=true;coins(q.reward);notify(`Quest complete! +${q.reward} coins ✨`);return journal()}
