@@ -1,4 +1,23 @@
-# Hearth & Harbor v2.2 — Around the Table
+# Hearth & Harbor v2.3 — Home Is a Feeling (first playable household slice)
+
+A free iPhone-first 2.5D cozy life simulator, published to GitHub Pages.
+
+## New in v2.3
+- **Playable household members inside residential homes.** Visit People → Little Households → Visit, then Menu → Household Daybook. Select Poppy or a resident; the avatar, name and need meters follow the selected person.
+- **Five household activities:** sleep, read, tidy, make a simple meal, and spend quality time. Residents walk to stations and perform queued activities. Needs recover, and quality time can strengthen roommate relationships.
+- **Room personalization:** six free color palettes and three purchasable visible decoration slots per address. A capped home-comfort rating increases routine benefits. Resident needs and decoration progress persist.
+- **Anti-grind rules:** repeated daily activities produce reduced need benefits, and tidying cannot repeatedly generate household money.
+- **Save compatibility:** older games, friendships, households, cooking (12 recipes), and progression remain compatible.
+
+### Scope
+This is the **first release of the v2.3 milestone**, not the completed household simulator. Resident control currently works inside their own residences. Freeform wall construction, rotated furniture, sophisticated autonomous schedules, and full multi-resident action queues remain future steps. Physical iPhone Safari QA is still required.
+
+## How to play
+Open the game on GitHub Pages. Tap **People → Little Households → Visit** to enter an occupied residence. Use **Menu → Household Daybook** to change who you guide, choose home activities or customize the room. Poppy remains available through the Daybook roster, and returning to town safely resets control.
+
+
+## Previously implemented
+
 
 An original, free, iPhone-first 2.5D cozy life simulator with household and village systems.
 
