@@ -17,3 +17,6 @@
 .portrait-canvas{display:block;width:40px;height:40px;image-rendering:pixelated;image-rendering:crisp-edges}
 .tiny-avatar{background:linear-gradient(155deg,#d6efbf,#fae2bb);overflow:hidden}
 @media(max-width:360px){.speech-head strong{font-size:15px}.talk-actions button{padding:8px 5px;font-size:11px}}
+
+/* Little Households: readable individual resident needs on mobile. */
+.mini-needs{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;font-size:11px;color:#315953}.mini-needs span{padding:3px 5px;background:#e6f3de;border:1px solid #a9cba9;border-radius:6px;white-space:nowrap}
