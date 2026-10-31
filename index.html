@@ -1,74 +1,17 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
-  <meta name="theme-color" content="#70d6ee" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Hearth & Harbor" />
-  <meta name="description" content="A tiny town with a whole lot of heart. A playable cozy chibi life simulator." />
-  <link rel="apple-touch-icon" href="assets/icon-192.png" />
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="stylesheet" href="style.css?v=0.6.0" />
-  <title>Hearth & Harbor • A Little Life of Your Own</title>
-</head>
-<body>
-  <main id="game" aria-label="Hearth and Harbor 3D game">
-    <div id="viewport"></div>
-    <div id="vignette"></div>
-    <div class="top-left hud glass">
-      <div class="brand"><span class="brand-flower">✿</span><div><strong>Hearth <i>&</i> Harbor</strong><small>A LITTLE LIFE OF YOUR OWN</small></div></div>
-      <div class="time-line"><span id="weather">☀️</span> <span id="dateText">Spring · Day 1</span><span class="dot">•</span><span id="clockText">8:00 AM</span></div>
-    </div>
-    <div class="top-right hud">
-      <div class="currency glass"><span>🪙</span><b id="coinText">250</b><span class="divider-dot">✦</span><span>💗</span><b id="heartText">0</b></div>
-      <button class="circle-btn glass" id="soundBtn" aria-label="Toggle sound" title="Toggle sound">♫</button>
-      <button class="circle-btn glass" id="helpBtn" aria-label="Help">?</button>
-    </div>
-    <div class="location-pill glass" id="locationText">🌷 Maplewood Village</div>
-    <div id="npcLabel" class="npc-label" style="display:none"></div>
-    <div id="toast" aria-live="polite"></div>
-    <div class="bottom-wrap">
-      <div class="needs glass">
-        <div class="character-chip"><div class="avatar-dot" id="avatarDot">👩🏻</div><div><b id="characterText">Poppy</b><small id="moodText">Feeling lovely</small></div></div>
-        <div class="need"><span>🍞</span><div class="need-track"><i id="needHunger"></i></div><small>Food</small></div>
-        <div class="need"><span>☀️</span><div class="need-track"><i id="needFun"></i></div><small>Fun</small></div>
-        <div class="need"><span>💬</span><div class="need-track"><i id="needSocial"></i></div><small>Social</small></div>
-        <div class="need"><span>💤</span><div class="need-track"><i id="needEnergy"></i></div><small>Energy</small></div>
-        <div class="time-controls"><button id="pauseBtn" class="mini-btn selected" aria-label="Pause time">Ⅱ</button><button id="playBtn" class="mini-btn" aria-label="Normal speed">▶</button><button id="fastBtn" class="mini-btn" aria-label="Fast time">▶▶</button></div>
-      </div>
-      <nav class="toolbar glass" aria-label="Game menu">
-        <button id="homeBtn"><span>🏡</span><small>Home</small></button>
-        <button id="townBtn" class="active"><span>🌳</span><small>Town</small></button>
-        <button id="peopleBtn"><span>💌</span><small>People</small></button>
-        <button id="journalBtn"><span>📖</span><small>Journal</small><i id="journalDot"></i></button>
-        <button id="buildBtn"><span>🛋️</span><small>Decorate</small></button>
-        <button id="styleBtn"><span>👗</span><small>Style</small></button>
-        <button id="menuBtn"><span>⚙️</span><small>Menu</small></button>
-      </nav>
-    </div>
-    <div class="hint glass" id="hint">Tap anywhere to stroll • Tap neighbors & places to interact</div>
-    <div id="conversationEmote" class="conversation-emote" aria-hidden="true"></div>
-    <section id="conversationLayer" class="conversation-layer hidden" aria-label="Talking with your neighbor" aria-live="polite">
-      <div class="dialogue-card">
-        <div class="dialogue-header"><div id="dialogueAvatar" class="dialogue-avatar" aria-hidden="true">🌼</div>
-          <div class="dialogue-heading"><strong id="dialogueName">Neighbor</strong><small id="dialogueRole">Friend</small></div>
-          <div id="dialogueHearts" class="dialogue-hearts">♥ 0</div><button id="dialogueClose" class="dialogue-x" aria-label="End conversation">✕</button></div>
-        <div id="dialogueText" class="dialogue-text">Hello there!</div>
-        <div id="dialogueGain" class="dialogue-gain" aria-hidden="true"></div>
-        <div id="dialogueActions" class="dialogue-actions"></div>
-      </div>
-    </section>
-    <div id="modalShade" class="modal-shade hidden" role="presentation">
-      <section class="panel glass" role="dialog" aria-modal="true" aria-label="Game menu">
-        <button id="closeModal" class="close-modal" aria-label="Close">✕</button>
-        <div id="modalBody"></div>
-      </section>
-    </div>
-    <div id="loading" class="loading"><div class="loading-card"><div class="loading-icon">🌼</div><h1>Hearth <em>&</em> Harbor</h1><p>Making your little world…</p><div class="loading-bar"><span></span></div></div></div>
-  </main>
-  <script type="module" src="game.js?v=0.6.0"></script>
-</body>
-</html>
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#244d4b">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Hearth & Harbor"><meta name="description" content="A joyful 2.5D pixel-art life sim for your phone.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="style.css?v=0.7.0"><title>Hearth & Harbor · Pixel Village</title></head>
+<body><main id="game">
+<canvas id="scene" aria-label="Hearth and Harbor 2.5D game world"></canvas>
+<header class="top"><div class="brand panel"><div class="brand-mark">✿</div><div><strong>Hearth <span>&</span> Harbor</strong><small id="dateText">SPRING • DAY 1 • 8:00 AM</small></div></div><div class="money panel">🪙 <b id="coinText">250</b><i>♥</i><b id="heartText">0</b></div></header>
+<div class="town-label" id="locationText">✦ MAPLEWOOD VILLAGE ✦</div>
+<div class="prompt" id="prompt">TAP TO WALK · TAP A NEIGHBOR TO CHAT</div>
+<div class="world-toast" id="toast"></div>
+<div class="emote" id="emote" hidden>♥</div>
+<section id="conversation" class="conversation hidden" aria-label="Conversation"><div class="speech"><div class="speech-head"><div class="tiny-avatar" id="talkPortrait">🌷</div><div><strong id="talkName">Poppy</strong><small id="talkRole">Neighbor</small></div><button type="button" id="talkClose" class="xbtn" aria-label="Close conversation">✕</button></div><p id="talkText"></p><div id="talkActions" class="talk-actions"></div></div></section>
+<div class="bottom"><section class="status panel"><div class="status-name"><span>🌼</span><strong id="playerName">Poppy</strong></div><div class="vitals"><div><label>FOOD</label><i><b id="needFood"></b></i></div><div><label>FUN</label><i><b id="needFun"></b></i></div><div><label>SOCIAL</label><i><b id="needSocial"></b></i></div><div><label>REST</label><i><b id="needEnergy"></b></i></div></div><button id="timeBtn" class="time-btn" aria-label="Change time speed">▶</button></section>
+<nav class="nav panel" aria-label="Actions"><button id="townBtn" class="active"><span>🌳</span><small>Town</small></button><button id="homeBtn"><span>🏡</span><small>Home</small></button><button id="peopleBtn"><span>💌</span><small>People</small></button><button id="journalBtn"><span>📜</span><small>Journal</small></button><button id="decorateBtn"><span>🪑</span><small>Decor</small></button><button id="styleBtn"><span>🎀</span><small>Style</small></button><button id="menuBtn"><span>⚙️</span><small>Menu</small></button></nav></div>
+<section id="modal" class="modal hidden" aria-label="Game actions" role="dialog" aria-modal="true"><div class="modal-card"><button id="closeModal" class="xbtn" aria-label="Close menu">✕</button><div id="modalContent"></div></div></section>
+<div id="loading"><div class="load-card"><div class="load-sun">☀️</div><h1>HEARTH <span>&</span> HARBOR</h1><p>Welcome to your little corner of the world</p><div class="pixel-progress"></div></div></div>
+</main><script defer src="game.js?v=0.7.0"></script></body></html>
