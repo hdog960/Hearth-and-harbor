@@ -1,4 +1,4 @@
-# Hearth & Harbor v1.8 — Household Foundations
+# Hearth & Harbor v1.9 — Open Doors
 
 Free iPhone-first 2.5D life-simulation prototype on GitHub Pages.
 
@@ -18,3 +18,6 @@ Resident home interiors, playable household switching, weddings, and children ar
 
 ## Deployment
 Serve repository root from GitHub Pages (main branch). Open on iPhone in Safari.
+
+## v1.9 Open Doors
+Six residential units are now enterable via People → Little Households → Visit. Interiors show the current occupants (including roommates after moves), use distinct palettes, and offer furniture interactions and conversations. Room-comfort upgrades cost 45, 75, then 110 player coins; upgrade levels and once-daily visiting boosts persist to existing local saves. Leave by tapping the door or Town. Resident interiors are a first-pass feature, not full household control.
