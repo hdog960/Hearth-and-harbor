@@ -18,3 +18,9 @@ Relationships progress *only* when existing neighbor visits complete after both 
 - The Town Hearts board and a new partner-focused conversation topic reflect the relationship.
 - Added bounded, validated saved state for couple moments and bouquet gifts, and Town Stories support for their IDs.
 - Local Chromium 390×844 testing: bootstrap, couple card, bouquet purchase, full NPC routing, both arriving, one saved story, and no JavaScript exceptions. Existing 28 resident relationship tests plus 19 static integration checks passed. Full physical iPhone validation still required.
+
+## v2.4.5 Shared Futures
+
+Committed couples with two completed evening encounters can decide to cohabit or maintain their own homes from Town Hearts. Moves are blocked if either address already houses two residents; no one is displaced. Partners who live together can receive a homemade meal (one saved plate, once per day), yielding modest hunger/social benefits and a persistent Town Story. Evening rituals for housemates now occur near their shared residence. Save import validates these new relationship choices and daily meal records.
+
+Local build validation: 27 browser interaction checks, 17 new source checks, 28 core relationship checks, JavaScript syntax. Live GitHub Pages title and latest source verified. Physical iPhone Safari rendering not yet confirmed.
