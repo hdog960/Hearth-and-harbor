@@ -1,11 +1,11 @@
-/* Hearth & Harbor — Shared Futures v2.4.5
+/* Hearth & Harbor — Promises in Bloom v2.4.6
    A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),rand=(a,b)=>a+Math.random()*(b-a);
 const hash=(n)=>{const x=Math.sin(n*127.1+8.45)*43758.5453;return x-Math.floor(x)};
 const SAVE='hearth-harbor-save-v1';
-const DEF=()=>({socialPostcard:null,townHearts:{},coupleMoments:[],coupleBouquets:{},couplePlans:{},coupleDinners:{},heartStories:{},romance:{},householdAuto:{},residentHabits:{},autoBondDay:{},cooking:defaultCooking(),residenceThemes:{},residenceProps:{},residenceDaily:{},residenceDecor:{},residenceVisits:{},residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
+const DEF=()=>({weddingPlans:{},socialPostcard:null,townHearts:{},coupleMoments:[],coupleBouquets:{},couplePlans:{},coupleDinners:{},heartStories:{},romance:{},householdAuto:{},residentHabits:{},autoBondDay:{},cooking:defaultCooking(),residenceThemes:{},residenceProps:{},residenceDaily:{},residenceDecor:{},residenceVisits:{},residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
 const COOKING_RECIPE_IDS=['toast','salad','soup','pancakes','eggs','noodles','fishplate','tart','biscuits','jam','skewers','dumplings'];
 const COOKING_ING_IDS=['bread','butter','berry','apple','carrot','herb','flour','milk','egg','noodle','fish','honey','onion','potato'];
 function defaultCooking(){return {pantry:{bread:2,butter:1,berry:4,apple:1,carrot:1,herb:1,flour:1,milk:1,egg:2,noodle:1,fish:1,honey:1,onion:1,potato:1},dishes:[],xp:0,made:0,mastered:Object.fromEntries(COOKING_RECIPE_IDS.map(id=>[id,0])),servedDaily:{},relaxed:false}}
@@ -30,7 +30,7 @@ function cleanSave(raw){
  const safeStory=/^\d{1,4}:[01]$/;
  const safeVisit=/^v:(?:[1-9]\d{0,3}):[01]$/;
  const safeDay=/^[1-9]\d{0,3}$/;
- const safeTownStory=/^(?:c:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|\d{1,4}:[01]|v:[1-9]\d{0,3}:[01]|m:\d{1,4}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|[hpd]:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|r:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn))$/;
+ const safeTownStory=/^(?:c:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|\d{1,4}:[01]|v:[1-9]\d{0,3}:[01]|m:\d{1,4}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|[hpdw]:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|r:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn))$/;
  const safeCouple=/^c:([1-9]\d{0,3}):((?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn))$/;
  const lifeRecord=obj(raw.residentLife);
  const savedHomes=Object.fromEntries([...npcIds].map((id,i)=>{
@@ -74,7 +74,8 @@ function cleanSave(raw){
  // Only known residents, locations and safe statuses can be restored from an imported postcard.
  const pc=obj(raw.socialPostcard),postcard=(npcIds.has(pc.from)&&['garden','cafe','pond'].includes(pc.place)&&['pending','accepted','done','declined'].includes(pc.status)&&['friend','romance'].includes(pc.kind))?
   {day:number(pc.day,0,0,9999)|0,from:pc.from,place:pc.place,kind:pc.kind,status:pc.status}:null;
- const res={...d,socialPostcard:postcard,townHearts:HearthTownHearts.clean(raw.townHearts),
+ const weddingPlans=Object.fromEntries(Object.entries(obj(raw.weddingPlans)).filter(([key,w])=>safePair.test(key)&&key.split('|')[0]!==key.split('|')[1]&&['engaged','scheduled','married'].includes(w?.status)&&['garden','cafe','pond'].includes(w?.venue)).slice(0,15).map(([key,w])=>[key,{status:w.status,proposalDay:number(w.proposalDay,0,0,9999)|0,day:number(w.day,0,0,9999)|0,venue:w.venue,vow:['kind','joy','dream'].includes(w.vow)?w.vow:'',marriedDay:number(w.marriedDay,0,0,9999)|0}]));
+ const res={...d,weddingPlans,socialPostcard:postcard,townHearts:HearthTownHearts.clean(raw.townHearts),
    coupleMoments:Array.isArray(raw.coupleMoments)?[...new Set(raw.coupleMoments.filter(x=>typeof x==='string'&&safeCouple.test(x)&&x.split(':')[2]?.split('|').every(id=>npcIds.has(id))))].slice(-48):[],
    coupleBouquets:Object.fromEntries(Object.entries(obj(raw.coupleBouquets)).filter(([k,v])=>safeCouple.test(k)&&k.split(':')[2]?.split('|')[0]!==k.split(':')[2]?.split('|')[1]&&Number(v)===1).slice(-20).map(([k])=>[k,1])),couplePlans:Object.fromEntries(Object.entries(obj(raw.couplePlans)).filter(([k,v])=>safePair.test(k)&&['apart','together'].includes(v?.choice)).map(([k,v])=>[k,{choice:v.choice,day:number(v.day,0,0,9999)|0,home:/^h[0-5]$/.test(v.home)?v.home:''}]).slice(0,15)),coupleDinners:Object.fromEntries(Object.entries(obj(raw.coupleDinners)).filter(([k])=>safePair.test(k)).map(([k,v])=>[k,number(v,0,0,9999)|0]).slice(0,15)),romance,householdAuto,residentHabits,autoBondDay,residenceThemes,residenceProps,residenceDaily,residenceDecor,residenceVisits,residentHomes:savedHomes,householdFunds:savedFunds,housingDay:number(raw.housingDay,number(raw.day,1,1,9999)|0,0,9999)|0,householdMoves:houseMoves,friendVisits,invitedVisits,visitCounts,visitSeen:Array.isArray(raw.visitSeen)?[...new Set(raw.visitSeen.filter(x=>typeof x==='string'&&safeVisit.test(x)))].slice(-35):[],residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
    hair:safeColor(raw.hair,d.hair),outfit:safeColor(raw.outfit,d.outfit),skin:safeColor(raw.skin,d.skin),
@@ -404,6 +405,7 @@ function processHousingDay(){
    const enough=(state.householdFunds[home]||0)>=upkeep;
    state.householdFunds[home]=Math.max(0,(state.householdFunds[home]||0)-upkeep);
    if(!enough)residents.forEach(n=>lifeFor(n.id).needs.fun=clamp(lifeFor(n.id).needs.fun-6,0,100));
+   if(residents.length===2){const key=pairKey(residents.map(n=>n.id));if(state.weddingPlans[key]?.status==='married')residents.forEach(n=>lifeFor(n.id).needs.social=clamp(lifeFor(n.id).needs.social+3,0,100));}
   }
  }
  state.housingDay=state.day;
@@ -915,6 +917,88 @@ function dinner245(key,index){
  save();notify('🍽️ A lovely meal together!');plans245(key);
 }
 
+const coupleRecord=key=>committed245(key);
+const coupleNames=key=>key.split('|').map(id=>NPCS.find(n=>n.id===id)?.name||id);
+const coupleEveCount=key=>state.coupleMoments.filter(id=>id.endsWith(':'+key)).length;
+const coupleLivingTogether=key=>shared245(key);
+// v2.4.6 — Promises in Bloom. Weddings happen in world, not through a reward-only button.
+const WEDDING_VENUES={garden:{name:'the flower garden',x:835,y:575,icon:'🌷',tone:'garden'},cafe:{name:'the café terrace',x:905,y:735,icon:'☕',tone:'cafe'},pond:{name:'the lily pond',x:921,y:1147,icon:'🪷',tone:'pond'}};
+const WEDDING_VOWS={kind:{label:'Promise to care',text:'They promise to make room for each other, even on difficult days.',bond:7},joy:{label:'Promise to laugh',text:'They promise to keep finding little adventures and reasons to laugh.',bond:6},dream:{label:'Promise to encourage dreams',text:'They promise to champion each other’s passions and ambitions.',bond:8}};
+const weddingNames=key=>coupleNames(key);
+function weddingReadiness(key){
+ const c=coupleRecord(key),plan=state.couplePlans[key];
+ if(!c||!HearthTownHearts.available(state,key.split('|')))return {ok:false,reason:'They must be committed to one another first.'};
+ if((state.townTensions[key]||0)>=8)return {ok:false,reason:'A little reconciliation needs to happen first.'};
+ if(!plan)return {ok:false,reason:'Let them discuss their home and future first.'};
+ if(coupleEveCount(key)<3)return {ok:false,reason:`They need one more meaningful evening together (${coupleEveCount(key)}/3).`};
+ if(state.day<=plan.day)return {ok:false,reason:'Give them another day to reflect on their plans.'};
+ return {ok:true,reason:'They are ready to talk about a lifelong promise.'};
+}
+function weddingActive(key){
+ const w=state.weddingPlans[key];if(!w||w.status!=='scheduled'||state.day!==w.day||state.minute<18*60||state.minute>20.5*60)return null;
+ const v=WEDDING_VENUES[w.venue];return {pair:key.split('|'),point:[v.x,v.y],id:`w:${w.day}:${key}`,venue:v,key};
+}
+function activeWedding(n){return Object.keys(state.weddingPlans).map(weddingActive).find(w=>w?.pair.includes(n.id))||null}
+function weddingAtVenue(key){const event=weddingActive(key);if(!event||scene!=='town')return false;
+ return meetingReady(event)&&Math.hypot(player.x-event.point[0],player.y-event.point[1])<240;
+}
+function weddingBoard(key){
+ const c=coupleRecord(key);if(!c)return townHeartsBoard();
+ const w=state.weddingPlans[key],ready=weddingReadiness(key),names=weddingNames(key),title=escapeHtml(names.join(' & '));
+ const intro=`<div class="wedding-head"><div class="wedding-flowers">🌸 <span>♥</span> 🌷</div><small>THE LITTLE PROMISE BOOK</small><h2>${title}</h2><p>Every couple deserves a celebration that feels like them, whether they share one cottage or two.</p></div>`;
+ let actions='';
+ if(!w)actions=`<div class="wedding-note">${escapeHtml(ready.reason)}</div><button class="btn" data-act="wedding-promise" data-id="${key}" ${!ready.ok?'disabled':''}>💍 Talk about engagement</button>`;
+ else if(w.status==='engaged'||(w.status==='scheduled'&&w.day<state.day)){
+  actions=`<div class="wedding-note">💍 Engaged since Day ${w.proposalDay}. Choose a little celebration for ${w.status==='scheduled'?'a new day':'tomorrow'}.</div><div class="wedding-venues">${Object.entries(WEDDING_VENUES).map(([id,v])=>`<button data-act="wedding-plan" data-id="${key}|${id}">${v.icon} ${escapeHtml(v.name)}<small>Day ${state.day+1} · 6:00–8:30 PM</small></button>`).join('')}</div>`;
+ }else if(w.status==='scheduled'){
+  const active=weddingActive(key),atVenue=active&&weddingAtVenue(key);
+  actions=`<div class="wedding-note">🌸 Celebration planned at ${escapeHtml(WEDDING_VENUES[w.venue].name)} on Day ${w.day}, 6:00–8:30 PM. You can visit the venue and take part when both partners arrive.</div>
+  <button class="btn" data-act="wedding-visit" data-id="${key}">🧭 Walk to the celebration</button>
+  <button class="btn" data-act="wedding-ceremony" data-id="${key}" ${atVenue?'':'disabled'}>💐 Begin the ceremony ${atVenue?'':'(meet at venue first)'}</button>`;
+ }else if(w.status==='married'){
+  actions=`<div class="wedding-note">💞 Married on Day ${w.marriedDay} at ${escapeHtml(WEDDING_VENUES[w.venue].name)}.<br>${escapeHtml(WEDDING_VOWS[w.vow]?.text||'They promised to care for each other.')}</div><p>Marriage does not force a shared address. Their living arrangements are still their choice.</p>`;
+ }
+ showModal('wedding',`<div class="wedding-sheet">${intro}${actions}<button class="btn secondary" data-act="town-hearts">← Town Hearts</button></div>`);
+}
+function weddingPromise(key){const ready=weddingReadiness(key);if(!ready.ok||state.weddingPlans[key])return weddingBoard(key);
+ state.weddingPlans[key]={status:'engaged',proposalDay:state.day,day:0,venue:'garden',vow:'',marriedDay:0};
+ const n=weddingNames(key);state.townStories.push({id:`w:${state.day}:${key}`,day:state.day,pair:key.split('|'),title:'A little promise',text:`${n[0]} and ${n[1]} decided to celebrate the life they're building together. An engagement is a promise, not a requirement to share a home.`,outcome:'romance'});
+ state.townStories=state.townStories.slice(-24);save();notify(`💍 ${n.join(' & ')} are engaged!`);weddingBoard(key);
+}
+function weddingPlan(key,place){const w=state.weddingPlans[key];if(!w||!WEDDING_VENUES[place]||!['engaged','scheduled'].includes(w.status)||(w.status==='scheduled'&&w.day>=state.day))return weddingBoard(key);
+ if(!coupleRecord(key))return townHeartsBoard();
+ Object.assign(w,{status:'scheduled',day:Math.min(9999,state.day+1),venue:place});
+ for(const id of key.split('|')){const n=NPCS.find(n=>n.id===id);if(n)n.routineKey=''}
+ save();notify('A cozy celebration is on the calendar! ✉️');weddingBoard(key);
+}
+function weddingVisit(key){const w=state.weddingPlans[key];if(!w||w.status!=='scheduled')return weddingBoard(key);
+ const v=WEDDING_VENUES[w.venue];closeModal();if(scene!=='town')goScene('town');const dest=nearestWalkable({x:v.x,y:v.y+112},'town',true)||{x:v.x,y:v.y+112};
+ goTo(dest,()=>notify('🌸 Welcome! When both partners arrive, open Town Hearts to begin.'));notify(`Follow the path to ${v.name}.`);
+}
+function weddingCeremony(key){if(!weddingAtVenue(key))return weddingBoard(key);
+ const w=state.weddingPlans[key],n=weddingNames(key),v=WEDDING_VENUES[w.venue];
+ showModal('wedding-ceremony',`<div class="wedding-sheet wedding-ceremony"><div class="wedding-arch"><span>🌸</span><span>💗</span><span>🌼</span><div>🌿　${escapeHtml(n[0])} <span>♥</span> ${escapeHtml(n[1])}　🌿</div></div><small>DAY ${state.day} · ${escapeHtml(v.name.toUpperCase())}</small><h2>A promise in bloom</h2><p>The village grows quiet for a moment. How will they describe the life they hope to share?</p>${Object.entries(WEDDING_VOWS).map(([id,o])=>`<button class="btn" data-act="wedding-vow" data-id="${key}|${id}">💌 ${escapeHtml(o.label)}<small>${escapeHtml(o.text)}</small></button>`).join('')}<button class="btn secondary" data-act="wedding-close">Not yet — keep celebrating</button></div>`);
+}
+function weddingVow(key,vow){if(!WEDDING_VOWS[vow]||!weddingAtVenue(key))return weddingBoard(key);
+ const w=state.weddingPlans[key];if(!w||w.status!=='scheduled')return weddingBoard(key);
+ w.status='married';w.marriedDay=state.day;w.vow=vow;
+ const ids=key.split('|'),names=weddingNames(key),words=WEDDING_VOWS[vow];
+ state.townBonds[key]=clamp((state.townBonds[key]||0)+words.bond,0,100);
+ for(const id of ids){const r=lifeFor(id).needs;r.social=clamp(r.social+25,0,100);r.fun=clamp(r.fun+22,0,100);const n=NPCS.find(n=>n.id===id);if(n){n.emotion='happy';n.emotionUntil=tick+9;n.routineKey=''}}
+ state.needs.social=clamp(state.needs.social+10,0,100);
+ state.townStories.push({id:`w:${state.day}:${key}`,day:state.day,pair:ids,title:'A promise in bloom',text:`${names[0]} and ${names[1]} celebrated their marriage at ${WEDDING_VENUES[w.venue].name}. ${words.text} The couple can choose to keep separate homes.`,outcome:'romance'});state.townStories=state.townStories.slice(-24);
+ save();updateUI();notify(`💐 A beautiful day for ${names.join(' & ')}!`);
+ showModal('wedding-finale',`<div class="wedding-sheet wedding-ceremony"><div class="wedding-arch"><span>🌼</span><span>💞</span><span>🌼</span></div><h2>Just Married!</h2><p>${escapeHtml(names.join(' & '))} celebrated their love, surrounded by their little village.</p><blockquote>${escapeHtml(words.text)}</blockquote><button class="btn" data-act="wedding-back" data-id="${key}">💗 View their story</button></div>`);
+}
+function drawWeddingVenue(g){
+ for(const [key,w] of Object.entries(state.weddingPlans)){
+  const v=WEDDING_VENUES[w.venue];if(!v||w.status!=='scheduled'||w.day!==state.day)continue;
+  const x=v.x,y=v.y-48;
+  g.save();g.lineWidth=8;g.strokeStyle='#e5b6a4';g.beginPath();g.moveTo(x-75,y+55);g.lineTo(x-75,y-65);g.quadraticCurveTo(x,y-136,x+75,y-65);g.lineTo(x+75,y+55);g.stroke();
+  g.font='25px system-ui';g.textAlign='center';g.fillText('🌸 🌼 🌸',x,y-105);g.fillText('🌷',x-76,y+44);g.fillText('🌷',x+76,y+44);
+  g.fillStyle='#fff1d7';g.font='bold 15px monospace';g.fillText('A PROMISE IN BLOOM',x,y-149);g.restore();break;
+ }
+}
 function partnerFor(id){const c=HearthTownHearts.connections(state,NPCS).find(c=>['courting','partners'].includes(c.stage)&&c.key.split('|').includes(id));
  return c?NPCS.find(n=>n.id===c.key.split('|').find(x=>x!==id)):null;
 }
@@ -942,13 +1026,15 @@ function drawCoupleSparkles(g){
 function townHeartsBoard(){
  const pairs=HearthTownHearts.connections(state,NPCS);
  const now=coupleRituals();
- const visible=pairs.map(c=>{const event=now.find(r=>pairKey(r.pair)===c.key),done=event&&state.coupleMoments.includes(event.id),gift=event&&state.coupleBouquets[event.id],future=c.stage==='partners'?'<button data-act="couple-plans245" data-id="'+c.key+'">🏡 Life plans</button>':'';
+ const visible=pairs.map(c=>{const event=now.find(r=>pairKey(r.pair)===c.key),done=event&&state.coupleMoments.includes(event.id),gift=event&&state.coupleBouquets[event.id],future=c.stage==='partners'?'<button data-act="couple-plans245" data-id="'+c.key+'">🏡 Life plans</button><button data-act="wedding-board" data-id="'+c.key+'">'+(state.weddingPlans[c.key]?.status==='married'?'💞 Married':state.weddingPlans[c.key]?.status==='scheduled'?'🌸 Wedding day':state.weddingPlans[c.key]?.status==='engaged'?'💍 Engaged':'💍 Promises & wedding')+'</button>':'';
   return `<div class="card couple-heart-card"><div><b>${c.stage==='partners'?'💞':c.stage==='courting'?'💕':'🌷'} ${escapeHtml(c.names.join(' & '))}</b><small>${escapeHtml(c.label)} · ${c.sharedDays} meaningful afternoons together<br>${event?`${done?'✨ Shared tonight':'🌙 Tonight at the '+escapeHtml(event.place)} · ${escapeHtml(event.doing)}`:'Evening traditions begin at 8:45 PM during active play.'}<br>Sharing a cottage remains a separate household choice.</small></div>${event&&!done&&['courting','partners'].includes(c.stage)?`<button data-act="couple-flowers" data-id="${c.key}" ${gift||state.coins<10?'disabled':''}>${gift?'🌸 Gift left':'🌷 Flowers · 10 🪙'}</button>`:''}${future}</div>`;
  }).join('');
  showModal('town-hearts',`<h2>💕 Town Hearts</h2><p>Little relationships are growing around the village. Residents can discover feelings and choose to date after many friendly meetings. Existing partnerships and disagreements are respected.</p>${visible||'<div class="card"><div><b>🌱 Friendships first</b><small>Get to know the neighbors and spend time in town. Warm friendships may slowly become something more, but romance is never guaranteed.</small></div></div>'}<p>Love stories evolve while you play; they never progress in the background. Friendships remain valuable on their own.</p>${btn('📜 Town Stories','stories')}`);
 }
 function currentRoutine(n){
  if(dateMoment?.id===n.id&&scene==='town')return {h:`date-${dateMoment.place}`,where:[dateMoment.where.x,dateMoment.where.y],doing:`meeting ${state.name} for a little date`,icon:'💕',mood:'happy'};
+ const ceremony=activeWedding(n);
+ if(ceremony)return {h:`wedding-${ceremony.id}`,where:meetingPosition(ceremony,n),doing:'getting ready for a little wedding',icon:'💐',mood:'happy'};
  const meetup=activeMeeting(n);
  if(meetup){const last=state.townStories.find(x=>x.id===meetup.id);
   if(last?.outcome==='misunderstanding'){const other=NPCS.find(x=>x.id===meetup.pair.find(id=>id!==n.id));const side=meetup.pair.indexOf(n.id)===0?-1:1;return {h:`${meetup.slot}-space`,where:[meetup.point[0]+side*105,meetup.point[1]+side*38],doing:`taking a little space after talking with ${other.name}`,icon:'🌧️',mood:'peaceful'};}
@@ -1770,7 +1856,7 @@ function drawScene(){if(!W||!H)return;
  ctx.setTransform(DPR,0,0,DPR,0,0);ctx.imageSmoothingEnabled=false;
  ctx.fillStyle=scene==='town'?'#74b470':'#7cb58c';ctx.fillRect(0,0,W,H);
  ctx.save();ctx.translate(W/2,H*.54);ctx.scale(worldScale,worldScale);ctx.translate(-cam.x,-cam.y);
- if(scene==='town')drawTownGround(ctx);else if(scene==='residence')drawResidenceGround(ctx);else drawHomeGround(ctx);
+ if(scene==='town'){drawTownGround(ctx);drawWeddingVenue(ctx);}else if(scene==='residence')drawResidenceGround(ctx);else drawHomeGround(ctx);
  if(scene==='town'){
   const ordered=objects.map(o=>({...o,draw:0})).concat(NPCS.map(o=>({...o,type:'npc',draw:1})),[{type:'player',x:player.x,y:player.y,draw:2}]).sort((a,b)=>a.y-b.y);
   for(const o of ordered){if(Math.abs(o.x-cam.x)>W/worldScale*.85+230||Math.abs(o.y-cam.y)>H/worldScale*.85+230)continue;
@@ -2103,7 +2189,7 @@ function decorate(){if(scene!=='home')goScene('home');
 function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
  showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(pendingName??state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair color</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Haircut</h3><div class="haircuts">${['Bob','Side-part','Tousled','Ponytail','Buns'].map((n,i)=>`<button data-act="set-style" data-id="${i}" aria-pressed="${state.hairStyle===i}" class="haircut ${state.hairStyle===i?'selected':''}">${n}</button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Evening Traditions v2.4.4 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Postcards'+(todaysPostcard()?.status==='pending'?' · New!':''),'postcards')}${btn('💌 Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🍳 Hearth Kitchen','cook-book')}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
+function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Promises in Bloom v2.4.6 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Postcards'+(todaysPostcard()?.status==='pending'?' · New!':''),'postcards')}${btn('💌 Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🍳 Hearth Kitchen','cook-book')}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
 function handleAction(action,id){if(action==='more-talk')return talkChoices('more');if(action==='romance-menu')return talkChoices('romance');if(action==='talk-back')return talkChoices('main');
  if(action==='hearts')return heartNotes();
  if(action==='postcards')return postcards();
@@ -2138,6 +2224,13 @@ function handleAction(action,id){if(action==='more-talk')return talkChoices('mor
  if(action==='town-hearts')return townHeartsBoard();
  if(action==='couple-flowers')return offerCoupleFlowers(id);
  if(action==='couple-plans245')return plans245(id);
+ if(action==='wedding-board'||action==='wedding-back')return weddingBoard(id);
+ if(action==='wedding-promise')return weddingPromise(id);
+ if(action==='wedding-plan'){const pos=id.lastIndexOf('|');if(pos>0)return weddingPlan(id.slice(0,pos),id.slice(pos+1));return;}
+ if(action==='wedding-visit')return weddingVisit(id);
+ if(action==='wedding-ceremony')return weddingCeremony(id);
+ if(action==='wedding-vow'){const pos=id.lastIndexOf('|');if(pos>0)return weddingVow(id.slice(0,pos),id.slice(pos+1));return;}
+ if(action==='wedding-close')return weddingBoard(Object.entries(state.weddingPlans).find(([,w])=>w.status==='scheduled'&&w.day===state.day)?.[0]||'');
  if(action==='couple-share245'){const cut=id.lastIndexOf('|');if(cut>0)return sharedHome245(id.slice(0,cut),id.slice(cut+1));return}
  if(action==='couple-apart245')return apart245(id);
  if(action==='couple-dinner245'){const cut=id.lastIndexOf('|');if(cut>0)return dinner245(id.slice(0,cut),id.slice(cut+1));return}
