@@ -1,17 +1,11 @@
-# Hearth & Harbor v2.3.5 — Little Moments
+# Hearth & Harbor v2.4.1 — Shared Moments
 
-This update gives everyday household routines visible, original pixel-art actions and a brief in-world performance step. Residents and Poppy now visibly read, prepare a simple meal, tidy, rest, socialize, or practice hobbies rather than receiving rewards immediately on arrival.
+A relationship polish release for the original 2.5D life simulation.
 
-Manual routines now take 3.8 seconds while using the chosen station. The routine tracker shows progress. Canceling, leaving the scene, or switching residents before completion does not grant unfinished activity rewards. Autonomous residents show corresponding props and animation while doing their tasks.
-
-There are no save-format changes. Existing houses, decorations, resident habits, relationships, and 12 cooking recipes are preserved. No purchases or ingredients are consumed by autonomous actions.
-
-## Playing
-Open **Home → Decor (Daybook)** for Poppy, or **People → Little Households → Visit → Decor (Daybook)** to direct a neighbor. Add a routine, close the Daybook, and watch the character use their home. Use **Clear** to cancel. Turn autonomy on/off inside a residential Daybook.
-
-## Quality
-29 legacy regression checks plus 17 new activity/cancellation/layout checks pass in mobile-sized Chromium with zero observed JavaScript exceptions. Physical iPhone Safari remains an important follow-up.
-
-## v2.4.0 — First Sparks
-
-The first Hearts & Personalities update adds optional romance alongside friendships: personality discoveries, spark conversations, three walk-to destinations for dates, saved relationship memories, partnership milestones and a compact Hearts notebook. Existing households, furniture, resident habits and all 12 recipes remain in the game. This is **not** yet marriage/family gameplay. See [FIRST_SPARKS_V24_NOTES.md](FIRST_SPARKS_V24_NOTES.md) for testing and limitations.
+- After two characters arrive at their date destination, select one of three ways to spend time together: listen, laugh, or surprise.
+- Each villager has a favorite way of connecting and preferred date location; both affect quality. Nonfavorite choices still make progress.
+- Results update chemistry, friendship, social/fun needs, and persistent Town Stories / Hearts notebook.
+- Memories can be revisited through the romantic conversation menu.
+- Abandoning the date or closing the choice card awards nothing and preserves the save.
+- All original 12 cooking recipes, home decorating, household routines, and save-key compatibility remain.
+- This is not marriage or complete autonomous romance yet.
