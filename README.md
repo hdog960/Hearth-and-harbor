@@ -1,16 +1,13 @@
-# Hearth & Harbor v2.3.4 — Personal Habits
+# Hearth & Harbor v2.3.5 — Little Moments
 
-iPhone-first cozy 2.5D life simulator, published on GitHub Pages. Original characters and world art. No external paid services.
+This update gives everyday household routines visible, original pixel-art actions and a brief in-world performance step. Residents and Poppy now visibly read, prepare a simple meal, tidy, rest, socialize, or practice hobbies rather than receiving rewards immediately on arrival.
 
-## This release
-- Six individually authored hobbies and preferences: flowers for Mabel; fruit displays for Rosie; baking ideas for Oliver; reading for Jun; sketching for Bea; fishing-lure craft for Finn.
-- Residents autonomously pick their favorite activity when there is time and their vital needs are satisfied, or the player can manually direct it through the Daybook.
-- Adding a matching decoration to their home gives an extra fun boost during their favorite activity. The Daybook shows each neighbor's preferred piece of furniture, whether that item is already in the room, and their total hobby days.
-- Three distinct days enjoying a hobby earn a persisted personal memory. This cannot be farmed by repeatedly tapping an activity on one day.
-- Manual control, action queue, room decoration, 12 cooking recipes, friendship systems, and old saves are preserved.
+Manual routines now take 3.8 seconds while using the chosen station. The routine tracker shows progress. Canceling, leaving the scene, or switching residents before completion does not grant unfinished activity rewards. Autonomous residents show corresponding props and animation while doing their tasks.
 
-## Play
-Open the public GitHub Pages site. To try the new feature: People → Little Households → Visit → Decor (Daybook) → Little passions. Select a villager, choose their hobby, or leave Auto ON to see their daily habits develop.
+There are no save-format changes. Existing houses, decorations, resident habits, relationships, and 12 cooking recipes are preserved. No purchases or ingredients are consumed by autonomous actions.
 
-## Not yet implemented
-A complete skill tree for each hobby, autonomous decisions while the app is closed, family/romance progression, and huge town districts are future work.
+## Playing
+Open **Home → Decor (Daybook)** for Poppy, or **People → Little Households → Visit → Decor (Daybook)** to direct a neighbor. Add a routine, close the Daybook, and watch the character use their home. Use **Clear** to cancel. Turn autonomy on/off inside a residential Daybook.
+
+## Quality
+29 legacy regression checks plus 17 new activity/cancellation/layout checks pass in mobile-sized Chromium with zero observed JavaScript exceptions. Physical iPhone Safari remains an important follow-up.
