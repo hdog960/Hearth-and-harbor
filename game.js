@@ -2172,11 +2172,12 @@ function goScene(next){if(scene==='grove'&&next==='town'){scene='town';goScene('
  resize();updateUI();save();notify(next==='grove'?'The woodland trail is yours to explore! 🌲':next==='museum'?'Welcome to the Little Museum! ✨':next==='home'?'Home sweet home! 🏡':'Out into the sunshine! 🌷')}
 function beginPlacement(obj){
  if(scene!=='home'&&scene!=='residence')return;
- const moving=obj.moveIndex!==undefined;
+ const moving=obj.moveIndex!==undefined,fromStorage=obj.storageIndex!==undefined;
+ const home=scene==='residence'?activeResidence:'player';
  const source=obj.residence?state.residenceProps[activeResidence]:state.placed;
- const item=moving?source?.[obj.moveIndex]:obj;
+ const item=moving?source?.[obj.moveIndex]:fromStorage?littleAtelier.storedItem(obj.storageIndex,home):obj;
  if(!item)return;
- placement={...obj,x:item.x??575,y:item.y??item.z??660,rot:item.rot||0,residence:scene==='residence',room:activeResidence};
+ placement={...obj,kind:item.kind,x:item.x??575,y:item.y??item.z??660,rot:item.rot||0,residence:scene==='residence',room:activeResidence};
  closeModal();const hint=$('placementHint');hint.classList.remove('hidden');
  $('placementText').textContent=moving?'Drag or tap a new spot for this item':'Drag or tap a clear space to place the item';
  $('rotatePlacement').hidden=false;notify('Arrange your furniture. Rotate or cancel any time. 🌷');
@@ -2196,21 +2197,34 @@ function furnitureSpotFree(pos,item,where=scene,ignore=-1){
 }
 function commitPlacement(wx,wy){
  if(!placement||!['home','residence'].includes(scene))return false;
- const pos=chooseFurniturePosition(wx,wy),item=placement.moveIndex!==undefined?(placement.residence?state.residenceProps[activeResidence]:state.placed)[placement.moveIndex]:placement;
+ const home=scene==='residence'?activeResidence:'player',stored=placement.storageIndex!==undefined;
+ const list=scene==='residence'?state.residenceProps[activeResidence]:state.placed;
+ const item=placement.moveIndex!==undefined?list[placement.moveIndex]:stored?littleAtelier.storedItem(placement.storageIndex,home):placement;
  if(!item)return false;
- if(!furnitureSpotFree(pos,item,scene,placement.moveIndex??-1)){notify('That spot is occupied. Try another clear space.');return false}
- const move=placement.moveIndex!==undefined,rot=placement.rot||0;
- if(move){const old=placement.residence?state.residenceProps[activeResidence][placement.moveIndex]:state.placed[placement.moveIndex];
+ const pos=chooseFurniturePosition(wx,wy),move=placement.moveIndex!==undefined,rot=placement.rot||0;
+ if(!furnitureSpotFree(pos,item,scene,placement.moveIndex??-1)){
+  notify('That spot is occupied. Try another clear space.');return false;
+ }
+ if(!move&&list.length>=(scene==='residence'?8:80)){
+  notify('This room is full. Store or move another furnishing first.');return false;
+ }
+ const info=furnitureTypes.find(f=>f.id===item.kind);
+ if(!info)return false;
+ const price=move||stored?0:placement.residence?Math.max(10,Math.round(info.cost*.65)):info.cost;
+ if(state.coins<price){notify('Not enough coins!');return false}
+ const before=littleAtelier.snapshot(home);
+ if(move){
+  const old=list[placement.moveIndex];
   old.x=pos.x;if(placement.residence)old.y=pos.y;else old.z=pos.y;old.rot=rot;
  }else{
-  const info=furnitureTypes.find(f=>f.id===item.kind);if(!info)return false;
-  const price=placement.residence?Math.max(10,Math.round(info.cost*.65)):info.cost;
-  if(state.coins<price){notify('Not enough coins!');return false}
-  state.coins-=price;
-  if(placement.residence)state.residenceProps[activeResidence].push({kind:item.kind,x:pos.x,y:pos.y,rot});
-  else state.placed.push({kind:item.kind,x:pos.x,z:pos.y,rot});
+  if(stored)littleAtelier.storage(home).splice(placement.storageIndex,1);
+  else state.coins-=price;
+  list.push(placement.residence?{kind:item.kind,x:pos.x,y:pos.y,rot}:{kind:item.kind,x:pos.x,z:pos.y,rot});
  }
- stopPlacement();save();updateUI();notify('Your room is coming together! ✨');return true;
+ littleAtelier.commit(before,home);
+ stopPlacement();save();updateUI();
+ notify(stored?'Furniture returned from storage — no extra charge! ✨':'Your room is coming together! ✨');
+ return true;
 }
 function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){stopRoutine();notify('Routine paused. You are in control.');}
  const wx=(x-W/2)/worldScale+cam.x,wy=(y-H*.54)/worldScale+cam.y;
