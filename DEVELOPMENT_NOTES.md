@@ -113,3 +113,7 @@ Deploy the repository root to GitHub Pages (main branch), then open in iPhone Sa
 - Introduced comfort variety bonuses and decor-aware resident leisure locations.
 - Added distinct cancel / rotate controls with large tap targets and a new service worker cache.
 - Completed local desktop-Chromium mobile-size checks covering placement, migration, cooking, menus, and multiple viewports; further physical iPhone testing needed.
+
+## v2.3.3 — Autonomy QA
+
+Adds validated `householdAuto` and `autoBondDay` to persistent save data, a resident room activity state machine, and independence buttons in the Household Daybook. Pause, conversations, menus, and manual guidance suspend the activities. A 27-check mobile Chromium test of the local variant passed; GitHub release includes a functionally equivalent integration with the existing household menu. Physical iPhone Safari testing is still necessary.
