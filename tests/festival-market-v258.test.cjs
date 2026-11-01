@@ -150,5 +150,5 @@ test('painted booth signs match the touch targets; runtime and offline assets st
  for(const f of ['festival-market-v258.js','festival-market-v258.css']){
   assert.ok(html.includes(f));assert.ok(sw.includes("'./"+f+"'"));
  }
- assert.match(sw,/hearth-harbor-v258-village-market/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/); // New releases intentionally roll the offline cache.
 });
