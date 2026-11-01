@@ -1,11 +1,11 @@
-/* Hearth & Harbor — First Sparks v2.4.0
+/* Hearth & Harbor — Shared Moments v2.4.1
    A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),rand=(a,b)=>a+Math.random()*(b-a);
 const hash=(n)=>{const x=Math.sin(n*127.1+8.45)*43758.5453;return x-Math.floor(x)};
 const SAVE='hearth-harbor-save-v1';
-const DEF=()=>({romance:{},householdAuto:{},residentHabits:{},autoBondDay:{},cooking:defaultCooking(),residenceThemes:{},residenceProps:{},residenceDaily:{},residenceDecor:{},residenceVisits:{},residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
+const DEF=()=>({heartStories:{},romance:{},householdAuto:{},residentHabits:{},autoBondDay:{},cooking:defaultCooking(),residenceThemes:{},residenceProps:{},residenceDaily:{},residenceDecor:{},residenceVisits:{},residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
 const COOKING_RECIPE_IDS=['toast','salad','soup','pancakes','eggs','noodles','fishplate','tart','biscuits','jam','skewers','dumplings'];
 const COOKING_ING_IDS=['bread','butter','berry','apple','carrot','herb','flour','milk','egg','noodle','fish','honey','onion','potato'];
 function defaultCooking(){return {pantry:{bread:2,butter:1,berry:4,apple:1,carrot:1,herb:1,flour:1,milk:1,egg:2,noodle:1,fish:1,honey:1,onion:1,potato:1},dishes:[],xp:0,made:0,mastered:Object.fromEntries(COOKING_RECIPE_IDS.map(id=>[id,0])),servedDaily:{},relaxed:false}}
@@ -66,7 +66,10 @@ function cleanSave(raw){
  // Save only validated counts/days; no imported HTML or arbitrary trait injection.
  const residentHabits=Object.fromEntries([...npcIds].map(id=>{const h=obj(obj(raw.residentHabits)[id]);return [id,{sessions:number(h.sessions,0,0,999)|0,lastDay:number(h.lastDay,0,0,9999)|0}]}));
  const autoBondDay=Object.fromEntries(Object.entries(obj(raw.autoBondDay)).filter(([key])=>safePair.test(key)).slice(0,15).map(([key,day])=>[key,number(day,0,0,9999)|0]));
- const romance=Object.fromEntries([...npcIds].map(id=>{const p=obj(obj(raw.romance)[id]);return [id,{insights:number(p.insights,0,0,3)|0,chemistry:number(p.chemistry,0,0,100)|0,dates:number(p.dates,0,0,30)|0,stage:['friend','dating','partner'].includes(p.stage)?p.stage:'friend',discoveryDay:number(p.discoveryDay,0,0,9999)|0,sparkDay:number(p.sparkDay,0,0,9999)|0,dateDay:number(p.dateDay,0,0,9999)|0,partnerDay:number(p.partnerDay,0,0,9999)|0}]}));
+ const romance=Object.fromEntries([...npcIds].map(id=>{
+  const item=obj(obj(raw.romance)[id]);
+  return [id,{insights:number(item.insights,0,0,3)|0,chemistry:number(item.chemistry,0,0,100)|0,dates:number(item.dates,0,0,30)|0,stage:['friend','dating','partner'].includes(item.stage)?item.stage:'friend',discoveryDay:number(item.discoveryDay,0,0,9999)|0,sparkDay:number(item.sparkDay,0,0,9999)|0,dateDay:number(item.dateDay,0,0,9999)|0,partnerDay:number(item.partnerDay,0,0,9999)|0,lastMoment:['listen','laugh','surprise'].includes(item.lastMoment)?item.lastMoment:'',lastPlace:['garden','cafe','pond'].includes(item.lastPlace)?item.lastPlace:'',lastQuality:number(item.lastQuality,0,0,3)|0,lastDay:number(item.lastDay,0,0,9999)|0}];
+ }));
  const res={...d,romance,householdAuto,residentHabits,autoBondDay,residenceThemes,residenceProps,residenceDaily,residenceDecor,residenceVisits,residentHomes:savedHomes,householdFunds:savedFunds,housingDay:number(raw.housingDay,number(raw.day,1,1,9999)|0,0,9999)|0,householdMoves:houseMoves,friendVisits,invitedVisits,visitCounts,visitSeen:Array.isArray(raw.visitSeen)?[...new Set(raw.visitSeen.filter(x=>typeof x==='string'&&safeVisit.test(x)))].slice(-35):[],residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
    hair:safeColor(raw.hair,d.hair),outfit:safeColor(raw.outfit,d.outfit),skin:safeColor(raw.skin,d.skin),
    hairStyle:number(raw.hairStyle,d.hairStyle,0,4)|0,coins:number(raw.coins,d.coins,0,1000000),hearts:number(raw.hearts,0,0,1000000),
@@ -107,8 +110,8 @@ const playerDef=()=>scene==='residence'&&controlledResident?NPCS.find(n=>n.id===
 const selfPortrait=()=>({id:'player',name:state.name,skin:color(state.skin),hair:color(state.hair),outfit:color(state.outfit),kind:'dress',style:state.hairStyle??1});
 let scene='town',activeResidence=null,controlledResident=null,householdQueue=[],householdBusy=false,householdCurrent=null,previousTownSpot=null,speed=1,modal=null,talk=null,placement=null,toastTimer=0,uiTimer=0;
 const roomAutonomy=new Map();
-let dateMoment=null;
 let householdHold=null; // Temporary in-world activity; never serialized
+let dateMoment=null; // In-world meetups; no time or rewards granted until both arrive
 let player={x:597,y:654,target:null,facing:'front',walk:0,bodyBob:0},cam={x:597,y:654},W=0,H=0,DPR=1,last=0,tick=0;
 let displayScale=1;let worldScale=1;
 const furnitureTypes=[{id:'bed',name:'Cloud-soft bed',emoji:'🛏️',cost:95},{id:'sofa',name:'Peach sofa',emoji:'🛋️',cost:75},{id:'plant',name:'Fern in pot',emoji:'🪴',cost:25},{id:'books',name:'Storybook shelf',emoji:'📚',cost:70},{id:'lamp',name:'Honey lamp',emoji:'💡',cost:40},{id:'rug',name:'Patchwork rug',emoji:'🧶',cost:35},{id:'chair',name:'Wooden chair',emoji:'🪑',cost:30},{id:'flowers',name:'Flower vase',emoji:'💐',cost:20}];
@@ -819,7 +822,8 @@ function visitPlans(){const slot=visitSlot(),live=friendshipVisit(),tomorrow=sta
  ${tomorrow?`<div class="card"><div><b>📅 Tomorrow's plans</b><small>${escapeHtml(tomorrow.map(id=>NPCS.find(n=>n.id===id).name).join(' & '))} · early afternoon</small></div></div>`:''}
  <h3>Neighbor connections</h3>${all.slice(0,10).map(([a,b])=>`<div class="card"><div><b>${escapeHtml(a.name)} & ${escapeHtml(b.name)}</b><small>${friendshipStatus([a.id,b.id])} · ${Math.round(bondScore([a.id,b.id]))} closeness · ${state.visitCounts[pairKey([a.id,b.id])]||0} visits${(state.townTensions[pairKey([a.id,b.id])]||0)>=8?' · 💭 some tension':''}</small></div></div>`).join('')||'<p>More friendships will develop as neighbors meet.</p>'}`)}
 
-function currentRoutine(n){if(dateMoment?.id===n.id&&scene==='town')return {h:'date-'+dateMoment.place,where:[dateMoment.where.x,dateMoment.where.y],doing:'meeting '+state.name+' for a little date',icon:'💕',mood:'happy'};
+function currentRoutine(n){
+ if(dateMoment?.id===n.id&&scene==='town')return {h:`date-${dateMoment.place}`,where:[dateMoment.where.x,dateMoment.where.y],doing:`meeting ${state.name} for a little date`,icon:'💕',mood:'happy'};
  const meetup=activeMeeting(n);
  if(meetup){const last=state.townStories.find(x=>x.id===meetup.id);
   if(last?.outcome==='misunderstanding'){const other=NPCS.find(x=>x.id===meetup.pair.find(id=>id!==n.id));const side=meetup.pair.indexOf(n.id)===0?-1:1;return {h:`${meetup.slot}-space`,where:[meetup.point[0]+side*105,meetup.point[1]+side*38],doing:`taking a little space after talking with ${other.name}`,icon:'🌧️',mood:'peaceful'};}
@@ -946,78 +950,116 @@ function checkFriendshipMoment(n,previous,next){
  }
  return false;
 }
-
+// v2.4 First Sparks — original, optional relationship stories. No romance is automatic.
 const HEART_PROFILES={
- mabel:{quality:'Tender & grounded',values:'quiet kindness',secret:'She presses flowers for important memories.',dream:'A garden full of stories',flirt:'You make even a rainy day feel like spring.',dateLine:'Mabel shares a little bouquet and listens to the birds.'},
- rosie:{quality:'Bold & generous',values:'shared laughter',secret:'She remembers everyone’s favorite fruit.',dream:'A market bursting with color',flirt:'You make ordinary days feel exciting!',dateLine:'Rosie brings peaches and tells a hilarious market story.'},
- oliver:{quality:'Soft-spoken & devoted',values:'thoughtful gestures',secret:'He saves handwritten recipes people give him.',dream:'A bakery where everybody belongs',flirt:'I think I just forgot what I was going to say...',dateLine:'Oliver shares a pastry with a little heart in the crust.'},
- jun:{quality:'Quietly curious',values:'deep conversations',secret:'He writes tiny stories about his neighbors.',dream:'A library with no lonely corners',flirt:'I could spend the whole afternoon talking with you.',dateLine:'Jun reads a story and lets you choose its ending.'},
- bea:{quality:'Playful & imaginative',values:'creative adventures',secret:'Her favorite paintings are the ones she never sells.',dream:'To paint every season',flirt:'You just gave me an entirely new color to paint with.',dateLine:'Bea sketches the sunlight on the water.'},
- finn:{quality:'Patient & adventurous',values:'comfortable company',secret:'He releases his biggest fish when nobody watches.',dream:'To know every bend in the river',flirt:'You make a quiet day feel like an adventure.',dateLine:'Finn shares his lucky stone and a peaceful moment.'}
+ mabel:{quality:'Tender & grounded',values:'quiet kindness',secret:'She presses a flower for every important memory.',dream:'A garden full of stories',date:'garden',flirt:'You make even a rainy day feel like spring.',dateLine:'Mabel shares a little bouquet and listens to the birds.'},
+ rosie:{quality:'Bold & generous',values:'shared laughter',secret:'She knows everyone’s favorite fruit by heart.',dream:'A market bursting with color',date:'cafe',flirt:'You have a way of making ordinary days exciting!',dateLine:'Rosie brings peach slices and tells you a hilarious market story.'},
+ oliver:{quality:'Soft-spoken & devoted',values:'small thoughtful gestures',secret:'He keeps every handwritten recipe he has ever been gifted.',dream:'A bakery where everybody belongs',date:'cafe',flirt:'I think I just forgot what I was going to say...',dateLine:'Oliver brings a little pastry with a heart baked into the crust.'},
+ jun:{quality:'Quietly curious',values:'deep conversations',secret:'He writes tiny stories about the people he meets.',dream:'A library with no lonely corners',date:'garden',flirt:'I could happily spend the whole afternoon talking with you.',dateLine:'Jun reads the beginning of a story and lets you choose the ending.'},
+ bea:{quality:'Playful & imaginative',values:'creative adventures',secret:'Her favorite paintings are the ones she never sells.',dream:'To paint every season',date:'pond',flirt:'You just gave me an entirely new color to paint with.',dateLine:'Bea sketches the light on the water and adds you to the picture.'},
+ finn:{quality:'Patient & adventurous',values:'comfortable company',secret:'He releases his biggest catches when nobody is watching.',dream:'To know every bend in the river',date:'pond',flirt:'You make a quiet fishing trip feel like an adventure.',dateLine:'Finn shows you his lucky stone and shares the silence with you.'}
 };
+const MOMENT_CHOICES={listen:{icon:'💬',title:'Listen to their story',prompt:'Give them your full attention and learn something new.'},laugh:{icon:'🎈',title:'Share a little laugh',prompt:'Find something playful and enjoy the moment.'},surprise:{icon:'🎁',title:'A thoughtful surprise',prompt:'Offer a small gesture made just for them.'}};
+const FAVORITE_MOMENT={mabel:'listen',rosie:'laugh',oliver:'surprise',jun:'listen',bea:'laugh',finn:'listen'};
+const MOMENT_REPLIES={mabel:{listen:'Mabel talks about the first flower she ever grew, then smiles at how carefully you listened.',laugh:'Mabel laughs at a story about a mischievous garden snail.',surprise:'Mabel tucks your little keepsake into her flower journal.'},rosie:{listen:'Rosie opens up about her dreams for the market.',laugh:'Rosie makes up a ridiculous fruit pun, and you both end up laughing.',surprise:'Rosie promises your gift a special place behind the counter.'},oliver:{listen:'Oliver tells you why he learned to bake in the first place.',laugh:'A puff of flour turns into a silly baking story.',surprise:'Oliver looks delighted by the thoughtful gesture and shares a warm pastry.'},jun:{listen:'Jun shares a passage from a story he has never shown anyone.',laugh:'Jun tries a quiet joke, then beams when you laugh.',surprise:'Jun carefully saves the small memento in his favorite book.'},bea:{listen:'Bea describes a painting she hopes to make one day.',laugh:'Bea draws a playful sketch of your adventure together.',surprise:'Bea promises to paint the moment so you can both remember it.'},finn:{listen:'Finn tells you about a peaceful morning on the water.',laugh:'Finn tells a funny fishing tale, exaggerating the size of every fish.',surprise:'Finn calls your gesture a new lucky charm.'}};
 const DATE_PLACES={garden:{name:'Flower Garden',icon:'🌷',point:[835,575]},cafe:{name:'Honeybun Café',icon:'🥐',point:[965,647]},pond:{name:'Lily Pond',icon:'🎣',point:[920,1160]}};
-function heartRecord(id){return state.romance[id]||(state.romance[id]={insights:0,chemistry:0,dates:0,stage:'friend',discoveryDay:0,sparkDay:0,dateDay:0,partnerDay:0})}
+function heartRecord(id){return state.romance[id]||(state.romance[id]={insights:0,chemistry:0,dates:0,stage:'friend',discoveryDay:0,sparkDay:0,dateDay:0,partnerDay:0,lastMoment:'',lastPlace:'',lastQuality:0,lastDay:0})}
 function romanceName(r){return r.stage==='partner'?'Partners':r.stage==='dating'?'Dating':r.chemistry>=20?'A little spark':'Friends'}
-function heartMemory(id,title,text){if(state.lifeMoments.some(m=>m.id===id&&m.title===title&&m.day===state.day))return;state.lifeMoments.push({id,day:state.day,title,text});state.lifeMoments=state.lifeMoments.slice(-24)}
-function heartNotes(){
- let rows=NPCS.map(n=>{const r=heartRecord(n.id),p=HEART_PROFILES[n.id];return '<div class="heart-card"><div class="heart-card-head"><strong>'+escapeHtml(n.emoji+' '+n.name)+'</strong><span class="heart-stage">'+romanceName(r)+'</span></div><div class="heart-meta">'+escapeHtml(p.quality)+' · ♥ '+Math.round(state.relations[n.id]||0)+' friendship</div><div class="heart-meter"><span style="width:'+r.chemistry+'%"></span></div><small>✨ '+r.chemistry+' chemistry · '+r.insights+'/3 discoveries · '+r.dates+' dates</small><p>'+(r.insights?escapeHtml(p.values):'Get to know them through conversation.')+(r.insights>=2?'<br>📖 '+escapeHtml(p.secret):'')+(r.insights>=3?'<br>🌟 '+escapeHtml(p.dream):'')+'</p><button data-act="find" data-id="'+n.id+'">Find '+escapeHtml(n.name)+'</button></div>'}).join('');
- showModal('hearts','<h2>💗 Hearts & Personalities</h2><p>Romance is optional. Build trust, get to know your neighbors and share small adventures.</p>'+rows);
+function heartStory(id,title,text){
+ if(state.lifeMoments.some(m=>m.id===id&&m.title===title&&m.day===state.day))return;
+ state.lifeMoments.push({id,day:state.day,title,text});state.lifeMoments=state.lifeMoments.slice(-24);
 }
-function heartReply(n,message){$('talkText').textContent=message;$('emote').textContent='💗';n.emotion='happy';n.emotionUntil=tick+2;const r=heartRecord(n.id);$('talkRole').textContent=n.job+' · '+friendshipRank(state.relations[n.id]||0)+' · 💗 '+romanceName(r);save();updateUI()}
+function heartNotes(){
+ showModal('hearts',`<h2>💗 Hearts & Personalities</h2><p>Affection is optional. Build friendship first, learn what matters to someone, and share thoughtful little experiences. Nobody is automatically paired up.</p>
+ ${NPCS.map(n=>{const r=heartRecord(n.id),p=HEART_PROFILES[n.id];return `<div class="heart-card"><div class="heart-card-head"><strong>${escapeHtml(n.emoji+' '+n.name)}</strong><span class="heart-stage">${escapeHtml(romanceName(r))}</span></div><div class="heart-meta">${escapeHtml(p.quality)} · ♥ ${Math.round(state.relations[n.id]||0)} friendship</div><div class="heart-meter"><span style="width:${r.chemistry}%"></span></div><small>✨ ${r.chemistry} chemistry · ${r.insights}/3 discoveries · ${r.dates} dates</small>${r.lastMoment?`<div class="heart-memory">${MOMENT_CHOICES[r.lastMoment].icon} Last memory: ${escapeHtml(DATE_PLACES[r.lastPlace]?.name||'the village')} · ${escapeHtml(MOMENT_CHOICES[r.lastMoment].title)} ${r.lastQuality>=3?'✦':''}</div>`:''}<p>${r.insights?escapeHtml(p.values):'Learn what matters to them by talking.'}${r.insights>=2?`<br>📖 ${escapeHtml(p.secret)}`:''}${r.insights>=3?`<br>🌟 ${escapeHtml(p.dream)}`:''}</p><button data-act="find" data-id="${n.id}">Find ${escapeHtml(n.name)}</button></div>`}).join('')}
+ <p>Romantic milestones are earned by spending time together; existing friendships, housing and town stories are unaffected.</p>`)
+}
+function refreshHeartTalk(n){const r=heartRecord(n.id),role=$('talkRole');role.textContent=`${n.job} · ${friendshipRank(state.relations[n.id]||0)} · 💗 ${romanceName(r)}`}
 function heartConversation(n,kind){
- const r=heartRecord(n.id),p=HEART_PROFILES[n.id],friend=state.relations[n.id]||0;
+ const r=heartRecord(n.id),p=HEART_PROFILES[n.id];const reply=t=>{$('talkText').textContent=t;$('emote').textContent='💗';n.emotion='happy';n.emotionUntil=tick+2;refreshHeartTalk(n);updateUI();save()};
+ if(kind==='reflect'){
+  if(!r.lastMoment)return reply('I think we still have some lovely adventures ahead of us.');
+  const line=MOMENT_REPLIES[n.id][r.lastMoment];
+  return reply(`Remember our day at ${DATE_PLACES[r.lastPlace]?.name||'the village'}? ${line}`);
+ }
  if(kind==='discover'){
-  if(r.discoveryDay===state.day)return heartReply(n,'We already shared something personal today. I like taking time to really listen.');
+  if(r.discoveryDay===state.day)return reply('We have already shared something personal today. I like taking the time to really listen.');
   r.discoveryDay=state.day;r.insights=Math.min(3,r.insights+1);
-  let msg=['What matters to me? '+p.values+'. I just love meaningful moments.','Something I rarely share: '+p.secret,'One day I hope for '+p.dream.toLowerCase()+'.'][r.insights-1];
-  const prev=friend;state.relations[n.id]=Math.min(100,prev+3);checkFriendshipMoment(n,prev,state.relations[n.id]);return heartReply(n,msg);
+  const lines=[`What matters most to me? ${p.values}. I don't need a perfect day—just a meaningful one.`,`Something I don't tell everyone: ${p.secret}`,`If I could make one dream come true, it would be ${p.dream.toLowerCase()}.`];
+  const previous=state.relations[n.id]||0;state.relations[n.id]=Math.min(100,previous+3);checkFriendshipMoment(n,previous,state.relations[n.id]);
+  return reply(lines[r.insights-1]);
  }
  if(kind==='spark'){
-  if(friend<25)return heartReply(n,'That is kind. I would like to know you better first.');
-  if(r.insights<2)return heartReply(n,'I think the best connections start with understanding each other.');
-  if(r.sparkDay===state.day)return heartReply(n,'I am still smiling from our little moment earlier.');
-  if(lifeFor(n.id).needs.social<20||lifeFor(n.id).needs.energy<18)return heartReply(n,'Can we chat after I have rested a little?');
-  r.sparkDay=state.day;r.chemistry=Math.min(100,r.chemistry+12);return heartReply(n,p.flirt);
+  if((state.relations[n.id]||0)<25)return reply('That is sweet. I would love to get to know you better first.');
+  if(r.insights<2)return reply('We are becoming friends. I think the best connections start with understanding each other.');
+  if(r.sparkDay===state.day)return reply('I am still smiling about our little moment earlier.');
+  r.sparkDay=state.day;
+  const needs=lifeFor(n.id).needs,goodMood=needs.social>=20&&needs.energy>=18;
+  if(!goodMood)return reply('Could we talk when I have had a little rest? I want to give you my full attention.');
+  r.chemistry=Math.min(100,r.chemistry+10+(p.date==='garden'?2:0));
+  return reply(p.flirt);
  }
  if(kind==='date-invite'){
-  if(scene!=='town')return heartReply(n,'Meet me outside in the village and ask again!');
-  if(dateMoment)return heartReply(n,'We have an outing planned. Let us enjoy that first!');
-  if(friend<35||r.insights<2||r.chemistry<20)return heartReply(n,'Let us get to know one another a little better first.');
-  if(r.dateDay===state.day)return heartReply(n,'Today was lovely. Let us save our next outing for tomorrow.');
-  $('talkText').textContent='Where shall we go? Pick a place and we will walk there together.';
-  $('talkActions').innerHTML=Object.entries(DATE_PLACES).map(([key,v])=>'<button data-act="date-place" data-id="'+key+'">'+v.icon+' '+v.name+'</button>').join('')+'<button data-act="date-cancel">Maybe later</button>';
+  if(scene!=='town')return reply('That sounds lovely. Meet me outside in the village and ask again!');
+  if(dateMoment)return reply('We already have a little outing planned. Let us enjoy that first!');
+  if((state.relations[n.id]||0)<35||r.insights<2||r.chemistry<20)return reply('I would love to know you a little better first. More conversations, and perhaps a shared spark?');
+  if(r.dateDay===state.day)return reply('Today was lovely. Let us save our next adventure for another day.');
+  $('talkText').textContent='Where should we spend a little time together? Choose a place and we will both walk there. 🌼';
+  $('talkActions').innerHTML=Object.entries(DATE_PLACES).map(([key,v])=>`<button data-act="date-place" data-id="${key}">${v.icon} ${v.name}</button>`).join('')+'<button data-act="date-cancel">Maybe later</button>';
   return;
  }
  if(kind==='partner'){
-  if(r.stage!=='dating'||r.dates<3||r.chemistry<60||friend<65)return heartReply(n,'We have something special. Let us keep discovering where it leads.');
-  if(r.partnerDay===state.day)return heartReply(n,'I would choose another day with you, too.');
+  if(r.stage!=='dating'||r.dates<3||r.chemistry<60||(state.relations[n.id]||0)<65)return reply('We have something special. Let us keep discovering where it leads.');
+  if(r.partnerDay===state.day)return reply('I would choose another day with you, too.');
   r.partnerDay=state.day;r.stage='partner';r.chemistry=Math.min(100,r.chemistry+8);
-  heartMemory(n.id,'A promise beneath the village sky',state.name+' and '+n.name+' decided to become partners. Their next chapter is just beginning.');
-  return heartReply(n,'I would love that. We can make room for one another in our little stories. 💕');
+  heartStory(n.id,'A promise beneath the village sky',`${state.name} and ${n.name} decided to become partners, with many adventures still to come.`);
+  return reply('I would love that. We can make room for each other in our little stories. 💕');
  }
 }
 function planDate(place){
  if(!talk||scene!=='town'||!DATE_PLACES[place])return;
- const n=NPCS.find(n=>n.id===talk),r=heartRecord(n.id);
- if(r.dateDay===state.day||(state.relations[n.id]||0)<35||r.insights<2||r.chemistry<20)return;
- const site=DATE_PLACES[place],where=nearestWalkable({x:site.point[0],y:site.point[1]},'town',true)||{x:site.point[0],y:site.point[1]};
- dateMoment={id:n.id,place,where,started:tick,arrived:false};n.routineKey='';n.routineRoute=[];
- closeTalk();
- goTo(nearestWalkable({x:where.x-54,y:where.y+22},'town',true)||where,()=>{if(dateMoment?.id===n.id)dateMoment.arrived=true});
- notify(site.icon+' You and '+n.name+' are heading to '+site.name+'.');
+ const n=NPCS.find(o=>o.id===talk),r=heartRecord(n.id);
+ if(r.dateDay===state.day||(state.relations[n.id]||0)<35||r.chemistry<20||r.insights<2)return;
+ const site=DATE_PLACES[place];const where=nearestWalkable({x:site.point[0],y:site.point[1]},'town',true)||{x:site.point[0],y:site.point[1]};
+ dateMoment={id:n.id,place,where,started:tick,arrived:false,presented:false};
+ n.routineKey='';n.routineRoute=[];
+ closeTalk();goTo(nearestWalkable({x:where.x-54,y:where.y+22},'town',true)||where,()=>{if(dateMoment?.id===n.id)dateMoment.arrived=true});
+ notify(`${site.icon} You and ${n.name} are heading to ${site.name}.`);
+}
+function abandonDate(message='Outing canceled. No progress was lost.'){
+ if(!dateMoment)return;
+ const n=NPCS.find(o=>o.id===dateMoment.id);if(n)n.routineKey='';
+ dateMoment=null;player.target=null;
+ notify(message);
 }
 function advanceDate(){
- if(!dateMoment||scene!=='town')return;
+ if(!dateMoment||scene!=='town'||modal||talk)return;
  const d=dateMoment,n=NPCS.find(n=>n.id===d.id);if(!n){dateMoment=null;return}
- if(tick-d.started>160){dateMoment=null;notify('Your outing was interrupted. You can try again.');return}
- if(!d.arrived||Math.hypot(n.x-d.where.x,n.y-d.where.y)>95)return;
- const r=heartRecord(n.id),p=HEART_PROFILES[n.id],place=DATE_PLACES[d.place];if(r.dateDay===state.day){dateMoment=null;return}
- r.dateDay=state.day;r.dates++;r.chemistry=Math.min(100,r.chemistry+17);if(r.stage==='friend')r.stage='dating';
- const prev=state.relations[n.id]||0;state.relations[n.id]=Math.min(100,prev+8);checkFriendshipMoment(n,prev,state.relations[n.id]);
- state.needs.fun=clamp(state.needs.fun+15,0,100);state.needs.social=clamp(state.needs.social+16,0,100);
- const needs=lifeFor(n.id).needs;needs.social=clamp(needs.social+16,0,100);needs.fun=clamp(needs.fun+15,0,100);
- heartMemory(n.id,'A little date at '+place.name,state.name+' and '+n.name+' spent a peaceful afternoon at '+place.name+'. '+p.dateLine);
- n.emotion='happy';n.emotionUntil=tick+4;dateMoment=null;n.routineKey='';save();updateUI();notify(place.icon+' '+p.dateLine+' 💗');
+ if(tick-d.started>160){abandonDate('Your outing was interrupted. You can try again another day.');return}
+ if(!d.arrived||Math.hypot(n.x-d.where.x,n.y-d.where.y)>95||d.presented)return;
+ if(heartRecord(n.id).dateDay===state.day){abandonDate('You already enjoyed an outing today.');return}
+ d.presented=true;
+ const place=DATE_PLACES[d.place];
+ const pImage=charArt(selfPortrait(),'front',0,'happy').toDataURL('image/png');
+ const nImage=charArt(n,'front',0,'happy').toDataURL('image/png');
+ showModal('date-moment',`<div class="date-moment-head"><small>${place.icon} A LITTLE TIME TOGETHER</small><h2>${escapeHtml(place.name)}</h2><p>You and ${escapeHtml(n.name)} arrived together. How would you like to spend this moment?</p></div><div class="date-moment-art"><img alt="${escapeHtml(state.name)}" src="${pImage}"><span class="date-moment-heart">${place.icon} 💗</span><img alt="${escapeHtml(n.name)}" src="${nImage}"></div><div class="date-moment-options">${Object.entries(MOMENT_CHOICES).map(([key,v])=>`<button data-act="date-choice" data-id="${key}"><strong>${v.icon} ${v.title}</strong><small>${v.prompt}</small></button>`).join('')}</div><button class="date-moment-leave" data-act="date-abandon">End the outing without a memory</button>`);
+}
+function finishDate(moment){
+ if(!dateMoment||modal!=='date-moment'||!MOMENT_CHOICES[moment])return;
+ const d=dateMoment,n=NPCS.find(x=>x.id===d.id);if(!n)return;
+ const r=heartRecord(n.id),p=HEART_PROFILES[n.id],place=DATE_PLACES[d.place];
+ if(r.dateDay===state.day)return;
+ const favorite=FAVORITE_MOMENT[n.id]===moment,idealPlace=p.date===d.place;
+ const quality=1+(favorite?1:0)+(idealPlace?1:0);
+ r.dateDay=state.day;r.dates++;r.lastPlace=d.place;r.lastMoment=moment;r.lastQuality=quality;r.lastDay=state.day;
+ r.chemistry=Math.min(100,r.chemistry+8+quality*4);if(r.stage==='friend')r.stage='dating';
+ const before=state.relations[n.id]||0;state.relations[n.id]=Math.min(100,before+4+quality*2);checkFriendshipMoment(n,before,state.relations[n.id]);
+ state.needs.fun=clamp(state.needs.fun+8+quality*2,0,100);state.needs.social=clamp(state.needs.social+10+quality*2,0,100);
+ const life=lifeFor(n.id).needs;life.social=clamp(life.social+12+quality,0,100);life.fun=clamp(life.fun+10+quality,0,100);
+ const line=MOMENT_REPLIES[n.id][moment];
+ heartStory(n.id,`A little date at ${place.name}`,`${state.name} and ${n.name} spent time together at ${place.name}. ${line}`);
+ n.emotion='happy';n.emotionUntil=tick+4;n.routineKey='';dateMoment=null;closeModal();save();updateUI();
+ notify(`${place.icon} ${line} ${favorite?'A perfect little connection! 💗':'💗'}`);
 }
 const questDefs=[{id:'meet',text:'Meet 3 neighbors',max:3,reward:70},{id:'chat',text:'Have 5 friendly chats',max:5,reward:80},{id:'fish',text:'Catch 3 fish',max:3,reward:85},{id:'garden',text:'Harvest your first flowers',max:1,reward:55},{id:'work',text:'Work 2 café shifts',max:2,reward:120}];
 
@@ -1503,7 +1545,7 @@ function drawHouseholdActivity(g,x,y,kind,progress=0,seed=0){
  }else if(kind==='rest'){
   round(g,'#f0a5b7',px-25,py-5,50,27,6,'#ba7d91',2);
   round(g,'#fff8e8',px-21,py-12,21,14,5);
-  for(let i=0;i<3;i++){const sy=py-12-i*11-(tick*6%10);g.font='bold '+(13+i*2)+'px sans-serif';g.fillStyle='#65859b';g.fillText('z',px+10+i*5,sy)}
+  for(let i=0;i<3;i++){const sy=py-12-i*11-(tick*6%10);g.font=`bold ${13+i*2}px sans-serif`;g.fillStyle='#65859b';g.fillText('z',px+10+i*5,sy)}
  }else if(kind==='tidy'){
   line(g,'#ae8157',[[px+14,py-24],[px-7,py+20]],4);
   poly(g,'#e4ab6a',[[px-18,py+8],[px+1,py+15],[px-3,py+22],[px-24,py+15]]);
@@ -1652,7 +1694,7 @@ function approachObject(o){
 }
 function approachNeighbor(n){return nearestWalkable({x:n.x-51,y:n.y+35},scene,true)||{x:n.x-55,y:n.y+38}}
 
-function goScene(next){if(dateMoment){const n=NPCS.find(n=>n.id===dateMoment.id);if(n)n.routineKey='';dateMoment=null;}if(scene==='residence'&&next==='town')return leaveResidence();if(talk)closeTalk();closeModal();stopPlacement();scene=next;activeResidence=null;controlledResident=null;stopRoutine();
+function goScene(next){if(scene==='residence'&&next==='town')return leaveResidence();if(dateMoment){const v=NPCS.find(n=>n.id===dateMoment.id);if(v)v.routineKey='';dateMoment=null;}if(talk)closeTalk();closeModal();stopPlacement();scene=next;activeResidence=null;controlledResident=null;stopRoutine();
  if(next==='home'){player.x=575;player.y=670;cam.x=575;cam.y=650;}else{player.x=566;player.y=621;cam.x=566;cam.y=620;}
  resize();updateUI();save();notify(next==='home'?'Home sweet home! 🏡':'Out into the sunshine! 🌷')}
 function beginPlacement(obj){
@@ -1798,22 +1840,22 @@ function update(dt){tick+=dt;advanceHouseholdHold(dt);
 
 }
 function loop(now){if(!last)last=now;const dt=Math.min(.046,(now-last)/1000);last=now;try{update(dt);drawScene()}catch(e){console.error(e);notify('A scene error occurred: '+e.message)}requestAnimationFrame(loop)}
-function closeModal(){if(typeof kitchen!=='undefined'&&kitchen.session&&modal==='cook-step'){kitchen.session=null;notify('Cooking ended. Ingredients were already used.')}modal=null;$('modal').classList.add('hidden')}
+function closeModal(){if(modal==='date-moment'&&dateMoment)abandonDate('You ended the outing. No progress was lost.');if(typeof kitchen!=='undefined'&&kitchen.session&&modal==='cook-step'){kitchen.session=null;notify('Cooking ended. Ingredients were already used.')}modal=null;$('modal').classList.add('hidden')}
 function showModal(kind,body){closeTalk();modal=kind;$('modalContent').innerHTML=body;$('modal').classList.remove('hidden')}
 function btn(label,fn){return `<button class="btn" data-act="${fn}">${label}</button>`}
 const kitchen=new window.HearthKitchen({getState:()=>state,save,coins,changeNeed,notify,showModal,getResidents:()=>scene==='residence'?roomResidents().map(n=>({id:n.id,name:n.name})):[],feedResident:(id,food,social)=>{const life=state.residentLife[id];if(life){life.needs.food=clamp(life.needs.food+food,0,100);life.needs.social=clamp(life.needs.social+social,0,100)}},bondResident:(id,amount)=>{state.relations[id]=clamp((state.relations[id]||0)+amount,0,100)}});
 function buttonClick(e){const b=e.target.closest('[data-act]');if(!b)return;handleAction(b.dataset.act,b.dataset.id||'')}
 function talkChoices(mode='main'){
- const options=mode==='romance'?[['spark','💞 Share a spark'],['date-invite','🌷 Ask on a date'],['partner','💕 Make it official'],['talk-back','← Back']]:mode==='more'?[['invite','📅 Arrange visit'],['housemate','🏡 Home life'],['mediate','🕊️ Make peace'],['join','✨ Join in'],['help','🌟 Help with dream'],['compliment','💗 Compliment'],['gift','🎁 Gift'],['talk-back','← Back']]:[['chat','💬 Chat'],['ask','🌤 Their day'],['discover','🌱 Get to know'],['romance-menu','💗 Feelings'],['more-talk','✨ More'],['bye','See you!']];
+ const options=mode==='romance'?[['spark','💞 Share a spark'],['date-invite','🌷 Ask on a date'],['reflect','📖 Remember together'],['partner','💕 Make it official'],['talk-back','← Back']]:mode==='more'?[['invite','📅 Arrange visit'],['housemate','🏡 Home life'],['mediate','🕊️ Make peace'],['join','✨ Join in'],['help','🌟 Help with dream'],['compliment','💗 Compliment'],['gift','🎁 Gift'],['talk-back','← Back']]:[['chat','💬 Chat'],['ask','🌤 Their day'],['discover','🌱 Get to know'],['romance-menu','💗 Feelings'],['more-talk','✨ More'],['bye','See you!']];
  $('talkActions').innerHTML=options.map(([act,label])=>'<button data-act="'+act+'">'+label+'</button>').join('');
 }
 function openTalk(id){const n=NPCS.find(a=>a.id===id);if(!n)return;closeModal();talk=id;n.emotion='happy';n.emotionUntil=tick+1.2;const r=state.relations[id]||0;
- $('talkName').textContent=n.name;$('talkRole').textContent=`${n.job} · ${friendshipRank(r)} · ♥ ${r}`;$('talkPortrait').textContent='';const portrait=document.createElement('canvas');portrait.width=54;portrait.height=54;portrait.className='portrait-canvas';const pg=portrait.getContext('2d');pg.imageSmoothingEnabled=false;pg.drawImage(charArt(n,'front',0,'happy'),4,0,88,79,0,0,54,54);$('talkPortrait').append(portrait);
+ $('talkName').textContent=n.name;$('talkRole').textContent=`${n.job} · ${friendshipRank(r)} · ♥ ${r} · ${romanceName(heartRecord(n.id))}`;$('talkPortrait').textContent='';const portrait=document.createElement('canvas');portrait.width=54;portrait.height=54;portrait.className='portrait-canvas';const pg=portrait.getContext('2d');pg.imageSmoothingEnabled=false;pg.drawImage(charArt(n,'front',0,'happy'),4,0,88,79,0,0,54,54);$('talkPortrait').append(portrait);
  $('talkText').textContent=neighborMoment(n);$('conversation').classList.remove('hidden');$('game').classList.add('talking');
  talkChoices('main');
  $('emote').textContent='💗';$('emote').hidden=false;state.met=state.met||[];if(!state.met.includes(id)){state.met.push(id);task('meet')}changeNeed('social',7);save()}
 function closeTalk(){talk=null;$('conversation').classList.add('hidden');$('game').classList.remove('talking');$('emote').hidden=true}
-function respond(kind){const n=NPCS.find(o=>o.id===talk);if(!n)return;if(['discover','spark','date-invite','partner'].includes(kind))return heartConversation(n,kind);
+function respond(kind){const n=NPCS.find(o=>o.id===talk);if(!n)return;if(['discover','spark','date-invite','partner','reflect'].includes(kind))return heartConversation(n,kind);
  if(!state.socialDaily[n.id]||state.socialDaily[n.id].day!==state.day)state.socialDaily[n.id]={day:state.day,chat:0,compliment:0,gift:0,join:0};
  const daily=state.socialDaily[n.id],r=state.relations[n.id]||0,cap=kind==='chat'?2:1;
  const voices=personalityTalk[n.id]||personalityTalk.mabel;
@@ -1850,12 +1892,12 @@ function respond(kind){const n=NPCS.find(o=>o.id===talk);if(!n)return;if(['disco
  else if(kind==='gift'){coins(-20);gain=20;n.emotion='surprised';$('talkText').textContent=voices.gift[(state.day+daily.gift)%voices.gift.length];$('emote').textContent='🎁'}
  state.relations[n.id]=Math.min(100,r+gain);state.hearts+=gain;n.emotionUntil=tick+2.1;checkFriendshipMoment(n,r,state.relations[n.id]);$('talkRole').textContent=`${n.job} · ${friendshipRank(state.relations[n.id])} · ♥ ${state.relations[n.id]}`;$('heartText').textContent=state.hearts;save();
 }
-function people(){showModal('people',`<h2>💌 Meet the Neighbors</h2><p>Everyone has their own needs, mood and a little dream. Talk to them, help them out, and watch friendships grow.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${NPCS.map(n=>{const life=lifeFor(n.id),m=personalMood(n),goal=RESIDENT_GOALS[n.id];return `<div class="card"><div><b>${n.emoji} ${n.name} · ♥ ${state.relations[n.id]||0}</b><small>${escapeHtml(n.job)} · ${escapeHtml(n.trait)}<br>${m.icon} ${m.name} · ${escapeHtml(currentRoutine(n).doing)}<br>${hobbyProfile(n.id).icon} ${escapeHtml(hobbyProfile(n.id).title)} · ${hobbyRecord(n.id).sessions} hobby days<br>🌟 ${escapeHtml(goal.title)} — ${life.helpCount}/3 ${life.helpCount>=3?'✓ Complete':''}<br>${friendshipRank(state.relations[n.id]||0)}<br>🏡 ${escapeHtml(apartmentName(residentHome(n.id)))} · 🪙 ${Math.round(state.householdFunds[residentHome(n.id)]||0)} household savings${bestNeighborFriend(n.id)?`<br>Friends with ${escapeHtml(bestNeighborFriend(n.id).name)} · ♥ ${bestNeighborFriend(n.id).score}`:''}${strainedNeighbor(n.id)?`<br>🌧️ Misunderstanding with ${escapeHtml(strainedNeighbor(n.id).name)} · ${Math.round(strainedNeighbor(n.id).tension)} tension`:''}</small><div class="mini-needs"><span>🍞 ${Math.round(life.needs.food)}</span><span>💤 ${Math.round(life.needs.energy)}</span><span>💌 ${Math.round(life.needs.social)}</span><span>🎈 ${Math.round(life.needs.fun)}</span></div></div><button data-act="find" data-id="${n.id}">Find</button></div>`}).join('')}`)}
+function people(){showModal('people',`<h2>💌 Meet the Neighbors</h2><p>Everyone has their own needs, mood and a little dream. Talk to them, help them out, and watch friendships grow.</p>${btn('💗 Hearts & Personalities','hearts')}${dateMoment?btn('✕ Cancel outing','date-abandon'):''}${btn('💌 Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${NPCS.map(n=>{const life=lifeFor(n.id),m=personalMood(n),goal=RESIDENT_GOALS[n.id];return `<div class="card"><div><b>${n.emoji} ${n.name} · ♥ ${state.relations[n.id]||0}</b><small>${escapeHtml(n.job)} · ${escapeHtml(n.trait)}<br>${m.icon} ${m.name} · ${escapeHtml(currentRoutine(n).doing)}<br>${hobbyProfile(n.id).icon} ${escapeHtml(hobbyProfile(n.id).title)} · ${hobbyRecord(n.id).sessions} hobby days<br>🌟 ${escapeHtml(goal.title)} — ${life.helpCount}/3 ${life.helpCount>=3?'✓ Complete':''}<br>${friendshipRank(state.relations[n.id]||0)}<br>🏡 ${escapeHtml(apartmentName(residentHome(n.id)))} · 🪙 ${Math.round(state.householdFunds[residentHome(n.id)]||0)} household savings${bestNeighborFriend(n.id)?`<br>Friends with ${escapeHtml(bestNeighborFriend(n.id).name)} · ♥ ${bestNeighborFriend(n.id).score}`:''}${strainedNeighbor(n.id)?`<br>🌧️ Misunderstanding with ${escapeHtml(strainedNeighbor(n.id).name)} · ${Math.round(strainedNeighbor(n.id).tension)} tension`:''}</small><div class="mini-needs"><span>🍞 ${Math.round(life.needs.food)}</span><span>💤 ${Math.round(life.needs.energy)}</span><span>💌 ${Math.round(life.needs.social)}</span><span>🎈 ${Math.round(life.needs.fun)}</span></div></div><button data-act="find" data-id="${n.id}">Find</button></div>`}).join('')}`)}
 function townStories(){const stories=[...state.townStories].reverse();const e=communityEvent();const dreams=[...state.lifeMoments].reverse();
  showModal('stories',`<h2>💌 Town Stories</h2><p>The neighbors have lives of their own, with visits between community events. Drop by the square, market, gardens, café and pond during the day to catch their little moments.</p>${e?`<div class="card"><div><b>${e.icon} Happening now: ${escapeHtml(e.title)}</b><small>${escapeHtml(e.place)} · ${escapeHtml(e.pair.map(id=>NPCS.find(n=>n.id===id).name).join(' & '))}</small></div></div>`:''}${dreams.map(moment=>`<div class="card"><div><b>🌟 ${escapeHtml(moment.title)}</b><small>Day ${moment.day} · ${escapeHtml(moment.text)}</small></div></div>`).join('')}${stories.length?stories.map(story=>`<div class="card"><div><b>${story.outcome==='misunderstanding'?'🌧️ ':story.outcome==='reconciled'?'🕊️ ':story.outcome==='visit'?'☕ ':story.outcome==='milestone'?'💗 ':'💛 '}${escapeHtml(story.title)}</b><small>Day ${story.day} · ${escapeHtml(story.text)}</small></div></div>`).join(''):'<p>No stories yet. Spend some time exploring or help a neighbor finish a dream.</p>'}<p>Stories record automatically once both neighbors arrive. Relationships can grow, strain, and heal as residents spend time together. You can also help neighbors make peace.</p>${btn('Back to journal','journal')}`)}
 function journal(){const done=questDefs.filter(q=>(state.quests[q.id]||0)>=q.max).length;showModal('journal',`<h2>📜 Your Little Journal</h2><p>${done} of ${questDefs.length} village adventures completed. Claim your rewards to grow your little life!</p>${btn('💌 Read Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${scene==='residence'||scene==='home'?btn('📖 Household Daybook','daybook'):''}${btn('🍳 Recipe Book','cook-book')}${questDefs.map(q=>{const n=state.quests[q.id]||0,claimed=state.quests[q.id+'_claimed'];return `<div class="card"><div><b>${q.text}</b><small>${Math.min(q.max,n)} / ${q.max} · 🪙 ${q.reward}</small></div><button data-act="claim" data-id="${q.id}" ${n<q.max||claimed?'disabled':''}>${claimed?'✓ Done':'Claim'}</button></div>`}).join('')}`)}
 function cafe(){showModal('cafe',`<h2>🥐 Honeybun Café</h2><p>Oliver needs help serving the lunchtime crowd. A short shift earns coins and lifts your spirits. Look for Oliver working in town, too.</p><div class="card"><b>1 cozy café shift</b><b>🪙 +45</b></div>${btn('Work a shift 🥐','work')} ${btn('Have a treat (10 🪙)','eat')}`)}
-function townHall(){showModal('hall',`<h2>🏛️ Maplewood Town Hall</h2><p>The village is growing around you. Meet six neighbors, spruce up your home, and complete the journal to become part of its story.</p>${btn('View your journal','journal')} ${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Town Stories','stories')}${btn('🏡 Little Households','housing')}`)}
+function townHall(){showModal('hall',`<h2>🏛️ Maplewood Town Hall</h2><p>The village is growing around you. Meet six neighbors, spruce up your home, and complete the journal to become part of its story.</p>${btn('View your journal','journal')} ${btn('💌 Town Stories','stories')}${btn('🏡 Little Households','housing')}`)}
 function market(){showModal('market',`<h2>🍓 Rosie’s Little Market</h2><p>Fresh fruit, pantry ingredients and lovely things for your home.</p>${btn('🧺 Buy pantry ingredients','cook-market')}<div class="grid"><div class="item"><span class="emoji">🍑</span><strong>Peach snack</strong><small>10 coins</small>${btn('Eat','eat')}</div><div class="item"><span class="emoji">🌻</span><strong>Flower seed</strong><small>8 coins</small>${btn('Buy','seed')}</div><div class="item"><span class="emoji">🪴</span><strong>Plant</strong><small>25 coins</small>${btn('Buy','buy-plant')}</div></div>`)}
 function garden(){showModal('garden',`<h2>🌱 Community Garden</h2><p>Plant little flowers, care for them, and harvest blooms for your cottage.</p><div class="grid">${(state.garden||[0,0,0,0]).map((n,i)=>`<div class="item"><span class="emoji">${n===2?'🌸':n===1?'🌱':'🟫'}</span><strong>Plot ${i+1}</strong><small>${n===2?'Ready!':n===1?'Growing':'Empty'}</small><button class="btn" data-act="plot" data-id="${i}">${n===2?'Harvest':n===1?'Water':'Plant'}</button></div>`).join('')}</div><p>Planting is free. Premium seed packets from Rosie’s market give a better harvest. 🌻 ${state.inventory.filter(x=>x==='flower-seed').length} seed packets available.</p>`)}
 function fishing(){showModal('fish',`<h2>🎣 Fishing at Lily Pond</h2><p>Watch the bobber and tap when it crosses the green zone!</p><div style="margin:24px 0 18px;height:30px;background:#b5d2bd;border:3px solid #91b1a6;position:relative"><div style="height:100%;width:26%;margin-left:38%;background:#7ddda4;border-left:3px solid white;border-right:3px solid white"></div><div id="bobber" style="position:absolute;top:-4px;bottom:-4px;width:6px;background:#ed7091;left:0"></div></div><button class="btn" data-act="catch" style="width:100%">🎣 Reel it in!</button>`);}
@@ -1865,8 +1907,13 @@ function decorate(){if(scene!=='home')goScene('home');
 function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
  showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(pendingName??state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair color</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Haircut</h3><div class="haircuts">${['Bob','Side-part','Tousled','Ponytail','Buns'].map((n,i)=>`<button data-act="set-style" data-id="${i}" aria-pressed="${state.hairStyle===i}" class="haircut ${state.hairStyle===i?'selected':''}">${n}</button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: First Sparks v2.4.0 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🍳 Hearth Kitchen','cook-book')}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
-function handleAction(action,id){if(action==='more-talk')return talkChoices('more');if(action==='romance-menu')return talkChoices('romance');if(action==='talk-back')return talkChoices('main');if(action==='hearts')return heartNotes();if(action==='date-place')return planDate(id);if(action==='date-cancel'){if(talk){const id=talk;closeTalk();openTalk(id)}return}if(action==='date-abandon'){if(dateMoment){const n=NPCS.find(n=>n.id===dateMoment.id);if(n)n.routineKey='';dateMoment=null;player.target=null;notify('Outing canceled. No progress lost.')}return}
+function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Shared Moments v2.4.1 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🍳 Hearth Kitchen','cook-book')}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
+function handleAction(action,id){if(action==='more-talk')return talkChoices('more');if(action==='romance-menu')return talkChoices('romance');if(action==='talk-back')return talkChoices('main');
+ if(action==='hearts')return heartNotes();
+ if(action==='date-place')return planDate(id);
+ if(action==='date-choice')return finishDate(id);
+ if(action==='date-cancel'){if(talk){const who=talk;closeTalk();openTalk(who)}return}
+ if(action==='date-abandon'){abandonDate('Date plans canceled. No progress was lost.');if(modal==='date-moment')closeModal();return}
  if(action.startsWith('cook-'))return kitchen.handle(action,id);
  if(action==='chat'||action==='compliment'||action==='gift'||action==='ask'||action==='join'||action==='news'||action==='help'||action==='mediate'||action==='invite'||action==='housemate')return respond(action);
  if(action==='bye')return closeTalk();
