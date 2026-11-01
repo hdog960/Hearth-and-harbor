@@ -1,0 +1,37 @@
+/* Hearth & Harbor v2.5.18 — Little Passions Studio */
+.hs-ui{max-width:660px;margin:auto;color:#436855;font-family:inherit}
+.hs-kicker{font-size:10px;font-weight:900;letter-spacing:.12em;color:#ac8367}
+.hs-ui h2{font-size:clamp(25px,6vw,33px);line-height:1.2;color:#426a54;margin:9px 0 12px}
+.hs-ui h3{font-size:16px;color:#5d765e;margin:14px 0 10px}
+.hs-ui p{font-size:13px;line-height:1.55;color:#6f8575;margin:8px 0}
+.hs-banner{background:linear-gradient(120deg,#e7f3df,#fff0dc);color:#6d806a;border:2px solid #dedbc2;border-radius:13px;padding:13px;margin:12px 0;font-weight:800;font-size:12px;line-height:1.5}
+.hs-person{display:flex;align-items:start;gap:11px;padding:12px;border:2px solid #e4d5bb;border-bottom:4px solid #d8bea1;border-radius:15px;background:#fff9ef;margin:10px 0}
+.hs-face{font-size:29px;display:grid;place-items:center;flex:none;width:50px;height:52px;background:#e8f0df;border-radius:12px}
+.hs-person>div{flex:1;min-width:0}
+.hs-person b{display:block;font-size:15px;color:#49705b}
+.hs-person small{display:block;font-size:11px;line-height:1.45;color:#829682;margin:6px 0}
+.hs-person button,.hs-ui .hs-main{min-height:45px;border:2px solid #51866e;background:#5b977b;border-radius:11px;padding:10px 13px;color:#fffaf0;font-weight:900;font-size:12px;font-family:inherit;touch-action:manipulation}
+.hs-person button{margin-top:5px;width:100%}
+.hs-person button:disabled{opacity:.55}
+.hs-ui button{font-family:inherit;touch-action:manipulation}
+.hs-back{display:block;background:transparent;border:0;padding:12px;margin:13px auto;min-height:44px;color:#79917b;font-weight:900;font-size:12px;text-decoration:underline}
+.hs-progress{border:1px solid #dfd7b9;border-radius:12px;background:#f7f4df;padding:10px;display:flex;gap:12px;align-items:center;justify-content:space-between;margin:12px 0}
+.hs-progress b{font-size:12px;color:#658368}
+.hs-progress>div{display:flex;gap:4px;flex:1;justify-content:flex-end}
+.hs-progress i{height:11px;flex:0 1 32px;border-radius:6px;background:#d9e3cf}
+.hs-progress i.done{background:#7fb496}
+.hs-worktop{background:linear-gradient(145deg,#f7e5cd,#e4efdf);border:3px solid #e2c8ae;border-radius:20px;min-height:118px;display:flex;gap:14px;align-items:center;justify-content:center;margin:13px 0;padding:12px;font-size:36px}
+.hs-worktop span{min-width:55px;height:65px;display:grid;place-items:center;border-radius:17px;background:#fff9e9}
+.hs-action-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:9px;margin:13px 0}
+.hs-action-grid button,.hs-palette button,.hs-canvas button{min-height:57px;border:2px solid #d5b993;border-radius:11px;background:#fff3d8;font-weight:900;color:#786550;font-size:13px;line-height:1.4;padding:10px 7px}
+.hs-action-grid button:active,.hs-canvas button:active{background:#dbeed8}
+.hs-palette{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:13px 0}
+.hs-palette button[aria-pressed=true]{border-color:#548e78;background:#e4f1db;color:#436c53}
+.hs-canvas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;border:6px solid #c7a57f;background:#f5e7c9;border-radius:15px;padding:12px;margin:8px auto;max-width:340px}
+.hs-canvas button{min-height:86px;background:#fff9ef}
+.hs-canvas button[aria-pressed=true]{background:#deecde;border-color:#80ab91}
+.hs-tip{display:block;color:#8b987f;font-size:11px;line-height:1.5;text-align:center;margin:12px 0}
+.hs-finish span{font-size:38px}
+.hs-main{display:block;width:100%;margin-top:14px}
+@media(max-width:380px){.hs-person{padding:9px;gap:7px}.hs-face{width:43px;height:45px;font-size:23px}.hs-action-grid{gap:6px;grid-template-columns:repeat(auto-fit,minmax(87px,1fr))}.hs-action-grid button{font-size:11px;min-height:53px}.hs-worktop{font-size:28px}}
+@media(prefers-reduced-motion:reduce){.hs-ui *{transition:none!important;animation:none!important}}
