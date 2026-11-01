@@ -1,0 +1,31 @@
+/* Hearth & Harbor v2.5.5 · Festival Days — original touch-first artwork */
+.hf-ui{font-family:inherit;color:#35584e;max-width:620px;margin:auto}
+.hf-ui h2{font-size:clamp(24px,6vw,33px);line-height:1.17;margin:7px 0 12px;color:#30594e}
+.hf-ui h3{font-size:17px;margin:21px 0 9px;color:#426b61}
+.hf-ui p{line-height:1.55;margin:10px 0;color:#52766a;font-size:14px}
+.hf-kicker{font-weight:900;letter-spacing:.12em;color:#aa775a;font-size:10px;margin:0 0 10px}
+.hf-banner{display:flex;gap:13px;align-items:center;padding:15px 13px;border-radius:20px;background:linear-gradient(127deg,#fff6df,#fce2e8 75%,#d9f2e7);border:2px solid #e5cabb}
+.hf-banner h2{margin:0 0 6px}
+.hf-banner p{margin:0}
+.hf-stamp{width:76px;flex-shrink:0;min-height:76px;display:grid;place-items:center;background:#fff9ee;border:3px solid #eac9a3;border-radius:21px;font-size:43px;box-shadow:0 4px 0 #deb9a8}
+.hf-status{background:#e5f1e6;color:#426c58;padding:11px 13px;border-radius:12px;font-weight:800;font-size:13px;margin:14px 0}
+.hf-hosts{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 15px}
+.hf-hosts span{background:#fff8e8;border:1px solid #ecd7b9;border-radius:12px;padding:9px 10px;font-size:12px;font-weight:700}
+.hf-primary,.hf-controls button{background:#488975;color:#fffdf1;border:2px solid #32715f;border-radius:14px;padding:13px 17px;min-height:49px;font:900 14px inherit;cursor:pointer;touch-action:manipulation}
+.hf-primary{display:block;width:100%;font-weight:900;font-size:15px;box-shadow:0 4px 0 #b7d3c0}
+.hf-primary:active,.hf-controls button:active{transform:translateY(2px);box-shadow:none}
+.hf-calendar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:16px}
+.hf-season{background:#f8f1e6;border:2px solid #e8dbcd;border-radius:13px;padding:9px;display:grid;gap:3px;font-size:12px}
+.hf-season.selected{background:#e7f3de;border-color:#88b89b}
+.hf-season small{font-size:11px;color:#688576}
+.hf-memory{font-size:12px;border-bottom:1px solid #decdbd;padding:9px 2px;font-weight:700}
+.hf-play #hfCanvas{display:block;width:100%;max-width:360px;aspect-ratio:360/310;margin:9px auto;border:5px solid #fff5e2;border-radius:18px;image-rendering:auto;touch-action:manipulation;box-shadow:0 4px 0 #decab9}
+.hf-controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
+.hf-controls button{min-width:62px;flex:1 1 64px;background:#faf1d9;color:#426959;border-color:#e0c6a3;font-size:16px}
+.hf-controls .hf-primary{color:#fff;background:#488975;border-color:#32715f;flex:2 1 180px}
+.hf-progress{text-align:center;font-weight:900;color:#397260}
+.hf-back{display:block;margin:14px auto 0;padding:8px 17px;border-radius:10px;background:transparent;color:#6f8079;text-decoration:underline;font-size:13px;font-weight:700;min-height:44px}
+.hf-score{text-align:center;font-size:55px;letter-spacing:2px;color:#efbb6d;margin:18px 0}
+.hf-score span{color:#dbd5c9}
+@media(max-width:380px){.hf-banner{padding:11px;gap:8px}.hf-stamp{width:58px;min-height:58px;font-size:34px}.hf-season{padding:7px}.hf-controls button{padding:10px;min-height:46px}}
+@media(prefers-reduced-motion:reduce){.hf-ui *, .hf-ui *:before,.hf-ui *:after{transition:none!important;animation:none!important}}
