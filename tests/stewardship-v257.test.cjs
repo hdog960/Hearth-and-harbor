@@ -112,9 +112,10 @@ test('project rendering and seasonal market scenes run without missing Canvas2D 
 test('the live runtime loads the module and caches the same version',()=>{
  assert.match(game,/stewardship:window\.HearthStewardship\.clean\(raw\.stewardship\)/);
  for(const s of ['stewardship.drawProjects','stewardship.festivalStalls','stewardship.hit',
- 'stewardship.use','stewardship.board','stew-build','stew-travel','projectboard']){
+ 'stewardship.use','stewardship.board','projectboard']){
   assert.ok(game.includes(s),s);
  }
+ assert.ok(code.includes('stew-build')&&code.includes('stew-travel'),'module owns project actions');
  assert.ok(html.indexOf('stewardship-v257.js')<html.indexOf('game.js'));
  for(const name of ['stewardship-v257.js','stewardship-v257.css']){
   assert.ok(html.includes(name));
