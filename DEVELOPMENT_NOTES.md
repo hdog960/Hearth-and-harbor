@@ -24,3 +24,6 @@ Relationships progress *only* when existing neighbor visits complete after both 
 Committed couples with two completed evening encounters can decide to cohabit or maintain their own homes from Town Hearts. Moves are blocked if either address already houses two residents; no one is displaced. Partners who live together can receive a homemade meal (one saved plate, once per day), yielding modest hunger/social benefits and a persistent Town Story. Evening rituals for housemates now occur near their shared residence. Save import validates these new relationship choices and daily meal records.
 
 Local build validation: 27 browser interaction checks, 17 new source checks, 28 core relationship checks, JavaScript syntax. Live GitHub Pages title and latest source verified. Physical iPhone Safari rendering not yet confirmed.
+
+## v2.4.6 Promises in Bloom
+New validated `weddingPlans` save field. Engagement requires a committed resident couple, life planning, three shared evenings and no serious tension. Ceremony choice and vows occur only when both characters arrive and the player is present during the scheduled time. Missed dates can be rescheduled without penalty. The feature does not auto-marry, move or evict anyone. Local Chromium tests: 23 wedding-path checks. Physical Safari test pending.
