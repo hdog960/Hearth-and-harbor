@@ -62,7 +62,7 @@ test('four seasons, eight resident interactions, one portrait per pair',()=>{
   assert.equal(stories.length,2);
   for(const story of stories){
    world.open(story.id);
-   assert.match(dialogs.at(-1).html,/shared|help|special/i);
+   assert.match(dialogs.at(-1).html,/Play a short|memory|together/i);
    runTask(world,story,season);
    assert.equal(state.community.moments[season+':'+story.id].stars,3);
    expectedHearts+=3;
