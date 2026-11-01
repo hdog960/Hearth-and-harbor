@@ -7,14 +7,14 @@
 function drawPlacedFurniture(g,f){
  if(!f)return;g.save();g.translate(f.x,f.y);g.rotate(((f.rot||0)%4)*Math.PI/2);drawFurniture(g,f.kind,0,0);g.restore();
 }
-/* Hearth & Harbor — The Little Atelier v2.3.2
+/* Hearth & Harbor — Everyday Autonomy v2.3.3
    A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),rand=(a,b)=>a+Math.random()*(b-a);
 const hash=(n)=>{const x=Math.sin(n*127.1+8.45)*43758.5453;return x-Math.floor(x)};
 const SAVE='hearth-harbor-save-v1';
-const DEF=()=>({cooking:defaultCooking(),residenceThemes:{},residenceProps:{},residenceDaily:{},residenceDecor:{},residenceVisits:{},residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
+const DEF=()=>({householdAuto:{},autoBondDay:{},cooking:defaultCooking(),residenceThemes:{},residenceProps:{},residenceDaily:{},residenceDecor:{},residenceVisits:{},residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
 const COOKING_RECIPE_IDS=['toast','salad','soup','pancakes','eggs','noodles','fishplate','tart','biscuits','jam','skewers','dumplings'];
 const COOKING_ING_IDS=['bread','butter','berry','apple','carrot','herb','flour','milk','egg','noodle','fish','honey','onion','potato'];
 function defaultCooking(){return {pantry:{bread:2,butter:1,berry:4,apple:1,carrot:1,herb:1,flour:1,milk:1,egg:2,noodle:1,fish:1,honey:1,onion:1,potato:1},dishes:[],xp:0,made:0,mastered:Object.fromEntries(COOKING_RECIPE_IDS.map(id=>[id,0])),servedDaily:{},relaxed:false}}
@@ -71,7 +71,9 @@ function cleanSave(raw){
  }));
  const residenceDaily=Object.fromEntries(Object.entries(obj(raw.residenceDaily)).filter(([k])=>(npcIds.has(k)||k==='player')).map(([k,v])=>[k,{day:number(obj(v).day,0,0,9999)|0,done:Array.isArray(obj(v).done)?[...new Set(v.done.filter(a=>['rest','read','tidy','meal','chat'].includes(a)))].slice(0,5):[]}]));
 
- const res={...d,residenceThemes,residenceProps,residenceDaily,residenceDecor,residenceVisits,residentHomes:savedHomes,householdFunds:savedFunds,housingDay:number(raw.housingDay,number(raw.day,1,1,9999)|0,0,9999)|0,householdMoves:houseMoves,friendVisits,invitedVisits,visitCounts,visitSeen:Array.isArray(raw.visitSeen)?[...new Set(raw.visitSeen.filter(x=>typeof x==='string'&&safeVisit.test(x)))].slice(-35):[],residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
+ const householdAuto=Object.fromEntries([...npcIds].map(id=>[id,obj(raw.householdAuto)[id]!==false]));
+ const autoBondDay=Object.fromEntries(Object.entries(obj(raw.autoBondDay)).filter(([key])=>safePair.test(key)).slice(0,15).map(([key,v])=>[key,number(v,0,0,9999)|0]));
+ const res={...d,householdAuto,autoBondDay,residenceThemes,residenceProps,residenceDaily,residenceDecor,residenceVisits,residentHomes:savedHomes,householdFunds:savedFunds,housingDay:number(raw.housingDay,number(raw.day,1,1,9999)|0,0,9999)|0,householdMoves:houseMoves,friendVisits,invitedVisits,visitCounts,visitSeen:Array.isArray(raw.visitSeen)?[...new Set(raw.visitSeen.filter(x=>typeof x==='string'&&safeVisit.test(x)))].slice(-35):[],residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
    hair:safeColor(raw.hair,d.hair),outfit:safeColor(raw.outfit,d.outfit),skin:safeColor(raw.skin,d.skin),
    hairStyle:number(raw.hairStyle,d.hairStyle,0,4)|0,coins:number(raw.coins,d.coins,0,1000000),hearts:number(raw.hearts,0,0,1000000),
    day:number(raw.day,1,1,9999)|0,minute:number(raw.minute,d.minute,0,1439.999),season:number(raw.season,0,0,3)|0,
@@ -110,6 +112,7 @@ const color=n=>typeof n==='number'?HEX(n):n;
 const playerDef=()=>scene==='residence'&&controlledResident?NPCS.find(n=>n.id===controlledResident)||selfPortrait():selfPortrait();
 const selfPortrait=()=>({id:'player',name:state.name,skin:color(state.skin),hair:color(state.hair),outfit:color(state.outfit),kind:'dress',style:state.hairStyle??1});
 let scene='town',activeResidence=null,controlledResident=null,householdQueue=[],householdBusy=false,householdCurrent=null,previousTownSpot=null,speed=1,modal=null,talk=null,placement=null,toastTimer=0,uiTimer=0;
+const roomAutonomy=new Map();
 let player={x:597,y:654,target:null,facing:'front',walk:0,bodyBob:0},cam={x:597,y:654},W=0,H=0,DPR=1,last=0,tick=0;
 let displayScale=1;let worldScale=1;
 const furnitureTypes=[{id:'bed',name:'Cloud-soft bed',emoji:'🛏️',cost:95},{id:'sofa',name:'Peach sofa',emoji:'🛋️',cost:75},{id:'plant',name:'Fern in pot',emoji:'🪴',cost:25},{id:'books',name:'Storybook shelf',emoji:'📚',cost:70},{id:'lamp',name:'Honey lamp',emoji:'💡',cost:40},{id:'rug',name:'Patchwork rug',emoji:'🧶',cost:35},{id:'chair',name:'Wooden chair',emoji:'🪑',cost:30},{id:'flowers',name:'Flower vase',emoji:'💐',cost:20}];
@@ -427,6 +430,7 @@ function housingBoard(){
 function roomResidents(){return activeResidence?householdMembers(activeResidence):[]}
 function roomPositions(){return [{x:580,y:690},{x:729,y:740}]}
 function enterResidence(home){
+ roomAutonomy.clear();
  if(!/^h[0-5]$/.test(home))return;
  if(scene==='town')previousTownSpot={x:player.x,y:player.y};
  if(talk)closeTalk();closeModal();stopPlacement();controlledResident=null;householdQueue=[];householdBusy=false;householdCurrent=null;updateRoutineStrip();
@@ -439,6 +443,7 @@ function enterResidence(home){
  resize();updateUI();save();
 }
 function leaveResidence(){
+ roomAutonomy.clear();
  if(scene!=='residence')return;
  if(talk)closeTalk();closeModal();stopPlacement();
  const home=activeResidence;scene='town';activeResidence=null;controlledResident=null;stopRoutine();
@@ -512,7 +517,68 @@ function nextOwnHomeAction(){
  goTo(pos,()=>{if(scene!=='home'||householdCurrent!==kind)return;runOwnHomeAction(kind);nextOwnHomeAction()});
 }
 function stopRoutine(){householdQueue=[];householdBusy=false;householdCurrent=null;player.target=null;updateRoutineStrip()}
-function residentHomePose(n,i){
+
+const AUTO_SPOTS={rest:[345,645],meal:[724,469],read:[420,570],tidy:[602,800],chat:[737,722]};
+function autoEnabled(id){return state.householdAuto[id]!==false}
+function autoChoice(n){
+ const a=lifeFor(n.id).needs,mate=roomResidents().some(m=>m.id!==n.id);
+ if(a.energy<46)return 'rest';if(a.food<52)return 'meal';
+ if(mate&&a.social<63)return 'chat';if(a.fun<60)return 'read';
+ return ['tidy','read',mate?'chat':'read','meal'][(Math.floor(state.minute/150)+n.id.length+state.day)%4];
+}
+function autoDestination(n,kind,i){
+ const props=state.residenceProps[activeResidence]||[];
+ let point=AUTO_SPOTS[kind];
+ const item=kind==='read'?props.find(p=>p.kind==='books'):kind==='chat'?props.find(p=>p.kind==='chair'):null;
+ if(item)point=[item.x+60,item.y+45];
+ const pos={x:clamp(point[0]+i*28,280,910),y:clamp(point[1]+i*27,340,970)};
+ return nearestWalkable(pos,'residence',true)||{x:575+i*70,y:760};
+}
+function finishAuto(n,kind){
+ const a=HOME_ACTIONS[kind],needs=lifeFor(n.id).needs,rec=residentDayRecord(n.id);
+ const once=!rec.done.includes(kind);if(once)rec.done.push(kind);
+ const multiplier=(once?.7:.3)*(1+Math.min(homeComfort(activeResidence),90)*.003);
+ for(const [k,v] of Object.entries(a.boost))needs[k]=clamp(needs[k]+v*multiplier,0,100);
+ if(kind==='chat'){
+  for(const m of roomResidents().filter(m=>m.id!==n.id)){
+   lifeFor(m.id).needs.social=clamp(lifeFor(m.id).needs.social+5,0,100);
+   const key=pairKey([n.id,m.id]);
+   if(state.autoBondDay[key]!==state.day){
+    state.autoBondDay[key]=state.day;
+    state.townBonds[key]=clamp((state.townBonds[key]||0)+1,0,100);
+   }
+  }
+ }
+ // Autonomous routines never spend coins or pantry supplies.
+ save();updateUI();
+}
+function updateRoomAutonomy(dt){
+ if(scene!=='residence'||!activeResidence||speed===0||modal||talk||placement)return;
+ for(const [i,n] of roomResidents().entries()){
+  const id=n.id;
+  if(id===controlledResident||!autoEnabled(id)){roomAutonomy.delete(id);continue}
+  let r=roomAutonomy.get(id);
+  if(!r){const pos=residentHomePoseFallback(n,i);r={x:pos.x,y:pos.y,phase:'break',wait:1.5+i*.8,elapsed:0,action:null,dir:'front',moving:false};roomAutonomy.set(id,r)}
+  if(r.phase==='break'){r.wait-=dt*speed;if(r.wait<=0){r.action=autoChoice(n);r.target=autoDestination(n,r.action,i);r.phase='walking'}}
+  else if(r.phase==='walking'){
+   const dx=r.target.x-r.x,dy=r.target.y-r.y,d=Math.hypot(dx,dy),step=Math.min(d,dt*speed*78);
+   if(d<=Math.max(step,4)){r.x=r.target.x;r.y=r.target.y;r.phase='using';r.moving=false;r.elapsed=0;r.dir='front'}
+   else if(d>0){r.x+=dx/d*step;r.y+=dy/d*step;r.moving=true;r.dir=dy<-.1?'back':Math.abs(dx)>Math.abs(dy)?'side':'front'}
+  }else if(r.phase==='using'){
+   r.elapsed+=dt*speed;r.moving=false;
+   if(r.elapsed>=4.6){finishAuto(n,r.action);r.phase='break';r.wait=7+i*1.5;r.elapsed=0}
+  }
+ }
+}
+function autoActivityLabel(id){const r=roomAutonomy.get(id);return r&&r.action?r.phase==='walking'?'Walking to '+HOME_ACTIONS[r.action].name:r.phase==='using'?HOME_ACTIONS[r.action].name:'Resting a moment':'Choosing their day'}
+function toggleAuto(id){
+ if(scene!=='residence'||!roomResidents().some(m=>m.id===id))return;
+ state.householdAuto[id]=!autoEnabled(id);roomAutonomy.delete(id);save();
+ notify((state.householdAuto[id]?'Autonomy enabled for ':'Autonomy paused for ')+NPCS.find(n=>n.id===id).name);
+ manageHousehold();
+}
+
+function residentHomePoseFallback(n,i){
  const needs=lifeFor(n.id).needs,slot=Math.floor(state.minute/120)+i;
  const props=state.residenceProps[activeResidence]||[];
  if(needs.energy<35||state.minute>=1260||state.minute<420)return{x:310+i*35,y:650+i*95,act:'💤'};
@@ -520,16 +586,26 @@ function residentHomePose(n,i){
  if(needs.fun<38||slot%4===1){const shelf=props.find(p=>p.kind==='books');return shelf?{x:Math.min(870,shelf.x+57),y:Math.min(980,shelf.y+38),act:'📚'}:{x:360+i*65,y:555+i*55,act:'📚'}}
  const cozy=props.find(p=>p.kind==='chair'||p.kind==='plant');return cozy?{x:Math.min(875,cozy.x+57),y:Math.min(960,cozy.y+44),act:'☕'}:{x:730-i*70,y:685+i*70,act:'☕'};
 }
+function residentHomePose(n,i){
+ const r=roomAutonomy.get(n.id);
+ if(r&&scene==='residence'&&n.id!==controlledResident&&autoEnabled(n.id)){
+  return{x:r.x,y:r.y,act:r.phase==='walking'?'👣':r.phase==='using'?HOME_ACTIONS[r.action]?.icon||'☕':'🌷',moving:r.moving,dir:r.dir,phase:r.phase,action:r.action};
+ }
+ return residentHomePoseFallback(n,i);
+}
 function manageHousehold(){
  if(scene==='home')return ownDaybook();
  if(scene!=='residence')return housingBoard();
  const members=roomResidents(),theme=state.residenceThemes[activeResidence]??0,style=HOME_THEMES[theme],comfort=homeComfort(),props=state.residenceProps[activeResidence]||[];
  const chosen=controlledResident?NPCS.find(n=>n.id===controlledResident):null;
+ const autoControls='<div class="autonomy-list"><h3>🌿 Resident independence</h3><p>Residents use rooms on their own when you are not guiding them. Switch their autonomy on or off.</p>'+
+ members.map(n=>'<div class="autonomy-row"><span><b>'+n.emoji+' '+escapeHtml(n.name)+'</b><small>'+escapeHtml(autoEnabled(n.id)?autoActivityLabel(n.id):'Manual only')+'</small></span><button data-act="toggle-auto" data-id="'+n.id+'" aria-pressed="'+autoEnabled(n.id)+'">'+(autoEnabled(n.id)?'🌿 Auto ON':'⏸ Auto OFF')+'</button></div>').join('')+'</div>';
+
  const roster='<div class="house-roster"><button data-act="guide-self" class="'+(!chosen?'selected':'')+'">🌼 '+escapeHtml(state.name)+' <small>My character</small></button>'+members.map(n=>'<button data-act="guide" data-id="'+n.id+'" class="'+(chosen?.id===n.id?'selected':'')+'">'+n.emoji+' '+escapeHtml(n.name)+' <small>'+escapeHtml(personalMood(n).name)+'</small></button>').join('')+'</div>';
  const actionGrid=chosen?'<div class="house-action-panel"><h3>'+escapeHtml(chosen.name)+"'s Daybook</h3><p>Choose an activity. Your resident walks to the station, then performs it.</p><div class=\"house-action-grid\">"+Object.entries(HOME_ACTIONS).map(([k,a])=>'<button data-act="queue-home" data-id="'+k+'"><span>'+a.icon+'</span><b>'+a.name+'</b><small>'+(residentDayRecord(chosen.id).done.includes(k)?'Already enjoyed today':'Add to routine')+'</small></button>').join('')+'</div><p>Queue up to three activities; reopen Daybook to add more.</p>'+btn('Clear queued activities','clear-home-queue')+'</div>':'<p class="house-help">Choose a resident to guide their day, or keep exploring as Poppy.</p>';
  const themes='<div class="house-themes">'+HOME_THEMES.map((v,i)=>'<button data-act="room-theme" data-id="'+i+'" aria-pressed="'+(i===theme)+'" class="'+(i===theme?'selected':'')+'" style="--theme:'+v.wall+'">'+v.emoji+'<small>'+v.name+'</small></button>').join('')+'</div>';
  const propsUI='<div class="house-shop">'+['plant','flowers','books','lamp','rug','chair'].map(k=>{const f=furnitureTypes.find(x=>x.id===k);return '<button data-act="room-prop" data-id="'+k+'" '+(props.length>=8?'disabled':'')+'>'+f.emoji+' '+f.name+'<small>🪙 '+Math.max(10,Math.round(f.cost*.65))+'</small></button>'}).join('')+'</div>';
- showModal('daybook','<div class="house-header"><span>🏡</span><div><h2>A House Is a Home</h2><p>'+escapeHtml(apartmentName(activeResidence))+' · '+style.emoji+' '+style.name+'</p></div></div><div class="house-comfort"><strong>✨ Home comfort '+comfort+'/100</strong><span><i style="width:'+comfort+'%"></i></span><small>Decorated homes make daily routines more restorative. Comfort is capped for balance.</small></div><h3>Who will you guide?</h3>'+roster+actionGrid+'<h3>Decorate this home</h3><p>Wallpaper colors are free to change. Furnishings cost coins and improve comfort.</p>'+themes+'<h3>Personal touches ('+props.length+'/8)</h3>'+propsUI+props.map((item,i)=>{const f=furnitureTypes.find(f=>f.id===item.kind);return '<div class="card"><div><b>'+(f?.emoji||'🌿')+' '+(f?.name||'Decoration')+'</b><small>Tap Move to arrange or rotate</small></div><div class="furniture-actions"><button data-act="room-move" data-id="'+i+'">Move</button><button data-act="room-sell" data-id="'+i+'">Sell</button></div></div>'}).join('')+btn('Visit rooms / comfort upgrades','room-info'));
+ showModal('daybook','<div class="house-header"><span>🏡</span><div><h2>A House Is a Home</h2><p>'+escapeHtml(apartmentName(activeResidence))+' · '+style.emoji+' '+style.name+'</p></div></div><div class="house-comfort"><strong>✨ Home comfort '+comfort+'/100</strong><span><i style="width:'+comfort+'%"></i></span><small>Decorated homes make daily routines more restorative. Comfort is capped for balance.</small></div><h3>Who will you guide?</h3>'+roster+actionGrid+'${autoControls}<h3>Decorate this home</h3><p>Wallpaper colors are free to change. Furnishings cost coins and improve comfort.</p>'+themes+'<h3>Personal touches ('+props.length+'/8)</h3>'+propsUI+props.map((item,i)=>{const f=furnitureTypes.find(f=>f.id===item.kind);return '<div class="card"><div><b>'+(f?.emoji||'🌿')+' '+(f?.name||'Decoration')+'</b><small>Tap Move to arrange or rotate</small></div><div class="furniture-actions"><button data-act="room-move" data-id="'+i+'">Move</button><button data-act="room-sell" data-id="'+i+'">Sell</button></div></div>'}).join('')+btn('Visit rooms / comfort upgrades','room-info'));
 }
 function buyResidenceProp(id){
  if(scene!=='residence')return;
@@ -1205,7 +1281,7 @@ function drawResidenceFurniture(g){
  if(placement?.residence){const f=placement.moveIndex!==undefined?props[placement.moveIndex]:placement;
   g.save();g.globalAlpha=.6;drawPlacedFurniture(g,{kind:f.kind,x:placement.x,y:placement.y,rot:placement.rot});g.restore();}
  const members=roomResidents();
- members.forEach((n,i)=>{if(n.id===controlledResident)return;const p=residentHomePose(n,i);drawCharacter(g,n,p.x,p.y,'front',false,personalMood(n).name==='Cheerful'?'happy':'neutral');drawName(g,n.name,p.x,p.y-145);g.save();g.textAlign='center';g.font='21px system-ui';g.fillText(p.act,p.x+45,p.y-172+Math.sin(tick*2+i)*3);g.restore()});
+ members.forEach((n,i)=>{if(n.id===controlledResident)return;const p=residentHomePose(n,i);drawCharacter(g,n,p.x,p.y,p.dir||'front',!!p.moving,personalMood(n).name==='Cheerful'?'happy':'neutral');drawName(g,n.name,p.x,p.y-145);g.save();g.textAlign='center';g.font='21px system-ui';g.fillText(p.act,p.x+45,p.y-172+Math.sin(tick*2+i)*3);g.restore()});
  if(!members.length){g.fillStyle='#547367';g.textAlign='center';g.font='bold 28px sans-serif';g.fillText('Waiting for new neighbors…',580,706);g.textAlign='left'}
 }
 function drawStatic(obj,g){
@@ -1476,6 +1552,7 @@ function update(dt){tick+=dt;
    if(!next.route?.length){player.target=null;player.facing='front';if(next.after)next.after()}
   }
  }}
+ if(scene==='residence')updateRoomAutonomy(dt);
  if(scene==='town'&&!talk&&!modal&&speed>0){
   for(let i=0;i<NPCS.length;i++){
    const n=NPCS[i],entry=currentRoutine(n),key=`${state.day}:${entry.h}`;
@@ -1580,7 +1657,7 @@ function decorate(){if(scene!=='home')goScene('home');
 function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
  showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(pendingName??state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair color</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Haircut</h3><div class="haircuts">${['Bob','Side-part','Tousled','Ponytail','Buns'].map((n,i)=>`<button data-act="set-style" data-id="${i}" aria-pressed="${state.hairStyle===i}" class="haircut ${state.hairStyle===i?'selected':''}">${n}</button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: The Little Atelier v2.3.2 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💌 Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🍳 Hearth Kitchen','cook-book')}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
+function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Everyday Autonomy v2.3.3 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💌 Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🍳 Hearth Kitchen','cook-book')}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
 function handleAction(action,id){
  if(action.startsWith('cook-'))return kitchen.handle(action,id);
  if(action==='chat'||action==='compliment'||action==='gift'||action==='ask'||action==='join'||action==='news'||action==='help'||action==='mediate'||action==='invite'||action==='housemate')return respond(action);
@@ -1593,6 +1670,7 @@ function handleAction(action,id){
  if(action==='queue-self'){closeModal();return queueOwnHomeAction(id)}
  if(action==='decor')return decorate();
  if(action==='guide')return selectHouseholdResident(id);
+ if(action==='toggle-auto')return toggleAuto(id);
  if(action==='guide-self'){stopGuidingResident();return manageHousehold()}
  if(action==='queue-home'){if(!controlledResident)return;closeModal();queueHouseholdAction(id);return}
  if(action==='clear-home-queue'){stopRoutine();notify('Routine cleared.');return scene==='home'?ownDaybook():manageHousehold()}
