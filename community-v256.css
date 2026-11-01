@@ -25,3 +25,13 @@
 .hcm-stars{text-align:center;font-size:44px;letter-spacing:5px;color:#e8b55f;margin:20px 0}
 @media(max-width:380px){.hcm-neighbor{gap:7px;padding:8px 7px}.hcm-avatar{width:40px;height:40px;font-size:25px}.hcm-neighbor button{min-width:85px;padding:7px;font-size:11px}}
 @media(prefers-reduced-motion:reduce){.hcm-ui *{animation:none!important;transition:none!important}}
+
+.hcm-ui h3{font-size:17px;margin:18px 0 9px;color:#4b735f}
+.hcm-archive{max-height:255px;overflow:auto;overscroll-behavior:contain;border:1px solid #e1d4bd;border-radius:13px;background:#fffaf0}
+.hcm-archive-item{display:flex;align-items:center;gap:9px;padding:11px 9px;border-bottom:1px solid #eee0cd}
+.hcm-archive-item:last-child{border-bottom:0}
+.hcm-archive-item>span{font-size:25px}
+.hcm-archive-item>div{flex:1;min-width:0}
+.hcm-archive-item b{font-size:12px;line-height:1.4;display:block}
+.hcm-archive-item small{display:block;color:#729082;font-size:11px;margin-top:3px}
+.hcm-archive-item>strong{font-size:12px;color:#d59b51}
