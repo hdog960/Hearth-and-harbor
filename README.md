@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.5.8 — Maplewood Festival Market
+# Hearth & Harbor v2.5.9 — A Village in Motion
+
+**The six Maplewood residents now actively work, prepare and socialize around the seasonal village festivals**, rather than merely gathering in one spot. Each has an individual schedule, destination and visible animated activity props: Mabel's garlands, Rosie's fruit baskets, Oliver's pastry trays, Jun's handwritten invitations, Bea's painting, and Finn's lanterns. In-game **day 2** is now a genuine festival preparation day; on days **3–5** neighbors change duties throughout morning, afternoon and evening. During ordinary days, completed garden, lantern, orchard and pond improvements also become part of their routines.
+
+**Help make the village feel like home.** Open the new Community Diary through Menu, Journal or Town Hall, pick a neighbor and walk over to help. Six neighbors each have three distinct activities and stories (18 options). One completed act per in-game day during days 2–5 gives a modest friendship, Hearts, Fun and Social reward. Choices persist in the diary and become little hand-made decorations during the festival. No real-time deadlines or new currencies.
+
+The scheduler explicitly preserves **dates, weddings, partner promises, friend visits, important encounters and household care** over the new jobs. All prior features and existing saves remain intact; iPhone-first with no paid services. The automatic regression suite passed, while physical Safari rendering and full route playthroughs remain outstanding. Read [v2.5.9 QA and next steps](VILLAGE_LIFE_V259_QA_AND_ROADMAP.md).
+
+## Previous milestone — Maplewood Festival Market v2.5.8
 
 **The Crafts and Treats stalls are now playable village destinations.** On days 3–5 of each in-game season, visit Bea's Crafts table to create one of four seasonal twelve-patch keepsakes with a real color/quality minigame. Bring an actual dish you prepared in Hearth Kitchen to the Treats stall, where Oliver and Rosie share it with the village—one prepared plate is consumed, exactly once, and a quality-stamped supper memory is saved. Seasonal snack purchases restore needs with a once-per-day cap. Both activities integrate existing residents, relationships, kitchen ingredients, and town upgrade bonuses rather than inventing disconnected menus.
 
