@@ -210,6 +210,16 @@ function setup(api){
    g.beginPath();g.ellipse(x-28+i*28,y-35+Math.sin(a)*4,3,6,0,0,Math.PI*2);g.fill();
   }
   g.globalAlpha=1;g.fillStyle=gathering.linen==='honey'?'#f1d69e':gathering.linen==='rose'?'#f3c7d5':'#c4dcc4';g.fillRect(x-60,y-10,120,6);
+  // Individual laid napkins and silverware; visible above the original pixel characters.
+  const count=gathering.guests.length+1;
+  for(let i=0;i<count;i++){
+   const nx=x-(count-1)*27+i*54,ny=y+7;
+   g.fillStyle=gathering.linen==='honey'?'#e5b878':gathering.linen==='rose'?'#e7a8b9':'#95b69b';
+   g.fillRect(nx-20,ny,15,12);
+   g.fillStyle='#fff9e9';g.fillRect(nx-18,ny+2,11,8);
+   g.fillStyle='#b7bfc1';g.fillRect(nx+11,ny-2,3,21);
+   g.fillRect(nx+17,ny-1,2,15);
+  }
   if(gathering.candle){g.fillStyle='#ffe5a2';g.beginPath();g.ellipse(x,y-49+Math.sin(tick*6)*3,5,9,0,0,Math.PI*2);g.fill();
    g.fillStyle='#ecb68c';g.fillRect(x-3,y-44,6,18);}
   g.restore();return true;
