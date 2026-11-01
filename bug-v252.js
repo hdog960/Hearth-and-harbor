@@ -38,7 +38,7 @@ function setup(api){
   stop();const relaxed=cozy();
   modal('bug-play','<section class="bug-app bug-playing"><p class="bug-eyebrow">A LITTLE MEADOW ADVENTURE</p><h2>'+insect.name+'</h2><p>Follow the insect, then release to swing. Or use the large button.</p><div class="bug-stats"><span id="bugTimer">'+(relaxed?'Cozy mode':'20.0 seconds')+'</span><span id="bugTries">3 swings</span></div><div class="bug-frame"><canvas id="bugArena" width="380" height="350" aria-label="Moving bug and aiming net"></canvas></div><div class="bug-controls"><button id="bugSwing">🕸️ Swing net</button><button class="bug-back" data-bug="book">Back</button></div><p class="bug-note" id="bugMessage">Watch its movement before swinging.</p></section>');
   connect();const canvas=document.getElementById('bugArena'),ctx=canvas.getContext('2d');
-  const s={insect,canvas,ctx,relaxed,done:false,t:0,last:performance.now(),time:20,attempts:0,aim:{x:190,y:165},bug:{x:190,y:160},swing:0,dodge:0,seed:Math.random()*4};active=s;canvas.style.touchAction='none';
+  const s={insect,canvas,ctx,relaxed,done:false,t:0,last:performance.now(),time:20,attempts:0,aim:{x:190,y:320},bug:{x:190,y:160},swing:0,dodge:0,seed:Math.random()*4};active=s;canvas.style.touchAction='none';
   function aim(e){const b=canvas.getBoundingClientRect();s.aim={x:clamp((e.clientX-b.left)*380/b.width,24,356),y:clamp((e.clientY-b.top)*350/b.height,26,320)}}
   canvas.onpointerdown=e=>{canvas.setPointerCapture?.(e.pointerId);aim(e)};
   canvas.onpointermove=e=>{if(e.buttons||e.pointerType==='touch')aim(e)};
