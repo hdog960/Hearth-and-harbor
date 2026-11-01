@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.5.11 — Roots & Keepsakes
+# Hearth & Harbor v2.5.12 — Rooms With Purpose
+
+**Household decorating now changes how people live in their homes.** Arrange matching furnishings close together to create four functional areas: a **Storybook Nook** (bookshelf + lamp), **Restful Retreat** (bed + rug), **Gathering Corner** (sofa + flowers) and **Creative Corner** (chair + fern). The existing drawn-in dollhouse bed, sofa and bookshelves count as real furniture, so you don't have to buy duplicates. These spaces add modest extra need restoration **only after Poppy or a resident completes the matching real Daybook activity**. Choose one home focus for a small additional benefit; changing it costs nothing.
+
+Each home also earns a permanent illustrated **House Charm** after three genuine daily furniture uses. Floor accents appear at the locations of functional corners. Purchased furniture is now inspectable by tapping it in the world, with a way to launch the appropriate household activity instead of granting unlimited free needs. Built-in beds, seating and shelves likewise use the real Daybook routine instead of giving repeated instant boosts. All of these mechanics work with the existing guided and autonomous household systems. This is a genuine quality and gameplay upgrade, not a separate menu-only currency.
+
+Find the new **Rooms With Purpose** guide in **Menu, Journal, or a household Daybook**, including Poppy's cottage and six residences. Your existing \`hearth-harbor-save-v1\` data, aspirations, cooking, relationships, town upgrades, festivals, fishing, museum and household history are retained. The updated automated regression suite checks the 11 new behaviors along with 45 earlier tests. Physical iPhone Safari and screenshot-driven UX testing are still outstanding. See [v2.5.12 QA and roadmap](FUNCTIONAL_HOMES_V2512_QA_AND_ROADMAP.md).
+
+## Previous milestone — Roots & Keepsakes v2.5.11
 
 **A meaningful household-life milestone on the road to v3.0 Generations.** Poppy and all six Maplewood residents now have three selectable personal aspirations each: **Cozy Maker**, **Story Keeper**, and **Caring Heart**. Every aspiration is completed by using *real household activities* through the existing Daybook, including guided residents and resident autonomy in the currently visited home. Goals take **three separate in-game days** and must be completed in order. A household member earns each aspiration's reward only once, even across reloads, repeated routines or switching goals.
 
