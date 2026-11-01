@@ -2253,8 +2253,8 @@ function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){sto
  }
  const character=NPCS.map(n=>({n,dist:Math.hypot(wx-n.x,wy-(n.y-66))})).sort((a,b)=>a.dist-b.dist)[0];
  if(character&&character.dist<84){const n=character.n;goTo(approachNeighbor(n),()=>openTalk(n.id));if(player.target)player.target.npcId=n.id;return}
- const actions=objects.filter(o=>o.action).map(o=>({o,dist:Math.hypot(wx-o.x,(wy-(o.type==='house'?o.y-100:o.type==='museum'?o.y-95:o.type==='residence'?o.y-77:o.y-30)))})).sort((a,b)=>a.dist-b.dist);
- const hit=actions[0];if(hit&&hit.dist<(hit.o.type==='house'?150:hit.o.type==='residence'?118:hit.o.type==='museum'?148:hit.o.type==='pond'?135:hit.o.type==='discovery'?56:90)){
+ const actions=objects.filter(o=>o.action).map(o=>({o,dist:Math.hypot(wx-o.x,(wy-(o.type==='house'?o.y-100:o.type==='museum'?o.y-95:o.type==='residence'?o.y-77:o.type==='festivalstand'?o.y-80:o.y-30)))})).sort((a,b)=>a.dist-b.dist);
+ const hit=actions[0];if(hit&&hit.dist<(hit.o.type==='house'?150:hit.o.type==='residence'?118:hit.o.type==='museum'?148:hit.o.type==='pond'?135:hit.o.type==='festivalstand'?118:hit.o.type==='discovery'?56:90)){
   const o=hit.o;goTo(approachObject(o),()=>perform(o.action,o));return;
  }
  goTo({x:clamp(wx,65,1460),y:clamp(wy,200,1440)});
