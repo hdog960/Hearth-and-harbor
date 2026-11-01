@@ -120,7 +120,7 @@ test('room focus selection is saved, visible and rejects unrecognized category I
  assert.equal(x.state.functionalHomes.focus.player,'gather');
  x.engine.board('h0');
  assert.match(x.modals.at(-1).html,/Residence 0/);
- assert.match(x.modals.at(-1).html,/four/i); // purely descriptive? checked below
+ assert.match(x.modals.at(-1).html,/spaces ready/);
 });
 test('older saves and corrupt entries sanitize all homes and known actors without losing valid progress',()=>{
  const r=F.clean({focus:{player:'__proto__',h0:'rest'},
