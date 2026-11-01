@@ -1,23 +1,17 @@
-# Hearth & Harbor v2.4.7 — Promise Days
+# Hearth & Harbor v2.5.0 — Field Notes
 
-A free iPhone-first 2.5D cozy life simulator, hosted on GitHub Pages.
+The first **Living Village** vertical slice. Original iPhone-first 2.5D life sim, deployed to GitHub Pages.
 
-## New in v2.4.7
-- **Promise Days:** Optional recurring celebrations for married resident couples, with at least seven in-game days between celebrations.
-- **Three destinations:** Flower garden, café terrace, and lily pond.
-- **In-world attendance:** Partners actually travel to the chosen venue; the player must be there to finish the celebration.
-- **Three thoughtful choices:** Share a heartfelt note, bring a bouquet (12 coins), or serve a homemade meal from the Hearth Kitchen.
-- **Meaningful consequences:** Social needs, happiness and relationship bonds improve; handwritten notes can also ease small tensions.
-- **Persistent memories:** Promise Days are recorded in Town Stories, survive saved-game reloads, and cannot pay out twice.
-- **Missed events:** You may replan them without penalties.
+## This release
+- 16 collectible nature discoveries (4 common + 3 per season).
+- Six discoverable glowing field sites each in-game day.
+- Seasonal nature guide, persistent satchel, and village Curiosity Cabinet displays.
+- Donations consume one find, award a one-time 18-coin reward and exhibition grants on 4/8/12/16 displays.
+- Village noticeboard is now an interactive collection hub.
+- All earlier household, cooking, romance, weddings, and saves retained.
 
-## How to try
-People → Town Hearts → Married couple → Promise Days. After seven in-game days of marriage, plan a celebration for the following day. Visit the location between 6:00 and 8:45 PM, and choose how to mark the occasion.
+## Controls
+Tap a glowing nature treasure while in town and Poppy walks to pick it up. Open **Journal → Field Guide**, or tap the village noticeboard for the Cabinet. The season changes every seven game days.
 
-This release preserves the existing cooking, households, weddings and local save key. The weekly Promise Day interval is an intentionally short **in-game** calendar cycle; it is not a real-world annual anniversary.
-
-## Testing
-The local browser build passed 19 targeted Promise Day integration tests (planning, attendance, outcomes, saves, cooldowns and missed-event rescheduling). Physical iPhone Safari testing is still required.
-
-## Roadmap
-Next: v2.5 — Living Village, a substantial, staged expansion of exploration, collecting, town culture and seasonal activities.
+## Limitations
+This is the start of v2.5, not the complete village expansion. Museum building, wildlife animations, bug-catching minigames, new areas, and festivals remain on the roadmap. Physical iPhone Safari should be tested.
