@@ -1,23 +1,16 @@
-# Hearth & Harbor v2.3.2 — The Little Atelier
-Free, original cozy life-simulation prototype for iPhone Safari on GitHub Pages.
+# Hearth & Harbor v2.3.4 — Personal Habits
 
-## Changes
-- Arrange furniture in Poppy's cottage and six resident interiors using tap or drag.
-- Rotate any placed furnishing with a 44px touch control; move and sell items later.
-- Eight freely positioned decorations per resident interior replace three fixed slots.
-- Comfort now rewards variety of furnishing types, not only item count; repeat activities still have reduced benefits.
-- Resident leisure routines react to furnishing choices, particularly bookcases, chairs and plants.
-- Existing string-based room decoration saves migrate to positioned objects; previously placed furniture gets default orientation.
-- No coins spent until placement is confirmed, with cancellation and half-price resale.
-- Cooking recipes, neighborhood relationships, and existing local save key remain compatible.
+iPhone-first cozy 2.5D life simulator, published on GitHub Pages. Original characters and world art. No external paid services.
 
-## How to use
-Poppy: Home → Decor → choose furniture → tap/drag inside the room → Rotate if desired.
-Neighbors: People → Little Households → Visit → Decor → purchase, move or sell custom furnishings.
+## This release
+- Six individually authored hobbies and preferences: flowers for Mabel; fruit displays for Rosie; baking ideas for Oliver; reading for Jun; sketching for Bea; fishing-lure craft for Finn.
+- Residents autonomously pick their favorite activity when there is time and their vital needs are satisfied, or the player can manually direct it through the Daybook.
+- Adding a matching decoration to their home gives an extra fun boost during their favorite activity. The Daybook shows each neighbor's preferred piece of furniture, whether that item is already in the room, and their total hobby days.
+- Three distinct days enjoying a hobby earn a persisted personal memory. This cannot be farmed by repeatedly tapping an activity on one day.
+- Manual control, action queue, room decoration, 12 cooking recipes, friendship systems, and old saves are preserved.
 
-## Known limitations
-Rooms are still single-scene spaces and rotation applies to pixel illustrations rather than custom side-view artwork. iPhone Safari performance and touch behavior require physical device verification.
+## Play
+Open the public GitHub Pages site. To try the new feature: People → Little Households → Visit → Decor (Daybook) → Little passions. Select a villager, choose their hobby, or leave Auto ON to see their daily habits develop.
 
-## v2.3.3 — Everyday Autonomy
-
-Residents in a **currently visited home** now independently walk to furniture to eat, rest, read, tidy and socialize according to their needs. The Household Daybook offers individual autonomy switches. When you manually control a villager, autonomy yields immediately. Shared quality time can improve bonds only once per pair per in-game day. No automatic purchases or pantry withdrawals. Existing saves and the twelve cooking recipes remain compatible. This is a focused prototype; there is no offline or full multiroom simulation yet.
+## Not yet implemented
+A complete skill tree for each hobby, autonomous decisions while the app is closed, family/romance progression, and huge town districts are future work.
