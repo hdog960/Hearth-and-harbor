@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.13 — Little Atelier
+# Hearth & Harbor v2.5.14 — At Our Table
+
+**A meaningful new household-and-cooking connection on the road to v3.0 Generations.** The twelve recipes you prepare in **Hearth Kitchen** now have a second purpose beyond eating them or using the old quick Share action: host a real **family supper** in Poppy's cottage or an occupied neighbor home. Choose a prepared plate, select one of **three conversation themes**, and walk to the dining area. Only when you arrive does the supper consume **exactly one** real cooked dish from your plate shelf.
+
+At a neighbor's home, the dinner includes the actual residents who live there. Their needs recover, favorite foods earn a little extra friendship, and conversation can strengthen their existing Town Bonds and reduce Tensions. **One featured supper per in-game day per home** creates a persistent, quality-rated memory; three completed suppers unlock a little framed **family-table keepsake** displayed in the real room. At home, Poppy can also enjoy a quiet supper and progress an existing meal-related aspiration. All supper benefits are free of real-money purchases and don't invent coins, extra ingredients, or new residents.
+
+Find **At Our Table** in Menu, Journal, household Daybooks, or directly beside the prepared-meal shelf in Hearth Kitchen. Existing saves, full cooking minigames, relationships, aspirations, room decorating, festivals, fishing, museum, gardening and village progress remain intact under the same local save key. The automated suite covers **76 regression scenarios**. Physical iPhone Safari and screenshot-based end-to-end testing remain outstanding.
+
+See [v2.5.14 QA and Generations roadmap](FAMILY_TABLE_V2514_QA_AND_ROADMAP.md).
+
+## Previous milestone — Little Atelier v2.5.13
 
 **Decorating is more flexible and forgiving.** Poppy's cottage and all six resident homes now have their own **furniture storage**. Store purchased furnishings instead of selling them, then put them back in the room later without paying again. Stored pieces preserve ownership and rotation, and the usual furniture placement rules still apply. Your stored items persist in the existing local save.
 
