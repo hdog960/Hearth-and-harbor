@@ -105,3 +105,11 @@ Deploy the repository root to GitHub Pages (main branch), then open in iPhone Sa
   ],
   "errors": []
 }
+
+## v2.3.2 — The Little Atelier
+- Added draggable/tap placement, four-orientation rotation, move and sell workflows in Poppy's home and six neighbor interiors.
+- Expanded resident home furnishing capacity from 3 fixed positions to 8 positioned items.
+- Added migration for old residenceProps string arrays to safe {kind,x,y,rot} records, saved with the existing localStorage key.
+- Introduced comfort variety bonuses and decor-aware resident leisure locations.
+- Added distinct cancel / rotate controls with large tap targets and a new service worker cache.
+- Completed local desktop-Chromium mobile-size checks covering placement, migration, cooking, menus, and multiple viewports; further physical iPhone testing needed.
