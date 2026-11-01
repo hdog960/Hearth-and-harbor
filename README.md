@@ -1,17 +1,12 @@
-# Hearth & Harbor v2.4.5 — Shared Futures
+# Hearth & Harbor v2.4.6 — Promises in Bloom
 
-Free, iPhone-first, 2.5D cozy life simulation hosted on GitHub Pages.
+Free, original iPhone-first cozy 2.5D life simulator running on GitHub Pages.
 
-## New in v2.4.5
-- Committed couples can discuss their future from **People → Town Hearts → Life plans**.
-- After two genuine shared evenings, a couple can choose one of their existing cottages to share, if both addresses have space. No forced moves or evictions.
-- Couples can also choose to keep independent homes without a penalty. The decision becomes a saved Town Story.
-- Shared-home partners can enjoy one homemade dinner per in-game day, consuming a prepared dish from the 12-recipe Hearth Kitchen and improving both residents' needs and bond.
-- Couples living together enjoy their evening tradition at their own cottage.
-- Older saves and relationship systems remain supported.
+## This release
+- Committed resident couples with three shared evenings and a prior life-plan discussion can choose engagement.
+- Optional ceremonies can be planned at the flower garden, cafe terrace, or lily pond for the following evening (6:00–8:30 PM).
+- Both residents travel to the venue and the player must attend before selecting one of three vows.
+- Marriage records, promises, and Town Stories persist in existing local saves; missed weddings can be rescheduled.
+- Married housemates receive a small daily social-needs benefit. Marriage does not force cohabitation.
 
-## Playing
-Open https://hdog960.github.io/Hearth-and-harbor/ in Safari. Cooking, home decorating, relationship outings, resident autonomy, and the original life-sim features are available.
-
-## Limits
-A full marriage ceremony, children, aging and generational inheritance are future milestones. Real life continues only when the game is open; there is no paid backend. Some old code and assets remain prototype-level, and physical iPhone Safari testing is still needed.
+This update covers **resident couples only**. Player marriage, children and generations remain future milestones. No accounts, ads, paid hosting, or server saves.
