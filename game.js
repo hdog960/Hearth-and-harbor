@@ -1,11 +1,11 @@
-/* Hearth & Harbor — Evening Traditions v2.4.4
+/* Hearth & Harbor — Shared Futures v2.4.5
    A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),rand=(a,b)=>a+Math.random()*(b-a);
 const hash=(n)=>{const x=Math.sin(n*127.1+8.45)*43758.5453;return x-Math.floor(x)};
 const SAVE='hearth-harbor-save-v1';
-const DEF=()=>({socialPostcard:null,townHearts:{},coupleMoments:[],coupleBouquets:{},heartStories:{},romance:{},householdAuto:{},residentHabits:{},autoBondDay:{},cooking:defaultCooking(),residenceThemes:{},residenceProps:{},residenceDaily:{},residenceDecor:{},residenceVisits:{},residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
+const DEF=()=>({socialPostcard:null,townHearts:{},coupleMoments:[],coupleBouquets:{},couplePlans:{},coupleDinners:{},heartStories:{},romance:{},householdAuto:{},residentHabits:{},autoBondDay:{},cooking:defaultCooking(),residenceThemes:{},residenceProps:{},residenceDaily:{},residenceDecor:{},residenceVisits:{},residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
 const COOKING_RECIPE_IDS=['toast','salad','soup','pancakes','eggs','noodles','fishplate','tart','biscuits','jam','skewers','dumplings'];
 const COOKING_ING_IDS=['bread','butter','berry','apple','carrot','herb','flour','milk','egg','noodle','fish','honey','onion','potato'];
 function defaultCooking(){return {pantry:{bread:2,butter:1,berry:4,apple:1,carrot:1,herb:1,flour:1,milk:1,egg:2,noodle:1,fish:1,honey:1,onion:1,potato:1},dishes:[],xp:0,made:0,mastered:Object.fromEntries(COOKING_RECIPE_IDS.map(id=>[id,0])),servedDaily:{},relaxed:false}}
@@ -30,7 +30,7 @@ function cleanSave(raw){
  const safeStory=/^\d{1,4}:[01]$/;
  const safeVisit=/^v:(?:[1-9]\d{0,3}):[01]$/;
  const safeDay=/^[1-9]\d{0,3}$/;
- const safeTownStory=/^(?:c:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|\d{1,4}:[01]|v:[1-9]\d{0,3}:[01]|m:\d{1,4}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|h:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|r:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn))$/;
+ const safeTownStory=/^(?:c:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|\d{1,4}:[01]|v:[1-9]\d{0,3}:[01]|m:\d{1,4}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|[hpd]:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|r:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn))$/;
  const safeCouple=/^c:([1-9]\d{0,3}):((?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn))$/;
  const lifeRecord=obj(raw.residentLife);
  const savedHomes=Object.fromEntries([...npcIds].map((id,i)=>{
@@ -76,7 +76,7 @@ function cleanSave(raw){
   {day:number(pc.day,0,0,9999)|0,from:pc.from,place:pc.place,kind:pc.kind,status:pc.status}:null;
  const res={...d,socialPostcard:postcard,townHearts:HearthTownHearts.clean(raw.townHearts),
    coupleMoments:Array.isArray(raw.coupleMoments)?[...new Set(raw.coupleMoments.filter(x=>typeof x==='string'&&safeCouple.test(x)&&x.split(':')[2]?.split('|').every(id=>npcIds.has(id))))].slice(-48):[],
-   coupleBouquets:Object.fromEntries(Object.entries(obj(raw.coupleBouquets)).filter(([k,v])=>safeCouple.test(k)&&k.split(':')[2]?.split('|')[0]!==k.split(':')[2]?.split('|')[1]&&Number(v)===1).slice(-20).map(([k])=>[k,1])),romance,householdAuto,residentHabits,autoBondDay,residenceThemes,residenceProps,residenceDaily,residenceDecor,residenceVisits,residentHomes:savedHomes,householdFunds:savedFunds,housingDay:number(raw.housingDay,number(raw.day,1,1,9999)|0,0,9999)|0,householdMoves:houseMoves,friendVisits,invitedVisits,visitCounts,visitSeen:Array.isArray(raw.visitSeen)?[...new Set(raw.visitSeen.filter(x=>typeof x==='string'&&safeVisit.test(x)))].slice(-35):[],residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
+   coupleBouquets:Object.fromEntries(Object.entries(obj(raw.coupleBouquets)).filter(([k,v])=>safeCouple.test(k)&&k.split(':')[2]?.split('|')[0]!==k.split(':')[2]?.split('|')[1]&&Number(v)===1).slice(-20).map(([k])=>[k,1])),couplePlans:Object.fromEntries(Object.entries(obj(raw.couplePlans)).filter(([k,v])=>safePair.test(k)&&['apart','together'].includes(v?.choice)).map(([k,v])=>[k,{choice:v.choice,day:number(v.day,0,0,9999)|0,home:/^h[0-5]$/.test(v.home)?v.home:''}]).slice(0,15)),coupleDinners:Object.fromEntries(Object.entries(obj(raw.coupleDinners)).filter(([k])=>safePair.test(k)).map(([k,v])=>[k,number(v,0,0,9999)|0]).slice(0,15)),romance,householdAuto,residentHabits,autoBondDay,residenceThemes,residenceProps,residenceDaily,residenceDecor,residenceVisits,residentHomes:savedHomes,householdFunds:savedFunds,housingDay:number(raw.housingDay,number(raw.day,1,1,9999)|0,0,9999)|0,householdMoves:houseMoves,friendVisits,invitedVisits,visitCounts,visitSeen:Array.isArray(raw.visitSeen)?[...new Set(raw.visitSeen.filter(x=>typeof x==='string'&&safeVisit.test(x)))].slice(-35):[],residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
    hair:safeColor(raw.hair,d.hair),outfit:safeColor(raw.outfit,d.outfit),skin:safeColor(raw.skin,d.skin),
    hairStyle:number(raw.hairStyle,d.hairStyle,0,4)|0,coins:number(raw.coins,d.coins,0,1000000),hearts:number(raw.hearts,0,0,1000000),
    day:number(raw.day,1,1,9999)|0,minute:number(raw.minute,d.minute,0,1439.999),season:number(raw.season,0,0,3)|0,
@@ -408,7 +408,7 @@ function processHousingDay(){
  }
  state.housingDay=state.day;
  // A close single neighbor pair may independently decide to move in after several visits.
- const eligible=NPCS.map(n=>({n,p:homeCandidate(n,34,3)})).filter(x=>x.p)
+ const eligible=NPCS.map(n=>({n,p:homeCandidate(n,34,3)})).filter(x=>x.p&&!partnerFor(x.n.id)&&!partnerFor(x.p.person.id))
   .sort((a,b)=>b.p.score-a.p.score);
  if(eligible.length){const {n,p}=eligible[0];moveIn(n,p.person)}
  save();
@@ -843,7 +843,7 @@ function coupleRituals(day=state.day,minute=state.minute){
  return connected.filter(c=>{
   const [a,b]=c.key.split('|');return HearthTownHearts.available(state,[a,b])&&(state.townTensions[c.key]||0)<8;
  }).map((c,i)=>{
-  const place=COUPLE_RITUAL_PLACES[(day+i)%COUPLE_RITUAL_PLACES.length],pair=c.key.split('|');
+  const pair=c.key.split('|'),place=shared245(c.key)?{name:apartmentName(residentHome(pair[0])),point:householdFront(pair[0]),icon:'🏡',verb:'enjoying an evening at home',art:'tea'}:COUPLE_RITUAL_PLACES[(day+i)%COUPLE_RITUAL_PLACES.length];
   return {id:`c:${day}:${c.key}`,day,pair,point:place.point,place:place.name,icon:place.icon,doing:place.verb,art:place.art,stage:c.stage};
  });
 }
@@ -876,6 +876,45 @@ function offerCoupleFlowers(key){
  if(state.coins<10)return notify('A fresh bouquet costs 10 coins.');
  state.coins-=10;state.coupleBouquets[event.id]=1;save();updateUI();notify('A little bouquet is waiting for the couple! 🌸');townHeartsBoard();
 }
+
+// Shared Futures v2.4.5 — deliberately separate from marriage and generations.
+const meals245={toast:'Cinnamon Toast',salad:'Fruit Salad',soup:'Vegetable Soup',pancakes:'Berry Pancakes',eggs:'Sunny Eggs',noodles:'Herb Noodles',fishplate:'Grilled Fish',tart:'Berry Tart',biscuits:'Honey Biscuits',jam:'Apple Jam',skewers:'Garden Skewers',dumplings:'Garden Dumplings'};
+function committed245(key){return HearthTownHearts.connections(state,NPCS).find(c=>c.key===key&&c.stage==='partners')}
+function shared245(key){let [a,b]=key.split('|');return residentHome(a)===residentHome(b)}
+function ready245(key){return !!committed245(key)&&HearthTownHearts.available(state,key.split('|'))&&(state.townTensions[key]||0)<8&&state.coupleMoments.filter(m=>m.endsWith(':'+key)).length>=2}
+function plans245(key){
+ const c=committed245(key);if(!c)return townHeartsBoard();
+ const [a,b]=key.split('|').map(id=>NPCS.find(n=>n.id===id)),shared=shared245(key),ready=ready245(key),locked=state.couplePlans[key]?.day===state.day;
+ const spare=householdMembers(residentHome(a.id)).length===1&&householdMembers(residentHome(b.id)).length===1;
+ const homes=[a,b].map(n=>'<button class="btn" data-act="couple-share245" data-id="'+key+'|'+residentHome(n.id)+'" '+(!ready||locked||!spare?'disabled':'')+'>🏡 Share '+escapeHtml(n.name)+'’s cottage · '+escapeHtml(apartmentName(residentHome(n.id)))+'</button>').join('');
+ const dishes=(state.cooking?.dishes||[]).map((d,i)=>'<button class="btn" data-act="couple-dinner245" data-id="'+key+'|'+i+'" '+(state.coupleDinners[key]===state.day?'disabled':'')+'>🍽️ Serve '+escapeHtml(meals245[d.id]||'home cooking')+'</button>').join('');
+ showModal('life-plans',`<div class="life-plan"><div class="life-plan-eyebrow">💌 THEIR NEXT CHAPTER</div><h2>${escapeHtml(a.name)} & ${escapeHtml(b.name)}</h2><p>Some love stories grow under one roof. Others bloom in two welcoming homes.</p><div class="life-plan-status">💕 ${c.sharedDays} meaningful visits · 🌙 ${state.coupleMoments.filter(m=>m.endsWith(':'+key)).length} shared evenings<br>🏡 ${shared?'Sharing '+escapeHtml(apartmentName(residentHome(a.id))):'Living in separate cottages'}</div>${!shared?'<h3>A decision for their future</h3><p>'+(ready?'They are ready to discuss sharing a home.':'They need two evenings together and no serious disagreements before deciding.')+'</p>'+homes+(!spare?'<p>One cottage is already full. Nobody will be evicted.</p>':'')+'<button class="btn secondary" data-act="couple-apart245" data-id="'+key+'" '+(!ready||locked?'disabled':'')+'>🌼 Cherish their separate homes</button>':'<h3>A home-cooked dinner</h3><p>Share a meal you made in the Hearth Kitchen. One meal per couple per day.</p>'+(dishes||'<p>Prepare a dish first!</p>')}</div><button class="btn secondary" data-act="town-hearts">← Town Hearts</button>`);
+}
+function sharedHome245(key,home){
+ if(!ready245(key)||shared245(key)||state.couplePlans[key]?.day===state.day||!/^h[0-5]$/.test(home))return plans245(key);
+ const ids=key.split('|'),receiver=NPCS.find(n=>ids.includes(n.id)&&residentHome(n.id)===home),mover=NPCS.find(n=>ids.includes(n.id)&&residentHome(n.id)!==home);
+ if(!receiver||!mover||householdMembers(home).length!==1||householdMembers(residentHome(mover.id)).length!==1){notify('A cottage is full. No one will be displaced.');return plans245(key)}
+ if(!moveIn(mover,receiver))return plans245(key);
+ state.couplePlans[key]={choice:'together',day:state.day,home};
+ state.townStories.push({id:'p:'+state.day+':'+key,day:state.day,pair:ids,title:'A home for two',text:receiver.name+' and '+mover.name+' decided to make a home together at '+apartmentName(home)+'.',outcome:'household'});state.townStories=state.townStories.slice(-24);
+ save();notify('🏡 A new chapter begins!');plans245(key);
+}
+function apart245(key){
+ if(!ready245(key)||shared245(key)||state.couplePlans[key]?.day===state.day)return plans245(key);
+ state.couplePlans[key]={choice:'apart',day:state.day,home:''};
+ state.townStories.push({id:'p:'+state.day+':'+key,day:state.day,pair:key.split('|'),title:'Room to grow',text:'This couple decided to enjoy separate homes and take life at their own pace.',outcome:'romance'});state.townStories=state.townStories.slice(-24);
+ for(const id of key.split('|'))lifeFor(id).needs.fun=clamp(lifeFor(id).needs.fun+6,0,100);
+ save();notify('🌷 A lovely choice at their own pace.');plans245(key);
+}
+function dinner245(key,index){
+ const i=Number(index);if(!committed245(key)||!shared245(key)||!Number.isInteger(i)||i<0||i>=state.cooking.dishes.length||state.coupleDinners[key]===state.day)return plans245(key);
+ const dish=state.cooking.dishes.splice(i,1)[0];
+ state.coupleDinners[key]=state.day;for(const id of key.split('|')){const n=lifeFor(id).needs;n.food=clamp(n.food+22+5*dish.quality,0,100);n.fun=clamp(n.fun+5,0,100);n.social=clamp(n.social+12,0,100)}
+ state.townBonds[key]=clamp((state.townBonds[key]||0)+3,0,100);
+ state.townStories.push({id:'d:'+state.day+':'+key,day:state.day,pair:key.split('|'),title:'Dinner for two',text:'The couple shared '+(meals245[dish.id]||'a cozy homemade meal')+' together in their cottage.',outcome:'romance'});state.townStories=state.townStories.slice(-24);
+ save();notify('🍽️ A lovely meal together!');plans245(key);
+}
+
 function partnerFor(id){const c=HearthTownHearts.connections(state,NPCS).find(c=>['courting','partners'].includes(c.stage)&&c.key.split('|').includes(id));
  return c?NPCS.find(n=>n.id===c.key.split('|').find(x=>x!==id)):null;
 }
@@ -903,8 +942,8 @@ function drawCoupleSparkles(g){
 function townHeartsBoard(){
  const pairs=HearthTownHearts.connections(state,NPCS);
  const now=coupleRituals();
- const visible=pairs.map(c=>{const event=now.find(r=>pairKey(r.pair)===c.key),done=event&&state.coupleMoments.includes(event.id),gift=event&&state.coupleBouquets[event.id];
-  return `<div class="card couple-heart-card"><div><b>${c.stage==='partners'?'💞':c.stage==='courting'?'💕':'🌷'} ${escapeHtml(c.names.join(' & '))}</b><small>${escapeHtml(c.label)} · ${c.sharedDays} meaningful afternoons together<br>${event?`${done?'✨ Shared tonight':'🌙 Tonight at the '+escapeHtml(event.place)} · ${escapeHtml(event.doing)}`:'Evening traditions begin at 8:45 PM during active play.'}<br>Sharing a cottage remains a separate household choice.</small></div>${event&&!done&&['courting','partners'].includes(c.stage)?`<button data-act="couple-flowers" data-id="${c.key}" ${gift||state.coins<10?'disabled':''}>${gift?'🌸 Gift left':'🌷 Flowers · 10 🪙'}</button>`:''}</div>`;
+ const visible=pairs.map(c=>{const event=now.find(r=>pairKey(r.pair)===c.key),done=event&&state.coupleMoments.includes(event.id),gift=event&&state.coupleBouquets[event.id],future=c.stage==='partners'?'<button data-act="couple-plans245" data-id="'+c.key+'">🏡 Life plans</button>':'';
+  return `<div class="card couple-heart-card"><div><b>${c.stage==='partners'?'💞':c.stage==='courting'?'💕':'🌷'} ${escapeHtml(c.names.join(' & '))}</b><small>${escapeHtml(c.label)} · ${c.sharedDays} meaningful afternoons together<br>${event?`${done?'✨ Shared tonight':'🌙 Tonight at the '+escapeHtml(event.place)} · ${escapeHtml(event.doing)}`:'Evening traditions begin at 8:45 PM during active play.'}<br>Sharing a cottage remains a separate household choice.</small></div>${event&&!done&&['courting','partners'].includes(c.stage)?`<button data-act="couple-flowers" data-id="${c.key}" ${gift||state.coins<10?'disabled':''}>${gift?'🌸 Gift left':'🌷 Flowers · 10 🪙'}</button>`:''}${future}</div>`;
  }).join('');
  showModal('town-hearts',`<h2>💕 Town Hearts</h2><p>Little relationships are growing around the village. Residents can discover feelings and choose to date after many friendly meetings. Existing partnerships and disagreements are respected.</p>${visible||'<div class="card"><div><b>🌱 Friendships first</b><small>Get to know the neighbors and spend time in town. Warm friendships may slowly become something more, but romance is never guaranteed.</small></div></div>'}<p>Love stories evolve while you play; they never progress in the background. Friendships remain valuable on their own.</p>${btn('📜 Town Stories','stories')}`);
 }
@@ -2098,6 +2137,10 @@ function handleAction(action,id){if(action==='more-talk')return talkChoices('mor
  if(action==='room-chat'){if(scene==='residence'&&roomResidents().some(n=>n.id===id))return openTalk(id);return}
  if(action==='town-hearts')return townHeartsBoard();
  if(action==='couple-flowers')return offerCoupleFlowers(id);
+ if(action==='couple-plans245')return plans245(id);
+ if(action==='couple-share245'){const cut=id.lastIndexOf('|');if(cut>0)return sharedHome245(id.slice(0,cut),id.slice(cut+1));return}
+ if(action==='couple-apart245')return apart245(id);
+ if(action==='couple-dinner245'){const cut=id.lastIndexOf('|');if(cut>0)return dinner245(id.slice(0,cut),id.slice(cut+1));return}
  if(action==='visits')return visitPlans();
  if(action==='housing')return housingBoard();
  if(action==='journal')return journal();
