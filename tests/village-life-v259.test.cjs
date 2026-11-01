@@ -161,5 +161,5 @@ test('runtime references new module, save migration and offline assets before ga
   assert.ok(html.includes(asset));
   assert.ok(sw.includes("'./"+asset+"'"));
  }
- assert.match(sw,/hearth-harbor-v259-village-in-motion/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/); // Cache ID advances with each release.
 });
