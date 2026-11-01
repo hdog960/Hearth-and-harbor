@@ -11,7 +11,7 @@
 .hf-status{background:#e5f1e6;color:#426c58;padding:11px 13px;border-radius:12px;font-weight:800;font-size:13px;margin:14px 0}
 .hf-hosts{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 15px}
 .hf-hosts span{background:#fff8e8;border:1px solid #ecd7b9;border-radius:12px;padding:9px 10px;font-size:12px;font-weight:700}
-.hf-primary,.hf-controls button{background:#488975;color:#fffdf1;border:2px solid #32715f;border-radius:14px;padding:13px 17px;min-height:49px;font:900 14px inherit;cursor:pointer;touch-action:manipulation}
+.hf-primary,.hf-controls button{background:#488975;color:#fffdf1;border:2px solid #32715f;border-radius:14px;padding:13px 17px;min-height:49px;font-family:inherit;font-size:14px;font-weight:900;cursor:pointer;touch-action:manipulation}
 .hf-primary{display:block;width:100%;font-weight:900;font-size:15px;box-shadow:0 4px 0 #b7d3c0}
 .hf-primary:active,.hf-controls button:active{transform:translateY(2px);box-shadow:none}
 .hf-calendar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:16px}
