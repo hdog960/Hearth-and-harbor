@@ -37,7 +37,7 @@ function clean(input){
   }
   out.people[id]={
    path:p&&finished[p]?null:p,
-   stage:Number.isInteger(s.stage)&&s.stage>=0&&s.stage<=2&&!finished[p]?s.stage:0,
+   stage:p&&Number.isInteger(s.stage)&&s.stage>=0&&s.stage<=2&&!finished[p]?s.stage:0,
    lastDay:boundedDay(s.lastDay),
    finished
   };
