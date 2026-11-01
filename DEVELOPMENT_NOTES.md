@@ -7,3 +7,14 @@ Relationships progress *only* when existing neighbor visits complete after both 
 **Persistence:** Sanitized `townHearts` state and `r:DAY:PAIR` memories; existing saves migrate to empty records and keep all previous data. A separate board appears in People, Journal and Menu.
 
 **Known limitations:** Simple authored compatibility scores, no dating dialogue between NPCs, no ceremony, no automatic moving in, no gender preference customization. Visual appearance relies on existing 2.5D sprites. Progress depends on the town running in an open tab; no offline simulation.
+
+## v2.4.4 — Evening Traditions QA and implementation
+
+- Resident NPCs with dating or committed status can have independent evening outings; no autonomous marriage or irreversible life decisions.
+- The 8:45–10:42 PM time window avoids the existing scheduled afternoon community encounters and evening social visits.
+- Both NPCs follow normal movement routes and must arrive before rewards or stories are recorded.
+- The world now displays a shared activity icon and subtle animated affectionate particles.
+- A once-per-outing bouquet costs 10 coins, adds a small optional social benefit, and is protected against repeated purchases.
+- The Town Hearts board and a new partner-focused conversation topic reflect the relationship.
+- Added bounded, validated saved state for couple moments and bouquet gifts, and Town Stories support for their IDs.
+- Local Chromium 390×844 testing: bootstrap, couple card, bouquet purchase, full NPC routing, both arriving, one saved story, and no JavaScript exceptions. Existing 28 resident relationship tests plus 19 static integration checks passed. Full physical iPhone validation still required.
