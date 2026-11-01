@@ -1,4 +1,13 @@
-/* Hearth & Harbor — Cozy Routines v2.3.1
+  const item=(state.residenceProps[activeResidence]||[]).find(f=>Math.hypot(wx-f.x,wy-f.y)<46);
+  if(item){goTo(nearestWalkable({x:item.x+64,y:item.y+35},'residence',true)||{x:580,y:670},()=>{
+   if(item.kind==='plant'||item.kind==='flowers')changeNeed('fun',6);
+   if(item.kind==='books')changeNeed('fun',9);
+   notify(`You admire the ${furnitureTypes.find(f=>f.id===item.kind)?.name||'furnishing'}. What a lovely touch! ✨`);
+  });return}
+function drawPlacedFurniture(g,f){
+ if(!f)return;g.save();g.translate(f.x,f.y);g.rotate(((f.rot||0)%4)*Math.PI/2);drawFurniture(g,f.kind,0,0);g.restore();
+}
+/* Hearth & Harbor — The Little Atelier v2.3.2
    A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
@@ -52,7 +61,14 @@ function cleanSave(raw){
  const residenceVisits=Object.fromEntries(Array.from({length:6},(_,i)=>[`h${i}`,number(obj(raw.residenceVisits)[`h${i}`],0,0,9999)|0]));
  const residenceThemes=Object.fromEntries(Array.from({length:6},(_,i)=>[`h${i}`,number(obj(raw.residenceThemes)[`h${i}`],i,0,5)|0]));
  const allowedProps=['plant','flowers','books','lamp','rug','chair'];
- const residenceProps=Object.fromEntries(Array.from({length:6},(_,i)=>{const h=`h${i}`,rows=Array.isArray(obj(raw.residenceProps)[h])?raw.residenceProps[h]:[];return [h,rows.filter(v=>allowedProps.includes(v)).slice(0,3)]}));
+ const residenceProps=Object.fromEntries(Array.from({length:6},(_,i)=>{
+  const h=`h${i}`,rows=Array.isArray(obj(raw.residenceProps)[h])?raw.residenceProps[h]:[];
+  const legacySpots=[[474,460],[677,900],[909,701]];
+  return [h,rows.filter(v=>allowedProps.includes(typeof v==='string'?v:v?.kind)).slice(0,8).map((v,j)=>{
+   const old=typeof v==='string',kind=old?v:v.kind,spot=legacySpots[j%3];
+   return {kind,x:number(old?undefined:v.x,spot[0],265,945),y:number(old?undefined:v.y,spot[1],300,1020),rot:number(old?0:v.rot,0,0,3)|0};
+  })];
+ }));
  const residenceDaily=Object.fromEntries(Object.entries(obj(raw.residenceDaily)).filter(([k])=>(npcIds.has(k)||k==='player')).map(([k,v])=>[k,{day:number(obj(v).day,0,0,9999)|0,done:Array.isArray(obj(v).done)?[...new Set(v.done.filter(a=>['rest','read','tidy','meal','chat'].includes(a)))].slice(0,5):[]}]));
 
  const res={...d,residenceThemes,residenceProps,residenceDaily,residenceDecor,residenceVisits,residentHomes:savedHomes,householdFunds:savedFunds,housingDay:number(raw.housingDay,number(raw.day,1,1,9999)|0,0,9999)|0,householdMoves:houseMoves,friendVisits,invitedVisits,visitCounts,visitSeen:Array.isArray(raw.visitSeen)?[...new Set(raw.visitSeen.filter(x=>typeof x==='string'&&safeVisit.test(x)))].slice(-35):[],residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
@@ -75,7 +91,7 @@ function cleanSave(raw){
    gardenBoost:Array.from({length:4},(_,i)=>!!(Array.isArray(raw.gardenBoost)&&raw.gardenBoost[i])),
    inventory:Array.isArray(raw.inventory)?raw.inventory.filter(x=>x==='flower-seed').slice(0,100):[],
    fish:Array.isArray(raw.fish)?raw.fish.filter(x=>typeof x==='string').slice(0,1000):[],
-   placed:Array.isArray(raw.placed)?raw.placed.filter(f=>f&&furnitureTypes.some(t=>t.id===f.kind)).slice(0,80).map(f=>({kind:f.kind,x:number(f.x,550,220,940),z:number(f.z,610,300,1030)})):[]};
+   placed:Array.isArray(raw.placed)?raw.placed.filter(f=>f&&furnitureTypes.some(t=>t.id===f.kind)).slice(0,80).map(f=>({kind:f.kind,x:number(f.x,550,220,940),z:number(f.z,610,300,1030),rot:number(f.rot,0,0,3)|0})):[]};
  res.cooking=cleanCookingSave(raw.cooking);
  return res;
 }
@@ -447,7 +463,7 @@ const HOME_ACTIONS={
  meal:{name:'Make a simple meal',icon:'🥣',spot:[824,390],boost:{food:24,energy:2},desc:'Residents can feed themselves without a minigame.'},
  chat:{name:'Quality time',icon:'💗',spot:[787,580],boost:{social:20,fun:7},desc:'A friendly pause to connect with your household.'}
 };
-function homeComfort(home=activeResidence){if(!home)return 0;return Math.min(100,18+18*(state.residenceDecor[home]||0)+7*(state.residenceProps[home]?.length||0))}
+function homeComfort(home=activeResidence){if(!home)return 0;const props=state.residenceProps[home]||[],variety=new Set(props.map(p=>typeof p==='string'?p:p.kind)).size;return Math.min(100,18+17*(state.residenceDecor[home]||0)+4*props.length+3*variety)}
 function selectHouseholdResident(id){
  if(scene!=='residence'||!roomResidents().some(n=>n.id===id))return;
  householdQueue=[];householdBusy=false;householdCurrent=null;updateRoutineStrip();player.target=null;controlledResident=id;
@@ -457,7 +473,7 @@ function selectHouseholdResident(id){
 function stopGuidingResident(){controlledResident=null;stopRoutine();player.target=null;player.x=565;player.y=840;player.facing='front';save();updateUI();notify('Poppy is in charge again! 🌷')}
 function residentDayRecord(id){let v=state.residenceDaily[id];if(!v||v.day!==state.day)v=state.residenceDaily[id]={day:state.day,done:[]};return v}
 
-function ownHomeComfort(){return Math.min(100,24+Math.min(12,state.placed.length)*6)}
+function ownHomeComfort(){return Math.min(100,24+Math.min(12,state.placed.length)*4+Math.min(8,new Set(state.placed.map(f=>f.kind)).size)*3)}
 function ownDaybook(){
  if(scene!=='home')return manageHousehold();
  const comfort=ownHomeComfort(),rec=residentDayRecord('player');
@@ -498,10 +514,11 @@ function nextOwnHomeAction(){
 function stopRoutine(){householdQueue=[];householdBusy=false;householdCurrent=null;player.target=null;updateRoutineStrip()}
 function residentHomePose(n,i){
  const needs=lifeFor(n.id).needs,slot=Math.floor(state.minute/120)+i;
+ const props=state.residenceProps[activeResidence]||[];
  if(needs.energy<35||state.minute>=1260||state.minute<420)return{x:310+i*35,y:650+i*95,act:'💤'};
  if(needs.food<40||slot%4===0)return{x:725+i*30,y:475+i*22,act:'🍲'};
- if(needs.fun<38||slot%4===1)return{x:360+i*65,y:555+i*55,act:'📚'};
- return{x:730-i*70,y:685+i*70,act:'☕'};
+ if(needs.fun<38||slot%4===1){const shelf=props.find(p=>p.kind==='books');return shelf?{x:Math.min(870,shelf.x+57),y:Math.min(980,shelf.y+38),act:'📚'}:{x:360+i*65,y:555+i*55,act:'📚'}}
+ const cozy=props.find(p=>p.kind==='chair'||p.kind==='plant');return cozy?{x:Math.min(875,cozy.x+57),y:Math.min(960,cozy.y+44),act:'☕'}:{x:730-i*70,y:685+i*70,act:'☕'};
 }
 function manageHousehold(){
  if(scene==='home')return ownDaybook();
@@ -511,15 +528,16 @@ function manageHousehold(){
  const roster='<div class="house-roster"><button data-act="guide-self" class="'+(!chosen?'selected':'')+'">🌼 '+escapeHtml(state.name)+' <small>My character</small></button>'+members.map(n=>'<button data-act="guide" data-id="'+n.id+'" class="'+(chosen?.id===n.id?'selected':'')+'">'+n.emoji+' '+escapeHtml(n.name)+' <small>'+escapeHtml(personalMood(n).name)+'</small></button>').join('')+'</div>';
  const actionGrid=chosen?'<div class="house-action-panel"><h3>'+escapeHtml(chosen.name)+"'s Daybook</h3><p>Choose an activity. Your resident walks to the station, then performs it.</p><div class=\"house-action-grid\">"+Object.entries(HOME_ACTIONS).map(([k,a])=>'<button data-act="queue-home" data-id="'+k+'"><span>'+a.icon+'</span><b>'+a.name+'</b><small>'+(residentDayRecord(chosen.id).done.includes(k)?'Already enjoyed today':'Add to routine')+'</small></button>').join('')+'</div><p>Queue up to three activities; reopen Daybook to add more.</p>'+btn('Clear queued activities','clear-home-queue')+'</div>':'<p class="house-help">Choose a resident to guide their day, or keep exploring as Poppy.</p>';
  const themes='<div class="house-themes">'+HOME_THEMES.map((v,i)=>'<button data-act="room-theme" data-id="'+i+'" aria-pressed="'+(i===theme)+'" class="'+(i===theme?'selected':'')+'" style="--theme:'+v.wall+'">'+v.emoji+'<small>'+v.name+'</small></button>').join('')+'</div>';
- const propsUI='<div class="house-shop">'+['plant','flowers','books','lamp','rug','chair'].map(k=>{const f=furnitureTypes.find(x=>x.id===k);return '<button data-act="room-prop" data-id="'+k+'" '+(props.length>=3?'disabled':'')+'>'+f.emoji+' '+f.name+'<small>🪙 '+Math.max(10,Math.round(f.cost*.65))+'</small></button>'}).join('')+'</div>';
- showModal('daybook','<div class="house-header"><span>🏡</span><div><h2>A House Is a Home</h2><p>'+escapeHtml(apartmentName(activeResidence))+' · '+style.emoji+' '+style.name+'</p></div></div><div class="house-comfort"><strong>✨ Home comfort '+comfort+'/100</strong><span><i style="width:'+comfort+'%"></i></span><small>Decorated homes make daily routines more restorative. Comfort is capped for balance.</small></div><h3>Who will you guide?</h3>'+roster+actionGrid+'<h3>Decorate this home</h3><p>Wallpaper colors are free to change. Furnishings cost coins and improve comfort.</p>'+themes+'<h3>Personal touches ('+props.length+'/3)</h3>'+propsUI+(props.length?btn('Remove last decoration (half refund)','room-remove-prop'):'')+btn('Visit rooms / comfort upgrades','room-info'));
+ const propsUI='<div class="house-shop">'+['plant','flowers','books','lamp','rug','chair'].map(k=>{const f=furnitureTypes.find(x=>x.id===k);return '<button data-act="room-prop" data-id="'+k+'" '+(props.length>=8?'disabled':'')+'>'+f.emoji+' '+f.name+'<small>🪙 '+Math.max(10,Math.round(f.cost*.65))+'</small></button>'}).join('')+'</div>';
+ showModal('daybook','<div class="house-header"><span>🏡</span><div><h2>A House Is a Home</h2><p>'+escapeHtml(apartmentName(activeResidence))+' · '+style.emoji+' '+style.name+'</p></div></div><div class="house-comfort"><strong>✨ Home comfort '+comfort+'/100</strong><span><i style="width:'+comfort+'%"></i></span><small>Decorated homes make daily routines more restorative. Comfort is capped for balance.</small></div><h3>Who will you guide?</h3>'+roster+actionGrid+'<h3>Decorate this home</h3><p>Wallpaper colors are free to change. Furnishings cost coins and improve comfort.</p>'+themes+'<h3>Personal touches ('+props.length+'/8)</h3>'+propsUI+props.map((item,i)=>{const f=furnitureTypes.find(f=>f.id===item.kind);return '<div class="card"><div><b>'+(f?.emoji||'🌿')+' '+(f?.name||'Decoration')+'</b><small>Tap Move to arrange or rotate</small></div><div class="furniture-actions"><button data-act="room-move" data-id="'+i+'">Move</button><button data-act="room-sell" data-id="'+i+'">Sell</button></div></div>'}).join('')+btn('Visit rooms / comfort upgrades','room-info'));
 }
 function buyResidenceProp(id){
- if(scene!=='residence')return;const f=furnitureTypes.find(x=>x.id===id&&['plant','flowers','books','lamp','rug','chair'].includes(id));if(!f)return;
+ if(scene!=='residence')return;
+ const f=furnitureTypes.find(x=>x.id===id&&['plant','flowers','books','lamp','rug','chair'].includes(id));if(!f)return;
  const p=state.residenceProps[activeResidence]||(state.residenceProps[activeResidence]=[]);
- if(p.length>=3)return notify('Three special decorations fit in each home. Store one to change it.');
+ if(p.length>=8)return notify('Eight decorations fit comfortably here. Move or sell one first.');
  const price=Math.max(10,Math.round(f.cost*.65));if(state.coins<price)return notify('You need '+price+' coins for this decoration.');
- state.coins-=price;p.push(id);save();updateUI();notify('A lovely new detail for the home! ✨');manageHousehold();
+ beginPlacement({kind:id,residence:true});
 }
 function runHouseholdAction(id,kind){
  if(!HOME_ACTIONS[kind]||scene!=='residence'||controlledResident!==id)return;
@@ -1182,7 +1200,10 @@ function drawResidenceFurniture(g){
  drawFurniture(g,'books',338,307);
  drawFurniture(g,'chair',786,801);
  drawFurniture(g,'flowers',695,554);
- const props=state.residenceProps[activeResidence]||[];const spots=[[474,460],[677,900],[909,701]];props.forEach((kind,i)=>drawFurniture(g,kind,spots[i][0],spots[i][1]));
+ const props=state.residenceProps[activeResidence]||[];
+ props.forEach((f,i)=>{if(placement?.residence&&placement.moveIndex===i)return;drawPlacedFurniture(g,f)});
+ if(placement?.residence){const f=placement.moveIndex!==undefined?props[placement.moveIndex]:placement;
+  g.save();g.globalAlpha=.6;drawPlacedFurniture(g,{kind:f.kind,x:placement.x,y:placement.y,rot:placement.rot});g.restore();}
  const members=roomResidents();
  members.forEach((n,i)=>{if(n.id===controlledResident)return;const p=residentHomePose(n,i);drawCharacter(g,n,p.x,p.y,'front',false,personalMood(n).name==='Cheerful'?'happy':'neutral');drawName(g,n.name,p.x,p.y-145);g.save();g.textAlign='center';g.font='21px system-ui';g.fillText(p.act,p.x+45,p.y-172+Math.sin(tick*2+i)*3);g.restore()});
  if(!members.length){g.fillStyle='#547367';g.textAlign='center';g.font='bold 28px sans-serif';g.fillText('Waiting for new neighbors…',580,706);g.textAlign='left'}
@@ -1208,10 +1229,10 @@ function drawHomeFurniture(g){
  drawFurniture(g,'bed',332,430);drawFurniture(g,'sofa',803,489);drawFurniture(g,'kitchen',840,309);drawFurniture(g,'books',342,314);
  for(let i=0;i<state.placed.length;i++){
   if(placement?.moveIndex===i)continue;
-  const f=state.placed[i];drawFurniture(g,f.kind,Math.abs(f.x||0)<40?575+(f.x||0)*28:(f.x||540),Math.abs(f.z||0)<40?600+(f.z||0)*25:(f.z||500));
+  const f=state.placed[i];drawPlacedFurniture(g,{kind:f.kind,x:Math.abs(f.x||0)<40?575+(f.x||0)*28:(f.x||540),y:Math.abs(f.z||0)<40?600+(f.z||0)*25:(f.z||500),rot:f.rot||0});
  }
  if(placement){const f=placement.moveIndex!==undefined?state.placed[placement.moveIndex]:placement;
-  g.save();g.globalAlpha=.62;drawFurniture(g,f.kind,placement.x??575,placement.y??670);g.restore();}
+  g.save();g.globalAlpha=.62;drawPlacedFurniture(g,{kind:f.kind,x:placement.x??575,y:placement.y??670,rot:placement.rot||0});g.restore();}
 }
 
 function drawFurniture(g,kind,x,y){const a=kind;
@@ -1279,7 +1300,8 @@ function isWalkable(x,y,where=scene,ignoreNpc=false){
   if(x<215||x>958||y<260||y>1070)return false;
   for(const [fx,fy,rx,ry] of [[332,430,95,62],[803,489,85,67],[840,309,100,64],[342,314,72,70]])
    if(Math.abs(x-fx)<rx&&Math.abs(y-fy)<ry)return false;
-  for(const f of state.placed){if(f.kind==='rug')continue;if(Math.abs(x-f.x)<47&&Math.abs(y-f.z)<34)return false}
+  const placedHere=where==='residence'?state.residenceProps[activeResidence]||[]:state.placed;
+  for(const f of placedHere){if(f.kind==='rug')continue;if(Math.abs(x-f.x)<47&&Math.abs(y-(f.y??f.z))<36)return false}
   return true;
  }
  if(x<80||x>1440||y<190||y>1460)return false;
@@ -1359,21 +1381,51 @@ function approachNeighbor(n){return nearestWalkable({x:n.x-51,y:n.y+35},scene,tr
 function goScene(next){if(scene==='residence'&&next==='town')return leaveResidence();if(talk)closeTalk();closeModal();stopPlacement();scene=next;activeResidence=null;controlledResident=null;stopRoutine();
  if(next==='home'){player.x=575;player.y=670;cam.x=575;cam.y=650;}else{player.x=566;player.y=621;cam.x=566;cam.y=620;}
  resize();updateUI();save();notify(next==='home'?'Home sweet home! 🏡':'Out into the sunshine! 🌷')}
-function beginPlacement(obj){placement={...obj,x:575,y:660};closeModal();$('placementHint').classList.remove('hidden');$('placementText').textContent=obj.moveIndex!==undefined?'Tap the floor to move this item':'Tap a clear spot to place your new furniture';notify('Choose a spot inside your cottage 🌷')}
-function stopPlacement(){placement=null;$('placementHint').classList.add('hidden')}
-function chooseFurniturePosition(wx,wy){return{x:Math.round(clamp(wx,275,905)/12)*12,y:Math.round(clamp(wy,365,965)/12)*12}}
-
-function clickWorld(x,y){if(modal||talk)return;if(householdBusy){stopRoutine();notify('Routine paused. You are in control.');}
- const wx=(x-W/2)/worldScale+cam.x,wy=(y-H*.54)/worldScale+cam.y;
- if(placement&&scene==='home'){
-  const pos=chooseFurniturePosition(wx,wy),f=placement.moveIndex!==undefined?state.placed[placement.moveIndex]:placement;
-  const blocked=[[332,430,95],[803,489,89],[840,309,95],[342,314,94]];
-  const occupied=blocked.some(([x,y,r])=>Math.hypot(pos.x-x,(pos.y-20)-(y-35))<r)||state.placed.some((item,i)=>i!==placement.moveIndex&&Math.hypot(pos.x-item.x,pos.y-item.z)<72)||Math.hypot(pos.x-player.x,pos.y-player.y)<55;
-  if(occupied)return notify('That spot is taken. Try a clear area!');
-  if(placement.moveIndex!==undefined){state.placed[placement.moveIndex].x=pos.x;state.placed[placement.moveIndex].z=pos.y;}
-  else{const item=furnitureTypes.find(t=>t.id===f.kind);if(state.coins<item.cost)return notify('Not enough coins!');state.coins-=item.cost;state.placed.push({kind:f.kind,x:pos.x,z:pos.y});}
-  stopPlacement();save();updateUI();notify('Perfect! Your room is coming together! ✨');return;
+function beginPlacement(obj){
+ if(scene!=='home'&&scene!=='residence')return;
+ const moving=obj.moveIndex!==undefined;
+ const source=obj.residence?state.residenceProps[activeResidence]:state.placed;
+ const item=moving?source?.[obj.moveIndex]:obj;
+ if(!item)return;
+ placement={...obj,x:item.x??575,y:item.y??item.z??660,rot:item.rot||0,residence:scene==='residence',room:activeResidence};
+ closeModal();const hint=$('placementHint');hint.classList.remove('hidden');
+ $('placementText').textContent=moving?'Drag or tap a new spot for this item':'Drag or tap a clear space to place the item';
+ $('rotatePlacement').hidden=false;notify('Arrange your furniture. Rotate or cancel any time. 🌷');
+}
+function stopPlacement(){placement=null;$('placementHint').classList.add('hidden');$('rotatePlacement').hidden=true}
+function rotatePlacement(){if(!placement)return;placement.rot=((placement.rot||0)+1)%4;notify('Turned your furniture ↻')}
+function chooseFurniturePosition(wx,wy){return{x:Math.round(clamp(wx,265,942)/12)*12,y:Math.round(clamp(wy,305,1020)/12)*12}}
+function arrangePosition(wx,wy){if(!placement)return;const p=chooseFurniturePosition(wx,wy);placement.x=p.x;placement.y=p.y}
+function furnitureSpotFree(pos,item,where=scene,ignore=-1){
+ const fixed=where==='residence'?[[311,465,98],[805,515,97],[822,327,114],[338,307,90],[786,801,60]]:[[332,430,100],[803,489,101],[840,309,110],[342,314,92]];
+ if(pos.x<272||pos.x>925||pos.y<340||pos.y>1000)return false;
+ if(item.kind!=='rug'&&fixed.some(([x,y,r])=>Math.hypot((pos.x-x)*.9,(pos.y-y+25)*1.1)<r))return false;
+ const list=where==='residence'?state.residenceProps[activeResidence]||[]:state.placed;
+ if(list.some((o,i)=>i!==ignore&&item.kind!=='rug'&&o.kind!=='rug'&&Math.hypot(pos.x-o.x,pos.y-(o.y??o.z))<72))return false;
+ if(item.kind!=='rug'&&Math.hypot(pos.x-player.x,pos.y-player.y)<48)return false;
+ return true;
+}
+function commitPlacement(wx,wy){
+ if(!placement||!['home','residence'].includes(scene))return false;
+ const pos=chooseFurniturePosition(wx,wy),item=placement.moveIndex!==undefined?(placement.residence?state.residenceProps[activeResidence]:state.placed)[placement.moveIndex]:placement;
+ if(!item)return false;
+ if(!furnitureSpotFree(pos,item,scene,placement.moveIndex??-1)){notify('That spot is occupied. Try another clear space.');return false}
+ const move=placement.moveIndex!==undefined,rot=placement.rot||0;
+ if(move){const old=placement.residence?state.residenceProps[activeResidence][placement.moveIndex]:state.placed[placement.moveIndex];
+  old.x=pos.x;if(placement.residence)old.y=pos.y;else old.z=pos.y;old.rot=rot;
+ }else{
+  const info=furnitureTypes.find(f=>f.id===item.kind);if(!info)return false;
+  const price=placement.residence?Math.max(10,Math.round(info.cost*.65)):info.cost;
+  if(state.coins<price){notify('Not enough coins!');return false}
+  state.coins-=price;
+  if(placement.residence)state.residenceProps[activeResidence].push({kind:item.kind,x:pos.x,y:pos.y,rot});
+  else state.placed.push({kind:item.kind,x:pos.x,z:pos.y,rot});
  }
+ stopPlacement();save();updateUI();notify('Your room is coming together! ✨');return true;
+}
+function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){stopRoutine();notify('Routine paused. You are in control.');}
+ const wx=(x-W/2)/worldScale+cam.x,wy=(y-H*.54)/worldScale+cam.y;
+ if(placement&&(scene==='home'||scene==='residence')){commitPlacement(wx,wy);return}
  if(scene==='residence'){
   if(wx>510&&wx<660&&wy>90&&wy<290){leaveResidence();return}
   const members=roomResidents();
@@ -1391,7 +1443,13 @@ function clickWorld(x,y){if(modal||talk)return;if(householdBusy){stopRoutine();n
  }
  if(scene==='home'){
   if(wy<220){notify('A lovely sunny view out of the window!');return}
-  const bounds={x:clamp(wx,225,947),y:clamp(wy,275,738)};
+  const custom=state.placed.find(f=>Math.hypot(wx-f.x,wy-f.z)<45);
+  if(custom){goTo(nearestWalkable({x:custom.x+65,y:custom.z+35},'home',true)||{x:570,y:670},()=>{
+   if(custom.kind==='books')changeNeed('fun',13);else if(custom.kind==='plant'||custom.kind==='flowers')changeNeed('fun',8);
+   else if(custom.kind==='sofa'||custom.kind==='chair')changeNeed('energy',5);
+   notify('Your own little corner feels wonderful. 🌸');
+  });return}
+  const bounds={x:clamp(wx,225,947),y:clamp(wy,275,985)};
   const fixed=[{kind:'bed',x:332,y:430,act:()=>{changeNeed('energy',70);notify('A wonderful nap! 💤')}},{kind:'sofa',x:803,y:489,act:()=>{changeNeed('fun',25);notify('Cozy sofa time! 💗')}},{kind:'kitchen',x:840,y:309,act:()=>kitchen.openBook()},{kind:'books',x:342,y:314,act:()=>{changeNeed('fun',15);notify('A lovely story! 📚')}}];
   const near=fixed.find(o=>Math.hypot(wx-o.x,wy-(o.y-35))<80);
   goTo(near?nearestWalkable({x:near.x+105,y:near.y+60}):bounds,near?.act);return;
@@ -1517,12 +1575,12 @@ function market(){showModal('market',`<h2>🍓 Rosie’s Little Market</h2><p>Fr
 function garden(){showModal('garden',`<h2>🌱 Community Garden</h2><p>Plant little flowers, care for them, and harvest blooms for your cottage.</p><div class="grid">${(state.garden||[0,0,0,0]).map((n,i)=>`<div class="item"><span class="emoji">${n===2?'🌸':n===1?'🌱':'🟫'}</span><strong>Plot ${i+1}</strong><small>${n===2?'Ready!':n===1?'Growing':'Empty'}</small><button class="btn" data-act="plot" data-id="${i}">${n===2?'Harvest':n===1?'Water':'Plant'}</button></div>`).join('')}</div><p>Planting is free. Premium seed packets from Rosie’s market give a better harvest. 🌻 ${state.inventory.filter(x=>x==='flower-seed').length} seed packets available.</p>`)}
 function fishing(){showModal('fish',`<h2>🎣 Fishing at Lily Pond</h2><p>Watch the bobber and tap when it crosses the green zone!</p><div style="margin:24px 0 18px;height:30px;background:#b5d2bd;border:3px solid #91b1a6;position:relative"><div style="height:100%;width:26%;margin-left:38%;background:#7ddda4;border-left:3px solid white;border-right:3px solid white"></div><div id="bobber" style="position:absolute;top:-4px;bottom:-4px;width:6px;background:#ed7091;left:0"></div></div><button class="btn" data-act="catch" style="width:100%">🎣 Reel it in!</button>`);}
 function decorate(){if(scene!=='home')goScene('home');
- showModal('decor',`<h2>🪑 Your Cozy Furniture</h2><p>Pick an item, then tap the floor to place it. Tap any purchased item below to move it again. Your room saves automatically.</p><h3>Wallpaper</h3><div class="swatches">${['#c5daba','#f2ccdf','#a5cedb','#f3dab2'].map((s,i)=>`<button data-act="wall" data-id="${i}" class="swatch" style="background:${s}" aria-label="Wallpaper ${i+1}" ${state.homeStyle===i?'aria-pressed="true"':''}></button>`).join('')}</div><h3>Furniture shop</h3><div class="grid">${furnitureTypes.map(f=>`<div class="item"><span class="emoji">${f.emoji}</span><strong>${f.name}</strong><small>🪙 ${f.cost}</small><button class="btn" data-act="buy" data-id="${f.id}">Choose</button></div>`).join('')}</div>${state.placed.length?`<h3>Your placed furniture</h3>${state.placed.map((f,i)=>`<div class="card"><div><b>${furnitureTypes.find(t=>t.id===f.kind)?.emoji||'🪑'} ${furnitureTypes.find(t=>t.id===f.kind)?.name||'Furniture'}</b><small>Arrange or sell an item</small></div><div class="furniture-actions"><button data-act="move" data-id="${i}">Move</button><button data-act="sell" data-id="${i}">Sell</button></div></div>`).join('')}`:''}`)}
+ showModal('decor',`<h2>🪑 Your Cozy Furniture</h2><p>Choose furniture, then tap or drag it into place. Use Rotate to change direction. Your room saves automatically.</p><h3>Wallpaper</h3><div class="swatches">${['#c5daba','#f2ccdf','#a5cedb','#f3dab2'].map((s,i)=>`<button data-act="wall" data-id="${i}" class="swatch" style="background:${s}" aria-label="Wallpaper ${i+1}" ${state.homeStyle===i?'aria-pressed="true"':''}></button>`).join('')}</div><h3>Furniture shop</h3><div class="grid">${furnitureTypes.map(f=>`<div class="item"><span class="emoji">${f.emoji}</span><strong>${f.name}</strong><small>🪙 ${f.cost}</small><button class="btn" data-act="buy" data-id="${f.id}">Choose</button></div>`).join('')}</div>${state.placed.length?`<h3>Your placed furniture</h3>${state.placed.map((f,i)=>`<div class="card"><div><b>${furnitureTypes.find(t=>t.id===f.kind)?.emoji||'🪑'} ${furnitureTypes.find(t=>t.id===f.kind)?.name||'Furniture'}</b><small>Move, rotate or sell this item</small></div><div class="furniture-actions"><button data-act="move" data-id="${i}">Move</button><button data-act="sell" data-id="${i}">Sell</button></div></div>`).join('')}`:''}`)}
 
 function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
  showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(pendingName??state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair color</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Haircut</h3><div class="haircuts">${['Bob','Side-part','Tousled','Ponytail','Buns'].map((n,i)=>`<button data-act="set-style" data-id="${i}" aria-pressed="${state.hairStyle===i}" class="haircut ${state.hairStyle===i?'selected':''}">${n}</button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Cozy Routines v2.3.1 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💌 Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🍳 Hearth Kitchen','cook-book')}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
+function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: The Little Atelier v2.3.2 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💌 Town Stories','stories')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🍳 Hearth Kitchen','cook-book')}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
 function handleAction(action,id){
  if(action.startsWith('cook-'))return kitchen.handle(action,id);
  if(action==='chat'||action==='compliment'||action==='gift'||action==='ask'||action==='join'||action==='news'||action==='help'||action==='mediate'||action==='invite'||action==='housemate')return respond(action);
@@ -1540,7 +1598,9 @@ function handleAction(action,id){
  if(action==='clear-home-queue'){stopRoutine();notify('Routine cleared.');return scene==='home'?ownDaybook():manageHousehold()}
  if(action==='room-theme'){if(scene!=='residence')return;const choice=Number(id);if(!Number.isInteger(choice)||choice<0||choice>=HOME_THEMES.length)return;state.residenceThemes[activeResidence]=choice;save();notify('Your home has a whole new feeling! 🎨');return manageHousehold()}
  if(action==='room-prop')return buyResidenceProp(id);
- if(action==='room-remove-prop'){if(scene!=='residence')return;const props=state.residenceProps[activeResidence]||[];if(!props.length)return;const removed=props.pop(),item=furnitureTypes.find(f=>f.id===removed);const refund=Math.floor(Math.max(10,Math.round((item?.cost||20)*.65))/2);state.coins+=refund;save();updateUI();notify('Decoration removed. '+refund+' coins refunded.');return manageHousehold()}
+ if(action==='room-move'){if(scene!=='residence')return;const i=Number(id),props=state.residenceProps[activeResidence]||[];if(!Number.isInteger(i)||!props[i])return;return beginPlacement({residence:true,moveIndex:i})}
+ if(action==='room-sell'){if(scene!=='residence')return;const i=Number(id),props=state.residenceProps[activeResidence]||[];if(!Number.isInteger(i)||!props[i])return;const [removed]=props.splice(i,1),f=furnitureTypes.find(f=>f.id===removed.kind);state.coins+=Math.floor(Math.max(10,Math.round((f?.cost||20)*.65))/2);save();updateUI();notify('Decoration sold for half price.');return manageHousehold()}
+ if(action==='room-remove-prop'){if(scene!=='residence')return;const props=state.residenceProps[activeResidence]||[];if(!props.length)return;const removed=props.pop(),item=furnitureTypes.find(f=>f.id===removed.kind);const refund=Math.floor(Math.max(10,Math.round((item?.cost||20)*.65))/2);state.coins+=refund;save();updateUI();notify('Decoration removed. '+refund+' coins refunded.');return manageHousehold()}
  if(action==='room-upgrade')return upgradeRoom();
  if(action==='room-chat'){if(scene==='residence'&&roomResidents().some(n=>n.id===id))return openTalk(id);return}
  if(action==='visits')return visitPlans();
@@ -1574,9 +1634,16 @@ function handleAction(action,id){
 }
 function bind(){
  canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture?.(e.pointerId);canvas._start={x:e.clientX,y:e.clientY}});
- canvas.addEventListener('pointerup',e=>{const a=canvas._start||{x:e.clientX,y:e.clientY};if(Math.hypot(a.x-e.clientX,a.y-e.clientY)>25)return;clickWorld(e.clientX,e.clientY)});
+ canvas.addEventListener('pointermove',e=>{if(!placement||modal||talk||!canvas._start)return;
+  const a=canvas._start;if(Math.hypot(a.x-e.clientX,a.y-e.clientY)>8){
+   arrangePosition((e.clientX-W/2)/worldScale+cam.x,(e.clientY-H*.54)/worldScale+cam.y);
+  }
+ });
+ canvas.addEventListener('pointerup',e=>{const a=canvas._start||{x:e.clientX,y:e.clientY};canvas._start=null;
+  if(placement){clickWorld(e.clientX,e.clientY);return}
+  if(Math.hypot(a.x-e.clientX,a.y-e.clientY)>25)return;clickWorld(e.clientX,e.clientY)});
  $('townBtn').onclick=()=>goScene('town');$('homeBtn').onclick=()=>goScene('home');$('peopleBtn').onclick=people;$('journalBtn').onclick=journal;$('decorateBtn').onclick=()=>scene==='residence'?manageHousehold():scene==='home'?ownDaybook():decorate();$('styleBtn').onclick=style;$('menuBtn').onclick=menu;
- $('timeBtn').onclick=()=>{speed=({0:1,1:2,2:3,3:0})[speed];updateUI()};$('cancelPlacement').onclick=()=>{stopPlacement();notify('Placement canceled — no coins spent')};$('routineAdd').onclick=()=>scene==='home'?ownDaybook():manageHousehold();$('routineStop').onclick=()=>{stopRoutine();notify('Routine cleared')};$('talkClose').onclick=closeTalk;$('talkActions').addEventListener('click',buttonClick);
+ $('timeBtn').onclick=()=>{speed=({0:1,1:2,2:3,3:0})[speed];updateUI()};$('cancelPlacement').onclick=()=>{stopPlacement();notify('Placement canceled — no coins spent')};$('rotatePlacement').onclick=rotatePlacement;$('routineAdd').onclick=()=>scene==='home'?ownDaybook():manageHousehold();$('routineStop').onclick=()=>{stopRoutine();notify('Routine cleared')};$('talkClose').onclick=closeTalk;$('talkActions').addEventListener('click',buttonClick);
  $('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal();else buttonClick(e)});$('closeModal').onclick=closeModal;
  addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});setInterval(save,18000);
 }
