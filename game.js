@@ -1926,7 +1926,7 @@ function drawResidenceFurniture(g){
  if(placement?.residence){const f=placement.moveIndex!==undefined?props[placement.moveIndex]:placement;
   g.save();g.globalAlpha=.6;drawPlacedFurniture(g,{kind:f.kind,x:placement.x,y:placement.y,rot:placement.rot});g.restore();}
  const members=roomResidents();
- members.forEach((n,i)=>{if(n.id===controlledResident)return;const p=familyTable.dinnerPose(n.id,activeResidence,tick)||residentHomePose(n,i);drawCharacter(g,n,p.x,p.y,p.dir||'front',!!p.moving,p.expression||p.phase==='using'&&p.action==='chat'?'happy':personalMood(n).name==='Cheerful'?'happy':'neutral');if(p.phase==='using'&&p.action){drawHouseholdActivity(g,p.x,p.y,p.action,Math.min(1,(roomAutonomy.get(n.id)?.elapsed||0)/4.6),i)}drawName(g,n.name,p.x,p.y-145);g.save();g.textAlign='center';g.font='21px system-ui';g.fillText(p.act,p.x+45,p.y-172+Math.sin(tick*2+i)*3);if(p.phase==='using'){g.fillStyle='#fff5c3';g.fillRect(p.x-20,p.y-166,40,4);g.fillStyle='#65bf93';g.fillRect(p.x-20,p.y-166,Math.min(40,40*(roomAutonomy.get(n.id)?.elapsed||0)/4.6),4)}g.restore()});
+ members.forEach((n,i)=>{if(n.id===controlledResident)return;const p=familyTable.dinnerPose(n.id,activeResidence,tick)||residentHomePose(n,i);drawCharacter(g,n,p.x,p.y,p.dir||'front',!!p.moving,(p.expression||(p.phase==='using'&&p.action==='chat'?'happy':personalMood(n).name==='Cheerful'?'happy':'neutral')));if(p.phase==='using'&&p.action){drawHouseholdActivity(g,p.x,p.y,p.action,Math.min(1,(roomAutonomy.get(n.id)?.elapsed||0)/4.6),i)}drawName(g,n.name,p.x,p.y-145);g.save();g.textAlign='center';g.font='21px system-ui';g.fillText(p.act,p.x+45,p.y-172+Math.sin(tick*2+i)*3);if(p.phase==='using'){g.fillStyle='#fff5c3';g.fillRect(p.x-20,p.y-166,40,4);g.fillStyle='#65bf93';g.fillRect(p.x-20,p.y-166,Math.min(40,40*(roomAutonomy.get(n.id)?.elapsed||0)/4.6),4)}g.restore()});
  if(!members.length){g.fillStyle='#547367';g.textAlign='center';g.font='bold 28px sans-serif';g.fillText('Waiting for new neighbors…',580,706);g.textAlign='left'}
 }
 function drawStatic(obj,g){
@@ -2297,7 +2297,7 @@ function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){sto
  goTo({x:clamp(wx,65,1460),y:clamp(wy,200,1440)});
 }
 function perform(action,obj){if(action==='stew-board')return stewardship.board();if(action==='festival-calendar')return festival.active(state.day)?festival.play():festival.calendar();if(action==='grove-entry')return goScene('grove');if(action==='museum-entry')return goScene('museum');if(action==='collect-nature')return collectNature(obj);if(action==='nature-gallery')return natureCabinet();if(action==='fish-guide')return fishingGame.overview();if(action==='fish-aquarium')return fishingGame.aquarium();if(action==='bug-hunt')return bugHunt.journal();if(action==='residence')return housingBoard();if(action==='home')return goScene('home');if(action==='cafe')return cafe();if(action==='library'){changeNeed('fun',16);notify('You found a beautiful new story! 📖');return}if(action==='hall')return townHall();if(action==='market')return market();if(action==='garden')return garden();if(action==='fish')return fishing();}
-function update(dt){tick+=dt;familyTable.update(dt);advanceHouseholdHold(dt);
+function update(dt){tick+=dt;if(speed>0)familyTable.update(dt);advanceHouseholdHold(dt);
  if(!talk&&!modal){const next=player.target;if(next){
   const point=next.route?.[0]||{x:next.x,y:next.y};let dx=point.x-player.x,dy=point.y-player.y,d=Math.hypot(dx,dy),step=Math.min(d,dt*178);
   if(d>Math.max(step,1)+2){
@@ -2366,11 +2366,25 @@ const homeAspirations=window.HearthAspirations.setup({getState:()=>state,save,no
 const functionalHomes=window.HearthFunctionalHomes.setup({getState:()=>state,save,notify,updateUI,showModal,closeModal,getScene:()=>scene,getControlledResident:()=>controlledResident,queueAction:(kind)=>{if(scene==='home')queueOwnHomeAction(kind);else if(scene==='residence'&&controlledResident)queueHouseholdAction(kind);}});
 const familyTable=window.HearthFamilyTable.setup({getState:()=>state,save,updateUI,notify,showModal,closeModal,getScene:()=>scene,getHome:()=>activeResidence,getMembers:()=>scene==='residence'?roomResidents().map(n=>n.id):[],walkTo:(pos,after)=>goTo(nearestWalkable(pos,scene,true)||pos,after),openKitchen:()=>kitchen.openBook(),completeHomeMeal:()=>homeAspirations.recordAction('player','meal',{scene:'home'}),isModalOpen:()=>!!modal,
   onDinnerStart:(guests)=>{
-   if(scene!=='residence')return;
+   if(scene!=='residence')return [];
+   const currentMembers=roomResidents();
+   const starts=guests.map((id,i)=>{
+    const n=NPCS.find(n=>n.id===id);
+    const pose=n?residentHomePose(n,currentMembers.findIndex(m=>m.id===id)):{x:580+i*90,y:650};
+    return {id,x:pose.x,y:pose.y};
+   });
    stopRoutine();controlledResident=null;
+   starts.forEach((p,i)=>roomAutonomy.set(p.id,{x:p.x,y:p.y,dir:'front',
+    action:null,target:{x:p.x,y:p.y},phase:'break',wait:1.5+i,elapsed:0,moving:false}));
+   return starts;
+  },
+  onDinnerEnd:(guests)=>{
+   if(scene!=='residence')return;
    guests.forEach((id,i)=>{
+    if(!roomResidents().some(n=>n.id===id))return;
     const x=i===0?602:795,y=515+i*17;
-    roomAutonomy.set(id,{x,y,dir:'front',action:null,target:{x,y},phase:'break',wait:2+i,elapsed:0,moving:false});
+    roomAutonomy.set(id,{x,y,dir:'front',action:null,target:{x,y},
+     phase:'break',wait:2+i,elapsed:0,moving:false});
    });
   }});
 const littleAtelier=window.HearthAtelier.setup({getState:()=>state,save,updateUI,notify,room:()=>scene==='residence'?activeResidence:'player',isInRoom:(h)=>scene==='home'&&h==='player'||scene==='residence'&&h===activeResidence,reopen:()=>scene==='home'?decorate():manageHousehold(),beginStored:(index)=>beginPlacement({storageIndex:index,residence:scene==='residence'})});
