@@ -2333,6 +2333,7 @@ function buttonClick(e){const b=e.target.closest('[data-act]');if(!b)return;hand
 function talkChoices(mode='main'){
  const options=mode==='romance'?[['spark','💞 Share a spark'],['date-invite','🌷 Ask on a date'],['reflect','📖 Remember together'],['partner','💕 Make it official'],['talk-back','← Back']]:mode==='more'?[['about-partner','💕 Ask about their partner'],['invite','📅 Arrange visit'],['housemate','🏡 Home life'],['mediate','🕊️ Make peace'],['join','✨ Join in'],['help','🌟 Help with dream'],['compliment','💗 Compliment'],['gift','🎁 Gift'],['talk-back','← Back']]:[['chat','💬 Chat'],['ask','🌤 Their day'],['discover','🌱 Get to know'],['romance-menu','💗 Feelings'],['more-talk','✨ More'],['bye','See you!']];
  if(mode==='main'&&scene==='town'&&['mabel','bea','finn','rosie'].includes(talk))options.splice(1,0,['stew-board','🌿 Improve the village']);
+ if(mode==='main'&&scene==='town'&&festivalMarket.open()&&['bea','rosie','oliver'].includes(talk))options.splice(1,0,['fmarket-overview','🎪 Visit the festival stalls']);
  if(mode==='main'&&scene==='town'&&community.festivalOpen()&&community.hosts().some(m=>m.id===talk))options.splice(1,0,['comm-talk','🎪 Help with the festival']);
  $('talkActions').innerHTML=options.map(([act,label])=>'<button data-act="'+act+'">'+label+'</button>').join('');
 }
