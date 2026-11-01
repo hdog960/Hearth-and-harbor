@@ -1,4 +1,23 @@
-# Hearth & Harbor v2.5.17 — Helping Hands
+# Hearth & Harbor v2.5.18 — Little Passions Studio
+
+**All six Maplewood residents finally have genuinely different playable hobbies.** Visit a resident's real occupied home, then open **Daybook → Little Passions Studio** or choose Studio from Menu. Poppy walks to the corresponding in-world hobby station and launches a tactile, mobile-friendly activity tied to that specific character:
+
+- **Mabel — Bloom by Bloom:** soil, seed, water and sunlight in order.
+- **Rosie — Market Basket:** sort three different fruits into the correct market crates.
+- **Oliver — A Perfect Pastry:** fold, press and turn a pastry through a five-step kneading pattern.
+- **Jun — Choose the Chapter:** write a tiny story using branching choices with different combinations of outcomes.
+- **Bea — Tiny Color Study:** select pigments and paint the matching four canvas squares.
+- **Finn — Little Lure Workshop:** weave a fishing lure using left/right loops and a finishing knot.
+
+These are **six different interaction patterns**, not just six renamed hobby menus. No timer, penalty, ingredient requirement, extra coins or paid content is involved. Activities become available only for actual residents currently living in the home. The same resident can complete one Studio project per in-game day, and after three studio days earns original framed hobby art that follows them to their home.
+
+**The Studio respects all existing household progression.** On a resident's first daily hobby, a successful activity triggers their normal Daybook hobby restoration, furniture effects, aspiration progress, and personal hobby history. If they have already done a hobby autonomously that day, the Studio is still playable as practice and can add a studio memory, but does **not** pay the prior need or aspiration rewards again. The resident appears as their existing sprite during a brief in-world celebration, with normal autonomy paused and resumed safely.
+
+The original local save key, previous household furniture, family suppers, cooking, seasonal festivals, village friendships, collections, town improvements and archives are preserved. New browser assets also work with the existing iPhone offline worker. **125 automated regression tests now pass** (15 new), although real iPhone Safari and screenshot-driven gameplay checks remain outstanding.
+
+See [v2.5.18 Little Passions QA and roadmap](HOBBY_STUDIO_V2518_QA_AND_ROADMAP.md).
+
+## Previous milestone — Helping Hands v2.5.17
 
 **Poppy can now work side-by-side with the residents of Maplewood.** Visit an occupied neighbor home and open **Daybook → Helping Hands**, or find it in Menu while visiting. Pick a real resident and choose one of three little cooperative activities: **Window Garden** 🪴, **Cozy Sorting** 🧺, or **Memory Craft** 🎨. Poppy walks to the activity station, then you complete three easy, tappable hands-on steps. Each activity requires different objects and answers; mistakes are gentle and never cost money or ingredients.
 
