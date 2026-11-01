@@ -1,0 +1,29 @@
+/* Hearth & Harbor v2.5.7 — The Village We Grow; iPhone-first town projects */
+.hs-ui{color:#355c50;font-family:inherit;max-width:640px;margin:auto}
+.hs-ui h2{font-size:clamp(25px,6vw,33px);line-height:1.16;color:#315c4e;margin:8px 0 12px}
+.hs-ui h3{font-size:17px;line-height:1.2;margin:0;color:#456d5e}
+.hs-ui p{font-size:13px;line-height:1.55;color:#657a6f;margin:9px 0}
+.hs-kicker{font-weight:900;color:#b08464;letter-spacing:.1em;font-size:10px}
+.hs-status{background:linear-gradient(120deg,#f4f1d9,#e7f3e3);border:2px solid #d6dfc2;border-radius:15px;padding:13px;margin:14px 0}
+.hs-status b{font-size:15px;display:block}
+.hs-status small{color:#6c8776;font-size:11px}
+.hs-track{height:11px;background:#d8ddce;border-radius:12px;margin:9px 0;overflow:hidden}
+.hs-track i{display:block;background:#7ab78a;height:100%;border-radius:12px;transition:width .25s ease}
+.hs-project{border:2px solid #e4d7bd;border-bottom:5px solid #dbc4a5;background:#fff9ed;border-radius:17px;padding:13px;margin:12px 0}
+.hs-project-head{display:flex;gap:11px;align-items:center}
+.hs-project-head>div{flex:1;min-width:0}
+.hs-project-head small{display:block;margin-top:5px;font-size:11px;color:#7b8d7a;line-height:1.45}
+.hs-icon{width:54px;height:54px;border-radius:14px;background:#e8efdb;display:grid;place-items:center;font-size:31px;flex:none}
+.hs-steps{display:grid;gap:5px;padding:10px 0}
+.hs-steps span{display:block;font-size:12px;background:#f4eee0;color:#8e9185;padding:8px;border-radius:9px}
+.hs-steps span.built{background:#e4f2de;color:#4f8362}
+.hs-steps span.current{background:#fff1d1;color:#946f4a;font-weight:800}
+.hs-ui .hs-effect{border-left:3px solid #83ba9d;background:#edf7e9;padding:9px;margin:8px 0;border-radius:0 9px 9px 0;color:#456f5e;font-size:12px}
+.hs-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:14px}
+.hs-primary{min-height:48px;min-width:170px;padding:10px 14px;background:#568b72;color:#fff9ed;border:2px solid #38735e;border-radius:12px;font-family:inherit;font-weight:900;font-size:14px;touch-action:manipulation;flex:1}
+.hs-primary:disabled{background:#c0c7b9;border-color:#aab6a5;color:#56695e;opacity:.75}
+.hs-actions>span{font-size:11px;color:#7b8c7a;font-weight:800}
+.hs-foot{font-size:12px!important}
+.hs-secondary{display:block;background:transparent;border:none;color:#6c8476;text-decoration:underline;font-family:inherit;padding:12px;margin:8px auto;min-height:44px}
+@media(max-width:375px){.hs-project{padding:10px}.hs-icon{width:43px;height:43px;font-size:25px}.hs-primary{min-width:120px}}
+@media(prefers-reduced-motion:reduce){.hs-ui *{transition:none!important;animation:none!important}}
