@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.5.7 — The Village We Grow
+# Hearth & Harbor v2.5.8 — Maplewood Festival Market
+
+**The Crafts and Treats stalls are now playable village destinations.** On days 3–5 of each in-game season, visit Bea's Crafts table to create one of four seasonal twelve-patch keepsakes with a real color/quality minigame. Bring an actual dish you prepared in Hearth Kitchen to the Treats stall, where Oliver and Rosie share it with the village—one prepared plate is consumed, exactly once, and a quality-stamped supper memory is saved. Seasonal snack purchases restore needs with a once-per-day cap. Both activities integrate existing residents, relationships, kitchen ingredients, and town upgrade bonuses rather than inventing disconnected menus.
+
+Open the **Festival Market** from Menu, Journal, Town Hall, the Festival Calendar or through festival-related residents, then **walk to either actual stall** in Maplewood. You can also tap the illustrated awnings in the village on festival days. Both permanent memories appear in the Market Scrapbook, and completed stalls receive visual embellishments. All previous game systems and saves remain compatible; no payments, ads, subscriptions or real-time deadlines.
+
+The first full automated regression suite for this milestone passed, including previous town-improvement and resident festival checks. Physical iPhone Safari and screenshot-driven full playtesting are still pending. [v2.5.8 QA & roadmap](FESTIVAL_MARKET_V258_QA_AND_ROADMAP.md) documents the actual scope and remaining work.
+
+## Previous milestone — The Village We Grow v2.5.7
 
 **A playable village-improvement milestone.** Maplewood now has an interactive **Town Projects** board near Town Hall. Help four neighbors build permanent improvements in two stages each: Mabel's flowering promenade, Bea's lantern plaza, Finn's lily-pond deck and Rosie's orchard cart. Each upgraded location changes the walkable game's environmental artwork and offers a useful **once-per-in-game-day interaction**. The orchard cart supplies a small seasonal parcel to the existing Hearth Kitchen pantry. Total construction contributions are 375 in-game coins, with no timers, ads, or real-money purchases.
 
