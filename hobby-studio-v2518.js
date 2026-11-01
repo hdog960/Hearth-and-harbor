@@ -41,14 +41,14 @@ function setup(api){
      !PEOPLE.every(id=>Number.isInteger(r.days[id])&&Number.isInteger(r.counts[id])&&typeof r.gallery[id]==='boolean'))s.hobbyStudio=clean(r);
   return s.hobbyStudio;
  };
- const eligible=id=>PEOPLE.includes(id)&&roster().includes(id)&&record().days[id]!==state().day&&!hasHobby(id);
+ const eligible=id=>PEOPLE.includes(id)&&roster().includes(id)&&record().days[id]!==state().day;
  let session=null,celebration=null;
  function board(){
   session=null;
   const ids=roster();
   const cards=ids.map(id=>{
-   const p=PROFILE[id],done=!eligible(id),count=record().counts[id];
-   return '<article class="hs-person"><span class="hs-face">'+p.icon+'</span><div><b>'+p.name+' · '+p.title+'</b><p>'+p.detail+'</p><small>'+count+' completed studio days'+(record().gallery[id]?' · ✨ framed hobby art':' · a framed hobby memory after 3 days')+'</small><button data-act="hs-start" data-id="'+id+'" '+(done?'disabled':'')+'>'+(done?'✓ Enjoyed today':'Try '+p.title)+'</button></div></article>';
+   const p=PROFILE[id],done=!eligible(id),routineDone=hasHobby(id),count=record().counts[id];
+   return '<article class="hs-person"><span class="hs-face">'+p.icon+'</span><div><b>'+p.name+' · '+p.title+'</b><p>'+p.detail+'</p><small>'+count+' completed studio days'+(record().gallery[id]?' · ✨ framed hobby art':' · a framed hobby memory after 3 days')+(routineDone?' · Daily needs already restored; studio is for practice':'')+'</small><button data-act="hs-start" data-id="'+id+'" '+(done?'disabled':'')+'>'+(done?'✓ Enjoyed today':'Try '+p.title)+'</button></div></article>';
   }).join('');
   showModal('hobby-studio','<div class="hs-ui"><div class="hs-kicker">AN AFTERNOON FULL OF LITTLE PASSIONS</div><h2>🎨 Little Passions Studio</h2><p>Each neighbor has a different hands-on hobby. Visit their home, walk to their favorite spot, and play a short activity with no timers or purchases. Completing it counts as their real Daybook hobby for today.</p><div class="hs-banner">'+(!home()?'Visit a neighbor home to use the studio.':!ids.length?'No neighbors live in this home yet.':'Six unique hobbies · '+ids.length+' neighbor'+(ids.length===1?'':'s')+' here today')+'</div>'+cards+'<button class="hs-back" data-act="hs-close">Return to your day</button></div>');
  }
@@ -58,7 +58,7 @@ function setup(api){
   if(typeof preparePlayer==='function')preparePlayer();
   closeModal();
   const p=PROFILE[id];
-  walkTo({x:p.station[0],y:p.station[1]},()=>arrive());
+  if(walkTo({x:p.station[0],y:p.station[1]},()=>arrive())===false){session=null;return board();}
  }
  function fresh(){
   return !!(session&&session.home===home()&&session.day===state().day&&eligible(session.id));
@@ -137,13 +137,15 @@ function setup(api){
   if(!session||session.stage!=='playing'||!fresh()||progress()!==total())return false;
   const s=session,id=s.id,p=PROFILE[id],r=record();
   // The original household daily action is the authority for hobby/aspiration rewards.
-  if(!completeHobby(id))return false;
+  const reward=completeHobby(id);
+  if(reward===false)return false;
+  s.routineRewarded=reward===true;
   r.days[id]=s.day;r.counts[id]=clamp(r.counts[id]+1,0,9999);
   if(r.counts[id]>=3)r.gallery[id]=true;
   const story=p.type==='story'?' · '+s.choices.map((c,i)=>p.questions[i].options.find(x=>x[0]===c)?.[1]||'').join(' · '):'';
   celebration={id,home:s.home,day:s.day,elapsed:0,duration:17,origin:api.onSceneStart?.(id)||null};
   session=null;save();updateUI();
-  showModal('hobby-studio-result','<div class="hs-ui"><div class="hs-kicker">A PASSION WORTH MAKING TIME FOR</div><h2>'+p.icon+' '+p.title+'</h2><div class="hs-worktop hs-finish"><span>🌼</span><span>'+p.icon+'</span><span>💗</span></div><p>'+p.name+' enjoyed the afternoon, and their existing hobby progress grew.'+esc(story)+'</p><div class="hs-banner">'+r.counts[id]+' studio day'+(r.counts[id]===1?'':'s')+' completed'+(r.gallery[id]?' · ✨ Their framed hobby keepsake is now displayed at home!':' · a keepsake after 3 days')+'</div><button class="hs-main" data-act="hs-board">See all hobbies</button><button class="hs-back" data-act="hs-close">Back to home</button></div>');
+  showModal('hobby-studio-result','<div class="hs-ui"><div class="hs-kicker">A PASSION WORTH MAKING TIME FOR</div><h2>'+p.icon+' '+p.title+'</h2><div class="hs-worktop hs-finish"><span>🌼</span><span>'+p.icon+'</span><span>💗</span></div><p>'+p.name+' enjoyed the afternoon.'+(s.routineRewarded?' Their daily hobby needs and aspiration also progressed.':' Their daily hobby needs were already restored, so this was creative practice.')+esc(story)+'</p><div class="hs-banner">'+r.counts[id]+' studio day'+(r.counts[id]===1?'':'s')+' completed'+(r.gallery[id]?' · ✨ Their framed hobby keepsake is now displayed at home!':' · a keepsake after 3 days')+'</div><button class="hs-main" data-act="hs-board">See all hobbies</button><button class="hs-back" data-act="hs-close">Back to home</button></div>');
   notify(p.icon+' '+p.name+' finished a lovely hobby afternoon!');
   return true;
  }
