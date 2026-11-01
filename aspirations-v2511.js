@@ -31,12 +31,12 @@ const blank=id=>({path:DEFAULT[id],stage:0,lastDay:0,finished:{}});
 function clean(input){
  const out={people:{},memories:[]},src=OWN(input)?input:{},from=OWN(src.people)?src.people:{};
  for(const id of IDS){
-  const s=OWN(from[id])?from[id]:{},p=PATH_IDS.includes(s.path)?s.path:DEFAULT[id];
+  const s=OWN(from[id])?from[id]:{},p=s.path===null?null:PATH_IDS.includes(s.path)?s.path:DEFAULT[id];
   const finished={};if(OWN(s.finished))for(const key of PATH_IDS){
    const d=boundedDay(s.finished[key]);if(d>=1)finished[key]=d;
   }
   out.people[id]={
-   path:finished[p]?null:p,
+   path:p&&finished[p]?null:p,
    stage:Number.isInteger(s.stage)&&s.stage>=0&&s.stage<=2&&!finished[p]?s.stage:0,
    lastDay:boundedDay(s.lastDay),
    finished
