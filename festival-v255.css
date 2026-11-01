@@ -29,3 +29,5 @@
 .hf-score span{color:#dbd5c9}
 @media(max-width:380px){.hf-banner{padding:11px;gap:8px}.hf-stamp{width:58px;min-height:58px;font-size:34px}.hf-season{padding:7px}.hf-controls button{padding:10px;min-height:46px}}
 @media(prefers-reduced-motion:reduce){.hf-ui *, .hf-ui *:before,.hf-ui *:after{transition:none!important;animation:none!important}}
+
+.hf-friends{display:block;width:100%;min-height:48px;margin:10px 0 14px;padding:11px;border:2px solid #d7b5b0;border-radius:13px;background:#fff1e8;color:#8a5d67;font-family:inherit;font-size:14px;font-weight:900;touch-action:manipulation}
