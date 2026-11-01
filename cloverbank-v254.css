@@ -1,0 +1,25 @@
+/* Cloverbank Grove · illustrated woodland guide and cozy activities */
+.grove-ui{--ink:#365e57;color:var(--ink);font-family:inherit;padding:4px 0 20px}
+.grove-eye{font-size:11px;letter-spacing:.17em;text-transform:uppercase;font-weight:900;color:#559781;padding-top:10px}
+.grove-ui h2{font-family:Georgia,serif;font-size:clamp(24px,6vw,33px);color:#31594f;margin:8px 0 12px;line-height:1.12}
+.grove-ui h3{font-family:Georgia,serif;color:#416956;font-size:20px;margin:12px 0}
+.grove-ui p{color:#607b6f;line-height:1.48;font-size:14px}
+.grove-hero{background:linear-gradient(165deg,#e4f2d4,#c0e1ca 72%,#b9d6d1);border:3px solid #a1c3aa;border-radius:21px;padding:17px 16px 13px;margin:10px 0 15px;box-shadow:0 4px 0 #8eb09a}
+.grove-hero:before{content:"❀   ✿       ❀     ✿";display:block;color:#da94a4;letter-spacing:12px;text-align:center;font-size:18px;margin-bottom:12px}
+.grove-stats{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
+.grove-stats span{background:#f7f8e9;border:1px solid #b0cdb6;border-radius:12px;padding:8px 11px;font-size:12px;font-weight:800;color:#4c6d5c}
+.grove-site{background:linear-gradient(145deg,#fffdf2,#ecf5e4);border:2px solid #c4d9bc;border-radius:17px;display:flex;gap:11px;align-items:center;padding:12px;margin:8px 0}
+.grove-site.done{border-color:#93c8ad;background:linear-gradient(145deg,#f3f9e4,#dcefdc)}
+.grove-site-icon{font-size:26px;background:#e2efdb;border-radius:13px;display:grid;place-items:center;width:50px;height:50px;flex:0 0 50px}
+.grove-site strong{font-size:15px;display:block;color:#3a6254}
+.grove-site small{display:block;margin-top:4px;color:#6a8674;font-size:12px;line-height:1.4}
+.grove-choice{display:flex;align-items:center;gap:14px;width:100%;padding:14px 16px;margin:10px 0;background:#fcf9e7;color:#476455;border:2px solid #c7d9b8;border-radius:16px;font-size:15px;font-weight:800;text-align:left;min-height:57px;font-family:inherit;touch-action:manipulation;cursor:pointer}
+.grove-choice span{font-size:25px}
+.grove-choice:active{background:#e0f1cf}
+.grove-button{display:block;width:100%;background:#96cfb2;border:2px solid #61a68f;border-radius:14px;color:#2d5c53;font:900 14px inherit;min-height:48px;padding:12px;margin:10px 0;touch-action:manipulation}
+.grove-button.secondary{background:#efe9ca;border-color:#d8c69f}
+.grove-card{border-radius:17px;border:2px solid #b6d3bd;background:#eef7e6;padding:16px;margin:12px 0}
+.grove-letter{background:#fef9e9;border:2px solid #e1c99a;border-radius:17px;padding:19px;box-shadow:0 5px 0 #d6cfac;font:italic 16px Georgia,serif;color:#5b6c57;line-height:1.55;margin:18px 0}
+.grove-small{font-size:12px!important;opacity:.85}
+@media(max-width:365px){.grove-ui h2{font-size:23px}.grove-site{padding:9px}.grove-site-icon{width:41px;height:41px;flex-basis:41px;font-size:23px}.grove-choice{padding:12px}.grove-hero{padding:13px}}
+@media(prefers-reduced-motion:reduce){.grove-choice{transition:none}}
