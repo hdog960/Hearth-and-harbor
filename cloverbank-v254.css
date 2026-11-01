@@ -16,7 +16,7 @@
 .grove-choice{display:flex;align-items:center;gap:14px;width:100%;padding:14px 16px;margin:10px 0;background:#fcf9e7;color:#476455;border:2px solid #c7d9b8;border-radius:16px;font-size:15px;font-weight:800;text-align:left;min-height:57px;font-family:inherit;touch-action:manipulation;cursor:pointer}
 .grove-choice span{font-size:25px}
 .grove-choice:active{background:#e0f1cf}
-.grove-button{display:block;width:100%;background:#96cfb2;border:2px solid #61a68f;border-radius:14px;color:#2d5c53;font:900 14px inherit;min-height:48px;padding:12px;margin:10px 0;touch-action:manipulation}
+.grove-button{display:block;width:100%;background:#96cfb2;border:2px solid #61a68f;border-radius:14px;color:#2d5c53;font-weight:900;font-size:14px;font-family:inherit;min-height:48px;padding:12px;margin:10px 0;touch-action:manipulation}
 .grove-button.secondary{background:#efe9ca;border-color:#d8c69f}
 .grove-card{border-radius:17px;border:2px solid #b6d3bd;background:#eef7e6;padding:16px;margin:12px 0}
 .grove-letter{background:#fef9e9;border:2px solid #e1c99a;border-radius:17px;padding:19px;box-shadow:0 5px 0 #d6cfac;font:italic 16px Georgia,serif;color:#5b6c57;line-height:1.55;margin:18px 0}
