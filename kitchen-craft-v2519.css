@@ -1,3 +1,6 @@
+.kc-intro{padding:13px 14px;margin:9px 0 15px;border:2px solid #dfd6b8;border-radius:14px;background:linear-gradient(125deg,#e7f2e0,#fff0d8);color:#53765f}
+.kc-intro b{font-size:14px;display:block;margin-bottom:4px}
+.kc-intro p{color:#778873;font-size:12px;line-height:1.5;margin:0}
 /* v2.5.19 — Kitchen Craft: original tactile ingredient boards for existing cooking steps */
 .kc-craft{margin:13px 0 16px;padding:12px;background:#fff6e8;border:2px solid #e8d3b4;border-bottom:5px solid #d8b995;border-radius:18px;color:#5a735e}
 .kc-eyebrow{font-size:10px;font-weight:900;letter-spacing:.095em;color:#ab8460}
