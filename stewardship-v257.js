@@ -12,7 +12,7 @@ const PROJECTS=[
  {id:'deck',name:'Lily Pond Deck',icon:'🐟',host:'finn',cost:[50,70],x:1054,y:1270,walkX:1125,walkY:1330,
   intro:'Finn has drawn plans for a little waterside deck where friends can watch the fish.',
   stage:['A sturdy boardwalk platform','Reed planters, railings and a cozy lookout'],benefit:'Take a waterside rest once a day: +7 Energy and +6 Fun'},
- {id:'cart',name:"Rosie's Orchard Cart",icon:'🍎',host:'rosie',cost:[35,50],x:648,y:819,walkX:645,walkY:883,
+ {id:'cart',name:"Rosie's Orchard Cart",icon:'🍎',host:'rosie',cost:[35,50],x:443,y:824,walkX:510,walkY:893,
   intro:"Rosie and Oliver want a cheerful little market cart stocked with the village's seasonal produce.",
   stage:['A little wooden pushcart','Colorful striped awning and seasonal baskets'],benefit:'Collect one complimentary seasonal pantry parcel per day'}
 ];
@@ -178,7 +178,7 @@ function setup(api){
   }
   // A real cart with visible season-specific produce, not another invisible button.
   if(grade('cart')){
-   g.save();g.translate(648,819);
+   g.save();g.translate(443,824);
    g.fillStyle='#75543f';g.fillRect(-51,-40,103,42);g.fillStyle='#d09b65';g.fillRect(-46,-43,94,31);
    g.fillStyle='#674d40';for(const x of [-31,33]){g.beginPath();g.arc(x,10,12,0,Math.PI*2);g.fill();g.fillStyle='#d9c097';g.beginPath();g.arc(x,10,6,0,Math.PI*2);g.fill();}
    if(grade('cart')===2){
