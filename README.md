@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.9 — A Village in Motion
+# Hearth & Harbor v2.5.10 — Little Moments Together
+
+**Your village improvements now bring neighbors closer together.** Four recurring paired scenes appear at actual upgraded places in Maplewood: Mabel and Jun's **Poetry Garden**, Bea and Finn's **Lantern Workshop**, Rosie and Oliver's **Shared Orchard Table**, and Finn and Jun's **Stories by the Water**. The two residents navigate to their meeting positions in the existing game world and interact with unique animated props rather than teleporting into unrelated menus.
+
+In **Menu / Journal / Town Hall → Neighbors Together**, discover when each story is available. The first two alternate on season day 1; the orchard and pond scenes happen on season days 6 and 7. These are **in-game recurring events**, not real-world deadlines. Once both residents are physically present, you can join their outing and choose one of two distinctive outcomes. Choices improve the NPCs' **existing relationship bonds**, help ease tension, grow friendships and create lasting memories, with rewards limited once per scene per seasonal cycle.
+
+**The important routines remain intact:** the new meetups never override dates, weddings, promises, established personal visits, urgent care or resident home time. Earlier households, cooking, decorations, collecting, festivals and saved progress remain intact with no additional cost. Automated regression checks now cover the new scenes. Real-device iPhone Safari testing and screenshot-based route QA are still outstanding.
+
+Read [v2.5.10 development and QA notes](NEIGHBOR_SCENES_V2510_QA_AND_ROADMAP.md).
+
+## Previous milestone — A Village in Motion v2.5.9
 
 **The six Maplewood residents now actively work, prepare and socialize around the seasonal village festivals**, rather than merely gathering in one spot. Each has an individual schedule, destination and visible animated activity props: Mabel's garlands, Rosie's fruit baskets, Oliver's pastry trays, Jun's handwritten invitations, Bea's painting, and Finn's lanterns. In-game **day 2** is now a genuine festival preparation day; on days **3–5** neighbors change duties throughout morning, afternoon and evening. During ordinary days, completed garden, lantern, orchard and pond improvements also become part of their routines.
 
