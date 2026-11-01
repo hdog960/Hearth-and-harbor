@@ -172,7 +172,9 @@ function setup(api){
   if(!installed.length&&!isActive)return;
   g.save();
   installed.slice(0,2).forEach((id,i)=>{
-   const x=856+i*49,y=204;
+   // Hang above the existing aspiration row in the two clear wall bays.
+   // Avoid the door, windows, family-table frame and House Charm below.
+   const x=i===0?472:705,y=174;
    g.fillStyle='#805945';g.fillRect(x-18,y-20,37,40);
    g.fillStyle='#d6ae78';g.fillRect(x-15,y-17,31,34);
    g.fillStyle='#fff2dd';g.fillRect(x-12,y-14,25,28);
