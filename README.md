@@ -1,4 +1,4 @@
-# Hearth & Harbor v2.5.3 — Lily Pond Stories
+# Hearth & Harbor v2.5.4 — Cloverbank Grove
 
 The first **Living Village** vertical slice. Original iPhone-first 2.5D life sim, deployed to GitHub Pages.
 
@@ -40,3 +40,24 @@ Eight seasonal insects now have an illustrated, touch-driven net-catching activi
 17 simulated gameplay and persistence/validation checks passed: successful three-step catch, cast timing, reel tension, pantry/quest/reward effects, museum catalogue, missed hook, seasonal restrictions and old save defaults. Browser script syntax and page/offline asset wiring checked. These are **scripted simulation checks**, not a physical iPhone Safari playthrough; final device touch and performance QA remains outstanding.
 
 The Pond Life Gallery is currently a curator's illustrated record directory, **not** a second walkable museum room. Larger fishing locations, fish cooking variants and aquatic exhibitions remain future work.
+
+## v2.5.4 — Cloverbank Grove: a new walkable exploration area
+
+The Living Village's first woodland destination is a completely separate, scrolling **Cloverbank Grove** scene reached via a decorated trail gate on Maplewood's east side. Its original pixel-style landscape includes a winding stone path, seasonal trees, a brook, meadow flowers, lanterns, benches, and four seasonal palettes. Walkable collision boundaries and pathfinding prevent walking off-trail or through the largest scenery. Tap the gate to travel, tap landmarks to walk to them, and tap the sign near the bottom of the grove to return to town.
+
+Three activities available once per in-game day:
+
+1. **Berry Hollow:** Gather either berries or herbs (+2, capped at 99) and add them to the existing Hearth Kitchen pantry.
+2. **Whispering Brook:** Choose a stone to skip across the brook. A flat pebble produces four skips and a modest one-time 7-coin reward; all choices restore Fun.
+3. **Sunbeam Lookout:** Sketch a season-specific scene for your scrapbook or send a postcard to one of the six neighbors (+3 friendship and Social). Preserve one sketch for each season.
+
+Completing all three activities grants a **20-coin daily trail reward**. The Grove Album tracks visits, completed moments, memories, and all four seasonal sketches. A new Journal link opens the album, and Menu offers a route to the woodland. The feature uses the existing save key, cleans imported Grove data, and preserves the full cooking, fishing, insect, museum, social, household and wedding systems.
+
+### v2.5.4 quality notes
+
+- 17 static, drawing-mock, asset-link and pathfinding checks passed (including all four seasonal palettes and the entrance-to-landmark routes).
+- 13 simulated interaction checks passed (pantry gains, once-daily limits, postcards, relationship changes, season sketch persistence, completion reward, new-day reset and saves).
+- GitHub Pages v2.5.4 homepage and the new scene JavaScript/CSS files were independently confirmed publicly reachable.
+- **Remaining:** Real-device Safari tap feel, final visual QA in a full browser, and performance of woodland canvas rendering on lower-end iPhones.
+
+This is the first woodland exploration slice, **not** the completion of the v2.5 Living Village expansion. Future work includes more fully interactive town facilities, seasonal community festivals, larger environmental art passes, and greater NPC participation in these destinations.
