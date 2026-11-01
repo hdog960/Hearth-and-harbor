@@ -1,0 +1,28 @@
+name: Hearth and Harbor Cozy QA
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  festival-and-syntax:
+    name: JavaScript syntax and festival regression suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check browser JavaScript syntax
+        run: |
+          for js in *.js; do
+            node --check "$js"
+          done
+      - name: Run deterministic festival tests
+        run: node --test tests/*.test.cjs
