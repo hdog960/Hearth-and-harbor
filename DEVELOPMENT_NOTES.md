@@ -1,10 +1,9 @@
-# v2.4.2 — Neighbor Postcards / QA
+# v2.4.3 — Town Hearts: development notes
 
-- Adds a validated optional `socialPostcard` record to the existing save format.
-- Daily invitations are generated between 10:00 and 20:00 in-game for residents with at least 18 friendship and sufficient energy. Preference is given to a different sender on successive days.
-- Friend or romance invitation kind depends on the *existing* romance stage; platonic mail does not start dating.
-- Can accept, decline without penalty, cancel, or resume on the same day. Neither walking nor merely arriving awards rewards; choosing a shared moment finishes the event.
-- Friendly visit rewards are modest and only once per invitation/day; romantic dates follow existing one-date-per-day safeguards.
-- A completed outing saves a personal memory. Old saves and the cooking system are unaffected.
-- Mobile QA: 31 local Chromium checks passed including both invitation kinds, save migration, cancellation, notes, cooking and four viewport layouts.
-- Known limitations: no offline progression, no genuine NPC-to-NPC romantic partnerships, physical iPhone Safari gesture testing remains required.
+**Scope:** Resident-to-resident attraction and first autonomous decisions, not a marriage/family simulation.
+
+Relationships progress *only* when existing neighbor visits complete after both characters arrive. After multiple meaningful days together, a pair with sufficient affinity and positive bonds can develop a spark, decide to court, or form a partnership. The progression is stateful and bounded to one advance per pair/day. Ineligible pairs and those already committed to other partners do not begin parallel courtships. A Poppy dating/partner bond blocks automatic NPC courtship for that villager.
+
+**Persistence:** Sanitized `townHearts` state and `r:DAY:PAIR` memories; existing saves migrate to empty records and keep all previous data. A separate board appears in People, Journal and Menu.
+
+**Known limitations:** Simple authored compatibility scores, no dating dialogue between NPCs, no ceremony, no automatic moving in, no gender preference customization. Visual appearance relies on existing 2.5D sprites. Progress depends on the town running in an open tab; no offline simulation.
