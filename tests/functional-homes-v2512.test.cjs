@@ -177,5 +177,5 @@ test('real canvas decorations render and source integration keeps old gameplay i
  for(const asset of ['functional-homes-v2512.js','functional-homes-v2512.css']){
   assert.ok(html.includes(asset));assert.ok(worker.includes("'./"+asset+"'"));
  }
- assert.match(worker,/hearth-harbor-v2512-rooms-with-purpose/);
+ assert.match(worker,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/); // Offline cache evolves each release.
 });
