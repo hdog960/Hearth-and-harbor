@@ -145,5 +145,5 @@ test('runtime hooks only advance completed actions; scripts and offline cache ar
   assert.ok(html.includes(asset));
   assert.ok(sw.includes("'./"+asset+"'"));
  }
- assert.match(sw,/hearth-harbor-v2511-roots-and-keepsakes/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/); // New releases rotate the offline cache.
 });
