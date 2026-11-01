@@ -24,7 +24,8 @@ const PLAN_IDS=Object.keys(PLANS);
 const valid=o=>o!==null&&typeof o==='object'&&!Array.isArray(o);
 const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
 function clean(input){
- const raw=valid(input)?input:{},days={},counts={},memories=[];
+ const raw=valid(input)?input:{},days={},counts={},memories=[],walls={};
+ for(const h of HOMES)walls[h]=raw.walls?.[h]===true;
  for(const id of PEOPLE){
   const d=raw.days?.[id],n=raw.counts?.[id];
   days[id]=Number.isInteger(d)&&d>=1&&d<=9999?d:0;
@@ -37,14 +38,14 @@ function clean(input){
    memories.push({id:row.id,home:row.home,plan:row.plan,day:row.day});
   }
  }
- return {days,counts,memories:memories.slice(-36)};
+ return {days,counts,walls,memories:memories.slice(-36)};
 }
 function setup(api){
  const {getState,getScene,getHome,getMembers,getResidentNeeds,save,updateUI,notify,showModal,closeModal,walkTo}=api;
  const state=()=>getState();
  const store=()=>{
   const s=state();
-  if(!valid(s.helpingHands)||!valid(s.helpingHands.days)||!valid(s.helpingHands.counts)||!Array.isArray(s.helpingHands.memories))s.helpingHands=clean(s.helpingHands);
+  if(!valid(s.helpingHands)||!valid(s.helpingHands.days)||!valid(s.helpingHands.counts)||!valid(s.helpingHands.walls)||!Array.isArray(s.helpingHands.memories))s.helpingHands=clean(s.helpingHands);
   return s.helpingHands;
  };
  const home=()=>getScene()==='residence'&&HOMES.includes(getHome())?getHome():null;
@@ -106,6 +107,7 @@ function setup(api){
   r.counts[p.id]=clamp(r.counts[p.id]+1,0,9999);
   r.memories.push({id:p.id,home:p.home,plan:p.plan,day:p.day});
   r.memories=r.memories.slice(-36);
+  if(r.memories.filter(x=>x.home===p.home).length>=3)r.walls[p.home]=true;
   if(valid(neighbor)){
    neighbor.social=clamp((neighbor.social||0)+10,0,100);
    neighbor.fun=clamp((neighbor.fun||0)+8,0,100);
@@ -119,7 +121,7 @@ function setup(api){
   scene={...p,elapsed:0,duration:18,start:typeof api.onSceneStart==='function'?api.onSceneStart(p.id):null};
   pending=null;
   save();updateUI();
-  showModal('helping-hands-result','<div class="hh-ui"><div class="hh-kicker">A LITTLE JOB, DONE TOGETHER</div><h2>'+PLANS[p.plan].icon+' '+PLANS[p.plan].title+'</h2><div class="hh-result">🌼 💗 '+({mabel:'🌷',rosie:'🍎',oliver:'🥐',jun:'📖',bea:'🎨',finn:'🐟'}[p.id])+'</div><p>'+PLANS[p.plan].story+'</p><div class="hh-banner">A memory was saved! Poppy and '+NAMES[p.id]+' both feel happier and closer today.'+(r.counts[p.id]===3?' ✨ Three little projects together — a keepsake is now on the wall!':'')+'</div><button class="hh-main" data-act="hh-board">See our little memories</button><button data-act="hh-close" class="hh-close">Return home</button></div>');
+  showModal('helping-hands-result','<div class="hh-ui"><div class="hh-kicker">A LITTLE JOB, DONE TOGETHER</div><h2>'+PLANS[p.plan].icon+' '+PLANS[p.plan].title+'</h2><div class="hh-result">🌼 💗 '+({mabel:'🌷',rosie:'🍎',oliver:'🥐',jun:'📖',bea:'🎨',finn:'🐟'}[p.id])+'</div><p>'+PLANS[p.plan].story+'</p><div class="hh-banner">A memory was saved! Poppy and '+NAMES[p.id]+' both feel happier and closer today.'+(r.walls[p.home]?' ✨ This home has a handmade keepsake on the wall!':'')+'</div><button class="hh-main" data-act="hh-board">See our little memories</button><button data-act="hh-close" class="hh-close">Return home</button></div>');
   notify('You and '+NAMES[p.id]+' made a lovely little memory! 💗');
   return true;
  }
@@ -146,7 +148,7 @@ function setup(api){
  }
  function draw(g,{home:h,tick=0}={}){
   if(!HOMES.includes(h))return;
-  const r=store(),mem=r.memories.filter(m=>m.home===h),keepsake=mem.length>=3;
+  const r=store(),keepsake=r.walls[h]===true;
   if(!keepsake&&!active())return;
   g.save();
   if(keepsake){
