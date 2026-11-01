@@ -71,7 +71,7 @@ function setup(api){
   stop();const relaxed=cozy(),now=performance.now();
   showModal('fishing-game','<div class="fishing-ui fishing-playing"><div class="fishing-eyebrow">THE POND • '+esc(f.name.toUpperCase())+'</div><h2 id="fishingTitle">Cast your line!</h2><p id="fishingHelp">Tap the water to aim your bobber near the moving shadow, then cast.</p><div class="fishing-hud"><span id="fishingStage">1 / 3 · CAST</span><span id="fishingClock">No rush</span></div><div class="fishing-water"><canvas id="fishingCanvas" width="760" height="660" aria-label="Illustrated pond fishing game. Tap water to aim."></canvas></div><div class="fishing-gauge" id="fishingGauge" hidden><div id="fishingTension"></div></div><div class="fishing-action"><button class="fishing-primary" id="fishingDo">🎣 Cast line</button><button class="fishing-muted" id="fishingBack">Back</button></div><p class="fishing-message" id="fishingMessage" aria-live="polite">No penalties for trying again.</p></div>');
   const cv=$('fishingCanvas'),g=cv.getContext('2d');
-  const s={fish:f,canvas:cv,g,phase:'cast',relaxed,last:now,time:0,phaseTime:0,aim:185,shadow:185,bobber:185,castQuality:0,hookWindow:0,biteAt:1.2,progress:0,tension:33,holding:false,brokenTime:0,closed:false,eff:0};
+  const s={fish:f,canvas:cv,g,phase:'cast',relaxed,last:now,time:0,phaseTime:0,aim:185,shadow:185,bobber:185,castQuality:0,hookWindow:0,biteAt:1.2,progress:0,tension:33,holding:false,brokenTime:0,lastTap:0,closed:false,eff:0};
   session=s;cv.style.touchAction='none';
   function coordinate(e){const r=cv.getBoundingClientRect();return Math.max(28,Math.min(352,(e.clientX-r.left)*380/r.width))}
   cv.onpointerdown=e=>{if(s.phase==='cast'){cv.setPointerCapture?.(e.pointerId);s.aim=coordinate(e)}else if(s.phase==='reel'){s.holding=true;cv.setPointerCapture?.(e.pointerId)}};
@@ -85,7 +85,7 @@ function setup(api){
    if(s.closed)return;
    if(s.phase==='cast')cast(s);
    else if(s.phase==='bite')hook(s);
-   else if(s.phase==='reel'){s.tension=Math.min(100,s.tension+4);s.progress=Math.min(100,s.progress+(s.relaxed?4:3));checkReel(s)}
+   else if(s.phase==='reel'){const now=performance.now();if(now-s.lastTap<135)return;s.lastTap=now;s.tension=Math.min(100,s.tension+4);s.progress=Math.min(100,s.progress+(s.relaxed?4:3));checkReel(s)}
   };
   $('fishingBack').onclick=overview;
   frame=requestAnimationFrame(t=>loop(s,t));
@@ -113,7 +113,7 @@ function setup(api){
  }
  function checkReel(s){
   if(s.progress>=100){finish(s);return}
-  if(!s.relaxed&&s.tension>=94&&s.brokenTime>=.43)fail(s,'The fish slipped away when the line grew too tight.');
+  if(!s.relaxed&&s.tension>=99||!s.relaxed&&s.tension>=94&&s.brokenTime>=.43)fail(s,'The fish slipped away when the line grew too tight.');
  }
  function fail(s,msg){
   if(s.closed)return;s.closed=true;if(frame)cancelAnimationFrame(frame);
