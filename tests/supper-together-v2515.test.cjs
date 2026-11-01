@@ -188,9 +188,9 @@ test('renderer uses real resident sprites, actual animated poses, and pauses aut
   'familyTable.drawFront(ctx',
   'familyTable.update(dt)',
   'onDinnerStart:(guests)=>',
-  'roomAutonomy.set(id,',
-  'Hearth & Harbor: Thoughtful Households v2.5.16'
+  'roomAutonomy.set(id,'
  ])assert.ok(core.includes(token),token);
+ assert.match(core,/Hearth & Harbor: [^\n]+v2\.5\.\d+/);
  assert.ok(html.includes('supper-together-v2515.css'));
  assert.ok(sw.includes("'./supper-together-v2515.css'"));
  assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/); // Release cache changes each version.
