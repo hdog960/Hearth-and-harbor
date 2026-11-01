@@ -224,6 +224,9 @@ function personalMood(n){
  if(a.fun<25)return {name:'Restless',icon:'☁️',note:'Everything feels repetitive. I want to do something fun.'};
  const strained=strainedNeighbor(n.id);
  if(strained&&strained.tension>=15)return {name:'Uneasy',icon:'🌧️',note:`I had a misunderstanding with ${strained.name}. I hope we can talk it through soon.`};
+ if(scene==='residence'&&householdRhythms.reaction(n.id)){
+  return {name:'Connected',icon:'💗',note:'Sharing a little care at home helped us feel closer today.'};
+ }
  const mood=currentRoutine(n).mood||'content';
  const icons={happy:'😊',cheerful:'🌞',inspired:'✨',focused:'🎯',peaceful:'🌷',busy:'💼',sleepy:'🌙'};
  return {name:mood.charAt(0).toUpperCase()+mood.slice(1),icon:icons[mood]||'😊',note:''};
