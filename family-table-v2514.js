@@ -1,4 +1,4 @@
-/* Hearth & Harbor v2.5.14 — At Our Table
+/* Hearth & Harbor v2.5.15 — Supper Together (evolving At Our Table)
    Prepared meals become home gatherings with conversation choices and persistent rituals.
    All interactions use actual dishes, existing household residents and an arrival callback.
  */
@@ -65,7 +65,9 @@ function setup(api){
  };
  const eligible=(d)=>valid(d)&&own(RECIPES,d.id)&&Number.isInteger(d.quality)&&d.quality>=1&&d.quality<=3;
  const served=h=>store().days[h]===state().day;
- let pending=null;
+ let pending=null, gathering=null;
+ const LINENS={sage:'🌿 Clover-green linen',rose:'🌷 Rosewater linen',honey:'🍯 Golden-honey linen'};
+ const seats=guests=>['Poppy',...memberNames(guests)];
  function memories(){
   const list=store().memories.slice().reverse().slice(0,12);
   return '<h3>Little dinners, lovingly remembered</h3><div class="ft-history">'+(list.map(r=>{
@@ -91,14 +93,43 @@ function setup(api){
   if(!pending||!TOPICS.some(t=>t.id===topic))return board();
   const p=pending;
   if(current()!==p.home||state().day!==p.day||served(p.home))return board();
-  pending={...p,topic};
+  pending={...p,topic,stage:'walking',places:[],linen:'sage',candle:false};
   closeModal();
-  // Reach a real kitchen/dining location in the currently occupied room.
-  walkTo(p.home==='player'?{x:725,y:391}:{x:738,y:393},()=>finish());
+  // Walk and arrive first; do not spend a single ingredient until the actual setting is complete.
+  walkTo(p.home==='player'?{x:725,y:391}:{x:738,y:393},()=>arrive());
  }
+ function validPending(p){
+  if(!p||current()!==p.home||state().day!==p.day||served(p.home))return false;
+  if(members().join('|')!==p.guests.join('|'))return false;
+  const d=dishes()[p.index];
+  return eligible(d)&&d.id===p.recipe&&d.quality===p.quality;
+ }
+ function arrive(){
+  if(!pending||pending.stage!=='walking')return false;
+  if(!validPending(pending)){pending=null;notify('Dinner plans changed. Your cooked meal is still safe.');return false}
+  pending.stage='setting';showSetting();return true;
+ }
+ function showSetting(){
+  if(!pending||pending.stage!=='setting')return false;
+  const p=pending,who=seats(p.guests),complete=p.places.length===who.length;
+  const host=who.length===1?'yourself':who.join(' · ');
+  const renderPlace=(person,i)=>'<button class="ft-seat '+(p.places.includes(i)?'is-set':'')+'" data-act="ft-place" data-id="'+i+'" aria-pressed="'+p.places.includes(i)+'"><span class="ft-seat-dish">'+(p.places.includes(i)?RECIPES[p.recipe].icon:'○')+'</span><b>'+person+'</b><small>'+(p.places.includes(i)?'✓ Place ready':'Tap to set this place')+'</small></button>';
+  showModal('family-table-setting','<div class="ft-ui ft-setting"><div class="ft-eyebrow">A HANDS-ON LITTLE MOMENT</div><h2>🍽️ Set the supper table</h2><p>You have arrived. Make a cozy place for '+host+' before serving <b>'+RECIPES[p.recipe].name+'</b>. Nothing is consumed until you finish setting every place.</p><div class="ft-linen" role="group" aria-label="Choose table linen">'+Object.entries(LINENS).map(([id,label])=>'<button data-act="ft-linen" data-id="'+id+'" aria-pressed="'+(p.linen===id)+'">'+label+'</button>').join('')+'</div><div class="ft-seating ft-'+p.linen+'"><div class="ft-table-center"><span>✦</span> '+RECIPES[p.recipe].icon+' <span>✦</span></div><div class="ft-seats">'+who.map(renderPlace).join('')+'</div></div><button class="ft-candle" data-act="ft-candle" aria-pressed="'+p.candle+'">'+(p.candle?'🕯️ Candle glowing · tap to put it out':'🕯️ Light a little candle')+'</button><p class="ft-setting-progress">'+p.places.length+'/'+who.length+' places set '+(complete?'· Ready to share!':'· Tap each empty plate')+'</p><button class="ft-main" data-act="ft-serve" '+(complete?'':'disabled')+'>🍲 Serve the supper</button><button class="ft-back" data-act="ft-abandon">Leave the table (keep your meal)</button></div>');
+  return true;
+ }
+ function setPlace(i){
+  if(!pending||pending.stage!=='setting'||!validPending(pending))return false;
+  if(!Number.isInteger(i)||i<0||i>=seats(pending.guests).length)return false;
+  if(!pending.places.includes(i))pending.places.push(i);
+  return showSetting();
+ }
+ function linen(id){if(!pending||pending.stage!=='setting'||!Object.prototype.hasOwnProperty.call(LINENS,id))return false;pending.linen=id;return showSetting();}
+ function candle(){if(!pending||pending.stage!=='setting')return false;pending.candle=!pending.candle;return showSetting();}
+ function abandon(){pending=null;closeModal();notify('Your prepared dish is still safely on the shelf.');}
+
  function finish(){
   const p=pending;
-  if(!p)return false;
+  if(!p||p.stage!=='setting'||p.places.length!==seats(p.guests).length||!validPending(p))return false;
   const h=current(),now=state(),r=store(),m=members();
   if(!h||h!==p.home||now.day!==p.day||served(h)||h!=='player'&&!m.length){pending=null;return false;}
   if(m.join('|')!==p.guests.join('|')){pending=null;notify('The household changed before dinner. Choose another time.');return false;}
@@ -132,6 +163,8 @@ function setup(api){
   if(h==='player')api.completeHomeMeal();
   r.memories.push({home:h,day:now.day,recipe:d.id,quality:d.quality,topic:topic.id,guests:m});
   r.memories=r.memories.slice(-40);
+  gathering={home:h,day:now.day,guests:m,topic:topic.id,recipe:d.id,linen:p.linen,candle:p.candle,elapsed:0,duration:26};
+  if(typeof api.onDinnerStart==='function')api.onDinnerStart(m);
   pending=null;save();updateUI();
   showModal('family-table-result','<div class="ft-ui"><div class="ft-eyebrow">THE LITTLE MOMENTS ARE THE BIG ONES</div><h2>🍽️ An evening to remember</h2><div class="ft-platter">'+RECIPES[d.id].icon+' <span>'+RECIPES[d.id].name+'</span></div><p class="ft-story">'+topic.intro+'</p><div class="ft-banner">'+(m.length?'💗 '+memberNames(m).join(' & ')+' shared dinner. ':'🌷 A peaceful supper at home. ')+(favorite.length?'Favorite dish for '+memberNames(favorite).join(' & ')+'! ':'')+'Your homemade meal restored needs and created a lasting memory.</div>'+(r.counts[h]===3?'<p>✨ Three suppers together! A new family-table keepsake now appears inside this home.</p>':'')+'<button class="ft-main" data-act="ft-board">Open family table scrapbook</button><button class="ft-back" data-act="ft-close">Return to the home</button></div>');
   notify('A new household dinner memory is saved! 💌');
@@ -141,8 +174,45 @@ function setup(api){
   if(action==='ft-board')return board();
   if(action==='ft-pick')return pick(Number(id));
   if(action==='ft-topic')return start(id);
+  if(action==='ft-place')return setPlace(Number(id));
+  if(action==='ft-linen')return linen(id);
+  if(action==='ft-candle')return candle();
+  if(action==='ft-serve')return finish();
+  if(action==='ft-abandon')return abandon();
   if(action==='ft-close'){pending=null;return closeModal();}
   if(action==='ft-kitchen'){pending=null;return api.openKitchen();}
+ }
+ function gatheringActive(home=current()){
+  return !!(gathering&&home===gathering.home&&state().day===gathering.day&&gathering.elapsed<gathering.duration&&members().join('|')===gathering.guests.join('|'));
+ }
+ function update(dt){
+  if(!gathering)return;
+  if(!gatheringActive()){gathering=null;return;}
+  if(typeof api.isModalOpen==='function'&&api.isModalOpen())return;
+  if(!Number.isFinite(dt)||dt<=0)return;
+  gathering.elapsed+=Math.min(.1,dt);
+  if(gathering.elapsed>=gathering.duration)gathering=null;
+ }
+ function dinnerPose(id,home=current(),tick=0){
+  if(!gatheringActive(home))return null;
+  const index=gathering.guests.indexOf(id);
+  if(index<0)return null;
+  const x=index===0?602:795,y=515+(index%2)*17;
+  return {x,y,dir:'front',moving:false,expression:'happy',act:gathering.topic==='celebrate'?'✨':gathering.topic==='dream'?'🌟':'💗',
+   phase:'supper',action:'meal',progress:Math.min(1,gathering.elapsed/gathering.duration),bob:Math.sin(tick*3.3+index)*2};
+ }
+ function drawFront(g,{home=current(),tick=0}={}){
+  if(!gatheringActive(home))return false;
+  const x=690,y=423;
+  g.save();g.fillStyle='#fff7dc';g.globalAlpha=.75;
+  for(let i=0;i<gathering.guests.length+1;i++){
+   const a=i*1.6+tick*2.6;
+   g.beginPath();g.ellipse(x-28+i*28,y-35+Math.sin(a)*4,3,6,0,0,Math.PI*2);g.fill();
+  }
+  g.globalAlpha=1;g.fillStyle=gathering.linen==='honey'?'#f1d69e':gathering.linen==='rose'?'#f3c7d5':'#c4dcc4';g.fillRect(x-60,y-10,120,6);
+  if(gathering.candle){g.fillStyle='#ffe5a2';g.beginPath();g.ellipse(x,y-49+Math.sin(tick*6)*3,5,9,0,0,Math.PI*2);g.fill();
+   g.fillStyle='#ecb68c';g.fillRect(x-3,y-44,6,18);}
+  g.restore();return true;
  }
  function draw(g,{home,day,tick=0}={}){
   if(!HOMES.includes(home))return;
@@ -175,7 +245,7 @@ function setup(api){
   }
   g.restore();
  }
- return {board,pick,start,finish,handle,draw,served,current,members,record:store,recipes:RECIPES};
+ return {board,pick,start,arrive,showSetting,setPlace,linen,candle,abandon,finish,handle,draw,drawFront,dinnerPose,gatheringActive,update,served,current,members,record:store,recipes:RECIPES};
 }
 root.HearthFamilyTable={clean,setup,RECIPES,FAVORITES,TOPICS,HOMES};
 })(window);
