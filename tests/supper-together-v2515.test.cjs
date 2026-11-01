@@ -135,6 +135,43 @@ test('gathering timer pauses behind the result modal and ends without permanent 
  assert.equal(x.game.gatheringActive('h0'),false);
  assert.equal(x.game.dinnerPose('rosie','h0',99),null);
 });
+test('real resident dinner positions ease from their previous home locations and return to autonomy',()=>{
+ let callback=0,ended=0,arrive,modal=true;
+ const state={
+  day:1,needs:{hunger:10,fun:10,social:10},relations:{rosie:2,oliver:2},
+  cooking:{dishes:[{id:'tart',quality:3}]},townBonds:{},townTensions:{},
+  familyTable:F.clean(null),residentLife:{rosie:{needs:{food:10,social:10,fun:10}},oliver:{needs:{food:10,social:10,fun:10}}}
+ };
+ const e=F.setup({
+  getState:()=>state,getScene:()=> 'residence',getHome:()=> 'h0',
+  getMembers:()=>['rosie','oliver'],save:()=>{},updateUI:()=>{},notify:()=>{},
+  showModal:()=>{modal=true},closeModal:()=>{modal=false},
+  walkTo:(_,cb)=>{arrive=cb},isModalOpen:()=>modal,
+  onDinnerStart:()=>{callback++;return [{id:'rosie',x:350,y:650},{id:'oliver',x:870,y:785}]},
+  onDinnerEnd:()=>{ended++}
+ });
+ e.pick(0);e.start('remember');arrive();
+ e.setPlace(0);e.setPlace(1);e.setPlace(2);
+ assert.equal(e.finish(),true);
+ assert.equal(callback,1);
+ let first=e.dinnerPose('rosie','h0',0);
+ assert.equal(first.x,350);
+ assert.equal(first.y,650);
+ assert.equal(first.moving,true);
+ modal=false;
+ for(let i=0;i<20;i++)e.update(.1);
+ let mid=e.dinnerPose('rosie','h0',2);
+ assert.ok(mid.x>350&&mid.x<602);
+ assert.ok(mid.y<650&&mid.y>515);
+ for(let i=0;i<230;i++)e.update(.1);
+ let seat=e.dinnerPose('rosie','h0',25);
+ assert.equal(Math.round(seat.x),602);
+ assert.equal(Math.round(seat.y),515);
+ assert.equal(seat.moving,false);
+ for(let i=0;i<42;i++)e.update(.1);
+ assert.equal(e.gatheringActive('h0'),false);
+ assert.equal(ended,1);
+});
 test('new animated supper decorations use Canvas2D and do not render in unrelated homes',()=>{
  const x=setup();start(x,'dream');placeAll(x,3);x.game.candle();x.game.finish();
  let calls=0;
