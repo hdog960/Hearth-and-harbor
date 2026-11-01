@@ -1,0 +1,23 @@
+/* Hearth & Harbor v2.5.16 — Thoughtful Households
+   Integrated directly in the existing household Daybook. */
+.rh-board{background:linear-gradient(145deg,#fff8ea,#edf3e6);border:2px solid #e5d5ba;border-bottom:4px solid #d2bba3;border-radius:17px;padding:14px;margin:15px 0;color:#426653}
+.rh-kicker{font-size:10px;letter-spacing:.10em;font-weight:900;color:#aa8061;margin-bottom:7px}
+.rh-board h3{font-size:18px;margin:0 0 7px;color:#416a55}
+.rh-board h4{font-size:14px;color:#5d7c62;margin:15px 0 9px}
+.rh-board>p{font-size:12px;line-height:1.6;color:#718374;margin:7px 0 12px}
+.rh-person{display:flex;gap:10px;padding:10px;border:1px solid #dee4d0;border-radius:13px;background:#fff9ee;margin:8px 0;align-items:flex-start}
+.rh-icon{display:grid;place-items:center;flex:none;width:42px;height:42px;border-radius:11px;background:#e7eddb;font-size:23px}
+.rh-person>div{min-width:0;flex:1}
+.rh-person b{display:block;font-size:13px;color:#4d735f}
+.rh-person small{display:block;font-size:11px;color:#648777;margin-top:4px;font-weight:900}
+.rh-person p{font-size:12px;line-height:1.45;color:#83917e;margin:6px 0 0}
+.rh-memories{max-height:230px;overflow:auto;overscroll-behavior:contain;background:#fdf8ed;border:1px solid #e6d7bd;border-radius:13px;padding:6px}
+.rh-memories>p{font-size:12px;line-height:1.5;padding:8px;color:#879682}
+.rh-memory{display:flex;gap:9px;align-items:center;border-bottom:1px solid #e8ddc9;padding:8px 6px}
+.rh-memory:last-child{border:0}
+.rh-memory>span{font-size:21px}
+.rh-memory p{font-size:12px;line-height:1.5;color:#758b79;margin:0}
+.rh-memory b{color:#577364}
+.rh-memory small{font-size:10px;color:#92a08e}
+@media(max-width:360px){.rh-board{padding:10px}.rh-person{padding:8px}.rh-icon{width:36px;height:36px;font-size:20px}}
+@media(prefers-reduced-motion:reduce){.rh-board *{transition:none!important;animation:none!important}}
