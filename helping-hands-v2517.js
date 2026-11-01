@@ -45,7 +45,7 @@ function setup(api){
  const state=()=>getState();
  const store=()=>{
   const s=state();
-  if(!valid(s.helpingHands)||!valid(s.helpingHands.days)||!valid(s.helpingHands.counts)||!valid(s.helpingHands.walls)||!Array.isArray(s.helpingHands.memories))s.helpingHands=clean(s.helpingHands);
+  if(!valid(s.helpingHands)||!valid(s.helpingHands.days)||!valid(s.helpingHands.counts)||!valid(s.helpingHands.walls)||!Array.isArray(s.helpingHands.memories)||!PEOPLE.every(id=>Number.isInteger(s.helpingHands.counts[id])&&Number.isInteger(s.helpingHands.days[id]))||!HOMES.every(h=>typeof s.helpingHands.walls[h]==='boolean'))s.helpingHands=clean(s.helpingHands);
   return s.helpingHands;
  };
  const home=()=>getScene()==='residence'&&HOMES.includes(getHome())?getHome():null;
@@ -104,7 +104,7 @@ function setup(api){
   const p=pending,r=store(),s=state(),neighbor=getResidentNeeds(p.id);
   // Claim once BEFORE any rewards; no repeated taps can create another completion.
   r.days[p.id]=s.day;
-  r.counts[p.id]=clamp(r.counts[p.id]+1,0,9999);
+  r.counts[p.id]=clamp((r.counts[p.id]||0)+1,0,9999);
   r.memories.push({id:p.id,home:p.home,plan:p.plan,day:p.day});
   r.memories=r.memories.slice(-36);
   if(r.memories.filter(x=>x.home===p.home).length>=3)r.walls[p.home]=true;
