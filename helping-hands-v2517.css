@@ -1,0 +1,42 @@
+/* Hearth & Harbor v2.5.17 — Helping Hands: mobile-first cooperative projects */
+.hh-ui{font-family:inherit;color:#426a55;max-width:640px;margin:0 auto}
+.hh-ui h2{font-size:clamp(24px,6vw,34px);color:#446c58;margin:8px 0 10px;line-height:1.2}
+.hh-ui h3{font-size:16px;color:#59775d;margin:15px 0 10px}
+.hh-ui p{font-size:13px;line-height:1.55;color:#728571;margin:8px 0}
+.hh-kicker{font-size:10px;font-weight:900;letter-spacing:.12em;color:#af8166}
+.hh-banner{background:linear-gradient(110deg,#f5ead3,#e5f1dd);border:2px solid #dfd2b5;border-radius:13px;padding:12px;color:#608066;font-size:13px;font-weight:800;line-height:1.5;margin:12px 0}
+.hh-person{display:flex;align-items:start;gap:10px;background:#fff9ef;border:2px solid #e6d5b9;border-bottom:4px solid #d4bda1;border-radius:15px;padding:12px;margin:12px 0}
+.hh-character{display:grid;place-items:center;font-size:30px;background:#ebf0dc;border-radius:12px;width:49px;height:49px;flex:none}
+.hh-member{flex:1;min-width:0}
+.hh-member>b{display:block;font-size:16px;color:#4a6d56}
+.hh-member>small{display:block;font-size:11px;color:#809480;line-height:1.45;margin:4px 0 8px}
+.hh-task-picker{display:flex;gap:7px;flex-wrap:wrap}
+.hh-task-picker button,.hh-choices button,.hh-main{font-family:inherit;font-size:12px;font-weight:900;border:2px solid #54876e;border-radius:11px;min-height:46px;padding:10px;background:#609b7e;color:#fff9e8;touch-action:manipulation}
+.hh-task-picker button{flex:1 1 105px;background:#f9ead4;color:#7b654f;border-color:#d7b996}
+.hh-task-picker button:disabled{opacity:.48}
+.hh-history{background:#fff9ed;border:1px solid #e4d7bb;border-radius:13px;max-height:240px;overflow:auto;overscroll-behavior:contain}
+.hh-history>p{padding:12px}
+.hh-memory{display:flex;gap:9px;align-items:center;padding:10px;border-bottom:1px solid #eee0cf}
+.hh-memory:last-child{border:0}
+.hh-memory>span{font-size:23px}
+.hh-memory p{flex:1;font-size:12px;margin:0;color:#718572}
+.hh-memory b{color:#537662}
+.hh-memory small{display:block;font-size:11px;margin-top:4px}
+.hh-close{font-family:inherit;display:block;border:0;background:transparent;text-decoration:underline;font-size:12px;font-weight:900;color:#728575;min-height:46px;padding:12px;margin:10px auto}
+.hh-progress{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff4dd;border:1px solid #e5d2ad;padding:10px;border-radius:13px;color:#907557;font-size:11px;font-weight:900;margin:14px 0}
+.hh-progress>div{display:flex;gap:5px}
+.hh-progress i{display:block;width:29px;height:10px;border-radius:6px;background:#d9dfd0}
+.hh-progress i.full{background:#77ad88}
+.hh-stage{display:flex;align-items:center;gap:8px;justify-content:center;background:linear-gradient(145deg,#f9e3cb,#e4f0de);border:3px solid #e4cdb1;border-radius:20px;min-height:148px;margin:13px 0;padding:12px}
+.hh-partner{font-size:35px;display:grid;place-items:center;width:61px;height:70px;background:#fff9e9;border-radius:19px}
+.hh-stage-center{font-size:37px;text-align:center;flex:1}
+.hh-stage-center small{display:block;font-size:10px;font-weight:900;color:#78907b;margin-top:5px}
+.hh-activity h3{font-size:16px;line-height:1.4;text-align:center}
+.hh-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0}
+.hh-choices button{min-height:85px;background:#fff4dd;color:#856b52;border-color:#dfc59c;font-size:12px;line-height:1.4}
+.hh-choices button:active{background:#e0eed8;border-color:#6d9f7c;transform:translateY(2px)}
+.hh-hint{display:block;text-align:center;color:#889481;line-height:1.5;font-size:11px;font-weight:800}
+.hh-result{text-align:center;font-size:40px;background:#f6f0d9;border:2px solid #e8d9b9;border-radius:18px;padding:20px;margin:13px 0}
+.hh-main{display:block;width:100%;margin:13px 0}
+@media(max-width:380px){.hh-person{padding:9px;gap:7px}.hh-character{width:40px;height:40px;font-size:24px}.hh-task-picker button{flex-basis:85px;font-size:11px}.hh-choices{gap:5px}.hh-choices button{font-size:10px;padding:6px}.hh-partner{font-size:28px;width:49px}}
+@media(prefers-reduced-motion:reduce){.hh-ui *{transition:none!important;animation:none!important}}
