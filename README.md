@@ -1,17 +1,17 @@
-# Hearth & Harbor v2.4.3 — Town Hearts
+# Hearth & Harbor v2.4.5 — Shared Futures
 
-An incremental update to the original free 2.5D browser life simulator.
+Free, iPhone-first, 2.5D cozy life simulation hosted on GitHub Pages.
 
-- Villagers can discover feelings after repeated, completed in-world visits with a compatible neighbor.
-- Distinct courtship/partnership stages and memories are kept separate from Poppy’s dating progress.
-- Serious arguments and existing partners prevent new courtships. No daily progress without a real, completed visit.
-- People, Journal, and Menu now offer **Town Hearts**, a view of resident-created relationships.
-- Existing saves, cooking, home interiors and quests are preserved. No offline progression, marriage or generational features are implied by this update.
+## New in v2.4.5
+- Committed couples can discuss their future from **People → Town Hearts → Life plans**.
+- After two genuine shared evenings, a couple can choose one of their existing cottages to share, if both addresses have space. No forced moves or evictions.
+- Couples can also choose to keep independent homes without a penalty. The decision becomes a saved Town Story.
+- Shared-home partners can enjoy one homemade dinner per in-game day, consuming a prepared dish from the 12-recipe Hearth Kitchen and improving both residents' needs and bond.
+- Couples living together enjoy their evening tradition at their own cottage.
+- Older saves and relationship systems remain supported.
 
-Serve the repository root on GitHub Pages. Full QA findings: `DEVELOPMENT_NOTES.md`.
+## Playing
+Open https://hdog960.github.io/Hearth-and-harbor/ in Safari. Cooking, home decorating, relationship outings, resident autonomy, and the original life-sim features are available.
 
-## v2.4.4 — Evening Traditions
-
-Dating and committed NPC couples now meet during an evening window (8:45–10:42 PM in-game) for original activities: flower-lit walks, café conversations or reading together. Both residents must physically arrive before a moment completes. Their social and fun needs recover, and a Town Stories entry records the evening. Open People → Town Hearts to follow couples and optionally leave a once-per-evening 10-coin bouquet; the gesture gives a small bounded bonus. You can also ask villagers about their partners in conversation.
-
-The same save key is retained, and new data is sanitized during import. Events only progress while playing in town. Marriage, children and generations are future work; physical iPhone Safari testing remains outstanding.
+## Limits
+A full marriage ceremony, children, aging and generational inheritance are future milestones. Real life continues only when the game is open; there is no paid backend. Some old code and assets remain prototype-level, and physical iPhone Safari testing is still needed.
