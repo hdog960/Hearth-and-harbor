@@ -1,10 +1,9 @@
-# v2.3.4 — Development and QA
+# v2.3.5 — Little Moments development notes
 
-- Preserve the original save key; add optional residentHabits counters (sessions + lastDay), validate all values and resident IDs on import.
-- Hobby preferences are authored per NPC and are not arbitrary imported objects.
-- Autonomy prioritizes hunger/rest and meaningful social needs ahead of hobbies.
-- Hobby actions use existing daily limits; per-day bonus for placing favorite decor is capped.
-- After three distinct hobby days a unique personal memory is saved to existing lifeMoments.
-- No new purchases occur automatically; kitchen pantry remains unchanged.
-- Local mobile-sized Chromium QA: 29/29 checks passed, no JavaScript exceptions, four screen sizes.
-- Follow up: additional animated furniture interactions, prop-aware movement and hobby progression beyond first milestone.
+- Six new pixel-art activity illustrations: nap pillow, open book, steaming meal, tidying tools, heart, creative kit. These render in the home alongside the character.
+- Guided routines now visibly perform for 3.8 seconds before rewards and progress are granted.
+- Cancelling, pausing, leaving a home, or changing control has been tested to prevent premature rewards or duplicate completion.
+- Autonomous residents use the same world-space activity illustrations; no consumable or currency spending.
+- Existing save schema retained and 12-recipe kitchen regression checked.
+- Automated tests: 29 legacy + 17 new; mobile portrait widths 320, 390, 430 and 844-wide landscape checked.
+- Planned next: richer animation frames/poses, resident relationship and autonomy rules, then careful v2.4 personality expansion.
