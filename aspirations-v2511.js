@@ -41,7 +41,6 @@ function clean(input){
    lastDay:boundedDay(s.lastDay),
    finished
   };
-  if(out.people[id].lastDay>0&&out.people[id].lastDay<Math.max(0,Math.min(...Object.values(finished).filter(Boolean))))out.people[id].lastDay=0;
  }
  if(Array.isArray(src.memories))for(const row of src.memories.slice(-90)){
   if(!OWN(row)||!IDS.includes(row.id)||!PATH_IDS.includes(row.path)||!Number.isInteger(row.day)||row.day<1||row.day>9999)continue;
