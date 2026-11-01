@@ -1,0 +1,27 @@
+/* Hearth & Harbor v2.5.6 — Together in Maplewood */
+.hcm-ui{color:#355e53;font-family:inherit;max-width:590px;margin:0 auto}
+.hcm-ui h2{font-size:clamp(23px,6vw,31px);line-height:1.19;margin:9px 0 13px;color:#365e53}
+.hcm-ui p{color:#58776b;font-size:14px;line-height:1.55;margin:11px 0}
+.hcm-eyebrow{font-size:11px;letter-spacing:.1em;color:#aa8566;font-weight:900}
+.hcm-stage,.hcm-portrait{padding:13px;background:linear-gradient(115deg,#fce6d7,#eaf3de);border:2px solid #e1d5b3;border-radius:15px;font-size:13px;line-height:1.65;color:#4e6a59;font-weight:700}
+.hcm-roster{display:grid;gap:11px;margin:18px 0}
+.hcm-neighbor{display:flex;align-items:center;gap:10px;padding:11px 10px;background:#fff9eb;border:2px solid #e8ddc7;border-radius:15px}
+.hcm-avatar{flex:none;display:grid;place-items:center;width:50px;height:50px;background:#f3e8da;border-radius:14px;font-size:30px}
+.hcm-neighbor>div{flex:1;min-width:0}
+.hcm-neighbor b{display:block;font-size:15px}
+.hcm-neighbor small{display:block;font-size:12px;line-height:1.3;color:#688074;margin-top:4px}
+.hcm-neighbor button,.hcm-main,.hcm-buttons button{border:2px solid #488775;background:#54927e;color:#fffaf0;border-radius:12px;padding:10px 12px;font-family:inherit;font-size:13px;font-weight:800;min-height:46px;touch-action:manipulation}
+.hcm-neighbor button{min-width:100px;flex:none}
+.hcm-neighbor button:disabled{opacity:.45}
+.hcm-main{display:block;width:100%;margin:12px 0;font-size:15px;min-height:49px}
+.hcm-light{display:block;padding:10px 15px;min-height:44px;width:100%;border:0;background:transparent;color:#64776d;text-decoration:underline;font-family:inherit;font-weight:700;margin:9px auto}
+.hcm-quote{padding:15px;background:#fff2dd;border-left:5px solid #d3aa87;border-radius:0 14px 14px 0;color:#665747!important;font-size:15px!important}
+.hcm-hint{font-size:12px!important}
+.hcm-game canvas{display:block;width:100%;max-width:360px;aspect-ratio:360/286;margin:10px auto;border:5px solid #fff7e6;border-radius:18px;box-shadow:0 3px 0 #d8c4ad;touch-action:manipulation}
+.hcm-buttons{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin:14px auto}
+.hcm-buttons button{flex:1 1 68px;min-width:66px;font-size:18px;background:#faf0d9;color:#416b58;border-color:#e1c8aa}
+.hcm-buttons .hcm-main{margin:0;background:#54927e;color:#fff;flex:2 1 170px;font-size:14px}
+.hcm-count{text-align:center;font-size:13px;font-weight:900;letter-spacing:.06em;color:#54826e}
+.hcm-stars{text-align:center;font-size:44px;letter-spacing:5px;color:#e8b55f;margin:20px 0}
+@media(max-width:380px){.hcm-neighbor{gap:7px;padding:8px 7px}.hcm-avatar{width:40px;height:40px;font-size:25px}.hcm-neighbor button{min-width:85px;padding:7px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){.hcm-ui *{animation:none!important;transition:none!important}}
