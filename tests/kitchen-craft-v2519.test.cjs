@@ -198,5 +198,5 @@ test('all new files load before Hearth Kitchen and precache on iPhone',()=>{
   assert.ok(html.includes(asset));assert.ok(worker.includes("'./"+asset+"'"));
  }
  assert.match(worker,/hearth-harbor-v2519-kitchen-craft/);
- for(const token of ["this.craft=window.HearthKitchenCraft?.make(kind,s.id)","case 'cook-craft':return this.craftAction(id)","if(this.craft)return"])assert.ok(kitchenSrc.includes(token),token);
+ for(const token of ["this.craft=window.HearthKitchenCraft?.make(kind,s.id)","case 'cook-craft':return this.craftAction(id)","if(!this.session||this.craft)return"])assert.ok(kitchenSrc.includes(token),token);
 });
