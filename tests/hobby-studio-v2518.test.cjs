@@ -221,5 +221,5 @@ test('game integrates real daily hobby and aspiration pathways and offline respo
  for(const asset of ['hobby-studio-v2518.js','hobby-studio-v2518.css']){
   assert.ok(html.includes(asset));assert.ok(sw.includes("'./"+asset+"'"));
  }
- assert.match(sw,/hearth-harbor-v2518-little-passions/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/); // New feature releases rotate the offline cache.
 });
