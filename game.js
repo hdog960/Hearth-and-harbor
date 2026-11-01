@@ -1799,7 +1799,7 @@ function buildTown(){objects.length=0;
  for(const [x,y,type] of [[385,470,0],[925,455,1],[385,1070,2],[1060,970,3]])put('house',x,y,{kind:type,label:['Your Cottage','Honeybun Café','Storybook Library','Town Hall'][type],action:['home','cafe','library','hall'][type]});
  RESIDENCES.forEach((site,i)=>put('residence',site.x,site.y,{kind:i,action:'residence',id:String(i)}));
  put('museum',1314,850,{action:'museum-entry'});put('stall',530,752,{action:'market'});put('pond',940,1250,{action:'fish'});put('garden',763,416,{action:'garden'});
- put('bench',730,780);put('bench',375,812);put('bench',1050,615);put('picnic',1125,830);put('board',1032,790,{action:'nature-gallery'});put('arch',820,1025);put('fence',475,525);put('fence',1120,1080);for(const [x,y,k] of [[445,560,0],[780,810,1],[900,900,2],[320,925,3],[700,1125,4],[1040,550,1],[1080,895,0],[550,1010,2]])put('flowerbed',x,y,{kind:k});
+ put('bench',730,780);put('bench',375,812);put('bench',1050,615);put('picnic',1125,830);put('board',1032,790,{action:'nature-gallery'});put('bugstand',674,980,{action:'bug-hunt'});put('arch',820,1025);put('fence',475,525);put('fence',1120,1080);for(const [x,y,k] of [[445,560,0],[780,810,1],[900,900,2],[320,925,3],[700,1125,4],[1040,550,1],[1080,895,0],[550,1010,2]])put('flowerbed',x,y,{kind:k});
  for(const [x,y] of [[610,530],[890,775],[495,1095],[1080,1165],[350,675]])put('lamp',x,y);
  for(const [x,y,n] of [[270,430,0],[265,830,1],[230,1100,0],[920,240,2],[1100,335,0],[1190,650,1],[1210,1100,0],[660,290,0],[560,1120,2],[870,1160,1],[1300,1250,0],[580,980,1],[147,650,0]])put('tree',x,y,{kind:n});
  const shrubs=[[250,590],[486,544],[1080,525],[630,405],[905,600],[1032,790],[300,995],[805,920],[1160,850],[650,1025],[1054,1087],[765,1071],[1180,1300]];
@@ -1923,6 +1923,7 @@ function drawResidenceFurniture(g){
 function drawStatic(obj,g){
  const {type,x,y}=obj;
  if(type==='discovery')drawNatureFind(g,obj);
+ if(type==='bugstand'){g.save();g.translate(x,y);g.fillStyle='#805c49';g.fillRect(-28,-69,8,72);g.fillRect(20,-69,8,72);g.fillStyle='#e5c78c';g.fillRect(-40,-108,80,44);g.strokeStyle='#fdf0c5';g.lineWidth=4;g.strokeRect(-40,-108,80,44);g.font='25px system-ui';g.textAlign='center';g.fillStyle='#467e64';g.fillText('🦋',0,-77);g.restore();drawName(g,'Meadow Net',x,y-125)}
  if(type==='museum'){HearthMuseum.drawBuilding(g,x,y);drawName(g,'Little Museum',x,y-179);}
  if(type==='house')drawArt(g,houseArt(obj.kind),x,y,1.38);
  if(type==='residence'){drawArt(g,houseArt((obj.kind+1)%4),x,y,1.08);drawName(g,['Rosewood','Willow Lane','Clover Court'][obj.kind],x,y-213)}
@@ -2246,7 +2247,7 @@ function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){sto
  }
  goTo({x:clamp(wx,65,1460),y:clamp(wy,200,1440)});
 }
-function perform(action,obj){if(action==='museum-entry')return goScene('museum');if(action==='collect-nature')return collectNature(obj);if(action==='nature-gallery')return natureCabinet();if(action==='residence')return housingBoard();if(action==='home')return goScene('home');if(action==='cafe')return cafe();if(action==='library'){changeNeed('fun',16);notify('You found a beautiful new story! 📖');return}if(action==='hall')return townHall();if(action==='market')return market();if(action==='garden')return garden();if(action==='fish')return fishing();}
+function perform(action,obj){if(action==='museum-entry')return goScene('museum');if(action==='collect-nature')return collectNature(obj);if(action==='nature-gallery')return natureCabinet();if(action==='bug-hunt')return bugHunt.journal();if(action==='residence')return housingBoard();if(action==='home')return goScene('home');if(action==='cafe')return cafe();if(action==='library'){changeNeed('fun',16);notify('You found a beautiful new story! 📖');return}if(action==='hall')return townHall();if(action==='market')return market();if(action==='garden')return garden();if(action==='fish')return fishing();}
 function update(dt){tick+=dt;advanceHouseholdHold(dt);
  if(!talk&&!modal){const next=player.target;if(next){
   const point=next.route?.[0]||{x:next.x,y:next.y};let dx=point.x-player.x,dy=point.y-player.y,d=Math.hypot(dx,dy),step=Math.min(d,dt*178);
