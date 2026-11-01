@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.5.6 — Together in Maplewood
+# Hearth & Harbor v2.5.7 — The Village We Grow
+
+**A playable village-improvement milestone.** Maplewood now has an interactive **Town Projects** board near Town Hall. Help four neighbors build permanent improvements in two stages each: Mabel's flowering promenade, Bea's lantern plaza, Finn's lily-pond deck and Rosie's orchard cart. Each upgraded location changes the walkable game's environmental artwork and offers a useful **once-per-in-game-day interaction**. The orchard cart supplies a small seasonal parcel to the existing Hearth Kitchen pantry. Total construction contributions are 375 in-game coins, with no timers, ads, or real-money purchases.
+
+On festival days 3–5, the town also gains original, illustrated seasonal **Crafts** and **Treats** stalls and subtle ambient decorations. These stalls are visual foundations; they do **not** yet implement extra shopping interactions. All previous cooking, fishing, museum, Cloverbank, household, friendship and festival features remain.
+
+Visit the improvement board through **Menu / Journal / Town Hall**, by asking a host neighbor about village improvements, or by tapping the newly painted sign. Once constructed, tap finished locations to enjoy their daily benefits. Existing saves are backward-compatible and remain on device. See [v2.5.7 QA & roadmap](STEWARDSHIP_V257_QA_AND_ROADMAP.md) for verified checks and remaining iPhone Safari testing.
+
+## Previous milestone — Together in Maplewood v2.5.6
 
 **Living Village community milestone.** Festivals now include resident-led activities and lasting local memories instead of just minigames. At every seasonal festival (in-game days **3–5**), find the Festival Friends board through **Menu**, **Journal**, **Town Hall** or **Festival Calendar**. Select a resident to walk toward them, talk to them and choose **Help with the festival**. Each host offers a distinct personal project; there are eight authored collaborations across the four seasons, featuring three different control styles and accessible alternatives.
 
