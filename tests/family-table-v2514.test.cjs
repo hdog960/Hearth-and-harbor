@@ -36,7 +36,15 @@ function harness(custom={}){
  return {state,module,notes,modals,
   setScene:(s,h)=>{scene=s;house=h??house},
   setGuests:x=>guests=x,
-  arrive:()=>arrive?.(),
+  arrive:()=>{
+   const ok=arrive?.();
+   if(ok&&modals.at(-1)?.kind==='family-table-setting'){
+    for(let i=0;i<1+guests.length;i++)module.setPlace(i);
+    return module.finish();
+   }
+   return ok;
+  },
+  arriveToSetting:()=>arrive?.(),
   get walks(){return walks},get writes(){return writes},get redraw(){return redraw},get homeMeal(){return homeMeal}};
 }
 function prepare(x,index=0,topic='remember'){
@@ -182,5 +190,5 @@ test('full game and kitchen link the dinner flow; all assets are offline preload
  for(const asset of ['family-table-v2514.js','family-table-v2514.css']){
   assert.ok(html.includes(asset));assert.ok(worker.includes("'./"+asset+"'"));
  }
- assert.match(worker,/hearth-harbor-v2514-at-our-table/);
+ assert.match(worker,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/); // Release caches advance.
 });
