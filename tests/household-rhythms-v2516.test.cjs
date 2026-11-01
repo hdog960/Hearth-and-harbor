@@ -157,5 +157,5 @@ test('main game connects autonomous and guided actions with aspirations, visible
  for(const asset of ['household-rhythms-v2516.js','household-rhythms-v2516.css']){
   assert.ok(html.includes(asset));assert.ok(sw.includes("'./"+asset+"'"));
  }
- assert.match(sw,/hearth-harbor-v2516-thoughtful-households/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/); // Cache rotates per release.
 });
