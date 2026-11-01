@@ -1,0 +1,10 @@
+/* Little Atelier touch-friendly decorating controls */
+#placementHint{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;max-width:min(95vw,560px);padding:10px 12px;z-index:30}
+#placementHint.hidden{display:none}
+#placementHint span{flex:1 1 100%;text-align:center;font-size:12px;font-weight:800;line-height:1.25}
+#rotatePlacement,#cancelPlacement{min-width:106px;min-height:44px;border-radius:12px;padding:9px 14px;font-size:14px;font-weight:900;border:2px solid #edd7a0;background:#fff9e7;color:#2e6154;touch-action:manipulation}
+#rotatePlacement{background:#b5edce;border-color:#6bc79b}
+#rotatePlacement[hidden]{display:none}
+.furniture-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.furniture-actions button{min-width:62px;min-height:42px}
+@media(max-width:360px){#placementHint{left:2vw;right:2vw;transform:none}#placementHint span{font-size:11px}}
