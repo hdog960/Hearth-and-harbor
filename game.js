@@ -1,11 +1,32 @@
-/* Hearth & Harbor — Promise Days v2.4.7
+/* Hearth & Harbor — Field Notes v2.5.0
    A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),rand=(a,b)=>a+Math.random()*(b-a);
 const hash=(n)=>{const x=Math.sin(n*127.1+8.45)*43758.5453;return x-Math.floor(x)};
 const SAVE='hearth-harbor-save-v1';
-const DEF=()=>({promiseDays:{},weddingPlans:{},socialPostcard:null,townHearts:{},coupleMoments:[],coupleBouquets:{},couplePlans:{},coupleDinners:{},heartStories:{},romance:{},householdAuto:{},residentHabits:{},autoBondDay:{},cooking:defaultCooking(),residenceThemes:{},residenceProps:{},residenceDaily:{},residenceDecor:{},residenceVisits:{},residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
+const DEF=()=>({nature:{found:{},donated:[],collectedDay:0,collectedSites:[],exhibitRewards:[]},promiseDays:{},weddingPlans:{},socialPostcard:null,townHearts:{},coupleMoments:[],coupleBouquets:{},couplePlans:{},coupleDinners:{},heartStories:{},romance:{},householdAuto:{},residentHabits:{},autoBondDay:{},cooking:defaultCooking(),residenceThemes:{},residenceProps:{},residenceDaily:{},residenceDecor:{},residenceVisits:{},residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
+// v2.5: original seasonal field-guide discoveries. Four year-round + three per season.
+const NATURE_SPECIES=[
+ {id:'clover',name:'Lucky Clover',season:-1,kind:'leaf',hue:'#61ba77',desc:'A little patch of green luck by the footpaths.'},
+ {id:'pebble',name:'Moonstone Pebble',season:-1,kind:'stone',hue:'#a4c3d7',desc:'A smooth stone that glimmers after rain.'},
+ {id:'shell',name:'Pearl Shell',season:-1,kind:'shell',hue:'#efc8a7',desc:'A tiny keepsake washed in from the harbor.'},
+ {id:'butterfly',name:'Honeywing Butterfly',season:-1,kind:'butterfly',hue:'#efad65',desc:'Warm golden wings fluttering over the flowers.'},
+ {id:'primrose',name:'Pink Primrose',season:0,kind:'flower',hue:'#f18ab2',desc:'The first blush of spring in Maplewood.'},
+ {id:'bluebell',name:'Morning Bluebell',season:0,kind:'flower',hue:'#8ea6e8',desc:'Its blue petals bow in the morning breeze.'},
+ {id:'dewbug',name:'Dewdrop Beetle',season:0,kind:'beetle',hue:'#67b8b5',desc:'A glossy little friend hiding in fresh spring grass.'},
+ {id:'sunpetal',name:'Sunpetal',season:1,kind:'flower',hue:'#f3cb55',desc:'Turns its glowing face toward the long summer sun.'},
+ {id:'cicada',name:'Golden Cicada',season:1,kind:'beetle',hue:'#e9b25f',desc:'The gentle hum of a sleepy summer afternoon.'},
+ {id:'dragonfly',name:'Lagoon Dragonfly',season:1,kind:'butterfly',hue:'#78d8d1',desc:'A flash of turquoise beside Lily Pond.'},
+ {id:'acorn',name:'Amber Acorn',season:2,kind:'acorn',hue:'#b97b50',desc:'Tucked under the trees as autumn arrives.'},
+ {id:'mapleleaf',name:'Crimson Maple Leaf',season:2,kind:'leaf',hue:'#e98163',desc:'A crisp red note from the autumn branches.'},
+ {id:'mushroom',name:'Velvet Mushroom',season:2,kind:'mushroom',hue:'#ce8f96',desc:'A soft mushroom wearing a rose-colored cap.'},
+ {id:'snowdrop',name:'Winter Snowdrop',season:3,kind:'flower',hue:'#f1f2f5',desc:'A brave bloom peeking through winter frost.'},
+ {id:'frostcrystal',name:'Frost Crystal',season:3,kind:'stone',hue:'#96cee8',desc:'A tiny sparkling piece of the cold morning.'},
+ {id:'pinecone',name:'Frosted Pinecone',season:3,kind:'acorn',hue:'#977c63',desc:'A woodland treasure dusted in pale snow.'}
+];
+const NATURE_SPOTS=[[710,545],[946,715],[712,911],[1090,1160],[420,1165],[1170,550]];
+const NATURE_SEASONS=['Spring','Summer','Autumn','Winter'];
 const COOKING_RECIPE_IDS=['toast','salad','soup','pancakes','eggs','noodles','fishplate','tart','biscuits','jam','skewers','dumplings'];
 const COOKING_ING_IDS=['bread','butter','berry','apple','carrot','herb','flour','milk','egg','noodle','fish','honey','onion','potato'];
 function defaultCooking(){return {pantry:{bread:2,butter:1,berry:4,apple:1,carrot:1,herb:1,flour:1,milk:1,egg:2,noodle:1,fish:1,honey:1,onion:1,potato:1},dishes:[],xp:0,made:0,mastered:Object.fromEntries(COOKING_RECIPE_IDS.map(id=>[id,0])),servedDaily:{},relaxed:false}}
@@ -76,7 +97,14 @@ function cleanSave(raw){
   {day:number(pc.day,0,0,9999)|0,from:pc.from,place:pc.place,kind:pc.kind,status:pc.status}:null;
  const weddingPlans=Object.fromEntries(Object.entries(obj(raw.weddingPlans)).filter(([key,w])=>safePair.test(key)&&key.split('|')[0]!==key.split('|')[1]&&['engaged','scheduled','married'].includes(w?.status)&&['garden','cafe','pond'].includes(w?.venue)).slice(0,15).map(([key,w])=>[key,{status:w.status,proposalDay:number(w.proposalDay,0,0,9999)|0,day:number(w.day,0,0,9999)|0,venue:w.venue,vow:['kind','joy','dream'].includes(w.vow)?w.vow:'',marriedDay:number(w.marriedDay,0,0,9999)|0}]));
  const promiseDays=Object.fromEntries(Object.entries(obj(raw.promiseDays)).filter(([key,row])=>safePair.test(key)&&key.split('|')[0]!==key.split('|')[1]&&['scheduled','complete'].includes(row?.status)&&['garden','cafe','pond'].includes(row?.place)).slice(0,15).map(([key,row])=>[key,{status:row.status,day:number(row.day,0,0,9999)|0,place:row.place,lastDay:number(row.lastDay,0,0,9999)|0,count:number(row.count,0,0,999)|0,lastChoice:['note','flowers','feast'].includes(row.lastChoice)?row.lastChoice:''}]));
- const res={...d,promiseDays,weddingPlans,socialPostcard:postcard,townHearts:HearthTownHearts.clean(raw.townHearts),
+ const nr=obj(raw.nature),nature={
+  found:Object.fromEntries(Object.entries(obj(nr.found)).filter(([k])=>NATURE_SPECIES.some(n=>n.id===k)).map(([k,v])=>[k,number(v,0,0,99)|0])),
+  donated:[...new Set((Array.isArray(nr.donated)?nr.donated:[]).filter(k=>NATURE_SPECIES.some(n=>n.id===k)))].slice(0,16),
+  collectedDay:number(nr.collectedDay,0,0,9999)|0,
+  collectedSites:[...new Set((Array.isArray(nr.collectedSites)?nr.collectedSites:[]).filter(x=>Number.isInteger(x)&&x>=0&&x<6))].slice(0,6),
+  exhibitRewards:[...new Set((Array.isArray(nr.exhibitRewards)?nr.exhibitRewards:[]).filter(x=>[4,8,12,16].includes(x)))].slice(0,4)
+ };
+ const res={...d,nature,promiseDays,weddingPlans,socialPostcard:postcard,townHearts:HearthTownHearts.clean(raw.townHearts),
    coupleMoments:Array.isArray(raw.coupleMoments)?[...new Set(raw.coupleMoments.filter(x=>typeof x==='string'&&safeCouple.test(x)&&x.split(':')[2]?.split('|').every(id=>npcIds.has(id))))].slice(-48):[],
    coupleBouquets:Object.fromEntries(Object.entries(obj(raw.coupleBouquets)).filter(([k,v])=>safeCouple.test(k)&&k.split(':')[2]?.split('|')[0]!==k.split(':')[2]?.split('|')[1]&&Number(v)===1).slice(-20).map(([k])=>[k,1])),couplePlans:Object.fromEntries(Object.entries(obj(raw.couplePlans)).filter(([k,v])=>safePair.test(k)&&['apart','together'].includes(v?.choice)).map(([k,v])=>[k,{choice:v.choice,day:number(v.day,0,0,9999)|0,home:/^h[0-5]$/.test(v.home)?v.home:''}]).slice(0,15)),coupleDinners:Object.fromEntries(Object.entries(obj(raw.coupleDinners)).filter(([k])=>safePair.test(k)).map(([k,v])=>[k,number(v,0,0,9999)|0]).slice(0,15)),romance,householdAuto,residentHabits,autoBondDay,residenceThemes,residenceProps,residenceDaily,residenceDecor,residenceVisits,residentHomes:savedHomes,householdFunds:savedFunds,housingDay:number(raw.housingDay,number(raw.day,1,1,9999)|0,0,9999)|0,householdMoves:houseMoves,friendVisits,invitedVisits,visitCounts,visitSeen:Array.isArray(raw.visitSeen)?[...new Set(raw.visitSeen.filter(x=>typeof x==='string'&&safeVisit.test(x)))].slice(-35):[],residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
    hair:safeColor(raw.hair,d.hair),outfit:safeColor(raw.outfit,d.outfit),skin:safeColor(raw.skin,d.skin),
@@ -1646,13 +1674,105 @@ function welcomeBoardArt(){return makeArt('board8',126,112,g=>{
  for(let i=0;i<5;i++){const a=i*Math.PI*2/5;oval(g,'#ed9eb6',101+Math.cos(a)*8,12+Math.sin(a)*7,5,5)}oval(g,'#f3ca75',101,12,4,4);
  });}
 
+// --- THE LIVING VILLAGE: Field Notes collection (v2.5 / first vertical slice) ---
+const natureRecord=()=>state.nature;
+function natureSpeciesAt(site,day=state.day,season=state.season){
+ const choices=NATURE_SPECIES.filter(n=>n.season===season),common=NATURE_SPECIES.filter(n=>n.season===-1);
+ return site<4?choices[(day+site-1)%choices.length]:common[(day+site-4)%common.length];
+}
+function refreshNatureFinds(){
+ if(!state?.nature)return;
+ if(state.nature.collectedDay!==state.day){state.nature.collectedDay=state.day;state.nature.collectedSites=[];}
+ for(let i=objects.length-1;i>=0;i--)if(objects[i].type==='discovery')objects.splice(i,1);
+ NATURE_SPOTS.forEach(([x,y],site)=>{if(state.nature.collectedSites.includes(site))return;
+  const spec=natureSpeciesAt(site);
+  // Observations live in the actual world. Nature finds never block walking.
+  put('discovery',x,y,{site,species:spec.id,action:'collect-nature'});
+ });
+}
+function drawNatureGlyph(g,kind,x,y,c,phase=0){
+ g.save();g.translate(x,y);g.scale(1.25,1.25);
+ const flutter=Math.sin(phase)*2;
+ if(kind==='leaf'){
+  line(g,'#56794d',[[0,9],[0,-11]],3);ellipse(g,c,-7,-8,9,5);ellipse(g,c,7,-15,10,6);ellipse(g,'#dbed9a',5,-17,4,2);
+ }else if(kind==='butterfly'){
+  ellipse(g,c,-9,-7+flutter,10,9);ellipse(g,c,9,-7-flutter,10,9);
+  ellipse(g,'#f8e5bd',-7,-8+flutter,4,4);ellipse(g,'#f8e5bd',7,-8-flutter,4,4);
+  ellipse(g,'#5d5a53',0,-6,3,11);line(g,'#5d5a53',[[-1,-15],[-5,-20]],1);line(g,'#5d5a53',[[1,-15],[5,-20]],1);
+ }else if(kind==='flower'){
+  line(g,'#579f65',[[0,10],[0,-8]],3);for(let k=0;k<5;k++){const a=k*Math.PI*2/5;ellipse(g,c,Math.cos(a)*9,-13+Math.sin(a)*9,7,6)}ellipse(g,'#ffdfa0',0,-13,5,5);
+ }else if(kind==='beetle'){
+  ellipse(g,'#483c40',0,0,11,13);ellipse(g,c,-4,0,7,11);ellipse(g,c,4,0,7,11);line(g,'#e3f6db',[[0,-9],[0,9]],2);
+  line(g,'#453f3b',[[-4,-10],[-10,-16]],2);line(g,'#453f3b',[[4,-10],[10,-16]],2);
+ }else if(kind==='acorn'){
+  ellipse(g,c,0,0,11,13);ellipse(g,'#7b5b4e',0,-10,12,6);line(g,'#624e47',[[0,-16],[3,-21]],2);
+  for(let j=-1;j<=1;j++)ellipse(g,'#f0ce92',j*6,-11,2,1);
+ }else if(kind==='mushroom'){
+  fill(g,'#f8e9c5',-5,-2,10,16);ellipse(g,c,0,-6,16,10);ellipse(g,'#fff1cb',-6,-9,3,3);ellipse(g,'#fff1cb',6,-12,3,3);
+ }else if(kind==='stone'){
+  poly(g,c,[[-14,8],[-10,-7],[0,-17],[12,-9],[16,7],[8,14],[-8,13]]);
+  poly(g,'#f3fcfc',[[-9,-6],[0,-13],[2,4],[-10,8]]);line(g,'#658a9c',[[2,5],[12,-6]],2);
+ }else if(kind==='shell'){
+  ellipse(g,c,0,-1,16,12);for(let j=-2;j<=2;j++)line(g,'#b99084',[[0,9],[j*7,-11+Math.abs(j)*3]],1);
+  ellipse(g,'#fff7e5',0,7,14,5);
+ }
+ g.restore();
+}
+function drawNatureFind(g,o){
+ const n=NATURE_SPECIES.find(n=>n.id===o.species);if(!n)return;
+ ellipse(g,'#416c5380',o.x,o.y,21,7);
+ ellipse(g,'#fff0b5',o.x,o.y-9+Math.sin(tick*2+o.site)*3,24,20);
+ drawNatureGlyph(g,n.kind,o.x,o.y-11+Math.sin(tick*2+o.site)*3,n.hue,tick*4);
+ for(let j=0;j<3;j++){const angle=j*TAU/3+tick*.6;fill(g,'#fff9de',o.x+Math.cos(angle)*22,o.y-11+Math.sin(angle)*20,3,3)}
+}
+function collectNature(obj){
+ if(!obj||obj.type!=='discovery'||!Number.isInteger(obj.site)||!NATURE_SPOTS[obj.site])return;
+ if(state.nature.collectedDay!==state.day)refreshNatureFinds();
+ if(state.nature.collectedSites.includes(obj.site))return notify('You already explored this spot today.');
+ const n=natureSpeciesAt(obj.site);if(n.id!==obj.species)return refreshNatureFinds();
+ state.nature.collectedSites.push(obj.site);
+ const first=!(state.nature.found[n.id]>0)&&!state.nature.donated.includes(n.id);
+ state.nature.found[n.id]=Math.min(99,(state.nature.found[n.id]||0)+1);
+ objects.splice(objects.indexOf(obj),1);
+ state.needs.fun=clamp(state.needs.fun+(first?8:3),0,100);
+ save();updateUI();notify(`${first?'✨ New discovery!':'🍃 Found another'} ${n.name} · Field Guide updated!`);
+}
+function natureIcon(n){return `<span class="nature-tile" style="--nature:${n.hue}" aria-hidden="true">${{flower:'✿',leaf:'❧',butterfly:'⋈',beetle:'✧',stone:'◆',shell:'◕',acorn:'♣',mushroom:'♠'}[n.kind]}</span>`}
+function natureStats(){return {donated:state.nature.donated.length,seen:NATURE_SPECIES.filter(n=>state.nature.donated.includes(n.id)||state.nature.found[n.id]>0).length}}
+function natureHeader(){const {seen,donated}=natureStats();return `<div class="nature-cover"><div class="nature-eyebrow">MAPLEWOOD NATURE SOCIETY</div><h2>🌿 The Field Guide</h2><p>Follow glittering wild treasures along the paths. The village changes its discoveries with the seasons.</p><div class="nature-stats"><span>🔎 ${seen} / ${NATURE_SPECIES.length} discovered</span><span>🏛️ ${donated} displayed</span><span>🍃 ${6-state.nature.collectedSites.length} finds left today</span></div></div>`}
+function natureGuide(){
+ const seasonal=NATURE_SEASONS[state.season];
+ const cards=NATURE_SPECIES.map(n=>{const collected=state.nature.found[n.id]||0,donated=state.nature.donated.includes(n.id),visible=collected||donated;
+  return `<div class="nature-card ${visible?'':'unknown'}">${natureIcon(n)}<div><b>${visible?escapeHtml(n.name):'??? Undiscovered'}</b><small>${n.season===-1?'Any season':NATURE_SEASONS[n.season]} · ${visible?escapeHtml(n.desc):'Keep exploring to reveal this treasure.'}</small><small>${donated?'✓ In the Cabinet':collected?`${collected} in your satchel`:'Not found yet'}</small></div></div>`;
+ }).join('');
+ showModal('nature-guide',`${natureHeader()}<div class="nature-tabs">${btn('🏛️ Visit Curiosity Cabinet','nature-gallery')}${btn('🍃 Go exploring','nature-close')}</div><p class="nature-tip">Current season: <b>${seasonal}</b> · Wild finds refresh at the start of each new in-game day.</p><div class="nature-list">${cards}</div>`);
+}
+function natureCabinet(){
+ const {donated}=natureStats();
+ const cards=NATURE_SPECIES.map(n=>{const inSatchel=state.nature.found[n.id]||0,displayed=state.nature.donated.includes(n.id);
+  return `<div class="nature-card ${displayed?'displayed':''}">${natureIcon(n)}<div><b>${displayed||inSatchel?escapeHtml(n.name):'Hidden Exhibit'}</b><small>${displayed?escapeHtml(n.desc):inSatchel?'A new treasure for the village display.':'Discover this treasure around Maplewood.'}</small></div><div class="nature-donate">${displayed?'<span>✓</span>':inSatchel?`<button data-act="nature-donate" data-id="${n.id}">Donate</button>`:'<span>🔒</span>'}</div></div>`;
+ }).join('');
+ showModal('nature-gallery',`<div class="nature-cover"><div class="nature-eyebrow">THE VILLAGE COLLECTION</div><h2>🏛️ Curiosity Cabinet</h2><p>Every discovery has a home here. Donate one of each treasure to fill the displays and help Maplewood flourish.</p><div class="nature-stats"><span>🏛️ ${donated} / 16 exhibits</span><span>🪙 18 coins per first donation</span></div></div><p class="nature-tip">Find the village noticeboard beside the market path, or return here from your journal.</p>${btn('📖 View Field Guide','nature-guide')}<div class="nature-list">${cards}</div><p class="nature-tip">Milestone exhibitions at 4, 8, 12, and 16 donations award one-time village grants.</p>`);
+}
+function donateNature(id){
+ const n=NATURE_SPECIES.find(n=>n.id===id);if(!n||state.nature.donated.includes(id)||!(state.nature.found[id]>0))return natureCabinet();
+ state.nature.found[id]--;state.nature.donated.push(id);state.coins+=18;
+ let reward=0;const count=state.nature.donated.length;
+ if([4,8,12,16].includes(count)&&!state.nature.exhibitRewards.includes(count)){
+  state.nature.exhibitRewards.push(count);reward=count*12;state.coins+=reward;
+ }
+ save();updateUI();notify(`🏛️ ${n.name} joins the display! +18 coins${reward?` · Exhibition grant +${reward}`:''}`);
+ natureCabinet();
+}
+function trackNature(id){return natureGuide()}
+
 const objects=[];
 function put(type,x,y,opts={}){const obj={type,x,y,...opts};objects.push(obj);return obj}
 function buildTown(){objects.length=0;
  for(const [x,y,type] of [[385,470,0],[925,455,1],[385,1070,2],[1060,970,3]])put('house',x,y,{kind:type,label:['Your Cottage','Honeybun Café','Storybook Library','Town Hall'][type],action:['home','cafe','library','hall'][type]});
  RESIDENCES.forEach((site,i)=>put('residence',site.x,site.y,{kind:i,action:'residence',id:String(i)}));
  put('stall',530,752,{action:'market'});put('pond',940,1250,{action:'fish'});put('garden',763,416,{action:'garden'});
- put('bench',730,780);put('bench',375,812);put('bench',1050,615);put('picnic',1125,830);put('board',1032,790);put('arch',820,1025);put('fence',475,525);put('fence',1120,1080);for(const [x,y,k] of [[445,560,0],[780,810,1],[900,900,2],[320,925,3],[700,1125,4],[1040,550,1],[1080,895,0],[550,1010,2]])put('flowerbed',x,y,{kind:k});
+ put('bench',730,780);put('bench',375,812);put('bench',1050,615);put('picnic',1125,830);put('board',1032,790,{action:'nature-gallery'});put('arch',820,1025);put('fence',475,525);put('fence',1120,1080);for(const [x,y,k] of [[445,560,0],[780,810,1],[900,900,2],[320,925,3],[700,1125,4],[1040,550,1],[1080,895,0],[550,1010,2]])put('flowerbed',x,y,{kind:k});
  for(const [x,y] of [[610,530],[890,775],[495,1095],[1080,1165],[350,675]])put('lamp',x,y);
  for(const [x,y,n] of [[270,430,0],[265,830,1],[230,1100,0],[920,240,2],[1100,335,0],[1190,650,1],[1210,1100,0],[660,290,0],[560,1120,2],[870,1160,1],[1300,1250,0],[580,980,1],[147,650,0]])put('tree',x,y,{kind:n});
  const shrubs=[[250,590],[486,544],[1080,525],[630,405],[905,600],[1032,790],[300,995],[805,920],[1160,850],[650,1025],[1054,1087],[765,1071],[1180,1300]];
@@ -1660,6 +1780,7 @@ function buildTown(){objects.length=0;
  for(let i=0;i<94;i++){let x=125+hash(i*31)*1130,y=300+hash(i*37+7)*1050;
   if((Math.abs(x-610)<120&&Math.abs(y-650)<120)||(Math.abs(x-790)<160&&Math.abs(y-750)<60)||(Math.abs(x-955)<130&&Math.abs(y-1280)<120))continue;
   put('flower',x,y,{kind:i%5,scale:.60+(i%3)*.21});}
+ refreshNatureFinds();
  NPCS.forEach(n=>{n.cx=n.x;n.cy=n.y;n.direction=0;n.moving=0;n.emotion='neutral';n.emotionUntil=0;n.wanderAngle=0;n.wanderDelay=0;n.routineKey='';n.routineRoute=[];n.routineGoal=null;n.routePause=0;n.pose='idle';n.moving=0;});
 }
 function screenX(x){return (x-cam.x)*worldScale+W/2}
@@ -1773,6 +1894,7 @@ function drawResidenceFurniture(g){
 }
 function drawStatic(obj,g){
  const {type,x,y}=obj;
+ if(type==='discovery')drawNatureFind(g,obj);
  if(type==='house')drawArt(g,houseArt(obj.kind),x,y,1.38);
  if(type==='residence'){drawArt(g,houseArt((obj.kind+1)%4),x,y,1.08);drawName(g,['Rosewood','Willow Lane','Clover Court'][obj.kind],x,y-213)}
  if(type==='stall')drawArt(g,stallArt(),x,y,1.60);
@@ -1780,6 +1902,7 @@ function drawStatic(obj,g){
  if(type==='shrub')drawArt(g,shrubArt(obj.kind),x,y,.85);
  if(type==='flower')drawArt(g,flowerArt(obj.kind),x,y,obj.scale||.8);
  if(type==='bench')drawArt(g,benchArt(),x,y,1.24);if(type==='picnic')drawArt(g,picnicArt(),x,y,1.05);if(type==='board')drawArt(g,welcomeBoardArt(),x,y,1.0);if(type==='arch')drawArt(g,flowerArchArt(),x,y,1.15);if(type==='fence')drawArt(g,fenceArt(),x,y,1.0);if(type==='flowerbed')drawArt(g,flowerbedArt(obj.kind),x,y,1.0);
+ if(type==='board')drawName(g,'Curiosity Cabinet',x,y-112);
  if(type==='lamp')drawArt(g,lampArt(),x,y,1.1);
  if(type==='pond'){const s=Math.sin(tick*2)*2;ellipse(g,'#d8fcf3',x+30,y-40+s,26,2)}
  if(type==='garden'){
@@ -2079,12 +2202,12 @@ function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){sto
  const character=NPCS.map(n=>({n,dist:Math.hypot(wx-n.x,wy-(n.y-66))})).sort((a,b)=>a.dist-b.dist)[0];
  if(character&&character.dist<84){const n=character.n;goTo(approachNeighbor(n),()=>openTalk(n.id));if(player.target)player.target.npcId=n.id;return}
  const actions=objects.filter(o=>o.action).map(o=>({o,dist:Math.hypot(wx-o.x,(wy-(o.type==='house'?o.y-100:o.type==='residence'?o.y-77:o.y-30)))})).sort((a,b)=>a.dist-b.dist);
- const hit=actions[0];if(hit&&hit.dist<(hit.o.type==='house'?150:hit.o.type==='residence'?118:hit.o.type==='pond'?135:90)){
-  const o=hit.o;goTo(approachObject(o),()=>perform(o.action));return;
+ const hit=actions[0];if(hit&&hit.dist<(hit.o.type==='house'?150:hit.o.type==='residence'?118:hit.o.type==='pond'?135:hit.o.type==='discovery'?56:90)){
+  const o=hit.o;goTo(approachObject(o),()=>perform(o.action,o));return;
  }
  goTo({x:clamp(wx,65,1460),y:clamp(wy,200,1440)});
 }
-function perform(action){if(action==='residence')return housingBoard();if(action==='home')return goScene('home');if(action==='cafe')return cafe();if(action==='library'){changeNeed('fun',16);notify('You found a beautiful new story! 📖');return}if(action==='hall')return townHall();if(action==='market')return market();if(action==='garden')return garden();if(action==='fish')return fishing();}
+function perform(action,obj){if(action==='collect-nature')return collectNature(obj);if(action==='nature-gallery')return natureCabinet();if(action==='residence')return housingBoard();if(action==='home')return goScene('home');if(action==='cafe')return cafe();if(action==='library'){changeNeed('fun',16);notify('You found a beautiful new story! 📖');return}if(action==='hall')return townHall();if(action==='market')return market();if(action==='garden')return garden();if(action==='fish')return fishing();}
 function update(dt){tick+=dt;advanceHouseholdHold(dt);
  if(!talk&&!modal){const next=player.target;if(next){
   const point=next.route?.[0]||{x:next.x,y:next.y};let dx=point.x-player.x,dy=point.y-player.y,d=Math.hypot(dx,dy),step=Math.min(d,dt*178);
@@ -2129,7 +2252,7 @@ function update(dt){tick+=dt;advanceHouseholdHold(dt);
   }
   settleCommunityEvent();settleFriendVisit();settleCoupleRituals();advanceDate();maybeSocialPostcard();
  }
- if(speed>0&&!modal&&!talk&&!placement){const elapsed=dt*speed*2.0;updateResidentNeeds(elapsed);state.minute+=elapsed;while(state.minute>=1440){state.minute-=1440;state.day++;if(state.day%7===1)state.season=(state.season+1)%4;processHousingDay();notify('A bright new day begins! 🌞');save()}
+ if(speed>0&&!modal&&!talk&&!placement){const elapsed=dt*speed*2.0;updateResidentNeeds(elapsed);state.minute+=elapsed;while(state.minute>=1440){state.minute-=1440;state.day++;if(state.day%7===1)state.season=(state.season+1)%4;refreshNatureFinds();processHousingDay();notify('A bright new day begins! 🌞');save()}
   const rate=dt*speed*.013;if(!(scene==='residence'&&controlledResident)){state.needs.hunger=clamp(state.needs.hunger-rate*1.9,0,100);state.needs.energy=clamp(state.needs.energy-rate*1.3,0,100);
   state.needs.social=clamp(state.needs.social-rate*.6,0,100);state.needs.fun=clamp(state.needs.fun-rate*.7,0,100);}
  }
@@ -2196,9 +2319,9 @@ function respond(kind){const n=NPCS.find(o=>o.id===talk);if(!n)return;if(['disco
 function people(){showModal('people',`<h2>💌 Meet the Neighbors</h2><p>Everyone has their own needs, mood and a little dream. Talk to them, help them out, and watch friendships grow.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Postcards'+(todaysPostcard()?.status==='pending'?' · New!':''),'postcards')}${dateMoment?btn('✕ Cancel outing','date-abandon'):''}${btn('💌 Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${NPCS.map(n=>{const life=lifeFor(n.id),m=personalMood(n),goal=RESIDENT_GOALS[n.id];return `<div class="card"><div><b>${n.emoji} ${n.name} · ♥ ${state.relations[n.id]||0}</b><small>${escapeHtml(n.job)} · ${escapeHtml(n.trait)}<br>${m.icon} ${m.name} · ${escapeHtml(currentRoutine(n).doing)}<br>${hobbyProfile(n.id).icon} ${escapeHtml(hobbyProfile(n.id).title)} · ${hobbyRecord(n.id).sessions} hobby days<br>🌟 ${escapeHtml(goal.title)} — ${life.helpCount}/3 ${life.helpCount>=3?'✓ Complete':''}<br>${friendshipRank(state.relations[n.id]||0)}<br>🏡 ${escapeHtml(apartmentName(residentHome(n.id)))} · 🪙 ${Math.round(state.householdFunds[residentHome(n.id)]||0)} household savings${bestNeighborFriend(n.id)?`<br>Friends with ${escapeHtml(bestNeighborFriend(n.id).name)} · ♥ ${bestNeighborFriend(n.id).score}`:''}${strainedNeighbor(n.id)?`<br>🌧️ Misunderstanding with ${escapeHtml(strainedNeighbor(n.id).name)} · ${Math.round(strainedNeighbor(n.id).tension)} tension`:''}</small><div class="mini-needs"><span>🍞 ${Math.round(life.needs.food)}</span><span>💤 ${Math.round(life.needs.energy)}</span><span>💌 ${Math.round(life.needs.social)}</span><span>🎈 ${Math.round(life.needs.fun)}</span></div></div><button data-act="find" data-id="${n.id}">Find</button></div>`}).join('')}`)}
 function townStories(){const stories=[...state.townStories].reverse();const e=communityEvent();const dreams=[...state.lifeMoments].reverse();
  showModal('stories',`<h2>💌 Town Stories</h2><p>The neighbors have lives of their own, with visits between community events. Drop by the square, market, gardens, café and pond during the day to catch their little moments.</p>${e?`<div class="card"><div><b>${e.icon} Happening now: ${escapeHtml(e.title)}</b><small>${escapeHtml(e.place)} · ${escapeHtml(e.pair.map(id=>NPCS.find(n=>n.id===id).name).join(' & '))}</small></div></div>`:''}${dreams.map(moment=>`<div class="card"><div><b>🌟 ${escapeHtml(moment.title)}</b><small>Day ${moment.day} · ${escapeHtml(moment.text)}</small></div></div>`).join('')}${stories.length?stories.map(story=>`<div class="card"><div><b>${story.outcome==='misunderstanding'?'🌧️ ':story.outcome==='reconciled'?'🕊️ ':story.outcome==='visit'?'☕ ':story.outcome==='milestone'?'💗 ':'💛 '}${escapeHtml(story.title)}</b><small>Day ${story.day} · ${escapeHtml(story.text)}</small></div></div>`).join(''):'<p>No stories yet. Spend some time exploring or help a neighbor finish a dream.</p>'}<p>Stories record automatically once both neighbors arrive. Relationships can grow, strain, and heal as residents spend time together. You can also help neighbors make peace.</p>${btn('Back to journal','journal')}`)}
-function journal(){const done=questDefs.filter(q=>(state.quests[q.id]||0)>=q.max).length;showModal('journal',`<h2>📜 Your Little Journal</h2><p>${done} of ${questDefs.length} village adventures completed. Claim your rewards to grow your little life!</p>${btn('💌 Read Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${scene==='residence'||scene==='home'?btn('📖 Household Daybook','daybook'):''}${btn('🍳 Recipe Book','cook-book')}${questDefs.map(q=>{const n=state.quests[q.id]||0,claimed=state.quests[q.id+'_claimed'];return `<div class="card"><div><b>${q.text}</b><small>${Math.min(q.max,n)} / ${q.max} · 🪙 ${q.reward}</small></div><button data-act="claim" data-id="${q.id}" ${n<q.max||claimed?'disabled':''}>${claimed?'✓ Done':'Claim'}</button></div>`}).join('')}`)}
+function journal(){const done=questDefs.filter(q=>(state.quests[q.id]||0)>=q.max).length;showModal('journal',`<h2>📜 Your Little Journal</h2><p>${done} of ${questDefs.length} village adventures completed. Claim your rewards to grow your little life!</p>${btn('💌 Read Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${scene==='residence'||scene==='home'?btn('📖 Household Daybook','daybook'):''}${btn('🦋 Field Guide & Curiosity Cabinet','nature-guide')}${btn('🍳 Recipe Book','cook-book')}${questDefs.map(q=>{const n=state.quests[q.id]||0,claimed=state.quests[q.id+'_claimed'];return `<div class="card"><div><b>${q.text}</b><small>${Math.min(q.max,n)} / ${q.max} · 🪙 ${q.reward}</small></div><button data-act="claim" data-id="${q.id}" ${n<q.max||claimed?'disabled':''}>${claimed?'✓ Done':'Claim'}</button></div>`}).join('')}`)}
 function cafe(){showModal('cafe',`<h2>🥐 Honeybun Café</h2><p>Oliver needs help serving the lunchtime crowd. A short shift earns coins and lifts your spirits. Look for Oliver working in town, too.</p><div class="card"><b>1 cozy café shift</b><b>🪙 +45</b></div>${btn('Work a shift 🥐','work')} ${btn('Have a treat (10 🪙)','eat')}`)}
-function townHall(){showModal('hall',`<h2>🏛️ Maplewood Town Hall</h2><p>The village is growing around you. Meet six neighbors, spruce up your home, and complete the journal to become part of its story.</p>${btn('View your journal','journal')} ${btn('💌 Town Stories','stories')}${btn('🏡 Little Households','housing')}`)}
+function townHall(){showModal('hall',`<h2>🏛️ Maplewood Town Hall</h2><p>The village is growing around you. Meet six neighbors, spruce up your home, and complete the journal to become part of its story.</p>${btn('View your journal','journal')} ${btn('💌 Town Stories','stories')}${btn('🏡 Little Households','housing')}${btn('🦋 Curiosity Cabinet','nature-gallery')}`)}
 function market(){showModal('market',`<h2>🍓 Rosie’s Little Market</h2><p>Fresh fruit, pantry ingredients and lovely things for your home.</p>${btn('🧺 Buy pantry ingredients','cook-market')}<div class="grid"><div class="item"><span class="emoji">🍑</span><strong>Peach snack</strong><small>10 coins</small>${btn('Eat','eat')}</div><div class="item"><span class="emoji">🌻</span><strong>Flower seed</strong><small>8 coins</small>${btn('Buy','seed')}</div><div class="item"><span class="emoji">🪴</span><strong>Plant</strong><small>25 coins</small>${btn('Buy','buy-plant')}</div></div>`)}
 function garden(){showModal('garden',`<h2>🌱 Community Garden</h2><p>Plant little flowers, care for them, and harvest blooms for your cottage.</p><div class="grid">${(state.garden||[0,0,0,0]).map((n,i)=>`<div class="item"><span class="emoji">${n===2?'🌸':n===1?'🌱':'🟫'}</span><strong>Plot ${i+1}</strong><small>${n===2?'Ready!':n===1?'Growing':'Empty'}</small><button class="btn" data-act="plot" data-id="${i}">${n===2?'Harvest':n===1?'Water':'Plant'}</button></div>`).join('')}</div><p>Planting is free. Premium seed packets from Rosie’s market give a better harvest. 🌻 ${state.inventory.filter(x=>x==='flower-seed').length} seed packets available.</p>`)}
 function fishing(){showModal('fish',`<h2>🎣 Fishing at Lily Pond</h2><p>Watch the bobber and tap when it crosses the green zone!</p><div style="margin:24px 0 18px;height:30px;background:#b5d2bd;border:3px solid #91b1a6;position:relative"><div style="height:100%;width:26%;margin-left:38%;background:#7ddda4;border-left:3px solid white;border-right:3px solid white"></div><div id="bobber" style="position:absolute;top:-4px;bottom:-4px;width:6px;background:#ed7091;left:0"></div></div><button class="btn" data-act="catch" style="width:100%">🎣 Reel it in!</button>`);}
@@ -2208,7 +2331,7 @@ function decorate(){if(scene!=='home')goScene('home');
 function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
  showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(pendingName??state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair color</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Haircut</h3><div class="haircuts">${['Bob','Side-part','Tousled','Ponytail','Buns'].map((n,i)=>`<button data-act="set-style" data-id="${i}" aria-pressed="${state.hairStyle===i}" class="haircut ${state.hairStyle===i?'selected':''}">${n}</button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Promises in Bloom v2.4.6 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Postcards'+(todaysPostcard()?.status==='pending'?' · New!':''),'postcards')}${btn('💌 Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🍳 Hearth Kitchen','cook-book')}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
+function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Field Notes v2.5.0 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Postcards'+(todaysPostcard()?.status==='pending'?' · New!':''),'postcards')}${btn('💌 Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🦋 Field Guide & Curiosity Cabinet','nature-guide')}${btn('🍳 Hearth Kitchen','cook-book')}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
 function handleAction(action,id){if(action==='more-talk')return talkChoices('more');if(action==='romance-menu')return talkChoices('romance');if(action==='talk-back')return talkChoices('main');
  if(action==='hearts')return heartNotes();
  if(action==='postcards')return postcards();
