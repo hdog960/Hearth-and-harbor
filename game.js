@@ -1799,7 +1799,7 @@ function put(type,x,y,opts={}){const obj={type,x,y,...opts};objects.push(obj);re
 function buildTown(){objects.length=0;
  for(const [x,y,type] of [[385,470,0],[925,455,1],[385,1070,2],[1060,970,3]])put('house',x,y,{kind:type,label:['Your Cottage','Honeybun Café','Storybook Library','Town Hall'][type],action:['home','cafe','library','hall'][type]});
  RESIDENCES.forEach((site,i)=>put('residence',site.x,site.y,{kind:i,action:'residence',id:String(i)}));
- put('festivalstand',754,657,{action:'festival-calendar'});put('museum',1314,850,{action:'museum-entry'});put('grovegate',1270,700,{action:'grove-entry'});put('stall',530,752,{action:'market'});put('pond',940,1250,{action:'fish'});put('garden',763,416,{action:'garden'});
+ put('festivalstand',820,667,{action:'festival-calendar'});put('museum',1314,850,{action:'museum-entry'});put('grovegate',1270,700,{action:'grove-entry'});put('stall',530,752,{action:'market'});put('pond',940,1250,{action:'fish'});put('garden',763,416,{action:'garden'});
  put('bench',730,780);put('bench',375,812);put('bench',1050,615);put('picnic',1125,830);put('board',1032,790,{action:'nature-gallery'});put('bugstand',674,980,{action:'bug-hunt'});put('arch',820,1025);put('fence',475,525);put('fence',1120,1080);for(const [x,y,k] of [[445,560,0],[780,810,1],[900,900,2],[320,925,3],[700,1125,4],[1040,550,1],[1080,895,0],[550,1010,2]])put('flowerbed',x,y,{kind:k});
  for(const [x,y] of [[610,530],[890,775],[495,1095],[1080,1165],[350,675]])put('lamp',x,y);
  for(const [x,y,n] of [[270,430,0],[265,830,1],[230,1100,0],[920,240,2],[1100,335,0],[1190,650,1],[1210,1100,0],[660,290,0],[560,1120,2],[870,1160,1],[1300,1250,0],[580,980,1],[147,650,0]])put('tree',x,y,{kind:n});
