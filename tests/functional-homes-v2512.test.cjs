@@ -40,6 +40,24 @@ test('four functional spaces require real nearby furniture rather than decoratio
  const residence=furniture.map(o=>({kind:o.kind,x:o.x,y:o.z}));
  assert.ok(F.detect(residence).every(x=>x.ready),'residence y coordinates work');
 });
+test('existing drawn-in beds, bookshelves and sofas count toward functional corners',()=>{
+ const compact=[
+  {kind:'rug',x:390,z:530},
+  {kind:'lamp',x:435,z:390},
+  {kind:'flowers',x:700,z:560}
+ ];
+ const x=create({placed:compact,residenceProps:{
+  h0:compact.map(o=>({kind:o.kind,x:o.x,y:o.z})),h1:[]
+ }});
+ const a=x.engine.active('player').map(x=>x.id);
+ assert.ok(a.includes('rest'),'default bed + purchased rug');
+ assert.ok(a.includes('reading'),'default bookshelf + purchased lamp');
+ assert.ok(a.includes('gather'),'default sofa + purchased flowers');
+ const b=x.engine.active('h0').map(x=>x.id);
+ assert.ok(b.includes('rest')&&b.includes('reading')&&b.includes('gather'),
+  'six room addresses share their actual built-in stations');
+ assert.ok(!a.includes('creative'),'creative nook still requires a plant and chair');
+});
 test('one real completed reading session awards a capped themed bonus, never free currency',()=>{
  const x=create(),needs={fun:31,energy:25,social:27};
  assert.equal(x.engine.reward('player','player','read',needs,true,1),true);
