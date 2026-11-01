@@ -1,11 +1,11 @@
-/* Hearth & Harbor — Town Hearts v2.4.3
+/* Hearth & Harbor — Evening Traditions v2.4.4
    A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),rand=(a,b)=>a+Math.random()*(b-a);
 const hash=(n)=>{const x=Math.sin(n*127.1+8.45)*43758.5453;return x-Math.floor(x)};
 const SAVE='hearth-harbor-save-v1';
-const DEF=()=>({socialPostcard:null,townHearts:{},heartStories:{},romance:{},householdAuto:{},residentHabits:{},autoBondDay:{},cooking:defaultCooking(),residenceThemes:{},residenceProps:{},residenceDaily:{},residenceDecor:{},residenceVisits:{},residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
+const DEF=()=>({socialPostcard:null,townHearts:{},coupleMoments:[],coupleBouquets:{},heartStories:{},romance:{},householdAuto:{},residentHabits:{},autoBondDay:{},cooking:defaultCooking(),residenceThemes:{},residenceProps:{},residenceDaily:{},residenceDecor:{},residenceVisits:{},residentHomes:{},householdFunds:{},housingDay:0,householdMoves:[],friendVisits:{},visitSeen:[],visitCounts:{},invitedVisits:{},townTensions:{},mediationDaily:{},residentLife:{},lifeMoments:[],neighborMilestones:[],socialDaily:{},townBonds:{},townStories:[],storySeen:[],name:'Poppy',hair:0x5d4037,hairStyle:1,outfit:0xe3a0a8,skin:0xf4c5aa,coins:250,hearts:0,day:1,minute:8*60,season:0,needs:{hunger:88,fun:89,social:83,energy:100},relations:{},met:[],quests:{},inventory:[],placed:[],garden:[0,0,0,0],gardenBoost:[false,false,false,false],fish:[],homeStyle:0,sound:false,seenWelcome:false});
 const COOKING_RECIPE_IDS=['toast','salad','soup','pancakes','eggs','noodles','fishplate','tart','biscuits','jam','skewers','dumplings'];
 const COOKING_ING_IDS=['bread','butter','berry','apple','carrot','herb','flour','milk','egg','noodle','fish','honey','onion','potato'];
 function defaultCooking(){return {pantry:{bread:2,butter:1,berry:4,apple:1,carrot:1,herb:1,flour:1,milk:1,egg:2,noodle:1,fish:1,honey:1,onion:1,potato:1},dishes:[],xp:0,made:0,mastered:Object.fromEntries(COOKING_RECIPE_IDS.map(id=>[id,0])),servedDaily:{},relaxed:false}}
@@ -30,7 +30,8 @@ function cleanSave(raw){
  const safeStory=/^\d{1,4}:[01]$/;
  const safeVisit=/^v:(?:[1-9]\d{0,3}):[01]$/;
  const safeDay=/^[1-9]\d{0,3}$/;
- const safeTownStory=/^(?:\d{1,4}:[01]|v:[1-9]\d{0,3}:[01]|m:\d{1,4}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|h:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|r:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn))$/;
+ const safeTownStory=/^(?:c:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|\d{1,4}:[01]|v:[1-9]\d{0,3}:[01]|m:\d{1,4}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|h:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn)|r:[1-9]\d{0,3}:(?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn))$/;
+ const safeCouple=/^c:([1-9]\d{0,3}):((?:mabel|rosie|oliver|jun|bea|finn)\|(?:mabel|rosie|oliver|jun|bea|finn))$/;
  const lifeRecord=obj(raw.residentLife);
  const savedHomes=Object.fromEntries([...npcIds].map((id,i)=>{
   const v=obj(raw.residentHomes)[id];return [id,typeof v==='string'&&/^h[0-5]$/.test(v)?v:`h${i}`];
@@ -73,7 +74,9 @@ function cleanSave(raw){
  // Only known residents, locations and safe statuses can be restored from an imported postcard.
  const pc=obj(raw.socialPostcard),postcard=(npcIds.has(pc.from)&&['garden','cafe','pond'].includes(pc.place)&&['pending','accepted','done','declined'].includes(pc.status)&&['friend','romance'].includes(pc.kind))?
   {day:number(pc.day,0,0,9999)|0,from:pc.from,place:pc.place,kind:pc.kind,status:pc.status}:null;
- const res={...d,socialPostcard:postcard,townHearts:HearthTownHearts.clean(raw.townHearts),romance,householdAuto,residentHabits,autoBondDay,residenceThemes,residenceProps,residenceDaily,residenceDecor,residenceVisits,residentHomes:savedHomes,householdFunds:savedFunds,housingDay:number(raw.housingDay,number(raw.day,1,1,9999)|0,0,9999)|0,householdMoves:houseMoves,friendVisits,invitedVisits,visitCounts,visitSeen:Array.isArray(raw.visitSeen)?[...new Set(raw.visitSeen.filter(x=>typeof x==='string'&&safeVisit.test(x)))].slice(-35):[],residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
+ const res={...d,socialPostcard:postcard,townHearts:HearthTownHearts.clean(raw.townHearts),
+   coupleMoments:Array.isArray(raw.coupleMoments)?[...new Set(raw.coupleMoments.filter(x=>typeof x==='string'&&safeCouple.test(x)&&x.split(':')[2]?.split('|').every(id=>npcIds.has(id))))].slice(-48):[],
+   coupleBouquets:Object.fromEntries(Object.entries(obj(raw.coupleBouquets)).filter(([k,v])=>safeCouple.test(k)&&k.split(':')[2]?.split('|')[0]!==k.split(':')[2]?.split('|')[1]&&Number(v)===1).slice(-20).map(([k])=>[k,1])),romance,householdAuto,residentHabits,autoBondDay,residenceThemes,residenceProps,residenceDaily,residenceDecor,residenceVisits,residentHomes:savedHomes,householdFunds:savedFunds,housingDay:number(raw.housingDay,number(raw.day,1,1,9999)|0,0,9999)|0,householdMoves:houseMoves,friendVisits,invitedVisits,visitCounts,visitSeen:Array.isArray(raw.visitSeen)?[...new Set(raw.visitSeen.filter(x=>typeof x==='string'&&safeVisit.test(x)))].slice(-35):[],residentLife:savedLife,lifeMoments:moments,name:typeof raw.name==='string'?raw.name.trim().slice(0,18)||d.name:d.name,
    hair:safeColor(raw.hair,d.hair),outfit:safeColor(raw.outfit,d.outfit),skin:safeColor(raw.skin,d.skin),
    hairStyle:number(raw.hairStyle,d.hairStyle,0,4)|0,coins:number(raw.coins,d.coins,0,1000000),hearts:number(raw.hearts,0,0,1000000),
    day:number(raw.day,1,1,9999)|0,minute:number(raw.minute,d.minute,0,1439.999),season:number(raw.season,0,0,3)|0,
@@ -828,9 +831,81 @@ function visitPlans(){const slot=visitSlot(),live=friendshipVisit(),tomorrow=sta
  ${tomorrow?`<div class="card"><div><b>📅 Tomorrow's plans</b><small>${escapeHtml(tomorrow.map(id=>NPCS.find(n=>n.id===id).name).join(' & '))} · early afternoon</small></div></div>`:''}
  <h3>Neighbor connections</h3>${all.slice(0,10).map(([a,b])=>`<div class="card"><div><b>${escapeHtml(a.name)} & ${escapeHtml(b.name)}</b><small>${friendshipStatus([a.id,b.id])} · ${Math.round(bondScore([a.id,b.id]))} closeness · ${state.visitCounts[pairKey([a.id,b.id])]||0} visits${(state.townTensions[pairKey([a.id,b.id])]||0)>=8?' · 💭 some tension':''}</small></div></div>`).join('')||'<p>More friendships will develop as neighbors meet.</p>'}`)}
 
+
+const COUPLE_RITUAL_PLACES=[
+ {name:'flower-lit path',point:[822,966],icon:'🌷',verb:'sharing a quiet walk',art:'flowers'},
+ {name:'café terrace',point:[895,732],icon:'☕',verb:'talking over a warm drink',art:'tea'},
+ {name:'library garden',point:[577,1093],icon:'📖',verb:'reading favorite pages together',art:'book'}
+];
+function coupleRituals(day=state.day,minute=state.minute){
+ if(minute<20.75*60||minute>=22.7*60)return [];
+ const connected=HearthTownHearts.connections(state,NPCS).filter(c=>['courting','partners'].includes(c.stage));
+ return connected.filter(c=>{
+  const [a,b]=c.key.split('|');return HearthTownHearts.available(state,[a,b])&&(state.townTensions[c.key]||0)<8;
+ }).map((c,i)=>{
+  const place=COUPLE_RITUAL_PLACES[(day+i)%COUPLE_RITUAL_PLACES.length],pair=c.key.split('|');
+  return {id:`c:${day}:${c.key}`,day,pair,point:place.point,place:place.name,icon:place.icon,doing:place.verb,art:place.art,stage:c.stage};
+ });
+}
+function activeCoupleRitual(n){return coupleRituals().find(r=>r.pair.includes(n.id))||null}
+function settleCoupleRituals(){
+ for(const event of coupleRituals()){
+  if(state.coupleMoments.includes(event.id)||!meetingReady(event))continue;
+  const key=pairKey(event.pair),gift=state.coupleBouquets[event.id]===1;
+  state.coupleMoments.push(event.id);state.coupleMoments=state.coupleMoments.slice(-48);
+  state.townBonds[key]=clamp((state.townBonds[key]||0)+2+(gift?2:0),0,100);
+  for(const id of event.pair){const n=NPCS.find(p=>p.id===id),needs=lifeFor(id).needs;
+   needs.social=clamp(needs.social+12+(gift?6:0),0,100);
+   needs.fun=clamp(needs.fun+8+(gift?4:0),0,100);
+   n.emotion='happy';n.emotionUntil=tick+5;
+  }
+  const names=event.pair.map(id=>NPCS.find(n=>n.id===id).name);
+  state.townStories.push({id:event.id,day:state.day,pair:event.pair.slice(),title:'An evening to remember',
+   text:`${names[0]} and ${names[1]} spent a gentle evening ${event.doing} at the ${event.place}.${gift?' Your surprise flowers made the moment even sweeter.':''}`,outcome:'romance'});
+  state.townStories=state.townStories.slice(-24);
+  notify(`${names[0]} and ${names[1]} shared a lovely evening ${event.icon}`);save();
+ }
+}
+function offerCoupleFlowers(key){
+ const connected=HearthTownHearts.connections(state,NPCS).find(c=>c.key===key&&['courting','partners'].includes(c.stage));
+ if(!connected)return notify('Those plans have changed.');
+ const event=coupleRituals().find(x=>pairKey(x.pair)===key);
+ if(!event)return notify('A surprise bouquet can be left during evening visiting hours (8:45–10:42 PM).');
+ if(state.coupleMoments.includes(event.id))return notify('They have already enjoyed their evening together.');
+ if(state.coupleBouquets[event.id])return notify('You already left a little surprise for them.');
+ if(state.coins<10)return notify('A fresh bouquet costs 10 coins.');
+ state.coins-=10;state.coupleBouquets[event.id]=1;save();updateUI();notify('A little bouquet is waiting for the couple! 🌸');townHeartsBoard();
+}
+function partnerFor(id){const c=HearthTownHearts.connections(state,NPCS).find(c=>['courting','partners'].includes(c.stage)&&c.key.split('|').includes(id));
+ return c?NPCS.find(n=>n.id===c.key.split('|').find(x=>x!==id)):null;
+}
+function askAboutPartner(n){const loved=partnerFor(n.id);if(!loved){$('talkText').textContent=`${n.name} says they're enjoying their own pace, friendships and hobbies for now.`;return}
+ const key=pairKey([n.id,loved.id]);const recent=[...state.townStories].reverse().find(x=>x.id.startsWith('c:')&&pairKey(x.pair||[])===key);
+ $('talkText').textContent=recent?`“${loved.name} and I had such a lovely evening. ${recent.text.split('. ')[0].replace(/^.*? spent /,'We spent ')}. I'm holding onto that little memory.”`:`“${loved.name} and I have been finding little reasons to spend time together. A quiet evening can mean so much.”`;
+ $('emote').textContent='💕';n.emotion='happy';n.emotionUntil=tick+3;
+}
+function drawCoupleSparkles(g){
+ for(const ev of coupleRituals()){
+  if(!meetingReady(ev))continue;
+  const [a,b]=ev.pair.map(id=>NPCS.find(n=>n.id===id));
+  const x=(a.x+b.x)/2,y=(a.y+b.y)/2-150;
+  g.save();g.textAlign='center';g.font='bold 26px system-ui';
+  g.globalAlpha=.7+Math.sin(tick*2)*.2;
+  g.fillText(ev.icon,x,y+Math.sin(tick*3)*3);
+  for(let j=0;j<3;j++){
+   const t=tick*1.6+j*2.1,cx=x+Math.cos(t)*31,cy=y-13-Math.abs(Math.sin(t))*20;
+   ellipse(g,j%2?'#fff2cd':'#ffaac4',cx,cy,3+j%2,4+j%2);
+  }
+  g.restore();
+ }
+}
+
 function townHeartsBoard(){
  const pairs=HearthTownHearts.connections(state,NPCS);
- const visible=pairs.map(c=>`<div class="card"><div><b>${c.stage==='partners'?'💞':c.stage==='courting'?'💕':'🌷'} ${escapeHtml(c.names.join(' & '))}</b><small>${escapeHtml(c.label)} · ${c.sharedDays} meaningful afternoons together<br>Residents choose their own pace. Sharing a cottage is a separate household decision.</small></div></div>`).join('');
+ const now=coupleRituals();
+ const visible=pairs.map(c=>{const event=now.find(r=>pairKey(r.pair)===c.key),done=event&&state.coupleMoments.includes(event.id),gift=event&&state.coupleBouquets[event.id];
+  return `<div class="card couple-heart-card"><div><b>${c.stage==='partners'?'💞':c.stage==='courting'?'💕':'🌷'} ${escapeHtml(c.names.join(' & '))}</b><small>${escapeHtml(c.label)} · ${c.sharedDays} meaningful afternoons together<br>${event?`${done?'✨ Shared tonight':'🌙 Tonight at the '+escapeHtml(event.place)} · ${escapeHtml(event.doing)`:'Evening traditions begin at 8:45 PM during active play.'}<br>Sharing a cottage remains a separate household choice.</small></div>${event&&!done&&['courting','partners'].includes(c.stage)?`<button data-act="couple-flowers" data-id="${c.key}" ${gift||state.coins<10?'disabled':''}>${gift?'🌸 Gift left':'🌷 Flowers · 10 🪙'}</button>`:''}</div>`;
+ }).join('');
  showModal('town-hearts',`<h2>💕 Town Hearts</h2><p>Little relationships are growing around the village. Residents can discover feelings and choose to date after many friendly meetings. Existing partnerships and disagreements are respected.</p>${visible||'<div class="card"><div><b>🌱 Friendships first</b><small>Get to know the neighbors and spend time in town. Warm friendships may slowly become something more, but romance is never guaranteed.</small></div></div>'}<p>Love stories evolve while you play; they never progress in the background. Friendships remain valuable on their own.</p>${btn('📜 Town Stories','stories')}`);
 }
 function currentRoutine(n){
@@ -840,6 +915,8 @@ function currentRoutine(n){
   if(last?.outcome==='misunderstanding'){const other=NPCS.find(x=>x.id===meetup.pair.find(id=>id!==n.id));const side=meetup.pair.indexOf(n.id)===0?-1:1;return {h:`${meetup.slot}-space`,where:[meetup.point[0]+side*105,meetup.point[1]+side*38],doing:`taking a little space after talking with ${other.name}`,icon:'🌧️',mood:'peaceful'};}
   const where=meetingPosition(meetup,n);return {h:EVENT_START[meetup.slot],where,doing:meetup.doing+' with '+NPCS.find(x=>x.id===meetup.pair.find(id=>id!==n.id)).name,icon:meetup.icon,mood:'happy',eventId:meetup.id}}
 
+ const couple=activeCoupleRitual(n);
+ if(couple){const partner=NPCS.find(x=>x.id===couple.pair.find(id=>id!==n.id));return {h:`evening-${couple.id}`,where:meetingPosition(couple,n),doing:`${couple.doing} with ${partner.name}`,icon:couple.icon,mood:'happy',coupleId:couple.id}}
  const visit=activeFriendVisit(n);
  if(visit){const other=NPCS.find(x=>x.id===visit.pair.find(id=>id!==n.id));return {h:`visit-${visit.day}-${visit.slot}`,where:meetingPosition(visit,n),doing:`visiting ${other.name} at ${visit.place}`,icon:visit.icon,mood:'happy',visitId:visit.id}}
  const care=lifeFor(n.id).mode;
@@ -862,6 +939,7 @@ const TASK_ART={
  finn:{tool:'fishing rod',join:'Finn lets you try his lucky fishing spot. You watch the bobber dance together.',rest:'Finn teaches you to listen for the soft sounds of the pond.'}
 };
 function activityType(n){
+ if(activeCoupleRitual(n))return 'couple';
  if(activeMeeting(n)||activeFriendVisit(n))return 'meet';
  const care=lifeFor(n.id).mode;if(care)return care;
  const stage=currentRoutine(n),hour=state.minute/60;
@@ -884,7 +962,11 @@ function drawActivity(g,n,x,y){
  const kind=activityType(n),bounce=Math.sin(tick*3.8+n.x*.01)*3,flip=Math.sin(tick*2.2+n.y*.01)*4;
  const xx=x+31, yy=y-52+bounce;
  g.save();g.lineWidth=3;g.lineCap='round';
- if(kind==='meet'){
+ if(kind==='couple'){
+  const ev=activeCoupleRitual(n);g.font='bold 21px system-ui';g.textAlign='center';g.fillText(ev?.icon||'💕',xx,yy-9+Math.sin(tick*3)*2);g.textAlign='left';
+  if(ev?.art==='tea'){ellipse(g,'#f8e3bb',xx,yy+8,12,4);round(g,'#d2a87e',xx-7,yy-1,14,9,3,'#986a57',2)}
+  else if(ev?.art==='flowers'){ellipse(g,'#7ab88f',xx,yy+4,9,4);ellipse(g,'#eda3b9',xx,yy-1,6,6)}
+ }else if(kind==='meet'){
   const e=activeMeeting(n);g.font='bold 24px system-ui';g.textAlign='center';g.fillStyle='#fff8ed';g.fillText(e.icon,xx,yy-9+Math.sin(tick*2)*2);g.textAlign='left';
   if(meetingReady(e)){ellipse(g,'#f6bfcb',x+18,y-141+Math.sin(tick*3)*3,4,4)}
  }else if(kind==='water'){
@@ -1669,6 +1751,7 @@ function drawScene(){if(!W||!H)return;
    }else if(o.type==='player')drawCharacter(ctx,playerDef(),player.x,player.y,player.facing,!!player.target);
    else drawStatic(o,ctx);
   }
+  drawCoupleSparkles(ctx);
  }else{
   if(scene==='residence')drawResidenceFurniture(ctx);else drawHomeFurniture(ctx);
   drawCharacter(ctx,playerDef(),player.x,player.y,player.facing,!!player.target,householdHold?.kind==='chat'?'happy':'neutral');
@@ -1900,7 +1983,7 @@ function update(dt){tick+=dt;advanceHouseholdHold(dt);
     }
    }
   }
-  settleCommunityEvent();settleFriendVisit();advanceDate();maybeSocialPostcard();
+  settleCommunityEvent();settleFriendVisit();settleCoupleRituals();advanceDate();maybeSocialPostcard();
  }
  if(speed>0&&!modal&&!talk&&!placement){const elapsed=dt*speed*2.0;updateResidentNeeds(elapsed);state.minute+=elapsed;while(state.minute>=1440){state.minute-=1440;state.day++;if(state.day%7===1)state.season=(state.season+1)%4;processHousingDay();notify('A bright new day begins! 🌞');save()}
   const rate=dt*speed*.013;if(!(scene==='residence'&&controlledResident)){state.needs.hunger=clamp(state.needs.hunger-rate*1.9,0,100);state.needs.energy=clamp(state.needs.energy-rate*1.3,0,100);
@@ -1919,7 +2002,7 @@ function btn(label,fn){return `<button class="btn" data-act="${fn}">${label}</bu
 const kitchen=new window.HearthKitchen({getState:()=>state,save,coins,changeNeed,notify,showModal,getResidents:()=>scene==='residence'?roomResidents().map(n=>({id:n.id,name:n.name})):[],feedResident:(id,food,social)=>{const life=state.residentLife[id];if(life){life.needs.food=clamp(life.needs.food+food,0,100);life.needs.social=clamp(life.needs.social+social,0,100)}},bondResident:(id,amount)=>{state.relations[id]=clamp((state.relations[id]||0)+amount,0,100)}});
 function buttonClick(e){const b=e.target.closest('[data-act]');if(!b)return;handleAction(b.dataset.act,b.dataset.id||'')}
 function talkChoices(mode='main'){
- const options=mode==='romance'?[['spark','💞 Share a spark'],['date-invite','🌷 Ask on a date'],['reflect','📖 Remember together'],['partner','💕 Make it official'],['talk-back','← Back']]:mode==='more'?[['invite','📅 Arrange visit'],['housemate','🏡 Home life'],['mediate','🕊️ Make peace'],['join','✨ Join in'],['help','🌟 Help with dream'],['compliment','💗 Compliment'],['gift','🎁 Gift'],['talk-back','← Back']]:[['chat','💬 Chat'],['ask','🌤 Their day'],['discover','🌱 Get to know'],['romance-menu','💗 Feelings'],['more-talk','✨ More'],['bye','See you!']];
+ const options=mode==='romance'?[['spark','💞 Share a spark'],['date-invite','🌷 Ask on a date'],['reflect','📖 Remember together'],['partner','💕 Make it official'],['talk-back','← Back']]:mode==='more'?[['about-partner','💕 Ask about their partner'],['invite','📅 Arrange visit'],['housemate','🏡 Home life'],['mediate','🕊️ Make peace'],['join','✨ Join in'],['help','🌟 Help with dream'],['compliment','💗 Compliment'],['gift','🎁 Gift'],['talk-back','← Back']]:[['chat','💬 Chat'],['ask','🌤 Their day'],['discover','🌱 Get to know'],['romance-menu','💗 Feelings'],['more-talk','✨ More'],['bye','See you!']];
  $('talkActions').innerHTML=options.map(([act,label])=>'<button data-act="'+act+'">'+label+'</button>').join('');
 }
 function openTalk(id){const n=NPCS.find(a=>a.id===id);if(!n)return;closeModal();talk=id;n.emotion='happy';n.emotionUntil=tick+1.2;const r=state.relations[id]||0;
@@ -1934,6 +2017,7 @@ function respond(kind){const n=NPCS.find(o=>o.id===talk);if(!n)return;if(['disco
  const voices=personalityTalk[n.id]||personalityTalk.mabel;
  if(kind==='help')return helpNeighbor(n);
  if(kind==='invite')return suggestVisit(n);
+ if(kind==='about-partner')return askAboutPartner(n);
  if(kind==='housemate')return encourageHousemate(n);
  if(kind==='mediate')return mediateNeighbor(n);
  if(kind==='join'){
@@ -1980,7 +2064,7 @@ function decorate(){if(scene!=='home')goScene('home');
 function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
  showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(pendingName??state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair color</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Haircut</h3><div class="haircuts">${['Bob','Side-part','Tousled','Ponytail','Buns'].map((n,i)=>`<button data-act="set-style" data-id="${i}" aria-pressed="${state.hairStyle===i}" class="haircut ${state.hairStyle===i?'selected':''}">${n}</button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Town Hearts v2.4.3 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Postcards'+(todaysPostcard()?.status==='pending'?' · New!':''),'postcards')}${btn('💌 Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🍳 Hearth Kitchen','cook-book')}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
+function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Evening Traditions v2.4.4 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Postcards'+(todaysPostcard()?.status==='pending'?' · New!':''),'postcards')}${btn('💌 Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🍳 Hearth Kitchen','cook-book')}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
 function handleAction(action,id){if(action==='more-talk')return talkChoices('more');if(action==='romance-menu')return talkChoices('romance');if(action==='talk-back')return talkChoices('main');
  if(action==='hearts')return heartNotes();
  if(action==='postcards')return postcards();
@@ -2013,6 +2097,7 @@ function handleAction(action,id){if(action==='more-talk')return talkChoices('mor
  if(action==='room-upgrade')return upgradeRoom();
  if(action==='room-chat'){if(scene==='residence'&&roomResidents().some(n=>n.id===id))return openTalk(id);return}
  if(action==='town-hearts')return townHeartsBoard();
+ if(action==='couple-flowers')return offerCoupleFlowers(id);
  if(action==='visits')return visitPlans();
  if(action==='housing')return housingBoard();
  if(action==='journal')return journal();
