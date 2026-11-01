@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.5.14 — At Our Table
+# Hearth & Harbor v2.5.15 — Supper Together
+
+**Supper is now a real little shared experience rather than just a button that adjusts needs.** In the existing **At Our Table** feature, you choose a dish you truly cooked in Hearth Kitchen, select a conversation theme, and walk to the dining area. Then the new **Set the supper table** activity lets you choose a linen color, optionally light a candle, and **tap a place for each actual dinner participant**. The Serve button is enabled only after every place is ready. You may leave without consuming the plate; no real-time timers, failure penalties, or additional currencies were added.
+
+**Real resident character art now joins the supper in the room.** The actual neighbors living in the home move smoothly from their normal positions to separate dinner places, display warm expressions and topic-specific reactions, and enjoy an animated household gathering. Everyday autonomy pauses during this brief scene and resumes from their dinner positions afterward. New hand-painted tabletop napkins, utensils, linens, candlelight and steam give the existing world more personality. The original twelve recipes, favorite foods, family scrapbook, and framed keepsakes after three suppers remain fully functional. Poppy can also enjoy a quiet one-person cottage supper.
+
+The original local save is preserved with **no new persistent data schema**, and existing relationships, festivals, decorating, aspirations, village projects and cooked-plate inventory remain intact. The regression suite now covers **87 automated tests** (11 new), although an actual iPhone Safari playtest and rendered screenshots remain outstanding. See [v2.5.15 Supper Together QA and roadmap](SUPPER_TOGETHER_V2515_QA_AND_ROADMAP.md).
+
+## Previous milestone — At Our Table v2.5.14
 
 **A meaningful new household-and-cooking connection on the road to v3.0 Generations.** The twelve recipes you prepare in **Hearth Kitchen** now have a second purpose beyond eating them or using the old quick Share action: host a real **family supper** in Poppy's cottage or an occupied neighbor home. Choose a prepared plate, select one of **three conversation themes**, and walk to the dining area. Only when you arrive does the supper consume **exactly one** real cooked dish from your plate shelf.
 
