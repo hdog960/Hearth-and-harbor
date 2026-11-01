@@ -160,5 +160,5 @@ test('runtime integrations and offline assets load before the main game',()=>{
  for(const asset of ['atelier-v2513.js','atelier-v2513.css']){
   assert.ok(html.includes(asset));assert.ok(sw.includes("'./"+asset+"'"));
  }
- assert.match(sw,/hearth-harbor-v2513-little-atelier/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/); // Cache names advance with releases.
 });
