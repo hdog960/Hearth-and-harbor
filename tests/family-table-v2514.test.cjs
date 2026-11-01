@@ -170,8 +170,8 @@ test('import sanitizer validates recipe IDs, households, quality and unique date
 test('full game and kitchen link the dinner flow; all assets are offline preloaded',()=>{
  for(const token of [
   'familyTable:window.HearthFamilyTable.clean(raw.familyTable)',
-  'familyTable.draw(ctx',{ /* noop */ }
- ]){if(typeof token==='string')assert.ok(core.includes(token),token);}
+  'familyTable.draw(ctx'
+ ])assert.ok(core.includes(token),token);
  for(const token of ['familyTable.handle','openFamilyTable:()=>familyTable.board()',
   "completeHomeMeal:()=>homeAspirations.recordAction('player','meal'"]){
   assert.ok(core.includes(token),token);
