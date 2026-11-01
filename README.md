@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.5.10 — Little Moments Together
+# Hearth & Harbor v2.5.11 — Roots & Keepsakes
+
+**A meaningful household-life milestone on the road to v3.0 Generations.** Poppy and all six Maplewood residents now have three selectable personal aspirations each: **Cozy Maker**, **Story Keeper**, and **Caring Heart**. Every aspiration is completed by using *real household activities* through the existing Daybook, including guided residents and resident autonomy in the currently visited home. Goals take **three separate in-game days** and must be completed in order. A household member earns each aspiration's reward only once, even across reloads, repeated routines or switching goals.
+
+As characters finish their goals, **lasting framed memories** appear on the walls of their actual home or shared residence: original pixel-painted flowers, storybooks and hearts. The new **Roots & Keepsakes** journal shows each person's current journey, progress and completed memories. Open it from **Menu**, **Journal**, Poppy's own **Daybook**, or a resident's household **Daybook**. Earlier cooking, festivals, shops, fishing, museum, town upgrades, dating, weddings, and household progress are all retained in the same local save; no real money or service fees.
+
+This is **not** v3.0 Generations yet: household autonomy, richer furniture and family care, physical iPhone Safari playtests, and long-term legacy data still need work. The new aspiration module was tested against all seven characters, three tracks per person, save migration and reward caps; the GitHub automated suite passed. See [v2.5.11 QA and Generations prerequisites](ASPIRATIONS_V2511_QA_AND_ROADMAP.md).
+
+## Previous milestone — Little Moments Together v2.5.10
 
 **Your village improvements now bring neighbors closer together.** Four recurring paired scenes appear at actual upgraded places in Maplewood: Mabel and Jun's **Poetry Garden**, Bea and Finn's **Lantern Workshop**, Rosie and Oliver's **Shared Orchard Table**, and Finn and Jun's **Stories by the Water**. The two residents navigate to their meeting positions in the existing game world and interact with unique animated props rather than teleporting into unrelated menus.
 
