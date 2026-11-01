@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.12 — Rooms With Purpose
+# Hearth & Harbor v2.5.13 — Little Atelier
+
+**Decorating is more flexible and forgiving.** Poppy's cottage and all six resident homes now have their own **furniture storage**. Store purchased furnishings instead of selling them, then put them back in the room later without paying again. Stored pieces preserve ownership and rotation, and the usual furniture placement rules still apply. Your stored items persist in the existing local save.
+
+**Undo / Redo is now built into decorating** for the most recent ten furniture changes in each room. Moves, rotations, purchases, sales, storage, and retrieval can all be undone, including restoring the correct coin amount on a mistaken purchase or sale. Undo is session-only and refuses to reverse a change if other gameplay has changed the coin balance or room layout. Wallpaper, quests, relationships and other non-decorating systems are intentionally unaffected.
+
+Open Poppy's **Decorate** menu or a resident's **Daybook → Decorate this home** to find Little Atelier. Both have large touch-friendly Store, Place, Undo and Redo controls. The previously introduced **Rooms With Purpose** functional furniture combinations, aspirations, saved memories, cooking, nature, festivals and household activities remain intact. No ads, premium currency or online services have been added.
+
+Added **ten regression tests**; the full automated suite now covers **66 scenarios** including earlier development. Physical iPhone Safari playtesting and screenshot-based visual QA are still outstanding. [v2.5.13 development and QA notes](ATELIER_V2513_QA_AND_ROADMAP.md).
+
+## Previous milestone — Rooms With Purpose v2.5.12
 
 **Household decorating now changes how people live in their homes.** Arrange matching furnishings close together to create four functional areas: a **Storybook Nook** (bookshelf + lamp), **Restful Retreat** (bed + rug), **Gathering Corner** (sofa + flowers) and **Creative Corner** (chair + fern). The existing drawn-in dollhouse bed, sofa and bookshelves count as real furniture, so you don't have to buy duplicates. These spaces add modest extra need restoration **only after Poppy or a resident completes the matching real Daybook activity**. Choose one home focus for a small additional benefit; changing it costs nothing.
 
