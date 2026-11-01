@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.16 — Thoughtful Households
+# Hearth & Harbor v2.5.17 — Helping Hands
+
+**Poppy can now work side-by-side with the residents of Maplewood.** Visit an occupied neighbor home and open **Daybook → Helping Hands**, or find it in Menu while visiting. Pick a real resident and choose one of three little cooperative activities: **Window Garden** 🪴, **Cozy Sorting** 🧺, or **Memory Craft** 🎨. Poppy walks to the activity station, then you complete three easy, tappable hands-on steps. Each activity requires different objects and answers; mistakes are gentle and never cost money or ingredients.
+
+After completing the steps, the actual resident's sprite joins Poppy at the work area for a brief animated scene. Residents pause their regular autonomy during the event and resume afterward. Both characters gain a modest Fun/Social lift, existing friendship improves, and the household remembers the project in a dated **Helping Hands journal**. One completion per resident per game day prevents farming. Complete **three projects in one home** to unlock a permanent hand-painted keepsake on that home's wall. You can leave an unfinished project without losing anything.
+
+All original cooking recipes, Supper Together meals, household aspirations, furniture, festivals, resident relationships, nature collections and prior saves are preserved in the existing local save. The new game modules are cached for iPhone offline use. **110 automated regression tests pass**, including fresh saves, wrong choices, daily caps, canceled activities, resident sprite scenes, and permanent wall artwork. Physical iPhone Safari and screenshot-based visual testing still remain outstanding.
+
+See [v2.5.17 Helping Hands development and QA](HELPING_HANDS_V2517_QA_AND_ROADMAP.md).
+
+## Previous milestone — Thoughtful Households v2.5.16
 
 **Residents now make better choices about their everyday lives.** The six Maplewood neighbors consider urgent needs, their next real Roots & Keepsakes aspiration step, activities already completed that day, household companionship and their own personalities before choosing what to do at home. They still walk to the existing functional furniture, complete timed tasks, and respond to their surroundings; this is real household simulation logic, not a checklist of invented rewards.
 
