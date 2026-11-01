@@ -1,0 +1,9 @@
+/* v2.3.3 — compact independence settings for mobile daybook */
+.autonomy-list{margin:12px 0 18px;padding:12px;border:2px solid #bad3b9;border-radius:14px;background:linear-gradient(#f6fcf2,#e9f5e8)}
+.autonomy-list h3{margin:0 0 5px;color:#316b58}
+.autonomy-list>p{margin:0 0 10px;font-size:12px;line-height:1.45;color:#54796b}
+.autonomy-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fffbf0;border:1px solid #d4e2c9;border-radius:10px;margin-top:8px;padding:8px}
+.autonomy-row span{flex:1;min-width:0}
+.autonomy-row small{display:block;color:#71917e;line-height:1.3}
+.autonomy-row button{min-width:104px;min-height:44px;border:1px solid #8db7a0;border-radius:9px;background:#dcefd9;color:#295c48;font-weight:800;font-size:12px}
+.autonomy-row button[aria-pressed="false"]{background:#f4e7da;color:#80624a;border-color:#c9a88d}
