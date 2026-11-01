@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.5.5 — Festival Days
+# Hearth & Harbor v2.5.6 — Together in Maplewood
+
+**Living Village community milestone.** Festivals now include resident-led activities and lasting local memories instead of just minigames. At every seasonal festival (in-game days **3–5**), find the Festival Friends board through **Menu**, **Journal**, **Town Hall** or **Festival Calendar**. Select a resident to walk toward them, talk to them and choose **Help with the festival**. Each host offers a distinct personal project; there are eight authored collaborations across the four seasons, featuring three different control styles and accessible alternatives.
+
+Helping both hosts in a season unlocks a persistent **Community Portrait**. Repeat plays remain available without repeated money, hearts or friendship awards. Previous memories appear in the Community Scrapbook archive, and small decorations celebrate completed projects in the town plaza. All prior activities, NPC relationships, households, collectibles and existing saves are retained.
+
+This remains an early milestone, not finished festival production art, broader village simulation or Generations. [Read the development and QA notes](COMMUNITY_V256_QA_AND_ROADMAP.md). Automated festival tests now run through [GitHub Actions](.github/workflows/cozy-qa.yml), but physical iPhone Safari testing is outstanding.
+
+## Previous milestone — Festival Days v2.5.5
 
 The next **Living Village** slice builds on Cloverbank Grove without replacing it. Maplewood now has a Festival Plaza sign, seasonal decorations, resident gatherings, a community calendar, and four original touch-first games: Spring **Petal Parade** (flower-crown arranging), Summer **Lantern Tide** (lantern timing), Autumn **Harvest Home** (leaf color matching), and Winter **Winter Wishlights** (constellation tracing). The celebrations happen on in-game days **3–5** of every seven-day season and return in subsequent years. You can find the calendar in **Menu**, **Journal**, **Town Hall** or at the plaza sign.
 
