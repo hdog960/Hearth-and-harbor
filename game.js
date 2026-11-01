@@ -2232,34 +2232,44 @@ function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){sto
   const members=roomResidents();
   const near=members.filter(n=>n.id!==controlledResident).map(n=>{const p=residentHomePose(n,members.findIndex(m=>m.id===n.id));return {n,p,dist:Math.hypot(wx-p.x,wy-(p.y-68))}}).sort((a,b)=>a.dist-b.dist)[0];
   if(near&&near.dist<95){goTo(nearestWalkable({x:near.p.x-80,y:near.p.y+25},'residence',true)||{x:555,y:700},()=>openTalk(near.n.id));return}
-  const item=(state.residenceProps[activeResidence]||[]).find(f=>Math.hypot(wx-f.x,wy-f.y)<46);
-  if(item){goTo(nearestWalkable({x:item.x+64,y:item.y+35},'residence',true)||{x:580,y:670},()=>{
-   if(item.kind==='plant'||item.kind==='flowers')changeNeed('fun',6);
-   if(item.kind==='books')changeNeed('fun',9);
-   notify(`You admire the ${furnitureTypes.find(f=>f.id===item.kind)?.name||'furnishing'}. What a lovely touch! ✨`);
-  });return}
-  const furn=[{x:311,y:465,word:'A soft, welcoming guest bed. 💤',fun:0},
-   {x:805,y:515,word:'A lovely chat on the sofa! 💗',fun:8},
-   {x:822,y:327,word:'The kitchen smells like fresh bread. 🍞',fun:4},
-   {x:338,y:307,word:'A shelf of favorite stories! 📚',fun:9},
-   {x:786,y:801,word:'A quiet corner to relax. 🌿',fun:6}];
+  const owned=state.residenceProps[activeResidence]||[];
+  const itemIndex=owned.findIndex(f=>Math.hypot(wx-f.x,wy-f.y)<46);
+  if(itemIndex>=0){
+   const item=owned[itemIndex];
+   goTo(nearestWalkable({x:item.x+64,y:item.y+35},'residence',true)||{x:580,y:670},
+    ()=>functionalHomes.inspect(activeResidence,itemIndex));
+   return;
+  }
+  const furn=[{x:311,y:465,kind:'rest'},{x:805,y:515,kind:'chat'},
+   {x:822,y:327,kind:'meal'},{x:338,y:307,kind:'read'},{x:786,y:801,kind:'hobby'}];
   const f=furn.find(f=>Math.hypot(wx-f.x,wy-(f.y-40))<85);
-  if(f){goTo(nearestWalkable({x:f.x+(f.x>600?-105:105),y:f.y+55},'residence',true)||{x:560,y:695},()=>{if(f.fun)changeNeed('fun',f.fun);if(controlledResident&&f.x===311)changeNeed('energy',28);if(controlledResident&&f.x===822)changeNeed('hunger',20);notify(f.word)});return}
+  if(f){
+   if(controlledResident)queueHouseholdAction(f.kind);
+   else goTo(nearestWalkable({x:f.x+(f.x>600?-105:105),y:f.y+55},'residence',true)||{x:560,y:695},
+    ()=>notify('A lovely functional corner! Guide a resident in the Daybook to use it.'));
+   return;
+  }
   if(wx>795&&wy>965){manageHousehold();return}
   goTo({x:clamp(wx,228,945),y:clamp(wy,275,1000)});return;
  }
  if(scene==='home'){
   if(wy<220){notify('A lovely sunny view out of the window!');return}
-  const custom=state.placed.find(f=>Math.hypot(wx-f.x,wy-f.z)<45);
-  if(custom){goTo(nearestWalkable({x:custom.x+65,y:custom.z+35},'home',true)||{x:570,y:670},()=>{
-   if(custom.kind==='books')changeNeed('fun',13);else if(custom.kind==='plant'||custom.kind==='flowers')changeNeed('fun',8);
-   else if(custom.kind==='sofa'||custom.kind==='chair')changeNeed('energy',5);
-   notify('Your own little corner feels wonderful. 🌸');
-  });return}
+  const itemIndex=state.placed.findIndex(f=>Math.hypot(wx-f.x,wy-f.z)<45);
+  if(itemIndex>=0){
+   const custom=state.placed[itemIndex];
+   goTo(nearestWalkable({x:custom.x+65,y:custom.z+35},'home',true)||{x:570,y:670},
+    ()=>functionalHomes.inspect('player',itemIndex));
+   return;
+  }
   const bounds={x:clamp(wx,225,947),y:clamp(wy,275,985)};
-  const fixed=[{kind:'bed',x:332,y:430,act:()=>{changeNeed('energy',70);notify('A wonderful nap! 💤')}},{kind:'sofa',x:803,y:489,act:()=>{changeNeed('fun',25);notify('Cozy sofa time! 💗')}},{kind:'kitchen',x:840,y:309,act:()=>kitchen.openBook()},{kind:'books',x:342,y:314,act:()=>{changeNeed('fun',15);notify('A lovely story! 📚')}}];
+  const fixed=[{kind:'rest',x:332,y:430},{kind:'chat',x:803,y:489},
+   {kind:'kitchen',x:840,y:309},{kind:'read',x:342,y:314}];
   const near=fixed.find(o=>Math.hypot(wx-o.x,wy-(o.y-35))<80);
-  goTo(near?nearestWalkable({x:near.x+105,y:near.y+60}):bounds,near?.act);return;
+  if(near){
+   if(near.kind==='kitchen')goTo(nearestWalkable({x:near.x-105,y:near.y+60},'home',true)||bounds,()=>kitchen.openBook());
+   else queueOwnHomeAction(near.kind);
+  }else goTo(bounds);
+  return;
  }
  const festivalStall=festivalMarket.hit(wx,wy);if(festivalStall){goTo(nearestWalkable({x:festivalStall.walkX,y:festivalStall.walkY},'town',true)||{x:festivalStall.walkX,y:festivalStall.walkY},()=>festivalMarket.visit(festivalStall.id));return}
  const upgrade=stewardship.hit(wx,wy);if(upgrade){goTo(nearestWalkable({x:upgrade.walkX,y:upgrade.walkY},'town',true)||{x:upgrade.walkX,y:upgrade.walkY},()=>stewardship.use(upgrade.id));return}
