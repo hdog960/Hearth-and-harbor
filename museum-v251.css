@@ -1,0 +1,15 @@
+/* Hearth & Harbor v2.5.1 · The Little Museum. Original miniature exhibition UI. */
+.museum-exhibit,.museum-desk{background:linear-gradient(145deg,#fdf6df,#f2e9d1);border:3px solid #e2cda1;border-radius:21px;padding:18px 15px;color:#456459;box-shadow:inset 0 2px #fff9e9}
+.museum-exhibit h2,.museum-desk h2{font-family:Georgia,serif;color:#46776c;margin:7px 0 10px;font-size:27px;line-height:1.1}
+.museum-exhibit>small,.museum-desk>small{color:#7f987d;font-size:10px;font-weight:900;letter-spacing:.15em}
+.museum-exhibit p,.museum-desk p{line-height:1.5;font-size:14px;color:#65746b}
+.museum-mini{width:105px;height:100px;margin:2px auto 13px;border-radius:22px;background:linear-gradient(150deg,#dcead8,#fdf0d0);border:3px solid #e6cfb0;display:flex;align-items:center;justify-content:center}
+.museum-mini .nature-tile{transform:scale(2.1);}
+.museum-desk-symbol{font-size:47px}
+.museum-placard{background:#e5ebd6;border:2px solid #cbdab8;border-radius:11px;padding:9px;color:#557765;font-size:12px;font-weight:800}
+.museum-exhibit button,.museum-desk button{min-height:45px;margin:8px 3px 0 0}
+.museum-offer{display:flex;align-items:center;gap:9px;margin:9px 0;padding:9px;border-radius:12px;background:#f3e5c9}
+.museum-offer b{font-size:13px;flex:1}
+.museum-offer button{min-width:82px;margin:0;min-height:42px}
+.museum-note{font-style:italic}
+@media(max-width:360px){.museum-exhibit,.museum-desk{padding:13px}.museum-exhibit h2,.museum-desk h2{font-size:23px}}
