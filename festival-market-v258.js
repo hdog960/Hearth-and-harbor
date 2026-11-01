@@ -16,7 +16,7 @@ const RECIPES={
  toast:'Cinnamon Toast',salad:'Orchard Fruit Salad',soup:'Garden Vegetable Soup',
  pancakes:'Berry Pancakes',eggs:'Sunny Morning Eggs',noodles:'Herb Garden Noodles',
  fishplate:'Harbor Grilled Fish',tart:'Honeybun Berry Tart',biscuits:'Honey Cloud Biscuits',
- jam:'Orchard Apple Jam',stew:'Cozy Cottage Stew',pie:'Homestyle Potato Pie'
+ jam:'Orchard Apple Jam',skewers:'Picnic Garden Skewers',dumplings:'Little Garden Dumplings'
 };
 const safeDay=d=>Number.isInteger(d)&&d>=1&&d<=9999?d:1;
 const cycle=d=>Math.floor((safeDay(d)-1)/7);
