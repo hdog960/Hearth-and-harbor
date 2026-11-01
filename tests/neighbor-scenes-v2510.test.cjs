@@ -184,5 +184,5 @@ test('script order, runtime integration, previous features and offline cache are
  for(const asset of ['neighbor-scenes-v2510.js','neighbor-scenes-v2510.css']){
   assert.ok(html.includes(asset));assert.ok(sw.includes("'./"+asset+"'"));
  }
- assert.match(sw,/hearth-harbor-v2510-little-moments/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/); // Cache advances with releases.
 });
