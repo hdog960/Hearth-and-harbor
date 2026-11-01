@@ -164,7 +164,10 @@ function setup(api){
   r.memories.push({home:h,day:now.day,recipe:d.id,quality:d.quality,topic:topic.id,guests:m});
   r.memories=r.memories.slice(-40);
   gathering={home:h,day:now.day,guests:m,topic:topic.id,recipe:d.id,linen:p.linen,candle:p.candle,elapsed:0,duration:26};
-  if(typeof api.onDinnerStart==='function')api.onDinnerStart(m);
+  if(typeof api.onDinnerStart==='function'){
+   const starts=api.onDinnerStart(m);
+   gathering.starts=Array.isArray(starts)?starts.filter(v=>v&&m.includes(v.id)&&Number.isFinite(v.x)&&Number.isFinite(v.y)):[];
+  }
   pending=null;save();updateUI();
   showModal('family-table-result','<div class="ft-ui"><div class="ft-eyebrow">THE LITTLE MOMENTS ARE THE BIG ONES</div><h2>🍽️ An evening to remember</h2><div class="ft-platter">'+RECIPES[d.id].icon+' <span>'+RECIPES[d.id].name+'</span></div><p class="ft-story">'+topic.intro+'</p><div class="ft-banner">'+(m.length?'💗 '+memberNames(m).join(' & ')+' shared dinner. ':'🌷 A peaceful supper at home. ')+(favorite.length?'Favorite dish for '+memberNames(favorite).join(' & ')+'! ':'')+'Your homemade meal restored needs and created a lasting memory.</div>'+(r.counts[h]===3?'<p>✨ Three suppers together! A new family-table keepsake now appears inside this home.</p>':'')+'<button class="ft-main" data-act="ft-board">Open family table scrapbook</button><button class="ft-back" data-act="ft-close">Return to the home</button></div>');
   notify('A new household dinner memory is saved! 💌');
@@ -191,14 +194,21 @@ function setup(api){
   if(typeof api.isModalOpen==='function'&&api.isModalOpen())return;
   if(!Number.isFinite(dt)||dt<=0)return;
   gathering.elapsed+=Math.min(.1,dt);
-  if(gathering.elapsed>=gathering.duration)gathering=null;
+  if(gathering.elapsed>=gathering.duration){
+   if(typeof api.onDinnerEnd==='function')api.onDinnerEnd(gathering.guests);
+   gathering=null;
+  }
  }
  function dinnerPose(id,home=current(),tick=0){
   if(!gatheringActive(home))return null;
   const index=gathering.guests.indexOf(id);
   if(index<0)return null;
-  const x=index===0?602:795,y=515+(index%2)*17;
-  return {x,y,dir:'front',moving:false,expression:'happy',act:gathering.topic==='celebrate'?'✨':gathering.topic==='dream'?'🌟':'💗',
+  const targetX=index===0?602:795,targetY=515+(index%2)*17;
+  const start=gathering.starts?.find(v=>v.id===id);
+  const walk=Math.min(1,gathering.elapsed/4);
+  const ease=walk*walk*(3-2*walk);
+  const x=start?start.x+(targetX-start.x)*ease:targetX,y=start?start.y+(targetY-start.y)*ease:targetY;
+  return {x,y,dir:'front',moving:!!start&&walk<1,expression:'happy',act:gathering.topic==='celebrate'?'✨':gathering.topic==='dream'?'🌟':'💗',
    phase:'supper',action:'meal',progress:Math.min(1,gathering.elapsed/gathering.duration),bob:Math.sin(tick*3.3+index)*2};
  }
  function drawFront(g,{home=current(),tick=0}={}){
