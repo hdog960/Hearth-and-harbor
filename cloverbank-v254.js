@@ -113,7 +113,7 @@ function walkable(x,y){if(x<326||x>866||y<180||y>1390)return false;
 }
 function cleanRecord(raw){const r=raw&&typeof raw==='object'&&!Array.isArray(raw)?raw:{};
  const valid=['berries','brook','lookout'];const day=n=>Number.isInteger(n)&&n>=0&&n<=9999?n:0;
- return {day:day(r.day),done:[...new Set(Array.isArray(r.done)?r.done:[])].filter(id=>valid.includes(id)),visits:day(r.visits),
+ return {day:day(r.day),visitDay:day(r.visitDay),done:[...new Set(Array.isArray(r.done)?r.done:[])].filter(id=>valid.includes(id)),visits:day(r.visits),
   seasonal:[...new Set(Array.isArray(r.seasonal)?r.seasonal:[])].filter(n=>Number.isInteger(n)&&n>=0&&n<=3),
   completedDay:day(r.completedDay), memories:Array.isArray(r.memories)?r.memories.filter(x=>typeof x==='string'&&x.length<=95).slice(-16):[]};
 }
