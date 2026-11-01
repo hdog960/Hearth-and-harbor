@@ -1,0 +1,13 @@
+/* Neighbor Postcards · v2.4.2 */
+.heart-postcard-link{margin:12px 0 18px}
+.heart-postcard-link button{width:100%;border-radius:15px;background:linear-gradient(110deg,#ffe6eb,#fff5df);color:#6d3e52;border:2px solid #e9b7ad;font-weight:850;min-height:48px;box-shadow:0 4px 0 #dfb5a3}
+.postcard-note{position:relative;margin:18px 0;padding:20px 18px;border-radius:16px;background:linear-gradient(135deg,#fff7e6,#ffeddf);border:2px solid #e7be9c;box-shadow:0 5px 0 #cfae8e;color:#66474d}
+.postcard-note:before{content:"✿";position:absolute;top:14px;right:18px;color:#e5a2a0;font-size:26px}
+.postcard-note small{display:block;letter-spacing:.1em;font-weight:900;color:#b86c78;margin-bottom:8px}
+.postcard-note h3{color:#76504c;margin:0 0 10px;font-family:Georgia,serif;font-size:25px}
+.postcard-note p{font-size:16px;line-height:1.5;color:#705553}
+.postcard-destination{font-size:14px;background:#f4dbcf;padding:11px;border-radius:12px;font-weight:800}
+.postcard-buttons{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.postcard-buttons button{flex:1;min-width:130px;min-height:46px;background:#df7d83;color:#fff;border-radius:12px;font-weight:850}
+.postcard-buttons button.secondary{background:#fff7eb;color:#945d67;border:1px solid #e8c2ae}
+@media(max-width:360px){.postcard-note{padding:16px 12px}.postcard-buttons{display:grid}}
