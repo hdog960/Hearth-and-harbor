@@ -206,5 +206,5 @@ test('full game loads new actions, resident sprite choreography, save schema and
  for(const asset of ['helping-hands-v2517.js','helping-hands-v2517.css']){
   assert.ok(index.includes(asset));assert.ok(sw.includes("'./"+asset+"'"));
  }
- assert.match(sw,/hearth-harbor-v2517-helping-hands/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/); // Cache advances on every release.
 });
