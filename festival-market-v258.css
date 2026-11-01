@@ -1,0 +1,49 @@
+/* Hearth & Harbor v2.5.8 — Festival Market; warm storybook, iPhone-first stalls. */
+.fm-ui{color:#355b50;max-width:630px;margin:auto;font-family:inherit}
+.fm-ui h2{color:#3b6858;font-size:clamp(24px,6vw,31px);line-height:1.16;margin:8px 0 12px}
+.fm-ui h3{font-size:16px;margin:17px 0 8px;color:#4b7663}
+.fm-ui p{font-size:13px;color:#617f70;line-height:1.55;margin:10px 0}
+.fm-eyebrow{font-size:10px;font-weight:900;letter-spacing:.12em;color:#a97f60}
+.fm-banner{border-radius:14px;border:2px solid #dfd4b6;background:linear-gradient(130deg,#fdf0d9,#f5e5d7,#e4f0df);padding:13px 14px;color:#756a4d;font-size:13px;line-height:1.5;font-weight:800;margin:12px 0}
+.fm-marketcards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:15px 0}
+.fm-marketcards article{display:flex;flex-direction:column;padding:13px;background:#fff8e8;border:2px solid #e6d5b5;border-bottom:5px solid #d8bb9a;border-radius:17px;gap:6px}
+.fm-marketcards article b{font-size:16px;color:#4b6d5c}
+.fm-marketcards article p{flex:1;margin:0}
+.fm-marketcards article small{font-size:11px;color:#829081;line-height:1.4}
+.fm-emoji{font-size:40px;display:block;margin-bottom:3px}
+.fm-ui button{font-family:inherit;touch-action:manipulation;cursor:pointer}
+.fm-marketcards button,.fm-dish button,.fm-snack button,.fm-main{font-size:13px;font-weight:900;color:#fff9eb;background:#568d77;border:2px solid #38705b;border-radius:12px;padding:10px 12px;min-height:46px}
+.fm-ui button:disabled{opacity:.48;cursor:default}
+.fm-main{display:block;width:100%;font-size:15px;min-height:50px;margin:11px 0}
+.fm-back{display:block;min-height:44px;padding:10px;margin:9px auto;background:transparent;border:0;text-decoration:underline;color:#668176;font-size:13px;font-weight:800}
+.fm-progress{background:#e8f2df;color:#53765d;font-weight:800;font-size:13px;padding:10px;border-radius:12px}
+.fm-archive{border:1px solid #e4d9c6;background:#fff9ef;border-radius:12px;max-height:250px;overflow:auto;overscroll-behavior:contain}
+.fm-archive>div{display:flex;gap:9px;padding:10px 12px;align-items:center;border-bottom:1px solid #f1e3d4}
+.fm-archive>div:last-child{border-bottom:0}
+.fm-archive span{font-size:25px}
+.fm-archive section{flex:1;min-width:0}
+.fm-archive b{font-size:12px}
+.fm-archive small{display:block;color:#7c9080;line-height:1.5;margin-top:4px;font-size:11px}
+.fm-bannerart{padding:21px 19px 10px;border-radius:20px;background:radial-gradient(circle at 60% 10%,#fffbdb,#f2d2b4 90%);border:4px solid #fff7eb;box-shadow:inset 0 0 0 3px #d7b18e,0 5px 0 #d4b9a1}
+.fm-bannerloop{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;max-width:360px;margin:0 auto;background:#a17960;padding:9px;border:5px solid #ead2a9;border-radius:10px;box-shadow:0 6px 0 #98705a;transform:rotate(-1deg)}
+.fm-tile{appearance:none;aspect-ratio:1/1;min-width:0;background:var(--tile);border:3px solid #fef1d9;border-radius:4px;color:#fff8e8;text-shadow:0 1px 2px #57474477;font-size:clamp(16px,6vw,28px);font-weight:900;min-height:49px;box-shadow:inset 0 0 0 2px #bc9577,0 2px 0 #805e50}
+.fm-tile:active{transform:translateY(2px)}
+.fm-dangle{text-align:center;color:#966953;margin-top:12px;letter-spacing:1rem;font-size:17px}
+.fm-palette{display:flex;gap:12px;justify-content:center;margin:18px auto 10px}
+.fm-palette button{background:#fff9eb;border:3px solid #e2c3a8;box-shadow:0 3px 0 #ddbd9b;border-radius:50%;width:55px;height:55px;padding:6px;display:grid;place-items:center}
+.fm-palette button.selected{border-color:#6b9c75;box-shadow:0 0 0 3px #b6d5a9}
+.fm-palette span{background:var(--swatch);width:34px;height:34px;display:block;border-radius:50%;box-shadow:inset 0 0 0 3px #fff3e6}
+.fm-mini{text-align:center;font-weight:800;color:#66856d!important}
+.fm-buttons{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.fm-buttons>button{flex:1;min-height:48px;border-radius:13px;background:#f7eedf;color:#597665;border:2px solid #e3cfb6;font-weight:800;font-size:13px}
+.fm-buttons>.fm-main{color:#fff9eb;background:#568d77;border-color:#38705b;margin:0;flex:2 1 160px}
+.fm-dish,.fm-snack{background:#fff9ec;border:2px solid #e4d6b9;border-radius:13px;padding:11px;display:flex;align-items:center;gap:10px;margin:9px 0}
+.fm-dish>span{font-size:27px}
+.fm-dish section,.fm-snack>div{flex:1;min-width:0}
+.fm-dish b,.fm-snack b{display:block;font-size:13px}
+.fm-dish small,.fm-snack small{display:block;font-size:11px;color:#779082;line-height:1.5;margin-top:3px}
+.fm-dish button,.fm-snack button{font-size:12px;min-width:76px}
+.fm-stars{text-align:center;font-size:47px!important;letter-spacing:.12em;color:#d9a253!important}
+.fm-empty{padding:13px;background:#fff0db;border-radius:12px}
+@media(max-width:390px){.fm-marketcards{gap:7px}.fm-marketcards article{padding:9px}.fm-marketcards article b{font-size:14px}.fm-marketcards button{padding:8px;font-size:12px}.fm-tile{min-height:44px;border-width:2px}.fm-bannerart{padding:14px 11px 9px}.fm-palette button{width:48px;height:48px}}
+@media(prefers-reduced-motion:reduce){.fm-ui *{animation:none!important;transition:none!important}}
