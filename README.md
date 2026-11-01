@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.15 — Supper Together
+# Hearth & Harbor v2.5.16 — Thoughtful Households
+
+**Residents now make better choices about their everyday lives.** The six Maplewood neighbors consider urgent needs, their next real Roots & Keepsakes aspiration step, activities already completed that day, household companionship and their own personalities before choosing what to do at home. They still walk to the existing functional furniture, complete timed tasks, and respond to their surroundings; this is real household simulation logic, not a checklist of invented rewards.
+
+**Living together now creates little memories.** When real housemates complete caring activities such as chatting, cooking a simple meal or tidying, they can strengthen their existing relationship bonds and remember the moment. These modest Social/Fun and relationship bonuses happen at most once per housemate pair per in-game day, with save/reload protection. Residents show responsive in-world reaction icons, and positive household connections can appear as a Connected mood without overriding urgent needs or interpersonal conflict.
+
+Open a resident household's **Daybook → Household Rhythms** to see why each resident is likely to do something next and read the recent daily memories. The existing cooking, At Our Table suppers, furniture, aspirations, villager stories, festivals and local save all remain intact. There is no extra currency, premium feature or offscreen AI simulation.
+
+**QA:** Eleven new permanent regression cases join the previous 87, for **98 automated tests**. As with earlier releases, a rendered full-browser and real iPhone Safari playtest is still needed before we declare the game's overall experience polished. See [v2.5.16 QA and Generations roadmap](HOUSEHOLD_RHYTHMS_V2516_QA_AND_ROADMAP.md).
+
+## Previous milestone — Supper Together v2.5.15
 
 **Supper is now a real little shared experience rather than just a button that adjusts needs.** In the existing **At Our Table** feature, you choose a dish you truly cooked in Hearth Kitchen, select a conversation theme, and walk to the dining area. Then the new **Set the supper table** activity lets you choose a linen color, optionally light a candle, and **tap a place for each actual dinner participant**. The Serve button is enabled only after every place is ready. You may leave without consuming the plate; no real-time timers, failure penalties, or additional currencies were added.
 
