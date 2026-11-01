@@ -64,8 +64,15 @@ function setup(api){
   if(!validObj(s.functionalHomes)||!validObj(s.functionalHomes.daily)||!IDS.every(id=>owns(s.functionalHomes.focus||{},id)))s.functionalHomes=clean(s.functionalHomes);
   return s.functionalHomes;
  };
- const homeItems=(id)=>{
-  const s=state();return id==='player'?s.placed||[]:s.residenceProps?.[id]||[];
+ // Built-in furnishings already drawn into the dollhouse count too.
+ // A player should not have to buy a second bed or bookshelf to use a real one.
+ const BUILT_INS={
+  player:[{kind:'bed',x:332,z:430},{kind:'sofa',x:803,z:489},{kind:'books',x:342,z:314}],
+  residence:[{kind:'bed',x:311,y:465},{kind:'sofa',x:805,y:515},{kind:'books',x:338,y:307}]
+ };
+ const homeItems=id=>{
+  const s=state(),purchased=id==='player'?s.placed||[]:s.residenceProps?.[id]||[];
+  return [...(Array.isArray(purchased)?purchased:[]),...(id==='player'?BUILT_INS.player:BUILT_INS.residence)];
  };
  const found=id=>detect(homeItems(id));
  const active=(id)=>found(id).filter(x=>x.ready);
