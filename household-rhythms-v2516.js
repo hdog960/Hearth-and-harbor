@@ -111,7 +111,14 @@ function setup(api){
    '<div class="rh-memory"><span>'+NARRATIVE[x.action].icon+'</span><p><b>'+NAMES[x.actor]+' and '+NAMES[x.other]+'</b> '+NARRATIVE[x.action].verb+' <small>· Day '+x.day+'</small></p></div>').join('');
   return '<section class="rh-board"><div class="rh-kicker">THE LITTLE THINGS WE DO FOR ONE ANOTHER</div><h3>💗 Household Rhythms</h3><p>Neighbors care for their needs, follow their own interests, and make progress toward personal dreams. When they genuinely cook, chat, or tidy together, their relationship creates a memory once a day.</p>'+persons+'<h4>Recent moments together</h4><div class="rh-memories">'+(stories||'<p>There will be little stories to remember as your household grows closer.</p>')+'</div></section>';
  }
- return {plan,complete,panel,record,todayPair};
+ function reaction(id){
+  if(!PEOPLE.includes(id))return null;
+  const homeIds=getResidents().map(n=>n.id);
+  const note=record().memories.slice().reverse().find(m=>m.day===state().day&&
+   (m.actor===id||m.other===id)&&homeIds.includes(m.actor)&&homeIds.includes(m.other));
+  return note?NARRATIVE[note.action].icon:null;
+ }
+ return {plan,complete,panel,record,todayPair,reaction};
 }
 root.HearthHouseholdRhythms={clean,intention,setup,PERSONALITY,ACTIONS,NARRATIVE,PEOPLE};
 })(window);
