@@ -4,3 +4,4 @@
 .couple-heart-card button{flex-shrink:0;border:1px solid #d89b90;background:#fff4d7;color:#77504c;padding:10px 12px;border-radius:12px;min-height:44px;font-weight:800}
 .couple-heart-card button:disabled{opacity:.55}
 @media(max-width:380px){.couple-heart-card{flex-wrap:wrap}.couple-heart-card button{width:100%}}
+@media(max-width:560px){.couple-heart-card{flex-direction:column;align-items:stretch}.couple-heart-card button{width:100%}}
