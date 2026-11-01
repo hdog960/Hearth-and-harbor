@@ -2424,7 +2424,7 @@ const hobbyStudio=window.HearthHobbyStudio.setup({
  completeHobby:id=>{
   if(scene!=='residence'||!roomResidents().some(n=>n.id===id))return false;
   const rec=residentDayRecord(id);
-  if(rec.done.includes('hobby'))return false;
+  if(rec.done.includes('hobby'))return null; // Practice can add a studio memory, not a second daily stat reward.
   rec.done.push('hobby');
   const n=NPCS.find(n=>n.id===id),needs=lifeFor(id).needs,scale=1+.006*homeComfort();
   needs.fun=clamp((needs.fun||0)+21*scale+(hasFavoriteFurnishing(id)?8:0),0,100);
