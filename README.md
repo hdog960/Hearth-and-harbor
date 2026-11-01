@@ -33,7 +33,7 @@ Eight seasonal insects now have an illustrated, touch-driven net-catching activi
 - Cozy fishing option extends the bite window and removes line-break pressure; touch casting, hold/release, and large tap controls provided.
 - Catches increase the existing fishing quest, record an entry in the save-compatible fishing log, and grant +1 fish ingredient to the Hearth Kitchen pantry (up to the 99-ingredient limit); first catches award 12 coins.
 - The Little Museum curator now links to a Pond Life Gallery. Fish observations may be registered once, without removing cooking ingredients or affecting the original 16 Curiosity Cabinet exhibits.
-- Existing flower, insect, museum, household, wedding, and cooking save data is preserved. The broken Meadow Net menu callback was corrected (journal → overview).
+- Existing flower, insect, museum, household, wedding, and cooking save data is preserved. The existing Meadow Net journal callback was retained to preserve bug catching.
 
 ### QA and current limitations
 
