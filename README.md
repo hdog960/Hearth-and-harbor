@@ -15,3 +15,8 @@ Tap a glowing nature treasure while in town and Poppy walks to pick it up. Open 
 
 ## Limitations
 This is the start of v2.5, not the complete village expansion. Museum building, wildlife animations, bug-catching minigames, new areas, and festivals remain on the roadmap. Physical iPhone Safari should be tested.
+## v2.5.1 — The Little Museum
+
+Maplewood now has a **walkable museum building** on the eastern village path. Walk inside to explore a 2.5D gallery of sixteen specimen cases, which fill as discoveries are donated. Tap individual exhibits to read about specimens or contribute a find. The curator's desk accepts donations and offers a once-per-in-game-day guided tour (+8 Fun). The Field Guide and Cabinet link to the museum; tap the exit or Town to return outside. The existing cooking, household, and relationship systems remain in place. The museum doesn't add a new save key: the collection is read from the existing `nature.donated` array, with only a validated `museumTourDay` added to the nature state.
+
+This is a museum vertical slice for the larger Living Village expansion, not its completion. Resident curators, themed museum quests, and additional collections remain future work.
