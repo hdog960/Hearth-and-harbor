@@ -35,7 +35,7 @@ function setup(api){
  const {getState,save,showModal,closeModal,notify,updateUI}=api;
  let session=null,raf=0;
  const state=()=>getState();
- const record=()=>{const s=state();s.community=clean(s.community);return s.community};
+ const record=()=>{const s=state();if(!s.community||typeof s.community!=='object'||Array.isArray(s.community))s.community=clean(s.community);return s.community};
  const hosts=()=>MOMENTS.filter(m=>m.season===state().season);
  const key=id=>cycle(state().day)+':'+id;
  const festivalOpen=()=>{const d=((state().day-1)%7)+1;return d>=3&&d<=5};
@@ -46,8 +46,10 @@ function setup(api){
  function stop(){if(raf)cancelAnimationFrame(raf);raf=0;if(session)session.closed=true;session=null;}
  function board(){
   stop();const h=hosts(),s=state(),open=festivalOpen();
-  const done=h.filter(m=>completed(m.id)).length;
-  showModal('community-board','<div class="hcm-ui"><div class="hcm-eyebrow">FESTIVAL FRIENDS · COMMUNITY STORIES</div><h2>💌 Together in Maplewood</h2><p>Festivals are special because of the neighbors who make them happen. Walk over to a host and help with a personal little project.</p><div class="hcm-stage">'+(open?'🎊 Neighbors are gathering at the Festival Plaza!':'🌱 Festival neighbors gather during days 3–5 of each season.')+'<br>Community memories this season: <b>'+done+' / '+h.length+'</b></div><div class="hcm-roster">'+h.map(m=>'<article class="hcm-neighbor"><span class="hcm-avatar">'+m.symbol+'</span><div><b>'+PEOPLE[m.id]+'</b><small>'+m.title+(completed(m.id)?' · ★'.repeat(record().moments[key(m.id)].stars)+' · Complete':' · A new story')+'</small></div><button data-act="comm-find" data-id="'+m.id+'" '+(!open?'disabled':'')+'>'+(!open?'Opens day 3':completed(m.id)?'Visit again':'Go meet')+'</button></article>').join('')+'</div><p class="hcm-hint">Talk to a resident in the world to start their project. You can revisit a finished activity without earning duplicate rewards.</p><div class="hcm-portrait">'+(hasPortrait()?'🖼️ Your community portrait is hanging in the scrapbook. Everyone came together!':done>=2?'🖼️ Your portrait is ready!':'🖼️ Help both festival hosts to add a community portrait to your scrapbook.')+'</div><button class="hcm-light" data-act="festival-calendar">Back to Festival Calendar</button></div>');
+  const r=record(),done=h.filter(m=>!!r.moments[key(m.id)]).length;
+  const archive=Object.entries(r.moments).map(([k,v])=>{const [n,id]=k.split(':'),c=Number(n),m=MOMENTS.find(x=>x.id===id&&x.season===c%4);return m?{cycle:c,title:m.title,name:PEOPLE[id],stars:v.stars,icon:m.symbol}:null}).filter(Boolean).sort((a,b)=>b.cycle-a.cycle).slice(0,12);
+  const archiveHtml=archive.map(a=>'<div class="hcm-archive-item"><span>'+a.icon+'</span><div><b>'+a.name+' · '+a.title+'</b><small>'+['Spring','Summer','Autumn','Winter'][a.cycle%4]+' · Cycle '+(a.cycle+1)+(r.portraits.includes(a.cycle)?' · 🖼️ Portrait':'')+'</small></div><strong>'+('★'.repeat(a.stars))+'</strong></div>').join('');
+  showModal('community-board','<div class="hcm-ui"><div class="hcm-eyebrow">FESTIVAL FRIENDS · COMMUNITY STORIES</div><h2>💌 Together in Maplewood</h2><p>Festivals are special because of the neighbors who make them happen. Walk over to a host and help with a personal little project.</p><div class="hcm-stage">'+(open?'🎊 Neighbors are gathering at the Festival Plaza!':'🌱 Festival neighbors gather during days 3–5 of each season.')+'<br>Community memories this season: <b>'+done+' / '+h.length+'</b></div><div class="hcm-roster">'+h.map(m=>'<article class="hcm-neighbor"><span class="hcm-avatar">'+m.symbol+'</span><div><b>'+PEOPLE[m.id]+'</b><small>'+m.title+(completed(m.id)?' · ★'.repeat(record().moments[key(m.id)].stars)+' · Complete':' · A new story')+'</small></div><button data-act="comm-find" data-id="'+m.id+'" '+(!open?'disabled':'')+'>'+(!open?'Opens day 3':completed(m.id)?'Visit again':'Go meet')+'</button></article>').join('')+'</div><p class="hcm-hint">Talk to a resident in the world to start their project. You can revisit a finished activity without earning duplicate rewards.</p><div class="hcm-portrait">'+(hasPortrait()?'🖼️ Your community portrait is hanging in the scrapbook. Everyone came together!':done>=2?'🖼️ Your portrait is ready!':'🖼️ Help both festival hosts to add a community portrait to your scrapbook.')+'</div><h3>Your shared memories</h3><div class="hcm-archive">'+(archiveHtml||'<p>Your first memory is still waiting for you.</p>')+'</div><button class="hcm-light" data-act="festival-calendar">Back to Festival Calendar</button></div>');
  }
  function open(id){
   stop();const m=moment(id);
@@ -171,7 +173,7 @@ function setup(api){
  }
  function drawTown(g,{day,season,tick=0}){
   if(!festivalOpen()||season!==state().season)return;
-  const h=hosts(),r=record();
+  const h=hosts(),r=state().community||{moments:{},portraits:[]};
   for(let i=0;i<h.length;i++){
    if(!r.moments[cycle(day)+':'+h[i].id])continue;
    const x=492+i*230,y=578-i*17;
