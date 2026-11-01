@@ -117,5 +117,15 @@ function cleanRecord(raw){const r=raw&&typeof raw==='object'&&!Array.isArray(raw
   seasonal:[...new Set(Array.isArray(r.seasonal)?r.seasonal:[])].filter(n=>Number.isInteger(n)&&n>=0&&n<=3),
   completedDay:day(r.completedDay), memories:Array.isArray(r.memories)?r.memories.filter(x=>typeof x==='string'&&x.length<=95).slice(-16):[]};
 }
-window.HearthGrove={draw,drawFront,walkable,hit,sites:SITES,cleanRecord};
+function drawGate(g,x,y,season=0){const p=PALETTES[clamp(season,0,3)];g.save();g.translate(x,y);
+ ellipse(g,0,15,74,21,'#4c7e5c55');
+ rect(g,-60,-101,12,120,'#9c7654');rect(g,49,-101,12,120,'#9c7654');
+ g.strokeStyle='#b38b68';g.lineWidth=12;g.beginPath();g.arc(0,-100,55,Math.PI,Math.PI*2);g.stroke();
+ for(let i=0;i<17;i++){const a=Math.PI+i*Math.PI/16,xx=Math.cos(a)*57,yy=-100+Math.sin(a)*-49;
+ ellipse(g,xx,yy,21,14,i%3===0?p.leafLight:p.leaf)}
+ rect(g,-78,-92,156,36,'#7d594c');rect(g,-73,-88,146,27,'#f7e1a4');
+ g.font='bold 14px system-ui';g.fillStyle='#456756';g.textAlign='center';g.fillText('CLOVERBANK',0,-70);
+ g.fillStyle='#f8eac5';g.font='11px system-ui';g.fillText('WOODLAND TRAIL',0,-38);
+ g.restore();}
+window.HearthGrove={draw,drawFront,drawGate,walkable,hit,sites:SITES,cleanRecord};
 })();
