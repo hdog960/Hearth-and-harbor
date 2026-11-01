@@ -121,5 +121,5 @@ test('the live runtime loads the module and caches the same version',()=>{
   assert.ok(html.includes(name));
   assert.ok(sw.includes("'./"+name+"'"));
  }
- assert.match(sw,/hearth-harbor-v257-village-we-grow/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/); // Cache name evolves with each release.
 });
