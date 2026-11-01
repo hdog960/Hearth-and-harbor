@@ -1,4 +1,10 @@
-# Hearth & Harbor v2.5.4 — Cloverbank Grove
+# Hearth & Harbor v2.5.5 — Festival Days
+
+The next **Living Village** slice builds on Cloverbank Grove without replacing it. Maplewood now has a Festival Plaza sign, seasonal decorations, resident gatherings, a community calendar, and four original touch-first games: Spring **Petal Parade** (flower-crown arranging), Summer **Lantern Tide** (lantern timing), Autumn **Harvest Home** (leaf color matching), and Winter **Winter Wishlights** (constellation tracing). The celebrations happen on in-game days **3–5** of every seven-day season and return in subsequent years. You can find the calendar in **Menu**, **Journal**, **Town Hall** or at the plaza sign.
+
+Completing a seasonal activity for the first time awards a modest set of capped rewards, two host friendships, and an entry in the new Festival Scrapbook. Replaying for fun is allowed without additional currency farming. Progress is backwards-compatible with existing local saves; no paid services. This is a playable event foundation, **not** final crowd artwork, festival breadth, or iPhone QA. See [Festival Days QA & roadmap](FESTIVAL_V255_QA_AND_ROADMAP.md) for what was tested and remains unverified.
+
+## Previous milestone — Cloverbank Grove v2.5.4
 
 The first **Living Village** vertical slice. Original iPhone-first 2.5D life sim, deployed to GitHub Pages.
 
