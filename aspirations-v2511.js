@@ -54,7 +54,7 @@ function clean(input){
 function setup(api){
  const {getState,save,notify,updateUI,showModal,closeModal}=api;
  const state=()=>getState();
- const record=()=>{const s=state();if(!OWN(s.homeAspirations)||!OWN(s.homeAspirations.people))s.homeAspirations=clean(s.homeAspirations);return s.homeAspirations;};
+ const record=()=>{const s=state();if(!OWN(s.homeAspirations)||!OWN(s.homeAspirations.people)||!IDS.every(id=>OWN(s.homeAspirations.people[id])))s.homeAspirations=clean(s.homeAspirations);return s.homeAspirations;};
  const who=id=>IDS.includes(id)?id:null;
  const status=id=>{const real=who(id);return real?record().people[real]:null;};
  const title=id=>id==='player'?(String(state().name||'Poppy').slice(0,32)):NAMES[id];
