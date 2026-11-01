@@ -90,7 +90,7 @@ function setup(api){
   const s=current();
   if(!s||!s.pair.includes(id)||!canGather(s)||api.protectedRoutine(normal))return normal;
   const side=s.pair.indexOf(id);
-  return {...normal,h:'neighbor-scene-'+s.id,where:s.positions[side],doing:s.doing[side],icon:s.icon,mood:'happy',neighborScene:s.id};
+  return {...normal,villageRole:false,h:'neighbor-scene-'+s.id,where:s.positions[side],doing:s.doing[side],icon:s.icon,mood:'happy',neighborScene:s.id};
  }
  function participantsReady(s=current()){
   if(!canGather(s))return false;
@@ -110,17 +110,17 @@ function setup(api){
  function booklet(){
   const s=sceneForDay(),opened=s&&upgraded(s),ready=opened&&active(s),r=record();
   const day=state().day;
-  const hour=Math.floor(state().minute/60);
+  const neighborsFree=Boolean(opened&&canGather(s));
   const plans=SCENES.map(e=>{
    const built=upgraded(e),finished=r.completed[cycle(day)+':'+e.id];
    const which=e.id==='flower'?'Season day 1 · alternating cycles':e.id==='lantern'?'Season day 1 · alternating cycles':e.id==='orchard'?'Season day 6':'Season day 7';
-   return '<article class="nm-scene '+(s?.id===e.id?'up-next':'')+'"><span class="nm-icon">'+e.icon+'</span><div><b>'+e.name+'</b><small>'+NAMES[e.pair[0]]+' & '+NAMES[e.pair[1]]+'</small><small>'+which+'</small><small>'+(built?'✓ '+['Blossom Promenade','Lantern Plaza','Orchard Cart','Lily Pond Deck'][SCENES.indexOf(e)]+' built':'🌿 Build '+e.upgrade+' upgrade first')+'</small>'+(s?.id===e.id&&ready?'<p>Visiting hours '+e.start+':00–'+e.end+':00 · '+(participantsReady(e)?'Both neighbors are here!':'The neighbors are on their way.')+'</p>':'')+'</div>'+(s?.id===e.id&&ready&&!finished?'<button data-act="nm-visit" data-id="'+e.id+'">Go see</button>':s?.id===e.id&&finished?'<span class="nm-finished">✓ Saved</span>':'')+'</article>';
+   return '<article class="nm-scene '+(s?.id===e.id?'up-next':'')+'"><span class="nm-icon">'+e.icon+'</span><div><b>'+e.name+'</b><small>'+NAMES[e.pair[0]]+' & '+NAMES[e.pair[1]]+'</small><small>'+which+'</small><small>'+(built?'✓ '+['Blossom Promenade','Lantern Plaza','Orchard Cart','Lily Pond Deck'][SCENES.indexOf(e)]+' built':'🌿 Build '+e.upgrade+' upgrade first')+'</small>'+(s?.id===e.id&&ready?'<p>Visiting hours '+e.start+':00–'+e.end+':00 · '+(participantsReady(e)?'Both neighbors are here!':'The neighbors are on their way.')+'</p>':'')+'</div>'+(s?.id===e.id&&ready&&neighborsFree&&!finished?'<button data-act="nm-visit" data-id="'+e.id+'">Go see</button>':s?.id===e.id&&finished?'<span class="nm-finished">✓ Saved</span>':'')+'</article>';
   }).join('');
   const history=[...r.history].reverse().slice(0,12).map(e=>{
    const obj=SCENES.find(s=>s.id===e.id);
    return '<div class="nm-memory"><span>'+obj.icon+'</span><div><b>'+obj.name+'</b><small>'+['Spring','Summer','Autumn','Winter'][e.cycle%4]+' · Cycle '+(e.cycle+1)+' · '+obj.choices[e.choice].label+'</small></div></div>';
   }).join('');
-  showModal('neighbor-moments','<div class="nm-ui"><div class="nm-kicker">VILLAGE SOCIAL LIFE · SHARED STORIES</div><h2>💌 Little Moments Together</h2><p>As Maplewood grows, its residents discover new things to do together. Build a place, visit during its social hours and join two neighbors for a small, one-of-a-kind memory.</p><div class="nm-status">'+(s?(opened?s.icon+' Today: '+s.name+' · '+(ready?'Visit '+s.start+':00–'+s.end+':00':'Opens at '+s.start+':00'):s.icon+' Today’s place needs a little building first'):'🌙 A peaceful day · Neighbor outings happen on days 1, 6 and 7')+'</div><div class="nm-roster">'+plans+'</div><h3>Your shared memories</h3><div class="nm-history">'+(history||'<p>A little story is waiting somewhere in the village.</p>')+'</div><button class="nm-back" data-act="nm-close">Back to Maplewood</button></div>');
+  showModal('neighbor-moments','<div class="nm-ui"><div class="nm-kicker">VILLAGE SOCIAL LIFE · SHARED STORIES</div><h2>💌 Little Moments Together</h2><p>As Maplewood grows, its residents discover new things to do together. Build a place, visit during its social hours and join two neighbors for a small, one-of-a-kind memory.</p><div class="nm-status">'+(s?(opened?s.icon+' Today: '+s.name+' · '+(ready?'Visit '+s.start+':00–'+s.end+':00'+(neighborsFree?'':' · Neighbors currently busy elsewhere'):'Opens at '+s.start+':00'):s.icon+' Today’s place needs a little building first'):'🌙 A peaceful day · Neighbor outings happen on days 1, 6 and 7')+'</div><div class="nm-roster">'+plans+'</div><h3>Your shared memories</h3><div class="nm-history">'+(history||'<p>A little story is waiting somewhere in the village.</p>')+'</div><button class="nm-back" data-act="nm-close">Back to Maplewood</button></div>');
  }
  function visit(id){
   const s=current();if(!s||s.id!==id||!canGather(s)||done(s))return booklet();
