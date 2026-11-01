@@ -59,7 +59,7 @@ function setup(api){
  const status=id=>{const real=who(id);return real?record().people[real]:null;};
  const title=id=>id==='player'?(String(state().name||'Poppy').slice(0,32)):NAMES[id];
  function select(id,path){
-  if(!who(id)||!PATHS[path])return board();
+  if(!who(id)||!PATH_IDS.includes(path))return board();
   const r=status(id);
   if(r.finished[path]){notify(title(id)+' has already completed this aspiration.');return board();}
   if(r.path!==path){
