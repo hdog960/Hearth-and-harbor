@@ -39,3 +39,10 @@ See [ROADMAP_V22_V30.md](ROADMAP_V22_V30.md) for the approved deep, paced v2.3â€
 
 ## Publish
 Deploy the repository root to GitHub Pages (main branch), then open in iPhone Safari. Saved progress stays in browser localStorage; export backups before major revisions.
+
+## v2.3.1 â€” Cozy Routines (playable)
+- Poppy's cottage now has a Daybook with five actions, accessible from Decor or Menu while at home.
+- Queued activities display in a compact, cancellable routine strip. Poppy walks to furniture to complete actions, with diminishing repeated bonuses.
+- Furnishing purchases raise Poppy's home comfort and improve restorative activities.
+- In residential interiors, NPCs show context-dependent daily activity poses near their furniture, based on time and needs.
+- Existing save data and the full 12-recipe cooking system remain supported. Core actions tested in a local mobile Chromium harness; physical iPhone Safari still needs validation.
