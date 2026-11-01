@@ -1,0 +1,27 @@
+/* v2.5.12 — Rooms With Purpose: iPhone-first meaningful room design */
+.hf-ui{max-width:650px;margin:auto;color:#3d6654;font-family:inherit}
+.hf-ui h2{font-size:clamp(24px,6vw,33px);line-height:1.2;color:#386451;margin:9px 0 12px}
+.hf-ui p{font-size:13px;color:#658073;line-height:1.55;margin:9px 0}
+.hf-kicker{font-size:10px;letter-spacing:.12em;font-weight:900;color:#a98062}
+.hf-homes{display:flex;gap:7px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;padding:6px 0 12px}
+.hf-homes button{flex:none;min-height:43px;border:2px solid #dfcfb5;border-radius:11px;color:#765e4b;background:#fff6e6;font-size:12px;font-family:inherit;font-weight:900;padding:8px 13px;scroll-snap-align:start}
+.hf-homes button[aria-pressed=true]{border-color:#4f8872;background:#5c9881;color:#fff8e9}
+.hf-summary{background:linear-gradient(120deg,#e3f0df,#fff0d7);border:2px solid #d8dec1;border-radius:13px;padding:12px;color:#5f7863;font-size:13px;line-height:1.55;margin:8px 0 14px}
+.hf-cards{display:grid;gap:12px}
+.hf-zone{padding:13px;border:2px solid #e6d7be;border-bottom:4px solid #dac3a5;border-radius:15px;background:#fff9ef}
+.hf-zone.ready{background:#f5f9e9;border-color:#c7d9c2}
+.hf-zonehead{display:flex;align-items:center;gap:11px}
+.hf-zonehead>span{font-size:31px;width:48px;height:48px;display:grid;place-items:center;border-radius:12px;background:#e5eedb;flex:none}
+.hf-zonehead>div{flex:1;min-width:0}
+.hf-zonehead b{font-size:16px;color:#416a56;display:block}
+.hf-zonehead small{font-size:11px;color:#77907d;display:block;margin-top:4px}
+.hf-ui .hf-tip{font-size:12px;font-style:italic;color:#92795f}
+.hf-ui .hf-effect{border-left:3px solid #8bb697;border-radius:0 8px 8px 0;background:#e9f2df;padding:9px;font-size:12px;font-weight:700;color:#5e8168}
+.hf-zone button,.hf-actions button{min-height:45px;border-radius:11px;border:2px solid #4d866e;background:#5e9881;color:#fffaf0;font-family:inherit;font-size:12px;font-weight:900;padding:9px 12px;touch-action:manipulation}
+.hf-zone button[aria-pressed=true]{background:#e3f0db;color:#517762;border-color:#8db79a}
+.hf-actions{display:flex;flex-wrap:wrap;gap:10px;margin:13px 0}
+.hf-actions button{flex:1 1 160px}
+.hf-ui .hf-foot{font-size:11px;color:#859182}
+.hf-back{background:transparent;border:0;min-height:44px;padding:12px;text-decoration:underline;color:#658274;font-family:inherit;font-size:13px;font-weight:800;display:block;margin:8px auto}
+@media(max-width:380px){.hf-zone{padding:10px}.hf-zonehead b{font-size:14px}.hf-zonehead>span{width:42px;height:42px;font-size:26px}}
+@media(prefers-reduced-motion:reduce){.hf-ui *{transition:none!important;animation:none!important}}
