@@ -128,7 +128,7 @@ test('history is bounded to ten transactions and is never saved alongside furnit
  }
  const panel=x.engine.toolbar('player');
  assert.match(panel,/10 changes to undo/);
- assert.deepEqual(Object.keys(x.state.atelierStorage).sort(),A.HOMES.slice().sort());
+ assert.equal(Object.keys(x.state.atelierStorage).sort().join('|'),A.HOMES.slice().sort().join('|'));
  for(let n=0;n<10;n++)assert.equal(x.engine.direction('undo','player'),true);
  assert.equal(x.engine.direction('undo','player'),false);
  assert.equal(x.state.placed[0].x,442,'oldest two edits remain outside the undo window');
