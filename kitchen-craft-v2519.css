@@ -1,0 +1,27 @@
+/* v2.5.19 — Kitchen Craft: original tactile ingredient boards for existing cooking steps */
+.kc-craft{margin:13px 0 16px;padding:12px;background:#fff6e8;border:2px solid #e8d3b4;border-bottom:5px solid #d8b995;border-radius:18px;color:#5a735e}
+.kc-eyebrow{font-size:10px;font-weight:900;letter-spacing:.095em;color:#ab8460}
+.kc-craft h3{margin:8px 0 5px;font-size:17px;color:#4d735e;line-height:1.25}
+.kc-craft p{font-size:12px;line-height:1.45;margin:6px 0 11px;color:#718871}
+.kc-stage{border:5px solid #b7865f;background:linear-gradient(135deg,#deb788,#f2d4ac);border-radius:17px;min-height:135px;padding:18px 10px;position:relative;overflow:hidden;box-shadow:inset 0 0 0 3px #f6dab7}
+.kc-woodgrain{position:absolute;inset:12px 0;opacity:.23;background:repeating-linear-gradient(90deg,transparent 0,transparent 23px,#946740 24px,#946740 25px,transparent 26px,transparent 48px);pointer-events:none}
+.kc-stage.kc-season,.kc-stage.kc-garnish{border-color:#b7bca1;background:linear-gradient(120deg,#d7e6c7,#f9e3be)}
+.kc-stage.kc-thread{border-color:#9a7256;background:linear-gradient(125deg,#e7d2b4,#b1cda6)}
+.kc-stage.kc-fill,.kc-stage.kc-stamp{border-color:#c0987b;background:linear-gradient(125deg,#f6dfbf,#f0c8a5)}
+.kc-positions{display:flex;justify-content:space-around;align-items:stretch;gap:6px;position:relative;z-index:1;min-height:92px}
+.kc-positions button{flex:1;min-width:0;min-height:88px;border-radius:12px;border:3px dashed #997a5c;background:#fff9e5;color:#765e49;padding:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-weight:900;font-size:12px;touch-action:manipulation}
+.kc-positions button span{font-size:25px;line-height:1.25;min-height:29px}
+.kc-positions button small{font-size:10px;line-height:1.2}
+.kc-positions button.is-done{background:#e8f4db;border-style:solid;border-color:#84a67d;color:#54745c}
+.kc-positions button:disabled:not(.is-done){opacity:.58}
+.kc-positions button:disabled.is-done{opacity:1}
+.kc-palette{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.kc-palette button{min-height:49px;flex:1 1 100px;background:#f9e8c9;color:#82694f;border:2px solid #d6b78b;border-radius:11px;padding:8px;font-size:12px;font-weight:900;touch-action:manipulation}
+.kc-palette button[aria-pressed=true]{background:#d9eaca;border-color:#70a484;color:#4d745a}
+.kc-feedback{font-size:12px;text-align:center;color:#789078;font-weight:800;min-height:37px;display:grid;place-items:center;padding:6px}
+.kc-bar{width:100%;height:10px;border-radius:7px;background:#dfdfca;overflow:hidden}
+.kc-bar i{height:100%;display:block;background:#7ab38b;transition:width .12s ease}
+.k-step-control.k-craft-controls{justify-content:center}
+.k-craft-instructions{text-align:center;font-size:12px;font-weight:800;line-height:1.45;color:#7a866f;background:#f5efd9;padding:12px;border-radius:12px}
+@media(max-width:375px){.kc-craft{padding:8px}.kc-stage{padding:13px 5px}.kc-positions button{min-height:78px;padding:3px}.kc-positions button span{font-size:19px}.kc-palette button{font-size:11px;flex-basis:83px}}
+@media(prefers-reduced-motion:reduce){.kc-craft *{animation:none!important;transition:none!important}}
