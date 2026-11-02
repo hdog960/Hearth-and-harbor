@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.23 — Little Trades & Kindness
+# Hearth & Harbor v2.5.24 — Honeybun Café Service & Fair Harvests
+
+**Honeybun Café work is now a real playable shift**, not a single tap that instantly pays coins. Serve three actual Maplewood neighbors with two-part pastry-and-drink orders using an illustrated serving tray, eight distinct food/drink choices and six successful steps. Each in-game day offers one paid 45-coin shift, with the original Energy/Fun exchange and café work quest still intact. After you've been paid, you can replay the full minigame as free practice, but repeating it doesn't pay again. Wrong choices are forgiving, and leaving doesn't cost anything.
+
+**The garden economy now respects an in-game day.** Each of the original four flower plots can be harvested for its original 24-coin (or premium 38-coin) reward once per in-game day, instead of providing infinite money by rapidly planting and harvesting the same plot. A harvested plot displays **Resting until tomorrow** until the in-game day changes. All old gardens and boosts remain intact, and the game still supports ordinary manual progress without real-world wait timers or purchases.
+
+There are no new paywalls, separate currencies or changes to cooked-food inventory. `hearth-harbor-save-v1` remains the only save key, with safe defaults for the optional new café-work and harvest record. **17 new automated tests** bring the full intended suite to **206** tests; physical iPhone Safari screenshots, actual touch performance and VoiceOver review still need player-device QA.
+
+[Read the v2.5.24 development and Generations notes](CAFE_SERVICE_V2524_QA_AND_ROADMAP.md).
+
+## Previous milestone — Little Trades & Kindness v2.5.23
 
 **Maplewood's shops now offer meaningful daily work tied to actual village life.** The newly illustrated Village Trades board sits on the lane near Rosie's market, and Village Trades is also accessible from Menu, Journal, Town Hall, or by talking to Rosie, Oliver and Bea. Choose a real commission, walk to the shop and complete a differentiated, touch-friendly task. Rosie's market packs two actual Hearth Kitchen pantry ingredients into a delivery; Oliver wraps and delivers one real saved cooked dish with quality-based pay; Bea helps you paint a seasonal welcome card with a small materials fee. All three have tactile illustrated worktops with changing artwork, gentle wrong-choice retries and clear results.
 

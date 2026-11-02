@@ -214,7 +214,7 @@ test('the new module is loaded before the game and fully available offline on iP
  for(const file of ['village-trades-v2523.js','village-trades-v2523.css']){
   assert.ok(html.includes(file));assert.ok(worker.includes("'./"+file+"'"));
  }
- assert.match(worker,/hearth-harbor-v2523-village-trades/);
+ assert.match(worker,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
 });
 test('responsive, keyboard and reduced-motion shop styling is present',()=>{
  const css=read('village-trades-v2523.css');

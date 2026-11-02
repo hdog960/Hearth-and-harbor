@@ -1,0 +1,35 @@
+/* Hearth & Harbor v2.5.24 — illustrated, playable café service */
+.hc24{color:#526d59;line-height:1.45;padding:4px 1px 11px;max-width:100%}
+.hc24 h2{font-size:clamp(21px,5vw,28px)!important;color:#486c58;margin:6px 0 11px}
+.hc24 p{font-size:13px;color:#627d67;line-height:1.5}
+.hc24 small{font-size:11px;color:#7b826a}
+.hc24-eyebrow{font-size:10px;letter-spacing:.11em;font-weight:900;color:#a37956;text-transform:uppercase}
+.hc24-guests{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;margin:9px 0 12px;padding:3px 1px}
+.hc24-guests span{flex:1;white-space:nowrap;background:#ede5d1;border:1px solid #d7bd93;border-radius:10px;padding:8px 6px;font-weight:900;font-size:11px;text-align:center;color:#8d826b}
+.hc24-guests .is-current{background:#ffedcd;border:2px solid #d6a37c;color:#875f4d}
+.hc24-guests .is-done{background:#deebd2;color:#4d8865;border-color:#8fae85}
+.hc24-note{background:linear-gradient(120deg,#f5e8cb,#edf2dc);border-left:5px solid #9db893;padding:11px;border-radius:12px}
+.hc24-note b{font-size:14px}
+.hc24-note p{margin:4px 0 0}
+.hc24-note strong{color:#845c4f}
+.hc24-board{margin:10px 0;background:linear-gradient(135deg,#ffedcd,#efd6b7);border:4px solid #bfa080;border-bottom:7px solid #a98061;border-radius:19px;padding:9px}
+.hc24-art{display:block;width:100%;max-height:169px;pointer-events:none;filter:drop-shadow(0 2px 2px #8f705b31)}
+.hc24-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:7px}
+.hc24-controls button{min-height:61px;display:flex;align-items:center;gap:6px;text-align:left;padding:7px;color:#78604b;background:#fff4dc;border:2px solid #d1b186;border-bottom:4px solid #bd9474;border-radius:12px;font-size:11px;font-weight:900;touch-action:manipulation}
+.hc24-chip{display:inline-block;flex:0 0 21px;width:21px;height:21px;border-radius:9px 7px 10px 6px;background:var(--chip);border:2px solid #fff5e8;box-shadow:0 2px 0 #ac896a55;transform:rotate(-9deg)}
+.hc24-progress{height:12px;border:2px solid #aaba92;border-radius:8px;background:#e0dfc5;overflow:hidden}
+.hc24-progress i{display:block;height:100%;background:linear-gradient(90deg,#9ac58c,#edd482);transition:width .15s}
+.hc24-feedback{min-height:25px;margin:8px 0 3px}
+.hc24 button:focus-visible{outline:3px solid #2c4750;outline-offset:3px}
+.hc24 .hc24-exit{margin-top:12px;min-height:47px;background:#f8ecd8;color:#7e674e;border:2px solid #dfc39e;border-bottom:4px solid #ba9776;padding:8px 11px;border-radius:12px;font-weight:850;width:100%}
+.hc24-status{background:linear-gradient(125deg,#f4e2ca,#e2edd9);border:2px solid #ddcba3;border-radius:14px;padding:10px 12px;margin:11px 0}
+.hc24-status b{display:block;color:#58765b;font-size:13px}
+.hc24-status small{display:block;margin-top:5px}
+.hc24-result{text-align:center;padding:18px 14px;background:linear-gradient(150deg,#fff3db,#dff0d8);border:3px solid #e7ca9c;border-radius:20px}
+.hc24-result>span{display:block;font-size:63px;color:#e1a2af;animation:hc24-bloom .45s ease-out}
+.hc24-result>strong{display:block;font-size:26px;letter-spacing:3px;color:#bb884a}
+.hc24-pay{margin:12px 0;padding:10px 8px;background:#fff9eb;border-radius:11px;color:#6b805f;font-size:12px;font-weight:900}
+.hc24-result button{width:100%;min-height:49px;border-radius:12px;background:#509a78;color:#fff9ec;font-weight:900;border:2px solid #f8eed7;border-bottom:4px solid #287154}
+@keyframes hc24-bloom{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+@media(max-width:390px){.hc24-board{padding:5px}.hc24-art{max-height:128px}.hc24-controls{gap:5px}.hc24-controls button{min-height:57px;font-size:10px;padding:5px}.hc24-chip{width:17px;height:17px;flex-basis:17px}.hc24-guests span{font-size:10px;padding:6px 3px}}
+@media(prefers-reduced-motion:reduce){.hc24-result>span{animation:none!important}.hc24-progress i{transition:none!important}}
