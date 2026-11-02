@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.27 — Everybody Has a Little Day
+# Hearth & Harbor v2.5.28 — Daybook Baton
+
+**You can switch between directly guided household residents without losing their activity plans.** The manual Daybook now remembers each person's current unfinished routine and up to three waiting tasks. Switch from Mabel to Rosie, come back to Mabel, and she resumes at her first unfinished activity; her existing timed activity restarts safely instead of granting a shortcut reward. Plans also survive returning to town and re-entering the home on the same in-game day, or a normal save reload. Intentional Clear Routine and walking interruptions still remove the selected resident's plan, not anyone else's.
+
+A **Saved Daybook Routines** scrapbook inside the household Daybook shows everyone’s unfinished tasks, with compact visual timelines and badges beside residents. The existing v2.5.27 autonomous schedules and Poppy's solo Daybook remain separate. There's no new currency, XP gain or passive needs restoration; genuine manual activity completion remains the only way to receive the existing rewards.
+
+The game keeps its existing `hearth-harbor-save-v1` key with strict optional imported-data sanitation. **24 additional regression checks** bring the intended total to **302 tests**, including direct simulation of the game's actual switch, queue, cancellation and completion functions. A physical iPhone Safari/VoiceOver rendered QA review remains outstanding.
+
+[Read v2.5.28 development and QA notes](DAYBOOK_BATON_V2528_QA_AND_ROADMAP.md).
+
+## Previous milestone — Everybody Has a Little Day v2.5.27
 
 **Residents can now follow separate plans in the same occupied household.** Open an actual residence's Daybook and choose **🗓️ Plan everyone's day** to give each roommate up to three ordered activities from the existing real routines: Rest, Make a Meal, Read, Tidy, Spend Time Together and Enjoy a Hobby. They walk to the proper room spots and complete their own timed actions while you guide someone else or explore the residence. Plans override casual autonomy temporarily—even with Auto OFF—and return residents to their usual needs/personality routines afterward.
 
