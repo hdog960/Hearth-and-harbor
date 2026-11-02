@@ -69,10 +69,10 @@ function setup(api){
  const labelKind=kind=>kind==='marriage'?'💍 Married partners':kind==='chosen'?'🌿 Chosen family':'🏡 Share a home';
  const peopleOf=ids=>ids.map(id=>esc(name(id))).join(' & ');
  const personButton=id=>'<button class="fa271-person-link" data-act="fa271-person" data-id="'+id+'">'+esc(name(id))+'</button>';
- const familyLink=e=>'<div class="fa271-link '+e.kind+'"><span class="fa271-symbol">'+(e.kind==='marriage'?'💍':e.kind==='chosen'?'🌿':'🏡')+'</span><div><strong>'+esc(peopleOf(e.ids))+'</strong><small>'+labelKind(e.kind)+(e.day?' · since Day '+e.day:' · currently co-residing')+'</small></div><button data-act="fa271-pair" data-id="'+e.key+'">Explore</button></div>';
+ const familyLink=e=>'<div class="fa271-link '+e.kind+'"><span class="fa271-symbol">'+(e.kind==='marriage'?'💍':e.kind==='chosen'?'🌿':'🏡')+'</span><div><strong>'+peopleOf(e.ids)+'</strong><small>'+labelKind(e.kind)+(e.day?' · since Day '+e.day:' · currently co-residing')+'</small></div><button data-act="fa271-pair" data-id="'+e.key+'">Explore</button></div>';
  const action=(act,id,label)=>'<button class="fa271-action" data-act="'+act+'"'+(id?' data-id="'+id+'"':'')+'>'+label+'</button>';
- function timeline(people=null,home=null,limit=14){
-  const hits=events().filter(e=>(!people||e.ids.some(id=>people.includes(id)))&&(!home||e.home===home||e.ids.some(id=>residents(home).includes(id)))).slice(0,limit);
+ function timeline(people=null,home=null,limit=14,requireAll=false){
+  const hits=events().filter(e=>(!people||(requireAll?people.every(id=>e.ids.includes(id)):e.ids.some(id=>people.includes(id))))&&(!home||e.home===home)).slice(0,limit);
   return hits.length?hits.map(e=>'<li><strong>Day '+e.day+' · '+esc(e.title)+'</strong><span>'+peopleOf(e.ids)+'</span><small>'+esc(e.detail)+(e.home?' · '+esc(homeName(e.home)):'')+'</small></li>').join(''):'<li class="fa271-empty">No recorded milestones yet. Real play creates the story.</li>';
  }
  function overview(){
@@ -96,7 +96,7 @@ function setup(api){
  function pairPage(key){
   if(!pairOK(key))return overview();
   const ids=key.split('|'),g=graph(),edges=g.edges.filter(e=>e.key===key),named=peopleOf(ids);
-  api.showModal?.('family-atlas','<section class="fa271-book"><div class="fa271-cover"><small>OUR SHARED CHAPTER</small><h2>🌿 '+named+'</h2><p>Connections are shown only when the original game records support them.</p></div><h3>What connects them?</h3>'+ (edges.length?edges.map(familyLink).join(''):'<p>No current bond. Previous shared memories may remain below.</p>')+'<h3>Genuine past moments</h3><ol class="fa271-timeline">'+timeline(ids,null,20)+'</ol><div class="fa271-people">'+ids.map(personButton).join('')+'</div>'+action('fa271-board','','← All connections')+'</section>');
+  api.showModal?.('family-atlas','<section class="fa271-book"><div class="fa271-cover"><small>OUR SHARED CHAPTER</small><h2>🌿 '+named+'</h2><p>Connections are shown only when the original game records support them.</p></div><h3>What connects them?</h3>'+ (edges.length?edges.map(familyLink).join(''):'<p>No current bond. Previous shared memories may remain below.</p>')+'<h3>Genuine past moments</h3><ol class="fa271-timeline">'+timeline(ids,null,20,true)+'</ol><div class="fa271-people">'+ids.map(personButton).join('')+'</div>'+action('fa271-board','','← All connections')+'</section>');
  }
  function portrait(h,index){
   if(!HOMES.slice(1).includes(h)||!Number.isInteger(index)||index<0||index>1)return false;
