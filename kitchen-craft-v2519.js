@@ -63,12 +63,13 @@ function make(kind,recipe){
   const marks=Array.from({length:length},(_,i)=>{
    const complete=i<n,active=i===n;
    if(kind==='chop')return '<button class="kc-cut '+(complete?'is-done':'')+'" data-act="cook-craft" data-id="cut:'+i+'" '+(complete||!active?'disabled':'')+' aria-label="Slice '+(i+1)+'" aria-pressed="'+complete+'"><span>'+(complete?'✓':'╱')+'</span><small>Cut '+(i+1)+'</small></button>';
-   const name=LABELS[kind][i],symbol=complete?chosenText(session.completed[i]):active?'○':'·';
+   const name=LABELS[kind][i],symbol=complete?'✓':active?'○':'·';
    return '<button class="kc-target '+(complete?'is-done':'')+'" data-act="cook-craft" data-id="place:'+i+'" '+(complete||!session.selected||!active?'disabled':'')+' aria-label="'+ESC(name)+'" aria-pressed="'+complete+'"><span>'+symbol+'</span><small>'+name+'</small></button>';
   }).join('');
   const palette=kind==='chop'?'':('<div class="kc-palette" role="group" aria-label="Choose an ingredient or tool">'+choices().map(([id,label])=>
    '<button data-act="cook-craft" data-id="pick:'+id+'" aria-pressed="'+(session.selected===id)+'">'+label+'</button>').join('')+'</div>');
-  return '<section class="kc-craft" id="kCraft"><div class="kc-eyebrow">THE LITTLE KITCHEN STUDIO · '+(n+1>length?length:n+1)+' / '+length+'</div><h3>'+title()+'</h3><p>'+helper()+'</p><div class="kc-stage kc-'+kind+'"><div class="kc-woodgrain"></div><div class="kc-positions">'+marks+'</div></div>'+palette+
+  const art=root.HearthKitchenWorktopArt?.render(kind,recipe,session.completed,session.selected)||'';
+  return '<section class="kc-craft" id="kCraft"><div class="kc-eyebrow">THE LITTLE KITCHEN STUDIO · '+(n+1>length?length:n+1)+' / '+length+'</div><h3>'+title()+'</h3><p>'+helper()+'</p><div class="kc-stage kc-'+kind+'"><div class="kc-woodgrain"></div>'+art+'<div class="kc-positions">'+marks+'</div></div>'+palette+
    '<div class="kc-feedback" role="status" aria-live="polite"><span>'+(done?'✨ Beautifully prepared!':
    session.mistakes?'Try another combination. Nothing is lost.':
    kind==='chop'?'Make the next careful cut.':!session.selected?'Select your ingredient or cutter.':'Selected '+chosenText(session.selected)+' · tap the highlighted spot.')+'</span><b>'+n+' of '+length+' placed</b></div></section>';
