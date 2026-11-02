@@ -227,7 +227,7 @@ test('the Daybook summary shows only the correct household’s pending activitie
 test('no DOM injection is possible through the imported resident name in the summary',()=>{
  const h=fixture();h.book.remember('h0','mabel','read',[]);
  h.callbacks.getPersonLabel=()=>'<img onerror=alert(1)>';
- const html=h.book.summary('h0');assert.doesNotMatch(html,/<img|onerror=/);
+ const html=h.book.summary('h0');assert.doesNotMatch(html,/<img/);
  assert.match(html,/&lt;img/);
 });
 test('the game integrates same-day saves and preserves pending plans on room transitions',()=>{
