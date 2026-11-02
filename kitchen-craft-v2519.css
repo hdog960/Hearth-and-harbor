@@ -28,3 +28,40 @@
 .k-craft-instructions{text-align:center;font-size:12px;font-weight:800;line-height:1.45;color:#7a866f;background:#f5efd9;padding:12px;border-radius:12px}
 @media(max-width:375px){.kc-craft{padding:8px}.kc-stage{padding:13px 5px}.kc-positions button{min-height:78px;padding:3px}.kc-positions button span{font-size:19px}.kc-palette button{font-size:11px;flex-basis:83px}}
 @media(prefers-reduced-motion:reduce){.kc-craft *{animation:none!important;transition:none!important}}
+
+/* v2.5.20 — one intentional, illustration-led step instead of two tall competing boards. */
+.k-craft-step .k-craft-hero{height:104px;min-height:0;margin:0 0 5px;border-radius:17px;border-bottom-width:5px;touch-action:auto!important}
+.k-craft-step .k-craft-hero .k-stage-top{top:6px;left:12px;right:12px}
+.k-craft-step .k-craft-hero .k-stage-tip{display:none}
+.k-craft-step .k-craft-hero .k-stage-sparkle{font-size:16px;top:15px;right:12px}
+.k-craft-step .k-craft-hero .k-board-art{inset:15px 0 0;height:calc(100% - 15px)}
+.k-craft-step .k-craft-hero .k-art-svg{max-height:92px;filter:drop-shadow(0 3px 2px #6d463427)}
+.k-craft-step .kc-craft{margin:9px 0 7px}
+.k-craft-step .kc-craft .kc-eyebrow{font-size:10px}
+.k-craft-step .k-underboard{margin-top:6px}
+.k-craft-step .k-progress{margin-bottom:8px}
+.k-craft-step .k-craft-controls{align-items:center;gap:8px}
+.k-craft-step .k-craft-controls .k-craft-instructions{flex:1;min-width:0;margin:0;font-size:11px;padding:10px;text-align:left}
+.k-craft-step .k-craft-controls .k-secondary-action{flex:0 0 auto;min-height:49px}
+.k-craft-step .kc-feedback{display:flex;justify-content:space-between;gap:8px;align-items:center;min-height:36px;text-align:left;font-size:11px}
+.k-craft-step .kc-feedback span{flex:1}
+.k-craft-step .kc-feedback b{white-space:nowrap;color:#537c62;font-size:10px}
+.k-craft-step .kc-stage{min-height:112px;padding:11px 8px}
+.k-craft-step .kc-positions{min-height:82px}
+.k-craft-step .kc-positions button{min-height:76px}
+.k-craft-step button:focus-visible{outline:3px solid #244d4b;outline-offset:3px}
+@media(max-width:390px){
+ .k-craft-step .k-step-intro{margin-bottom:5px!important}
+ .k-craft-step .k-craft-hero{height:86px}
+ .k-craft-step .k-craft-hero .k-art-svg{max-height:78px}
+ .k-craft-step .kc-craft{padding:9px 7px}
+ .k-craft-step .kc-craft h3{font-size:15px}
+ .k-craft-step .kc-craft p{font-size:11px;margin:5px 0 8px}
+ .k-craft-step .kc-stage{min-height:95px;padding:9px 5px}
+ .k-craft-step .kc-positions{min-height:74px}
+ .k-craft-step .kc-positions button{min-height:74px;font-size:10px}
+ .k-craft-step .kc-positions button small{font-size:9px}
+ .k-craft-step .kc-positions button span{font-size:19px}
+ .k-craft-step .k-craft-controls .k-craft-instructions{padding:8px}
+}
+@media(prefers-reduced-motion:reduce){.k-craft-step .kc-craft *{transition:none!important;animation:none!important}}
