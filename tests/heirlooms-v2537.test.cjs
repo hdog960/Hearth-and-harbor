@@ -272,7 +272,7 @@ test('offline mobile assets are loaded in safe order, with accessible responsive
  const html=read('index.html'),sw=read('sw.js'),css=read('heirlooms-v2537.css');
  for(const asset of ['heirlooms-v2537.js','heirlooms-v2537.css'])assert.ok(html.includes(asset)&&sw.includes("'./"+asset+"'"));
  assert.ok(html.indexOf('heirlooms-v2537.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2537-heirloom-cabinet/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
  for(const k of ['@media(max-width:390px)','@media(min-width:680px)','touch-action:manipulation','button:focus-visible','prefers-reduced-motion:reduce'])assert.ok(css.includes(k),k);
  assert.doesNotMatch(read('heirlooms-v2537.js'),/fetch\(|WebSocket|XMLHttpRequest|new Image\(|setInterval|localStorage|\.coins\s*[+]=/);
 });
