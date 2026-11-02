@@ -32,8 +32,9 @@ function clean(raw){
   events.push({home:e.home,day:e.day,kind:e.kind,source:e.source,actors,detail});
  }
  events.sort((a,b)=>a.day-b.day||a.source.localeCompare(b.source));
- // retain up to 30 dated events per home across multiple generations
- const seen={};const kept=[];for(const e of events){const total=seen[e.home]||0;if(total>=30)continue;seen[e.home]=total+1;kept.push(e)}
+ // Keep the latest 60 dated events per home, retaining the owner's pinned
+ // memories for as long as they remain among these bounded records.
+ const kept=[];for(const home of HOMES){const homeEvents=events.filter(e=>e.home===home);kept.push(...homeEvents.slice(-60))}
  for(const home of HOMES){
   const arr=Array.isArray(src.pins?.[home])?src.pins[home]:[];
   for(const source of arr)if(validSource(source)&&kept.some(e=>e.home===home&&e.source===source)&&!pins[home].includes(source)&&pins[home].length<2)pins[home].push(source);
@@ -47,7 +48,7 @@ function setup(api){
    s.householdChronicle=clean(s.householdChronicle);
   return s.householdChronicle;
  };
- const name=id=>String(api.getPersonLabel?.(id)||id==='player'?'Poppy':id).slice(0,36);
+ const name=id=>String(api.getPersonLabel?.(id)||(id==='player'?'Poppy':id)).slice(0,36);
  const label=home=>home==='player'?'Your Cottage':String(api.getHomeLabel?.(home)||home).slice(0,50);
  const headline=e=>{
   if(e.kind==='move')return 'A Home Shared Together';
