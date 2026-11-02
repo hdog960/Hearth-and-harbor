@@ -2362,7 +2362,7 @@ function btn(label,fn){return `<button class="btn" data-act="${fn}">${label}</bu
 const festival=window.HearthFestival.setup({getState:()=>state,save,notify,showModal,closeModal,updateUI});
 const community=window.HearthCommunity.setup({getState:()=>state,save,notify,showModal,closeModal,updateUI});
 const stewardship=window.HearthStewardship.setup({getState:()=>state,save,updateUI,notify,showModal,closeModal,travelTo:(x,y,after)=>{if(scene!=='town')goScene('town');goTo({x,y},after);}});
-const traditions=window.HearthHomeTraditions.setup({getState:()=>state,save,updateUI,notify,showModal,closeModal,getHomeLabel:id=>apartmentName(id),getPersonLabel:id=>id==='player'?state.name:NPCS.find(n=>n.id===id)?.name||'Neighbor'});
+const traditions=window.HearthHomeTraditions.setup({getState:()=>state,save,updateUI,notify,showModal,closeModal,getHomeLabel:id=>apartmentName(id),getPersonLabel:id=>id==='player'?state.name:NPCS.find(n=>n.id===id)?.name||'Neighbor',openTrades:()=>trades.board()});
  const cafeWork=window.HearthCafeWork.setup({getState:()=>state,save,updateUI,notify,showModal,onPaidShift:()=>task('work')});
 const trades=window.HearthVillageTrades.setup({getState:()=>state,save,updateUI,notify,showModal,closeModal,isTown:()=>scene==='town',travelTo:(x,y,after)=>{if(scene!=='town')goScene('town');goTo(nearestWalkable({x,y},'town',true)||{x,y},after);},openKitchen:()=>kitchen.openBook(),onCompleted:(id,day)=>traditions.recordTrade(id,day)});
  const festivalMarket=window.HearthFestivalMarket.setup({getState:()=>state,save,notify,showModal,closeModal,updateUI,isTown:()=>scene==='town',travelTo:(x,y,after)=>{if(scene!=='town')goScene('town');goTo({x,y},after);},openKitchen:()=>kitchen.openBook()});
