@@ -7,7 +7,7 @@ const C=w.window.HearthCareCircles;
 function fixture(overrides={}){
  const homeOf={mabel:'h0',rosie:'h0',oliver:'h1',jun:'h1',bea:'h2',finn:'h2'};
  const needs={};const done={},plans={};for(const id of C.IDS){needs[id]={food:55,energy:55,fun:55,social:55};done[id]=[]}
- const state={day:1,coins:200,householdFunds:{},townBonds:{'mabel|rosie':5},careCircles:C.clean(null),...overrides};
+ const state={day:1,coins:200,needs:{social:50},householdFunds:{},townBonds:{'mabel|rosie':5},careCircles:C.clean(null),...overrides};
  let saves=0,updates=0,modal={key:'',html:''};const notices=[];
  const api={getState:()=>state,save:()=>saves++,updateUI:()=>updates++,notify:x=>notices.push(x),
   getResidentHome:id=>homeOf[id],getHomeMembers:home=>Object.keys(homeOf).filter(id=>homeOf[id]===home),
