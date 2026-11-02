@@ -39,7 +39,7 @@ function clean(input){
  }
  return {daily:Object.fromEntries(Object.entries(daily).slice(-15)),memories:memories.slice(-30)};
 }
-function intention({id,needs,done=[],minute=720,roommate=false,aspiration=null,shared=false}={}){
+function intention({id,needs,done=[],minute=720,roommate=false,aspiration=null,shared=false,duty=null}={}){
  if(!PEOPLE.includes(id))return {action:'read',reason:'A quiet moment is welcome'};
  const n=valid(needs)?needs:{};
  const need=(k)=>Number.isFinite(n[k])?clamp(n[k],0,100):60;
@@ -53,6 +53,9 @@ function intention({id,needs,done=[],minute=720,roommate=false,aspiration=null,s
   if(aspiration.action==='chat'&&!roommate)return {action:'read',reason:'Enjoying a peaceful book until company is available',priority:'gentle'};
   return {action:aspiration.action,reason:'Working toward '+String(aspiration.label||'a personal dream').slice(0,55),priority:'dream'};
  }
+ // A chosen responsibility matters, but urgent needs and a real aspiration win first.
+ if(duty&&ACTIONS.includes(duty.action)&&!completed.includes(duty.action)&&minute>=8*60&&minute<22*60)
+  return {action:duty.action,reason:'Today’s household promise: '+String(duty.title||'helping out').slice(0,50),priority:'duty'};
  if(roommate&&!shared&&!completed.includes('chat')&&minute>=9*60&&minute<21*60)
   return {action:'chat',reason:'Making a little time for someone at home',priority:'bond'};
  const p=PERSONALITY[id];
@@ -64,7 +67,7 @@ function intention({id,needs,done=[],minute=720,roommate=false,aspiration=null,s
   reason:'A relaxed repeat after a satisfying day',priority:'gentle'};
 }
 function setup(api){
- const {getState,save,updateUI,notify,getResidents,getAspiration}=api;
+ const {getState,save,updateUI,notify,getResidents,getAspiration,getDuty}=api;
  const state=()=>getState();
  function record(){
   const s=state();
@@ -78,7 +81,7 @@ function setup(api){
   const aspiration=getAspiration(n.id);
   return intention({id:n.id,needs:state().residentLife[n.id]?.needs,
    done,minute:state().minute,roommate:!!other,
-   aspiration,shared:other?todayPair(n.id,other.id):false});
+   aspiration,shared:other?todayPair(n.id,other.id):false,duty:getDuty?.(n.id)||null});
  }
  function complete(id,kind){
   const people=getResidents();

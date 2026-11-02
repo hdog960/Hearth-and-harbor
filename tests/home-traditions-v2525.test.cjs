@@ -245,7 +245,7 @@ test('all new assets load before game and precache for offline iPhone play',()=>
  const html=read('index.html'),sw=read('sw.js');
  for(const asset of ['home-traditions-v2525.js','home-traditions-v2525.css'])assert.ok(html.includes(asset)&&sw.includes("'./"+asset+"'"));
  assert.ok(html.indexOf('home-traditions-v2525.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2525-home-traditions/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
 });
 test('touch UI has narrow iPhone styles, accessible focus, readable history and reduced motion',()=>{
  const css=read('home-traditions-v2525.css');

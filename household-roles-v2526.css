@@ -1,0 +1,41 @@
+/* Hearth & Harbor v2.5.26 — Our Household Promises
+ * A warm, touch-first scrapbook for voluntary home responsibilities. */
+.hr26-ui{color:#50715f;line-height:1.45;max-width:100%;padding:3px 0 12px}
+.hr26-ui h2{font-size:clamp(22px,5.6vw,29px)!important;line-height:1.12;margin:7px 0;color:#3c6956}
+.hr26-ui h3{font-size:15px;color:#4d755e;margin:7px 0}
+.hr26-ui p{font-size:12px;line-height:1.55;color:#6e816d;margin:5px 0 10px}
+.hr26-ui small{font-size:11px;line-height:1.3}
+.hr26-cover{position:relative;padding:17px 15px;border:3px solid #fff5dc;border-bottom:5px solid #d6ae81;border-radius:20px;background:radial-gradient(circle at 88% 9%,#f1cad066,transparent 43%),linear-gradient(135deg,#e5f1dd,#f9e9cc);overflow:hidden}
+.hr26-cover:before{content:'✿';position:absolute;right:-15px;bottom:-51px;font-size:132px;opacity:.15;color:#be91a3;pointer-events:none;line-height:1}
+.hr26-cover small{font-size:10px;font-weight:900;letter-spacing:.09em;color:#a68261}
+.hr26-tabs{display:flex;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding:10px 1px}
+.hr26-ui button{min-height:48px;border:2px solid #ddc49e;border-bottom:4px solid #bf9c7a;background:#f9edcf;color:#766047;border-radius:12px;padding:8px 11px;font-weight:850;font-size:12px;touch-action:manipulation;cursor:pointer}
+.hr26-ui button:disabled{opacity:.55;cursor:default}
+.hr26-ui button:focus-visible{outline:3px solid #2f5267;outline-offset:3px}
+.hr26-tabs button{white-space:nowrap;flex:none;min-height:43px}
+.hr26-tabs button[aria-pressed=true]{border-color:#83ad92;background:#e5f2db;color:#49795e}
+.hr26-summary{background:linear-gradient(100deg,#f8ead0,#e3eed7);border:1px solid #d1c49d;border-radius:13px;padding:12px;display:flex;flex-wrap:wrap;align-items:center;gap:5px 12px;margin:9px 0 14px}
+.hr26-summary b{font-size:13px;color:#5b8169}
+.hr26-summary span{font-size:11px;color:#7b8468;flex:1 1 170px}
+.hr26-cards{display:grid;gap:12px}
+.hr26-resident{padding:13px;background:linear-gradient(140deg,#fffaeb,#f2eddd);border:2px solid #decaac;border-bottom:5px solid #cead8c;border-radius:17px}
+.hr26-person{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px}
+.hr26-avatar{display:grid;place-items:center;width:49px;height:49px;flex:0 0 49px;border-radius:15px;font-size:25px;background:#eed4bf;border:2px solid #fff5dd}
+.hr26-person>div{min-width:0;flex:1}
+.hr26-person h3{margin:0 0 5px}
+.hr26-person p{margin:0}
+.hr26-options{display:grid;grid-template-columns:1fr;gap:7px}
+.hr26-options button{text-align:left;background:#fff7df;padding:10px 9px;display:grid;grid-template-columns:32px 1fr;column-gap:6px;align-items:center}
+.hr26-options button span{grid-row:1 / span 2;align-self:center;justify-self:center;font-size:23px}
+.hr26-options button strong{font-size:12px}
+.hr26-options button small{color:#7b856d;line-height:1.35;margin-top:2px;font-weight:600}
+.hr26-options button[aria-pressed=true]{background:#dfefdc;border-color:#6c9b7d;border-bottom-color:#4d7d62;color:#417453}
+.hr26-ui .hr26-free{width:100%;margin-top:8px;background:#f6e9d3;border-bottom-color:#c3a384}
+.hr26-history{padding:0;list-style:none;display:grid;gap:6px;margin:7px 0 13px}
+.hr26-history li{padding:9px 11px;border:1px solid #e4d4b8;border-radius:11px;background:#fdf4e1;font-size:12px}
+.hr26-history li small{display:inline-block;color:#ab8d68;margin-left:8px}
+.hr26-note{background:#e5eddd;padding:11px;border-left:4px solid #8fb39b;border-radius:10px}
+.hr26-ui .hr26-close{width:100%;background:#f3e4c8}
+@media(min-width:640px){.hr26-options{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:390px){.hr26-resident{padding:9px}.hr26-cover{padding:13px 11px}.hr26-options button{min-height:56px;padding:7px 6px}.hr26-options button strong{font-size:11px}.hr26-options button small{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.hr26-ui *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
