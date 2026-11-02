@@ -63,6 +63,7 @@ function setup(api){
    return {ok:false,reason:'Two current housemates are required.'};
   const carer=people.find(id=>id!==recipient);
   if(db().daily[home]===state().day)return {ok:false,reason:'This home already shared its daily act of care.'};
+  if(current(home))return {ok:false,reason:'Finish or cancel the current request before choosing a different one.'};
   if(db().personDaily[recipient]===state().day||db().personDaily[carer]===state().day)
    return {ok:false,reason:'One of these residents already helped or received care today.'};
   const amount=needValue(recipient,need);
