@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.26 — Our Household Promises
+# Hearth & Harbor v2.5.27 — Everybody Has a Little Day
+
+**Residents can now follow separate plans in the same occupied household.** Open an actual residence's Daybook and choose **🗓️ Plan everyone's day** to give each roommate up to three ordered activities from the existing real routines: Rest, Make a Meal, Read, Tidy, Spend Time Together and Enjoy a Hobby. They walk to the proper room spots and complete their own timed actions while you guide someone else or explore the residence. Plans override casual autonomy temporarily—even with Auto OFF—and return residents to their usual needs/personality routines afterward.
+
+Your instructions are stored in the same local game save and kept independent per resident. The planner includes a compact schedule timeline, accessible controls to undo the last task or clear just one resident's plan, and a genuine dated work-history log. Activities only grant their original effects when finished in the room: no new coin earnings, new currency, auto-XP or shortcuts. Pausing time or leaving the household suspends progress; old-day and stale plans expire safely and canceled tasks cannot create phantom rewards. The existing manually controlled resident queue remains available separately.
+
+**QA:** 24 new tests include simulated execution of the actual resident-update function with two separate schedules, ensuring the game genuinely moves/finishes activities rather than merely displaying a plan. This brings the intended suite to **278 checks**. Automated checks do not confirm real iPhone Safari visual/touch performance; that remains outstanding.
+
+[Read the v2.5.27 QA and Generations roadmap](HOUSEHOLD_SCHEDULES_V2527_QA_AND_ROADMAP.md).
+
+## Previous milestone — Our Household Promises v2.5.26
 
 **Households now choose how they care for one another.** Open the new **Household Promises** book from Menu, Journal or Daybook. Assign residents a Home Caretaker, Family Cook, Story Keeper, Warm Host or Creative Maker responsibility; actual roommates must choose different roles, and all assignments can be changed or turned off for free. Their real Daybook actions—not button presses—fulfill the promise. After urgent needs and personal aspirations, resident autonomy now makes time for assigned responsibilities rather than relying only on generic personality loops.
 
