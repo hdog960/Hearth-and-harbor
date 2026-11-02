@@ -1,0 +1,28 @@
+/* Hearth & Harbor 2.5.32 — a tactile scrapbook, not a disconnected menu. */
+.hc32-book{color:#526d5e;line-height:1.45;padding:2px 0 12px}
+.hc32-book h2{font-size:clamp(21px,5.5vw,29px)!important;color:#426851;margin:6px 0}
+.hc32-book h3{font-size:14px!important;color:#4f795d;margin:4px 0}
+.hc32-book p{font-size:12px;line-height:1.45;color:#70836e;margin:5px 0}
+.hc32-cover{position:relative;overflow:hidden;background:radial-gradient(circle at 95% 2%,#ecc6d1,transparent 42%),linear-gradient(130deg,#e6f0da,#f7e4cb);border:3px solid #fff4db;border-bottom:5px solid #cbaa83;border-radius:20px;padding:17px 15px}
+.hc32-cover:after{position:absolute;content:'✿';right:-12px;bottom:-52px;font-size:127px;line-height:1;color:#d5a7b6;opacity:.17;pointer-events:none}
+.hc32-cover small{font-size:10px;letter-spacing:.08em;font-weight:900;color:#ac8868}
+.hc32-cover b{display:inline-block;font-size:11px;padding:8px 10px;border-radius:10px;background:#fff9ed;color:#718568;margin-top:9px}
+.hc32-tabs{display:flex;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;gap:6px;padding:10px 1px}
+.hc32-book button{min-height:48px;background:#fff1d9;border:2px solid #dbc4a3;border-bottom:4px solid #b99c7f;border-radius:12px;padding:9px 12px;font-size:12px;font-weight:850;color:#76644f;touch-action:manipulation;cursor:pointer}
+.hc32-book button:focus-visible{outline:3px solid #28566a;outline-offset:3px}
+.hc32-book button:disabled{opacity:.48;cursor:default}
+.hc32-tabs button{white-space:nowrap;flex-shrink:0}
+.hc32-tabs button[aria-pressed=true]{background:#dfecdc;border-color:#86b293;color:#4c765b}
+.hc32-grid{display:grid;grid-template-columns:1fr;gap:10px;margin:9px 0}
+.hc32-memory{min-width:0;background:linear-gradient(130deg,#fff9ea,#f2ebd9);border:2px solid #e4ceb1;border-bottom:5px solid #cdac8b;border-radius:15px;padding:11px;display:flex;align-items:flex-start;gap:10px}
+.hc32-icon{display:grid;place-items:center;width:45px;height:45px;flex:0 0 45px;background:#efd6c4;border:2px solid #fff6e8;border-radius:13px;font-size:23px}
+.hc32-body{flex:1;min-width:0}
+.hc32-body small{color:#a48664;font-weight:850;font-size:10px;letter-spacing:.04em}
+.hc32-body button{font-size:11px;margin-top:9px;min-height:43px;width:100%;background:#e7eee0;border-color:#bdd0b4;border-bottom-color:#8da789}
+.hc32-body button[aria-pressed=true]{background:#d3e7d4;border-color:#78a282}
+.hc32-empty{padding:16px;border:1px dashed #d9bea0;border-radius:14px;background:#fdf6e6}
+.hc32-note{padding:11px;border-left:4px solid #98b69a;background:#e6eedf;border-radius:10px;margin:12px 0!important;font-size:11px!important}
+.hc32-book .hc32-back{width:100%;margin-top:12px}
+@media(min-width:660px){.hc32-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:390px){.hc32-cover{padding:11px}.hc32-memory{padding:8px}.hc32-icon{width:37px;height:37px;flex-basis:37px;font-size:19px}.hc32-body button{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.hc32-book *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
