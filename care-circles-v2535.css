@@ -1,0 +1,36 @@
+/* Hearth & Harbor v2.5.35 — Little Acts of Care, tactile mobile Daybook. */
+.cc35-book{color:#536e5f;line-height:1.5;padding:2px 0 14px}
+.cc35-book h2{font-size:clamp(22px,5.4vw,29px)!important;color:#467159;margin:4px 0}
+.cc35-book h3,.cc35-book h4{font-size:14px!important;color:#587562;margin:8px 0}
+.cc35-book p{font-size:12px;line-height:1.55;color:#718372;margin:7px 0}
+.cc35-cover{position:relative;overflow:hidden;padding:15px;border:3px solid #fff4e2;border-bottom:5px solid #cba885;border-radius:19px;background:radial-gradient(circle at 100% 2%,#e9c9d5,transparent 45%),linear-gradient(136deg,#e4eedf,#fae5cf)}
+.cc35-cover:after{content:'❦';position:absolute;right:-3px;bottom:-57px;opacity:.21;font-size:116px;color:#be9f97;pointer-events:none}
+.cc35-cover small{color:#a77c62;font-size:10px;letter-spacing:.1em;font-weight:900}
+.cc35-cover b{display:inline-block;background:#fff8e8;border:1px solid #e4d5ba;border-radius:11px;padding:7px 10px;font-size:11px;color:#668776;margin-top:7px}
+.cc35-tabs{display:flex;overflow-x:auto;gap:6px;overscroll-behavior-x:contain;scrollbar-width:thin;padding:11px 0 7px}
+.cc35-book button{min-height:47px;padding:8px 11px;border:2px solid #e3c9ad;border-bottom:4px solid #b99b84;border-radius:11px;background:#fff5e0;color:#736956;font-size:12px;font-weight:850;cursor:pointer;touch-action:manipulation}
+.cc35-book button:disabled{opacity:.46;cursor:default}
+.cc35-book button:focus-visible{outline:3px solid #295b6b;outline-offset:3px}
+.cc35-tabs button{flex-shrink:0;white-space:nowrap}
+.cc35-tabs button[aria-pressed=true]{background:#dcebd8;border-color:#91b69b;color:#52745f}
+.cc35-grid{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0}
+.cc35-person{background:linear-gradient(145deg,#fff9ed,#efe9dc);border:2px solid #e3d2b7;border-radius:14px;padding:11px}
+.cc35-needs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.cc35-needs button{display:grid;justify-items:center;gap:4px;min-width:0;min-height:91px;background:#f9ecdd}
+.cc35-needs button span{font-size:23px}
+.cc35-needs button strong{font-size:11px;line-height:1.2;text-align:center}
+.cc35-needs button small{font-size:10px;color:#857c6a}
+.cc35-active{background:#e6eedf;border:2px solid #a9c4a5;border-radius:14px;padding:12px;margin:11px 0}
+.cc35-active h4{margin-top:0}
+.cc35-buttons{display:grid;gap:7px;margin-top:9px}
+.cc35-buttons button:first-child{background:#daebd6;border-color:#a4c5a1;border-bottom-color:#88a88b}
+.cc35-done{padding:12px;background:#dfefda;border:1px solid #a6c2a0;border-radius:11px;font-weight:850;color:#547966!important}
+.cc35-history{background:#faf0df;border:1px solid #e2d0b3;border-radius:13px;padding:11px;margin:12px 0}
+.cc35-history ul{list-style:none;padding:0;margin:0}
+.cc35-history li{border-top:1px solid #e8d9c0;color:#778576;font-size:11px;padding:7px 0}
+.cc35-note{padding:11px;border-left:4px solid #9dbcaa;border-radius:10px;background:#eaf1e5;font-size:10px!important}
+.cc35-back{width:100%;margin-top:11px}
+.cc35-empty{padding:13px;background:#faf1de;border-radius:11px}
+@media(min-width:710px){.cc35-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:390px){.cc35-cover{padding:10px}.cc35-person{padding:8px}.cc35-needs{gap:5px}.cc35-needs button{padding:5px;min-height:82px}.cc35-needs button strong{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.cc35-book *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
