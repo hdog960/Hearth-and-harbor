@@ -135,12 +135,12 @@ test('an uncompleted request expires next day without a memory or help',()=>{
  assert.equal(f.c.data.history.length,0);
 });
 test('new real days allow more care and three genuine days earn one unique permanent quilt',()=>{
- const f=fixture();for(let day=1;day<=3;day++){f.state.day=day;const r=finish(f);assert.equal(r.keepsake,day===3)}
+ const f=fixture();for(let day=1;day<=3;day++){f.state.day=day;f.needs.rosie.food=55;const r=finish(f);assert.equal(r.keepsake,day===3)}
  assert.equal(f.c.data.history.length,3);assert.equal(f.c.comfort('h0'),2);
  assert.equal(JSON.stringify(f.c.data.keepsakes),JSON.stringify(['h0']));
 });
 test('more caring days never duplicate a keepsake or exceed the two comfort points',()=>{
- const f=fixture();for(let day=1;day<=5;day++){f.state.day=day;finish(f)}
+ const f=fixture();for(let day=1;day<=5;day++){f.state.day=day;f.needs.rosie.food=55;finish(f)}
  assert.equal(f.c.data.keepsakes.length,1);assert.equal(f.c.comfort('h0'),2);
 });
 test('different homes hold independent requests, completions and keepsake ownership',()=>{
@@ -166,7 +166,7 @@ test('needs and bonds always stay at 100 or lower with no invented cash',()=>{
  assert.equal(f.state.coins,200);
 });
 test('a real saved care record and earned quilt survive JSON save/reload',()=>{
- const f=fixture();for(let day=1;day<=3;day++){f.state.day=day;finish(f)}
+ const f=fixture();for(let day=1;day<=3;day++){f.state.day=day;f.needs.rosie.food=55;finish(f)}
  const saved=JSON.parse(JSON.stringify(f.c.data));
  const reloaded=fixture({day:4,careCircles:C.clean(saved)});
  assert.equal(reloaded.c.comfort('h0'),2);
@@ -215,7 +215,7 @@ test('the in-world home canvas draws real unfinished care and a permanent quilt 
  const f=fixture(),g=canvas();f.c.draw(g,'h0');assert.equal(g.n,0);
  care(f);f.c.draw(g,'h0');assert.ok(g.n>9);
  f.c.cancel('h0');const before=g.n;f.c.draw(g,'h0');assert.equal(g.n,before);
- for(let day=1;day<=3;day++){f.state.day=day;finish(f)}
+ for(let day=1;day<=3;day++){f.state.day=day;f.needs.rosie.food=55;finish(f)}
  const n=g.n;f.c.draw(g,'h0');assert.ok(g.n>n+15);
  const x=g.n;f.c.draw(g,'h2');assert.equal(g.n,x);
 });
