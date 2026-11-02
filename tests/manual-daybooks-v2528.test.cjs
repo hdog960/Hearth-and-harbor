@@ -257,5 +257,5 @@ test('manual Daybooks fully preload offline and have a phone-responsive decorati
  assert.ok(html.indexOf('manual-daybooks-v2528.js')<html.indexOf('game.js'));
  assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
  for(const token of ['@media(max-width:390px)','prefers-reduced-motion:reduce','.db28-person{','.db28-book{'])assert.ok(css.includes(token),token);
- assert.match(html,/<title>Hearth & Harbor · [^<]+ v2\.5\.[0-9]+<\/title>/);
+ assert.match(html,/<title>Hearth & Harbor · [^<]+ v2\.(?:5\.\d+|6\.\d+)<\/title>/);
 });
