@@ -106,7 +106,7 @@ function setup(api){
   const d=data(),companions=members(home).filter(x=>x!==actor);
   // A genuine action is already finished at this point. This is a small, capped
   // benefit layered on the existing action effects, not a second activity.
-  const ownKey=actor==='player'?'fun':'fun';
+  const ownKey='fun';
   needs[ownKey]=clamp((Number.isFinite(needs[ownKey])?needs[ownKey]:0)+3,0,100);
   if(companions.length){
    const recipient=api.getNeeds?.(companions[0]);
