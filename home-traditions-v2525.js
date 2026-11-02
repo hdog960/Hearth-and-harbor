@@ -178,6 +178,7 @@ function setup(api){
  function handle(action,arg){
   if(action==='ht-board')return board(HOMES.includes(arg)?arg:viewing);
   if(action==='ht-view')return board(arg);
+  if(action==='ht-trades')return api.openTrades?.();
   if(action==='ht-focus')return focus(arg);
   if(action==='ht-start'){
    const [home,key,...rest]=String(arg||'').split('|');
