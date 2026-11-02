@@ -85,8 +85,11 @@ function setup(api){
  }
  function release(home){
   const members=occupants(home),key=members.length===2?pair(members):null;
-  if(!key||!isActive(key)||!dayOK(state().day))return false;
-  const record=data().chosen[key];
+  return releaseLink(key);
+ }
+ function releaseLink(key){
+  if(!validPair(key)||!isActive(key)||!dayOK(state().day))return false;
+  const record=data().chosen[key],home=record.home;
   if(record.day===state().day)return false;
   record.status='ended';record.endedDay=state().day;
   data().history.push({key,home,day:state().day,kind:'release'});
@@ -139,13 +142,14 @@ function setup(api){
  function board(){
   const links=history().map(m=>{
    const ids=split(m.key),title=m.kind==='wedding'?'Married in Maplewood':m.kind==='pledge'?'A family chosen together':'A promise gently released';
-   return '<li><b>Day '+m.day+'</b> · '+title+' · '+ids.map(name).join(' & ')+'</li>';
+   return '<li><b>Day '+m.day+'</b> · '+title+' · '+ids.map(name).join(' & ')+(m.kind==='pledge'&&isActive(m.key)&&chosen(m.key)?.day===m.day?'<button data-act="fr33-unbind" data-id="'+m.key+'" '+(m.day===state().day?'disabled':'')+'>End this promise (connection history remains)</button>':'')+'</li>';
   }).join('');
   api.showModal?.('family-roots','<section class="fr33-book"><header class="fr33-cover"><small>OUR PEOPLE · OUR PROMISES</small><h2>🌿 Family Roots</h2><p>Families take different shapes. The family record honors actual marriages, the people sharing a home, and bonds two friends deliberately choose after working together.</p></header><div class="fr33-grid">'+cards()+'</div><section class="fr33-history"><h3>Our family connections</h3><ul>'+(links||'<li>The first family connections are still growing.</li>')+'</ul></section><p class="fr33-note">Only real married partners are marked as spouses. Chosen family is never a blood relationship, romance, child or inheritance claim. Two different days of genuine joint projects and an existing friendship are needed before the optional promise. Afterwards, one real daily chat between co-residents helps both feel connected; viewing this book never changes anyone’s needs.</p><button data-act="fr33-back">Return to the Daybook</button></section>');
  }
  function handle(action,id){
   if(action==='fr33-pledge'&&HOMES.includes(id))pledge(id);
   else if(action==='fr33-release'&&HOMES.includes(id))release(id);
+  else if(action==='fr33-unbind'&&validPair(id))releaseLink(id);
   else if(action==='fr33-back')return api.back?.();
   else if(action!=='fr33-board')return false;
   board();return true;
