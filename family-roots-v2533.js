@@ -16,13 +16,13 @@ const split=k=>typeof k==='string'?k.split('|'):[];
 const validPair=k=>{const ids=split(k);return ids.length===2&&ids[0]!==ids[1]&&IDS.includes(ids[0])&&IDS.includes(ids[1])&&pair(ids)===k};
 function clean(raw){
  const src=obj(raw)?raw:{},chosen={},careDay={},history=[];
- for(const [key,row] of Object.entries(obj(src.chosen)).slice(0,30)){
+ for(const [key,row] of Object.entries(obj(src.chosen)?src.chosen:{}).slice(0,30)){
   if(!validPair(key)||!obj(row)||!dayOK(row.day)||!HOMES.includes(row.home)||!['active','ended'].includes(row.status))continue;
   const end=row.status==='ended'&&dayOK(row.endedDay)&&row.endedDay>=row.day?row.endedDay:0;
   if(row.status==='ended'&&!end)continue;
   chosen[key]={day:row.day,home:row.home,status:row.status,endedDay:end};
  }
- for(const [key,day] of Object.entries(obj(src.careDay)).slice(0,30))if(validPair(key)&&dayOK(day))careDay[key]=day;
+ for(const [key,day] of Object.entries(obj(src.careDay)?src.careDay:{}).slice(0,30))if(validPair(key)&&dayOK(day))careDay[key]=day;
  if(Array.isArray(src.history))for(const m of src.history.slice(-80)){
   if(!obj(m)||!validPair(m.key)||!HOMES.includes(m.home)||!dayOK(m.day)||!['pledge','release'].includes(m.kind))continue;
   if(history.some(x=>x.key===m.key&&x.day===m.day&&x.kind===m.kind))continue;
