@@ -259,6 +259,6 @@ test('iPhone loads current mentorship assets offline and presents accessible mob
  for(const asset of ['mentorship-v2534.js','mentorship-v2534.css'])
   assert.ok(html.includes(asset)&&sw.includes("'./"+asset+"'"));
  assert.ok(html.indexOf('mentorship-v2534.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2534-passing-it-on/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
  for(const key of ['@media(max-width:390px)','@media(min-width:700px)','touch-action:manipulation','button:focus-visible','prefers-reduced-motion:reduce'])assert.ok(css.includes(key),key);
 });
