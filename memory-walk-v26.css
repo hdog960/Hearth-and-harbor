@@ -1,0 +1,30 @@
+/* Hearth & Harbor 2.6 — original touch-first village heritage exhibition */
+.mw26-book{color:#52705f;padding:2px 0 14px;line-height:1.52}
+.mw26-book h2{font-size:clamp(22px,5.6vw,30px)!important;color:#4c735e;margin:5px 0}
+.mw26-book h3{font-size:15px!important;color:#567962;margin:6px 0}
+.mw26-book p{font-size:12px;color:#788573;line-height:1.5;margin:6px 0}
+.mw26-hero{position:relative;overflow:hidden;background:radial-gradient(circle at 95% 1%,#ecd1d4,transparent 48%),linear-gradient(134deg,#d9e9d4,#f4dbbd);border:3px solid #fff4dc;border-bottom:5px solid #c3a082;border-radius:19px;padding:16px}
+.mw26-hero:after{content:'✿';position:absolute;right:-9px;bottom:-63px;font-size:135px;color:#9db9a1;opacity:.15;pointer-events:none}
+.mw26-hero small{color:#aa8266;font-size:10px;letter-spacing:.1em;font-weight:900}
+.mw26-hero b{display:inline-block;margin-top:10px;padding:8px 12px;background:#fff8e9;border:1px solid #e6d9bd;border-radius:10px;font-size:12px;color:#739073}
+.mw26-book button{min-height:47px;padding:9px 11px;border:2px solid #dec4a4;border-bottom:4px solid #b89877;border-radius:11px;background:#fff3dd;color:#59745d;font-size:12px;font-weight:850;touch-action:manipulation;cursor:pointer}
+.mw26-book button:disabled{opacity:.48;cursor:default}
+.mw26-book button:focus-visible{outline:3px solid #295d69;outline-offset:3px}
+.mw26-progress{height:12px;border:2px solid #d4bc9e;border-radius:9px;background:#fbf5e3;margin:12px 0;overflow:hidden}
+.mw26-progress i{display:block;height:100%;background:linear-gradient(90deg,#a8c5a3,#c6d8ad);border-radius:9px}
+.mw26-grid{display:grid;grid-template-columns:1fr;gap:11px;margin:12px 0}
+.mw26-card{display:flex;gap:11px;min-width:0;padding:12px;border:2px solid #e4cfb4;border-bottom:5px solid #c6a588;border-radius:15px;background:linear-gradient(140deg,#fff9e9,#eeebdc)}
+.mw26-art{flex:0 0 45px;width:45px;height:45px;display:grid;place-items:center;border-radius:12px;border:3px solid #fff6e1;background:#bed4b9;font-size:24px}
+.mw26-cardbody{min-width:0;flex:1}
+.mw26-cardbody small{color:#9e866d;font-size:10px;font-weight:900}
+.mw26-cardbody button{width:100%;min-height:48px;margin-top:7px;background:#dcebd6;border-color:#abc6a2;border-bottom-color:#86aa88}
+.mw26-choices{display:grid;gap:6px}
+.mw26-hint{font-weight:700;color:#a17e6f!important}
+.mw26-note{padding:12px;background:#e9f1e3;border-left:4px solid #9fbb9c;border-radius:9px;font-size:10px!important;margin:14px 0!important}
+.mw26-finale{padding:12px;border:2px solid #c5cfad;background:#f3eed6;border-radius:13px;color:#6e8368!important;font-weight:850}
+.mw26-portrait{background:#f9f0dd;border:2px solid #e1cab3;border-radius:14px;padding:13px;margin:12px 0}
+.mw26-portrait b{font-size:14px;color:#577861}
+.mw26-portrait button{width:100%;margin-top:9px;background:#d8edda;border-color:#abc6a4}
+@media(min-width:700px){.mw26-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:390px){.mw26-hero{padding:11px}.mw26-card{padding:8px;gap:7px}.mw26-art{width:35px;height:35px;flex-basis:35px;font-size:19px}.mw26-book button{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.mw26-book *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
