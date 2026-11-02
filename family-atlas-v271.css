@@ -1,0 +1,40 @@
+/* Hearth & Harbor v2.7.1 — Connections Atlas. A legible warm family book. */
+.fa271-book{padding:3px 0 14px;color:#52715e;line-height:1.5}
+.fa271-cover{position:relative;overflow:hidden;border-radius:19px;border:3px solid #fff4df;border-bottom:5px solid #c6a984;padding:18px 16px;background:radial-gradient(circle at 98% 0%,#eec3cf,transparent 42%),linear-gradient(137deg,#dceccf 5%,#fef1d8 92%)}
+.fa271-cover:after{content:'❧';position:absolute;right:-10px;bottom:-60px;font-size:146px;color:#b9cfad;opacity:.24;pointer-events:none}
+.fa271-cover small{font-size:10px;font-weight:900;letter-spacing:.12em;color:#aa816b}
+.fa271-cover h2{font-size:clamp(22px,5vw,30px)!important;color:#4e765e;margin:6px 0;line-height:1.2}
+.fa271-cover p,.fa271-book p{font-size:12px;color:#6a7869;margin:5px 0 12px}
+.fa271-book h3{font-size:15px!important;color:#5d8168;margin:17px 0 8px}
+.fa271-summary{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.fa271-summary span{flex:1 1 96px;text-align:center;background:#ebf0de;border:1px solid #c4d2ae;border-radius:12px;padding:9px 7px;font-size:11px;font-weight:800;color:#65806a}
+.fa271-people{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,115px),1fr));gap:8px;margin:9px 0}
+.fa271-book button{min-height:48px;border:2px solid #bbd0ba;border-bottom:4px solid #8daf9b;border-radius:12px;color:#426e5b;background:linear-gradient(#e3efde,#d0e4d1);font-size:12px;font-weight:850;padding:9px 10px;touch-action:manipulation;text-align:left;cursor:pointer}
+.fa271-book button:focus-visible{outline:3px solid #315e87;outline-offset:3px}
+.fa271-book button:disabled{opacity:.5;cursor:default}
+.fa271-person-link{display:grid;place-items:center;text-align:center!important;min-height:61px!important}
+.fa271-person-link:before{content:'✿';display:block;font-size:17px;color:#bb919c;margin-bottom:3px}
+.fa271-links{display:grid;gap:9px}
+.fa271-link{display:flex;align-items:center;gap:9px;background:#faf2e1;border:2px solid #e4d5b8;border-radius:15px;padding:10px}
+.fa271-link.marriage{border-left:6px solid #c7a4ba}
+.fa271-link.chosen{border-left:6px solid #a0cba5}
+.fa271-link.household{border-left:6px solid #b6c7c6}
+.fa271-link .fa271-symbol{font-size:23px}
+.fa271-link>div{flex:1;min-width:0}
+.fa271-link strong{display:block;font-size:12px;color:#677b64}
+.fa271-link small{font-size:10px;color:#907f72;display:block;line-height:1.4}
+.fa271-link button{min-width:76px;min-height:43px;width:auto}
+.fa271-homes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,185px),1fr));gap:9px}
+.fa271-home{background:#f9f2e5;border:1px solid #e2d2b8;border-bottom:4px solid #d2bba0;border-radius:13px;padding:11px}
+.fa271-home strong{font-size:12px;color:#5d7860}
+.fa271-home button{width:100%;margin-top:5px}
+.fa271-timeline{list-style:none;margin:10px 0;padding:0;display:grid;gap:8px}
+.fa271-timeline li{padding:9px 12px 9px 18px;border-left:4px solid #c9b69b;border-radius:0 10px 10px 0;background:#f8f0e3;font-size:11px}
+.fa271-timeline strong,.fa271-timeline span,.fa271-timeline small{display:block}
+.fa271-timeline strong{color:#597966;font-size:12px}
+.fa271-timeline span{color:#94705e;margin-top:3px}
+.fa271-timeline small{color:#887f6e;margin-top:3px}
+.fa271-action{width:100%;margin:8px 0}
+.fa271-memory{padding:16px;background:#fff6e6;border:3px double #cfb995;border-radius:15px;font-size:12px;color:#667c69;margin:12px 0}
+@media(max-width:380px){.fa271-cover{padding:12px}.fa271-link{flex-wrap:wrap}.fa271-link button{width:100%}.fa271-book button{min-height:50px}}
+@media(prefers-reduced-motion:reduce){.fa271-book *,.fa271-book *:before,.fa271-book *:after{animation:none!important;transition:none!important}}
