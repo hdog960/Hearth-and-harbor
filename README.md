@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.33 — Family Roots
+# Hearth & Harbor v2.5.34 — Passing It On
+
+**Neighbors can now actually teach and learn from one another inside the home.** Choose a mentor and learner in a two-person household and pick one of **four real skills**: reading, cooking, tidying or creative hobbies. The mentor must genuinely finish the selected activity before the learner can perform the matching real activity. Queue the next step in that resident's independent Daybook or guide them manually; the system never skips a room animation or pays rewards for a button click.
+
+A fully completed session gives small, capped relationship and needs benefits plus a persistent lesson in the learner's record. **Two, four and six genuine completed lessons** build confidence in that subject, adding **+2, +3 or +4 Fun** when that resident genuinely completes a matching activity on a later day. Learned knowledge survives moving homes. Every lesson includes visible progress in a new illustrated learning book, and an original subject-specific chart is drawn into the actual playable residence. Unfinished sessions can be canceled without losing earned lessons.
+
+The storage key remains `hearth-harbor-save-v1` with sanitized optional mentorship records. No new currency, forced aging, children, invented relations or passive rewards. **35 new regression cases** bring the intended full suite to **452**. Physical iPhone Safari rendered visual/touch/VoiceOver QA remains outstanding.
+
+[Read the v2.5.34 implementation, tests and Generations roadmap](PASSING_IT_ON_V2534_QA_AND_ROADMAP.md).
+
+## Previous milestone — Family Roots v2.5.33
 
 **Family Roots brings genuinely different connections into the same household record:** real existing marriages, actual co-residents, and optional non-romantic chosen-family bonds earned through meaningful shared activities. Each home’s residents appear in a new warm, mobile-friendly family book, alongside the marriage and promise history. A couple's wedding is never invented or replaced by a generic roommate tag, and moving houses doesn't erase a genuine connection.
 
