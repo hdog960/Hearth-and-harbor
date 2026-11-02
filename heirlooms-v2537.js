@@ -99,6 +99,16 @@ function setup(api){
   if(!current(home))return false;
   delete data().pending[home];api.save?.();api.updateUI?.();return true;
  }
+ function queue(home){
+  const p=current(home);
+  if(!p||(api.getDone?.(p.maker)||[]).includes('hobby'))return false;
+  if(p.maker==='player')return api.queuePlayerHobby?.()===true;
+  const planned=api.getSchedule?.(home,p.maker);
+  if(!Array.isArray(planned))return false;
+  if(planned.includes('hobby'))return true;
+  if(planned.length>=3)return false;
+  return api.addSchedule?.(home,p.maker,'hobby')===true;
+ }
  function completed(home,maker,action,first=true,day=state().day){
   if(!first||action!=='hobby'||!dayOK(day)||day!==state().day)return false;
   const p=current(home);
@@ -141,7 +151,7 @@ function setup(api){
  const comfort=home=>HOMES.includes(home)?Math.min(4,items(home).length*2):0;
  function board(home){
   const selected=HOMES.includes(home)?home:'player',people=occupants(selected),craft=current(selected),eligibleSources=proof(selected).filter(e=>!sourceUsed(selected,e.source));
-  const choices=craft?'<section class="hl37-active"><h3>✦ A handmade heirloom is in progress</h3><p>'+label(craft.maker)+' needs to finish a real <b>Hobby</b> activity. Directly guide them or add that step to their normal daybook.</p><button data-act="hl37-cancel" data-id="'+selected+'">Set this craft aside</button></section>':'<div class="hl37-catalog">'+
+  const choices=craft?'<section class="hl37-active"><h3>✦ A handmade heirloom is in progress</h3><p>'+label(craft.maker)+' needs to finish a real <b>Hobby</b> activity. Directly guide them or add that step to their normal daybook.</p><button data-act="hl37-queue" data-id="'+selected+'">🗓️ Queue the real crafting activity</button><button data-act="hl37-cancel" data-id="'+selected+'">Set this craft aside</button></section>':'<div class="hl37-catalog">'+
    (eligibleSources.length?eligibleSources.slice(-12).reverse().map(e=>'<article><b>'+KINDS[e.kind].title+'</b><small>Day '+e.day+' · '+KINDS[e.kind].subtitle+'</small><div class="hl37-choices">'+people.map(person=>{
     const ok=elig(selected,person,e.source).ok;
     return '<button data-act="hl37-make" data-id="'+selected+'|'+person+'|'+e.source+'" '+(ok?'':'disabled')+'>✂️ Let '+label(person)+' make it</button>';
@@ -175,8 +185,9 @@ function setup(api){
    const recipient=a.pop(),destination=a.pop(),source=a.join('|');
    const item=data().items.find(x=>x.origin===origin&&x.source===source);
    const currentHolder=item?.holder||origin;
-   gift(origin,source,destination,recipient);return board(currentHolder===destination?destination:currentHolder);
+   const gifted=gift(origin,source,destination,recipient);return board(gifted?destination:currentHolder);
   }
+  if(action==='hl37-queue'){if(!queue(id))api.notify?.('The crafter already finished their hobby, or their Daybook is full. Guide them or free a schedule slot.');return board(id)}
   if(action==='hl37-cancel'){cancel(id);return board(id)}
   if(action==='hl37-back')return api.back?.();
   return false;
@@ -214,7 +225,7 @@ function setup(api){
    g.restore();
   }
  }
- return {clean,begin,cancel,completed,gift,canGift,current,elig,items,occupants,proof,comfort,board,handle,draw,get data(){return data()}};
+ return {clean,begin,cancel,queue,completed,gift,canGift,current,elig,items,occupants,proof,comfort,board,handle,draw,get data(){return data()}};
 }
 root.HearthHeirlooms={setup,clean,HOMES,RESIDENTS,KINDS};
 })(window);
