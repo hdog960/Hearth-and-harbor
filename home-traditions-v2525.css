@@ -1,0 +1,49 @@
+/* Hearth & Harbor v2.5.25 — Home & Town Traditions
+   Painted book presentation with clear, compact phone-first touch layouts. */
+.ht-ui{color:#496c5b;font-family:inherit;line-height:1.45;padding:3px 1px 10px;max-width:100%}
+.ht-ui h2{font-size:clamp(23px,5.6vw,30px)!important;line-height:1.17;margin:6px 0 10px;color:#426b5b}
+.ht-ui h3{font-size:16px;margin:7px 0;color:#476d59}
+.ht-ui p{font-size:13px;line-height:1.55;margin:6px 0 12px;color:#65806b}
+.ht-ui small{font-size:11px;line-height:1.35}
+.ht-eyebrow{font-size:10px;letter-spacing:.10em;text-transform:uppercase;color:#a07e5d;font-weight:900}
+.ht-cover{position:relative;isolation:isolate;overflow:hidden;padding:18px 15px 15px;background:radial-gradient(circle at 95% 12%,#f5baca88,transparent 40%),linear-gradient(132deg,#edf4df,#f8ecd0 75%);border:3px solid #fff7e3;border-bottom:5px solid #d5ae8b;border-radius:22px;box-shadow:0 4px 14px #7a695d24}
+.ht-cover:before{content:'✿';position:absolute;z-index:-1;font-size:124px;right:-13px;bottom:-56px;line-height:1;color:#d3b8a8;opacity:.28}
+.ht-cover>small{font-weight:900;letter-spacing:.09em;color:#ae835b}
+.ht-cover p{max-width:420px}
+.ht-comfort{display:inline-block;background:#fff9e7;border:1px solid #dcc49e;border-radius:11px;color:#6b8062;padding:7px 10px;font-size:11px;font-weight:900}
+.ht-tabs{display:flex;gap:7px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding:9px 1px 11px;margin-top:4px}
+.ht-ui button{display:block;min-height:48px;border-radius:12px;border:2px solid #e7cf9b;border-bottom:4px solid #b39b7b;background:#f9eed7;color:#73654e;font-weight:900;font-size:12px;padding:8px 11px;touch-action:manipulation;cursor:pointer}
+.ht-ui button:focus-visible{outline:3px solid #254c58;outline-offset:3px}
+.ht-tabs button{white-space:nowrap;flex:0 0 auto;min-height:45px;background:#f2ead6;border-bottom:3px solid #bda181}
+.ht-tabs button.ht-selected{background:#dcefd9;color:#477961;border-color:#91bc94}
+.ht-focus{background:#e5ecdb;padding:12px;border-left:5px solid #8cad90;border-radius:13px;display:grid;gap:5px;margin-bottom:14px}
+.ht-focus strong{font-size:13px}
+.ht-focus small{color:#68806b}
+.ht-focus span{font-size:11px;font-weight:800;color:#668e67}
+.ht-focus button{margin-top:5px;max-width:390px;background:#fff5df}
+.ht-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.ht-story{background:linear-gradient(142deg,#fff7e8,#f1ebd8);border:2px solid #ddc7a3;border-bottom:5px solid #c6a686;border-radius:18px;padding:13px;box-shadow:0 2px 5px #615c4720}
+.ht-story.ht-done{background:linear-gradient(145deg,#f1f6e5,#e5efd5);border-color:#acbf9a}
+.ht-story-head{display:flex;align-items:flex-start;gap:10px}
+.ht-story-head>div:last-child{flex:1;min-width:0}
+.ht-story-head h3{margin:2px 0 1px}
+.ht-story-head small{display:block;font-weight:900;color:#a17a5d}
+.ht-story-head p{font-size:11px;margin:2px 0;color:#7b8968}
+.ht-seal{flex:0 0 51px;width:51px;height:51px;border-radius:16px;display:grid;place-items:center;font-size:29px;background:linear-gradient(145deg,#fff4d4,#eccfa9);box-shadow:inset 0 0 0 2px #fff9e9}
+.ht-chapters{display:flex;gap:7px;margin:12px 0 8px;align-items:center}
+.ht-chapters span{display:grid;place-items:center;width:33px;height:33px;border-radius:50%;border:2px solid #ceb999;background:#f7edd7;color:#92765c;font-weight:900;font-size:13px}
+.ht-chapters span.ht-current{background:#eed8a9;border-color:#bc9570;color:#735c43}
+.ht-chapters span.ht-finished{background:#9fc59b;border-color:#6d9b79;color:#fffef1}
+.ht-next{background:#fdf6e5;border-radius:10px;padding:9px;font-size:12px!important;color:#5d765f!important;min-height:48px}
+.ht-story button{width:100%;background:#4d9771;color:#fff9ed;border-color:#fff3d5;border-bottom-color:#2d7352;min-height:49px}
+.ht-earned,.ht-active{font-size:11px;font-weight:900;padding:9px 10px;background:#e4eed8;color:#568361;border-radius:11px}
+.ht-active{background:#f7e9c8;color:#947953}
+.ht-ui>h3{margin:20px 0 10px}
+.ht-journal{display:grid;gap:6px;padding:0;margin:0 0 12px;list-style:none}
+.ht-journal li{background:#f8f1de;border:1px solid #e7d2ae;border-radius:11px;padding:10px 11px;font-size:11px;color:#69806b}
+.ht-journal li span{color:#c59b61}
+.ht-help{font-size:12px!important;background:#ebeddd;border-radius:11px;padding:11px}
+.ht-ui .ht-close{background:#fff0d8;width:100%;margin-top:12px}
+@media(min-width:760px){.ht-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:390px){.ht-cover{padding:13px 11px}.ht-story{padding:10px}.ht-seal{flex-basis:44px;width:44px;height:44px;font-size:25px}.ht-story-head h3{font-size:14px}.ht-tabs{gap:5px}}
+@media(prefers-reduced-motion:reduce){.ht-ui *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
