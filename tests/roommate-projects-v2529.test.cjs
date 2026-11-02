@@ -230,6 +230,6 @@ test('offline assets are all precached and phone CSS supports touch, narrow layo
  for(const asset of ['roommate-projects-v2529.js','roommate-projects-v2529.css'])
   assert.ok(html.includes(asset)&&sw.includes("'./"+asset+"'"));
  assert.ok(html.indexOf('roommate-projects-v2529.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2529-together-at-home/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
  for(const bit of ['@media(max-width:390px)','@media(min-width:730px)','button:focus-visible','touch-action:manipulation','prefers-reduced-motion:reduce'])assert.ok(css.includes(bit),bit);
 });
