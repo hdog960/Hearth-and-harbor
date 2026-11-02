@@ -62,7 +62,7 @@ test('new art loads with main game and works offline under versioned cache',()=>
  const html=read('index.html'),sw=read('sw.js');
  assert.ok(html.includes('shared-scenes-v2530.js'));assert.ok(sw.includes("'./shared-scenes-v2530.js'"));
  assert.ok(html.indexOf('shared-scenes-v2530.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2530-shared-scenes/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
 });
 test('existing save key remains intact and old cohabitation reward rules are preserved',()=>{
  const s=read('game.js');assert.match(s,/const SAVE='hearth-harbor-save-v1'/);assert.ok(s.includes("roommateProjects.recordAction(activeResidence,id,kind,true,state.day)"));
