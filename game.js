@@ -1,4 +1,4 @@
-/* Hearth & Harbor — Kitchen Moments v2.5.21
+/* Hearth & Harbor — Living Worktops v2.5.22
    A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});

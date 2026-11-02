@@ -90,3 +90,34 @@
  .k-technique-row b{font-size:12px;letter-spacing:0}
 }
 @media(prefers-reduced-motion:reduce){.k-feedback-flourish{animation:none!important}}
+
+
+/* v2.5.22 — Illustrated Worktops: tangible food on a single accessible board.
+ * Original in-world SVG drawing; semantic buttons still own every action. */
+.k-craft-step .kc-stage{padding:7px 8px 9px;background:#eac69a;border-color:#c09165;box-shadow:inset 0 0 0 2px #fce5c4,0 3px 0 #a77a56;min-height:0}
+.k-craft-step .kc-stage.kc-season,.k-craft-step .kc-stage.kc-garnish{background:#e4d2a5;border-color:#9daa89}
+.k-craft-step .kc-stage.kc-fill,.k-craft-step .kc-stage.kc-stamp{background:#f4d5b0;border-color:#c69a7d}
+.k-craft-step .kc-woodgrain{display:none}
+.k-craft-step .kc-art-wrap{position:relative;width:100%;height:110px;margin:-2px auto 5px;overflow:hidden;pointer-events:none;isolation:isolate;display:flex;justify-content:center;align-items:center}
+.k-craft-step .kc-illustration{display:block;height:100%;width:100%;max-width:440px;overflow:visible;filter:drop-shadow(0 2px 2px #835e4325)}
+.k-craft-step .kc-art-wrap .kc-spark{transform-box:fill-box;transform-origin:center;animation:kc22-sparkle .38s ease-out both}
+.k-craft-step .kc-positions{min-height:78px;gap:6px;z-index:2;align-items:stretch}
+.k-craft-step .kc-positions button{min-height:76px;min-width:0;background:linear-gradient(#fffcf1,#f7e7c8);border:2px solid #caa77c;border-bottom:4px solid #b58b68;color:#785c45;box-shadow:0 2px 0 #b28b6550;padding:4px}
+.k-craft-step .kc-positions button.is-done{background:linear-gradient(#edf6df,#dceacb);border-color:#85aa7a;color:#4c7556}
+.k-craft-step .kc-positions button:disabled:not(.is-done){opacity:.63}
+.k-craft-step .kc-positions button:disabled.is-done{opacity:1}
+.k-craft-step .kc-positions button span{font-size:21px;min-height:23px}
+.k-craft-step .kc-positions button small{font-size:10px;font-weight:800;line-height:1.15}
+.k-craft-step .kc-palette button{border:2px solid #c6ab82;border-bottom:4px solid #b99166;background:#fff0d4;min-height:49px}
+.k-craft-step .kc-palette button[aria-pressed=true]{border-color:#61977b;background:#d6ebd0;box-shadow:inset 0 0 0 2px #f4fff3}
+.k-craft-step .kc-art-wrap svg{touch-action:none}
+@keyframes kc22-sparkle{0%{opacity:0;filter:brightness(1.5)}60%{opacity:1;filter:brightness(1.2)}100%{opacity:.9;filter:brightness(1)}}
+@media(max-width:390px){
+ .k-craft-step .kc-stage{padding:6px 5px}
+ .k-craft-step .kc-art-wrap{height:87px;margin-bottom:4px}
+ .k-craft-step .kc-positions{min-height:74px;gap:4px}
+ .k-craft-step .kc-positions button{min-height:74px;padding:3px}
+ .k-craft-step .kc-positions button small{font-size:9px}
+ .k-craft-step .kc-positions button span{font-size:18px}
+}
+@media(prefers-reduced-motion:reduce){.k-craft-step .kc-art-wrap .kc-spark{animation:none!important}}
