@@ -20,9 +20,9 @@ function harness(overrides={}){
  const normalize=x=>JSON.parse(JSON.stringify(x));
  return {a,api,homes,state,pictures,normalize,get modal(){return modal},get opened(){return opened},get saves(){return saves}};
 }
-test('fresh save has seven actual residents and no invented bloodline links',()=>{
+test('fresh save has eight actual residents including Pip and no invented bloodline links',()=>{
  const f=harness(),g=f.normalize(f.a.graph());
- assert.equal(g.nodes.length,7);assert.equal(g.households.length,7);
+ assert.equal(g.nodes.length,8);assert.equal(g.households.length,7);
  assert.equal(g.edges.filter(e=>e.kind==='marriage'||e.kind==='chosen').length,0);
  assert.equal(g.nodes.find(n=>n.id==='player').home,'player');
  assert.equal(g.edges.filter(e=>e.kind==='household').length,3);
@@ -156,7 +156,7 @@ test('iPhone load order, offline assets, menu and wall interaction are all wired
  const html=read('index.html'),sw=read('sw.js'),game=read('game.js'),css=read('family-atlas-v271.css');
  for(const file of ['family-atlas-v271.js','family-atlas-v271.css']){assert.ok(html.includes(file));assert.ok(sw.includes("'./"+file+"'"))}
  assert.ok(html.indexOf('family-atlas-v271.js')<html.indexOf('game.js'));
- assert.match(html,/v=2\.7\.1/);assert.match(sw,/hearth-harbor-v271-connections-atlas/);
+ assert.match(html,/v=2\.7\.2/);assert.match(sw,/hearth-harbor-v272-little-sprouts/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);assert.match(css,/prefers-reduced-motion/);
  for(const hook of ['window.HearthFamilyAtlas.setup({','familyAtlas.portrait(activeResidence,portraitIndex)','familyPortraits.hit(activeResidence,wx,wy)','familyAtlas.handle(action,id)',"btn('🌳 Connections Atlas','fa271-board')"])assert.ok(game.includes(hook),hook);
  assert.doesNotMatch(game,/fp27-board'\)\}\}/);
