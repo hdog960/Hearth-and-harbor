@@ -67,7 +67,7 @@ test('craft progress has one visible progress indicator with screen reader updat
  assert.match(x.view.markup,/id="kPercent" role="status" aria-live="polite"/);
  assert.doesNotMatch(x.view.markup,/kc-bar/,'duplicate board bar removed');
  const m=C.make('chop','salad');
- assert.match(m.render(),/1 of 4/ .replace('1','0')); // zero slices placed initially
+ assert.match(m.render(),/0 of 4 placed/);
  assert.match(m.render(),/aria-live="polite"/);
 });
 test('selecting a recipe and advancing to its next stage resets modal scroll',()=>{
@@ -114,7 +114,7 @@ test('noninteractive or forged activity selectors are not used for focus restora
  x.focus('cut:0');
  x.kitchen.handle('cook-craft','cut:0"][aria-pressed="true"]');
  assert.equal(x.kitchen.session.progress,0);
- assert.equal(x.view.focusId,null);
+ assert.equal(x.view.focusId,'cut:0','malformed token cannot steer focus away from the original safe control');
  assert.equal(x.saves,1,'the only write is the original ingredient reservation');
 });
 test('short screens and keyboard-only input have reachable, high-contrast visible controls',()=>{
