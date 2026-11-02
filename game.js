@@ -2519,6 +2519,9 @@ const heirlooms=window.HearthHeirlooms.setup({
  getPersonLabel:id=>id==='player'?state.name:NPCS.find(n=>n.id===id)?.name||id,
  getHomeLabel:home=>home==='player'?'Your Cottage':apartmentName(home),
  getDone:id=>residentDayRecord(id).done,
+ getSchedule:(home,id)=>schedules.current(home,id),
+ addSchedule:(home,id,kind)=>schedules.add(home,id,kind),
+ queuePlayerHobby:()=>{if(scene!=='home'||residentDayRecord('player').done.includes('hobby')||householdQueue.length>=3)return false;queueOwnHomeAction('hobby');return true},
  getMemories:home=>{chronicle.collect();return state.householdChronicle.events.filter(e=>e.home===home)},
  isElder:id=>id!=='player'&&lifeSeasons.chapter(id)===2,
  back:()=>scene==='residence'?manageHousehold():scene==='home'?ownDaybook():menu()
