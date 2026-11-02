@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.30 — Shared Scenes
+# Hearth & Harbor v2.5.31 — Personal Corners
+
+**Six different neighbors now have different homes that feel like theirs.** Mabel enjoys a real potted plant, Rosie a comfortable chair, Oliver a rug, Jun a bookcase, Bea fresh flowers, and Finn a lamp. Placing each favorite furnishing in their *current residence* creates a bespoke original in-world décor detail beside the actual furniture and **+2 home comfort per happy resident**, within the existing cap.
+
+Each resident can earn a small, bounded daily happiness/social benefit by **genuinely finishing their favorite routine with that furniture present**; three separate days earn a personal handmade memento that lives alongside the furnishing. The Household Daybook shows each roommate’s wishlist, matched furniture, progress and memory history. Another important fix: **Little Passions Studio hobby completion now correctly counts toward active two-person Storybook Corner projects**.
+
+No additional purchases are required beyond the game's existing furniture options, and no new currency or outside services are introduced. Saves remain compatible under the original `hearth-harbor-save-v1` key. **22 new regression scenarios** bring the suite to an expected **366 tests**. Physical iPhone Safari visual/gesture/VoiceOver QA remains outstanding.
+
+[Read v2.5.31 implementation, test coverage and Generations roadmap](PERSONAL_CORNERS_V2531_QA_AND_ROADMAP.md).
+
+## Previous milestone — Shared Scenes v2.5.30
 
 **Roommate projects now unfold visibly inside the actual residence.** While two residents work through a breakfast, storybook, or evening-lantern project, the game draws their original shared work area, personal contribution markers and **live activity progress following each resident’s real position**. These indicators reflect the existing manual and autonomous activity timers; paused or canceled work cannot pretend to be finished.
 
