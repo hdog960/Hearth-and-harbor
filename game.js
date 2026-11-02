@@ -2483,7 +2483,7 @@ const personalCorners=window.HearthPersonalCorners.setup({
 const chronicle=window.HearthHouseholdChronicle.setup({
  getState:()=>state,save,updateUI,notify,showModal,
  getHomeLabel:home=>apartmentName(home),
- getPersonLabel:id=>id==='player'?state.name:NPCS.find(n=>n.id===id)?.name||id,
+ getPersonLabel:id=>id==='player'?state.name:id==='pip'?'Pip':NPCS.find(n=>n.id===id)?.name||id,
  back:()=>manageHousehold()
 });
 const familyRoots=window.HearthFamilyRoots.setup({
@@ -2511,7 +2511,7 @@ const littleSprouts=window.HearthLittleSprouts.setup({
 const familyAtlas=window.HearthFamilyAtlas.setup({
  getState:()=>state,showModal,
  getResidentHome:id=>residentHome(id),
- getPersonLabel:id=>id==='player'?state.name:NPCS.find(n=>n.id===id)?.name||id,
+ getPersonLabel:id=>id==='player'?state.name:id==='pip'?'Pip':NPCS.find(n=>n.id===id)?.name||id,
  getHomeLabel:home=>home==='player'?'Your Cottage':apartmentName(home),
  getPortraits:home=>familyPortraits.items(home),
  getYoungResident:()=>littleSprouts.status(),
@@ -2554,7 +2554,7 @@ const heirlooms=window.HearthHeirlooms.setup({
  getState:()=>state,save,updateUI,notify,showModal,
  getResidentHome:id=>id==='player'?'player':residentHome(id),
  getHomeMembers:home=>home==='player'?['player']:NPCS.filter(n=>residentHome(n.id)===home).map(n=>n.id),
- getPersonLabel:id=>id==='player'?state.name:NPCS.find(n=>n.id===id)?.name||id,
+ getPersonLabel:id=>id==='player'?state.name:id==='pip'?'Pip':NPCS.find(n=>n.id===id)?.name||id,
  getHomeLabel:home=>home==='player'?'Your Cottage':apartmentName(home),
  getDone:id=>residentDayRecord(id).done,
  getSchedule:(home,id)=>schedules.current(home,id),
