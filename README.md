@@ -1,4 +1,10 @@
-# Hearth & Harbor v2.6.0 — Village Memory Walk
+# Hearth & Harbor v2.7.0 — Our Family Portraits
+
+**Generations Prelude, first playable slice:** Real married or voluntarily chosen-family residents living together can make one of three illustrated household portraits. Both must genuinely complete their own read, chat, or hobby activity through existing household routines; queuing or choosing does not instantly grant a keepsake. The resulting shared portrait is drawn inside the actual residence, saves its original family and day, and gives a modest +2 comfort (up to two per home). Moves or later family separation never erase an earned memory. Older saves and offline iPhone play remain compatible. No children, fake family relationships or full multigeneration system are claimed.
+
+[Read the v2.7 implementation, QA and next Generations steps](FAMILY_PORTRAITS_V270_QA_AND_GENERATIONS_HANDOFF.md).
+
+## Previous release — v2.6.0 Village Memory Walk
 
 **Maplewood itself can now remember your life in the village.** The new **🌿 Village Memory Walk** connects previously completed public works to authentic stories from the Household Chronicle. Restore the Blossom Promenade, Lantern Plaza and Rosie's Orchard Cart, and earn matching real home traditions, roommate projects or shared suppers. Then travel to each spot in the playable 2.5D town to install an original illustrated public memorial. Merely selecting a story or opening a menu cannot install it.
 
