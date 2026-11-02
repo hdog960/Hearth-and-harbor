@@ -29,7 +29,7 @@ const clamp=x=>Math.max(0,Math.min(100,Number.isFinite(x)?x:0));
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const defaults=()=>({guardian:null,guardianDay:0,needs:{joy:62,curiosity:55,confidence:50},daily:{day:0,done:[]},days:[],memories:[]});
 function clean(raw){
- const src=obj(raw)?raw:{},d=defaults(),needs=obj(src.needs),daily=obj(src.daily),memories=[],days=[];
+ const src=obj(raw)?raw:{},d=defaults(),needs=obj(src.needs)?src.needs:{},daily=obj(src.daily)?src.daily:{},memories=[],days=[];
  const guardian=src.guardian==='player'&&validDay(src.guardianDay)?'player':null;
  const guardianDay=guardian?src.guardianDay:0;
  const verifiedDays=Array.isArray(src.days)?src.days.filter(validDay).sort((a,b)=>a-b):[];
@@ -128,7 +128,7 @@ function setup(api){
   for(const key of Object.keys(d.needs))d.needs[key]=Math.max(20,Math.round((d.needs[key]-decay)*100)/100);
  }
  function draw(g,{scene,tick=0,drawSprite}={}){
-  if(!g||!drawSprite||(scene!=='town'&&scene!=='home')||!inPlace())return;
+  if(!g||!drawSprite||(scene!=='town'&&scene!=='home')||scene!==api.getScene?.()||!inPlace())return;
   const pos=position(),phase=Math.sin(tick*2.5)*1.5;
   drawSprite(CHILD,pos.x,pos.y+phase);
   if(scene==='town'||scene==='home'){
@@ -152,7 +152,7 @@ function setup(api){
   if(action==='ls272-close'){session=null;return api.closeModal?.()}
   return false;
  }
- return {status,data,position,entry,begin,choose,page,guardian,canBegin,hit,draw,handle,tick,get session(){return session},CHILD,ACTIONS};
+ return {status,position,entry,begin,choose,page,guardian,canBegin,hit,draw,handle,tick,get data(){return data()},get session(){return session},CHILD,ACTIONS};
 }
 root.HearthLittleSprouts={setup,clean,defaults,CHILD,ACTIONS};
 })(window);
