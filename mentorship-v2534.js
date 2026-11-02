@@ -113,7 +113,7 @@ function setup(api){
  // same-day stage and real household residency. All bonuses happen here.
  function completed(home,id,action,first=true,day=state().day){
   if(!first||!dayOK(day)||day!==state().day||!HOMES.includes(home)||
-   !IDS.includes(id)||!own(LESSONS,action))return false;
+   !IDS.includes(id)||!own(LESSONS,action)||!members(home).includes(id))return false;
   const data=db(),earned=skill(id,action);
   let benefit=0;
   // Learned confidence works on later days, never the day of its own lesson.
