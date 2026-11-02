@@ -157,7 +157,7 @@ test('all three distinct commissions may be finished once on the same day, no du
  assert.equal(t.trades.total,3);
  assert.equal(t.state.coins,250+22+37+16);
  assert.equal(t.saved,3);
- assert.deepEqual(Array.from(t.trades.data.daily['1']),T.IDS);
+ assert.deepEqual(Array.from(t.trades.data.daily['1']),Array.from(T.IDS));
 });
 test('changing real inventory mid-work prevents delivery and forfeits no extra resources',()=>{
  const t=harness();t.trades.start('oliver:0');t.state.cooking.dishes.splice(0,1);
