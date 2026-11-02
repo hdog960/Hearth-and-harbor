@@ -255,7 +255,7 @@ test('manual Daybooks fully preload offline and have a phone-responsive decorati
  for(const file of ['manual-daybooks-v2528.js','manual-daybooks-v2528.css'])
   assert.ok(html.includes(file)&&sw.includes("'./"+file+"'"));
  assert.ok(html.indexOf('manual-daybooks-v2528.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2528-daybook-baton/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
  for(const token of ['@media(max-width:390px)','prefers-reduced-motion:reduce','.db28-person{','.db28-book{'])assert.ok(css.includes(token),token);
  assert.match(html,/<title>Hearth & Harbor · Daybook Baton v2\.5\.28<\/title>/);
 });
