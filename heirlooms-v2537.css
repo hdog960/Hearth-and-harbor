@@ -1,0 +1,38 @@
+/* Hearth & Harbor v2.5.37 — handmade family heirloom cabinet, touch-first */
+.hl37-book{color:#536e5c;padding:2px 0 14px}
+.hl37-book h2{font-size:clamp(22px,5.6vw,30px)!important;margin:5px 0;color:#4e725a}
+.hl37-book h3,.hl37-book h4{font-size:14px!important;margin:11px 0 6px;color:#557861}
+.hl37-book p{font-size:12px;color:#738271;line-height:1.53}
+.hl37-cover{padding:17px;position:relative;overflow:hidden;background:radial-gradient(circle at 90% 1%,#e6c2d0,transparent 48%),linear-gradient(135deg,#e4f0dd,#f8e4c6);border:3px solid #fff3de;border-bottom:5px solid #c49f7d;border-radius:20px}
+.hl37-cover:after{position:absolute;content:'❦';font-size:127px;right:1px;bottom:-68px;opacity:.18;color:#7b9b7d;pointer-events:none}
+.hl37-cover small{font-size:10px;color:#ad8467;font-weight:900;letter-spacing:.12em}
+.hl37-cover b{display:inline-block;margin-top:9px;padding:7px 10px;background:#fff7e6;border-radius:10px;color:#739071;font-size:11px}
+.hl37-book button{padding:9px 10px;min-height:47px;border:2px solid #dfc5a6;border-bottom:4px solid #b69a7f;border-radius:12px;background:#fff3de;color:#6a755e;font-size:11px;line-height:1.35;font-weight:800;touch-action:manipulation;cursor:pointer}
+.hl37-book button:disabled{opacity:.46;cursor:default}
+.hl37-book button:focus-visible{outline:3px solid #285968;outline-offset:3px}
+.hl37-tabs{display:flex;gap:6px;overflow-x:auto;padding:11px 0;overscroll-behavior-x:contain;scrollbar-width:thin}
+.hl37-tabs button{flex:0 0 auto;white-space:nowrap}
+.hl37-tabs button[aria-pressed=true]{background:#d8e9d8;color:#4e735c;border-color:#94b899}
+.hl37-items{display:grid;gap:10px}
+.hl37-item{display:flex;gap:10px;align-items:flex-start;min-width:0;padding:11px;background:linear-gradient(135deg,#fff8e9,#f0e8d7);border:2px solid #e1cab0;border-bottom:5px solid #c6a58a;border-radius:15px}
+.hl37-stamp{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border:3px solid #ffefd5;border-radius:12px;background:#c3d8ba;color:#fff9eb;font-size:25px}
+.hl37-item-body{min-width:0;flex:1}
+.hl37-item-body>b{font-size:13px;color:#56755c}
+.hl37-item-body p{font-size:11px;margin:5px 0 8px}
+.hl37-recips{display:grid;grid-template-columns:1fr;gap:5px}
+.hl37-recips button{background:#e4eedc;border-color:#a9c5a8;border-bottom-color:#86a78b}
+.hl37-active{padding:13px;background:#e4eede;border:2px solid #acc6a9;border-radius:13px}
+.hl37-catalog{display:grid;gap:9px}
+.hl37-catalog article{padding:10px;border:2px solid #e4d0b5;border-radius:13px;background:#fff9e9}
+.hl37-catalog article>b{font-size:12px;display:block;color:#637b63}
+.hl37-catalog article>small{display:block;font-size:10px;color:#ab8e72;margin:3px 0 9px}
+.hl37-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.hl37-choices button{font-size:10px;background:#e4efd8;border-color:#a7bfa1;min-width:0}
+.hl37-history{margin:12px 0;padding:12px;border:1px solid #e0cdb0;background:#f8f0de;border-radius:13px}
+.hl37-history ul{list-style:none;margin:0;padding:0}
+.hl37-history li{padding:6px 0;border-top:1px solid #e7d8bd;font-size:11px;color:#758475}
+.hl37-note{margin:12px 0!important;padding:11px;border-left:4px solid #a4bfa9;border-radius:10px;background:#eaf1e3;font-size:10px!important}
+.hl37-back{display:block;width:100%;margin-top:12px}
+@media(min-width:680px){.hl37-items,.hl37-catalog{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:390px){.hl37-cover{padding:11px}.hl37-item{padding:8px;gap:7px}.hl37-stamp{width:35px;height:35px;flex-basis:35px;font-size:20px}.hl37-choices{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.hl37-book *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
