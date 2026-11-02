@@ -1,0 +1,39 @@
+/* Hearth & Harbor v2.5.29 — Together At Home, hand-painted household book */
+.rm29-ui{color:#506d5c;line-height:1.45;padding:2px 1px 12px}
+.rm29-ui h2{font-size:clamp(22px,5.6vw,29px)!important;color:#416851;line-height:1.14;margin:8px 0}
+.rm29-ui h3{font-size:15px;color:#54735b;margin:4px 0}
+.rm29-ui p{font-size:12px;line-height:1.55;color:#6d826b;margin:6px 0}
+.rm29-cover{position:relative;overflow:hidden;background:radial-gradient(circle at 94% 6%,#eec0c6 0,transparent 48%),linear-gradient(136deg,#e6f0d9,#f8e4c9);border-radius:20px;border:3px solid #fff5db;border-bottom:5px solid #cea982;padding:16px}
+.rm29-cover:before{content:'✿';position:absolute;bottom:-41px;right:-2px;font-size:111px;line-height:1;color:#d7aeb4;opacity:.23;pointer-events:none}
+.rm29-cover>small{font-size:10px;letter-spacing:.1em;font-weight:900;color:#a37a54}
+.rm29-cover p{position:relative}
+.rm29-summary{display:inline-block;background:#fff9e8;border:1px solid #ddc49e;border-radius:11px;padding:7px 10px;font-size:11px;color:#657e63;font-weight:900}
+.rm29-intro{margin:13px 0!important;font-weight:850;color:#6e8b70!important}
+.rm29-grid{display:grid;grid-template-columns:1fr;gap:11px}
+.rm29-card{background:linear-gradient(140deg,#fff8e7,#f1ecd9);border:2px solid #dfc7a6;border-bottom:5px solid #c8a98a;border-radius:17px;padding:12px}
+.rm29-card.rm29-selected{border-color:#95ba9c;background:linear-gradient(130deg,#f0f5e5,#e5efdb)}
+.rm29-head{display:flex;align-items:center;gap:11px}
+.rm29-head>span{display:grid;place-items:center;background:#f2dac0;flex:0 0 50px;height:50px;border-radius:15px;font-size:27px;border:2px solid #fff5e5}
+.rm29-head small{font-size:10px;color:#9c825f;font-weight:850}
+.rm29-steps{display:grid;gap:6px;margin:10px 0}
+.rm29-step{padding:9px 10px;display:grid;grid-template-columns:1fr 1fr;gap:2px 7px;align-items:center;background:#fff9eb;border:1px solid #dbc9a9;border-radius:11px}
+.rm29-step.rm29-done{background:#e3efd7;border-color:#9eb892}
+.rm29-step b{font-size:12px;color:#53795b}
+.rm29-step>span{font-size:11px;color:#7e7058;text-align:right}
+.rm29-step small{font-size:10px;grid-column:span 2;color:#8d9277}
+.rm29-progress{font-size:11px;color:#607b66;font-weight:900;margin:8px 0}
+.rm29-ui button{display:block;min-height:48px;border-radius:11px;border:2px solid #e7d0a7;border-bottom:4px solid #c6a080;background:#f8eed8;color:#79654a;font-size:12px;font-weight:900;padding:9px 10px;width:100%;touch-action:manipulation}
+.rm29-ui button:focus-visible{outline:3px solid #274e63;outline-offset:3px}
+.rm29-ui button:disabled{opacity:.58}
+.rm29-buttons{display:grid;gap:6px;margin-top:11px}
+.rm29-selected .rm29-buttons button{background:#dcebd3;border-color:#a5c4a3}
+.rm29-ui .rm29-auto{margin-top:13px;background:#538f71;color:#fffaf0;border-color:#eaf4d8;border-bottom-color:#377154}
+.rm29-ui .rm29-back{margin-top:13px;background:#f7ebd2}
+.rm29-note{font-size:11px!important;color:#7b8875!important;margin:9px 0!important}
+.rm29-history{background:#f5f0df;border:1px solid #ded3ba;border-radius:13px;padding:11px 12px;margin-top:13px}
+.rm29-history ul{list-style:none;padding:0;margin:6px 0}
+.rm29-history li{font-size:11px;padding:5px 0;border-bottom:1px solid #e8ddc9;color:#6e7a63}
+.rm29-history li:last-child{border:0}
+@media(min-width:730px){.rm29-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:390px){.rm29-cover{padding:12px}.rm29-card{padding:10px}.rm29-head>span{flex-basis:43px;height:43px;font-size:24px}.rm29-step{grid-template-columns:1fr}.rm29-step>span{text-align:left}.rm29-step small{grid-column:auto}}
+@media(prefers-reduced-motion:reduce){.rm29-ui *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
