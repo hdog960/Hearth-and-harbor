@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.32 — The Household Chronicle
+# Hearth & Harbor v2.5.33 — Family Roots
+
+**Family Roots brings genuinely different connections into the same household record:** real existing marriages, actual co-residents, and optional non-romantic chosen-family bonds earned through meaningful shared activities. Each home’s residents appear in a new warm, mobile-friendly family book, alongside the marriage and promise history. A couple's wedding is never invented or replaced by a generic roommate tag, and moving houses doesn't erase a genuine connection.
+
+**Chosen family** is available when two current housemates have completed at least two actual shared projects on separate days, built a minimum friendship bond and eased any serious tension. The promise itself is free and grants no rewards. Afterwards, a genuine once-daily completed conversation between co-residents can restore a modest amount of Social, build trust and gently ease tension. A pair-of-leaves keepsake appears directly in the actual residence scene, and the relationship can later be ended—even after a house move—without deleting memories.
+
+Saves keep the existing `hearth-harbor-save-v1` key; original weddings and all existing gameplay stay authoritative. The new relationship link record is sanitized on import. **27 new regression checks** bring the intended suite to **417**, including old saves, wedding precedence, moving, voluntary reversal and reward limits. A physical iPhone Safari visual, touch and VoiceOver review is still outstanding.
+
+[Read v2.5.33 implementation, QA and future Generations roadmap](FAMILY_ROOTS_V2533_QA_AND_ROADMAP.md).
+
+## Previous milestone — The Household Chronicle v2.5.32
 
 **Every home can now remember its own story.** The new **📖 Household Chronicle** pulls genuine previously earned milestones from your existing save—roommate moves, completed two-person projects, family suppers, full three-part traditions, and personal keepsakes—into a single warm, dated household journal. It tracks **Poppy’s cottage and all six residences separately** and preserves memories even if neighbors move elsewhere.
 
