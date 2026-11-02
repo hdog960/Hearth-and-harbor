@@ -115,7 +115,7 @@ test('art loads before craft state machine and is included in every offline cach
  const art='kitchen-worktop-art-v2522.js',craft='kitchen-craft-v2519.js',core='kitchen.js';
  assert.ok(html.includes(art)&&sw.includes("'./"+art+"'"));
  assert.ok(html.indexOf(art)<html.indexOf(craft)&&html.indexOf(craft)<html.indexOf(core));
- assert.match(sw,/hearth-harbor-v2522-living-worktops/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
 });
 test('responsive illustration remains decorative; controls stay large and reduced motion works',()=>{
  const css=read('kitchen-craft-v2519.css');

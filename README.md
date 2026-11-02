@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.22 — Living Worktops
+# Hearth & Harbor v2.5.23 — Little Trades & Kindness
+
+**Maplewood's shops now offer meaningful daily work tied to actual village life.** The newly illustrated Village Trades board sits on the lane near Rosie's market, and Village Trades is also accessible from Menu, Journal, Town Hall, or by talking to Rosie, Oliver and Bea. Choose a real commission, walk to the shop and complete a differentiated, touch-friendly task. Rosie's market packs two actual Hearth Kitchen pantry ingredients into a delivery; Oliver wraps and delivers one real saved cooked dish with quality-based pay; Bea helps you paint a seasonal welcome card with a small materials fee. All three have tactile illustrated worktops with changing artwork, gentle wrong-choice retries and clear results.
+
+**The game remembers your work:** distinct once-per-in-game-day rewards, permanent totals, a village work journal, friendship and modest needs recovery, and a hand-painted sign ribbon after three completed commissions with a shopkeeper. No account, paid infrastructure or extra currency. Your existing saved kitchens, 12 recipes, prepared dishes, residents, social histories, decorating and festivals carry forward under the same `hearth-harbor-save-v1` key; the new optional trade record is validated on import. Trading does not mint cooking XP or duplicate dishes. Resources are only consumed when a real job finishes.
+
+**QA:** 21 additional automated checks cover actual pantry/dish transactions, no duplicate daily rewards, cancel safety, bad imported saves, seasonal rotation, physical travel, small iPhone controls and offline assets. The release aims for **189 automated tests** in the GitHub QA workflow. A physical iPhone Safari screenshot/touch and VoiceOver check remains outstanding.
+
+[Read the v2.5.23 development and Generations notes](VILLAGE_TRADES_V2523_QA_AND_ROADMAP.md).
+
+## Previous milestone — Living Worktops v2.5.22
 
 **Hearth Kitchen now shows the food changing as you cook it.** Six existing touch-first cooking techniques have new hand-authored SVG worktop illustrations that evolve on real successful actions: sliced produce appears on the chopping board; each seasoning sits on the recipe's illustrated plate; skewers visibly fill with their actual vegetables; pastry pockets reveal the chosen berry, honey or garden filling; biscuits carry different stamped shapes; and dishes acquire the garnishes the player actually places. Choosing an ingredient previews it softly on the next position, while a wrong placement never paints a success. These images are original SVG artwork, not OS emoji used as food art.
 
