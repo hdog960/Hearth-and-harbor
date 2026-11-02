@@ -140,6 +140,16 @@ function setup(api){
   if(action==='fp27-cancel')return cancel(id);
   return false;
  }
+ // A picture is an actual wall object: the world tap opens its authentic record.
+ function hit(home,x,y){
+  const pictures=items(home);
+  if(!Number.isFinite(x)||!Number.isFinite(y))return -1;
+  for(let i=0;i<pictures.length;i++){
+   const cx=i?698:459;
+   if(x>=cx-64&&x<=cx+64&&y>=311&&y<=405)return i;
+  }
+  return -1;
+ }
  function draw(g,home){
   const pictures=items(home);if(!pictures.length)return;
   pictures.forEach((p,i)=>{
@@ -152,7 +162,7 @@ function setup(api){
    g.fillStyle='#e3bd80';g.beginPath();g.arc(0,-7,5,0,Math.PI*2);g.fill();g.fillStyle='#523f35';g.font='bold 10px system-ui';g.textAlign='center';g.fillText('DAY '+p.day,0,12);g.restore();
   });
  }
- return {clean,begin,cancel,queue,completed,session,relation,canBegin,board,handle,items,comfort,draw,get data(){return data()},THEMES};
+ return {clean,begin,cancel,queue,completed,session,relation,canBegin,board,handle,items,comfort,draw,hit,get data(){return data()},THEMES};
 }
 root.HearthFamilyPortraits={setup,clean,IDS,HOMES,THEMES};
 })(window);

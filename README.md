@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.7.0 — Our Family Portraits
+# Hearth & Harbor v2.7.1 — Our Connections Atlas
+
+**The first reliable family graph is playable.** The new illustrated Connections Atlas connects each of Maplewood's seven actual residents and seven households to only those marriages, chosen-family promises, living arrangements, moves and family portraits that the original game has truly recorded. Living together is never mislabeled as marriage or ancestry. Tap any earned Family Portrait on the playable house wall to read its history, explore the two people and visit their authentic family album. The Atlas grants no coins, children, guardians, fake memories or passive bonuses. It works offline on iPhone and preserves the original save key.
+
+The existing Family Portraits feature remains fully functional. The update also removes duplicate family menu entries and a stray visual brace from v2.7.0.
+
+[Read the v2.7.1 technical QA and Generations handoff](CONNECTIONS_ATLAS_V271_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.7.0 Our Family Portraits
 
 **Generations Prelude, first playable slice:** Real married or voluntarily chosen-family residents living together can make one of three illustrated household portraits. Both must genuinely complete their own read, chat, or hobby activity through existing household routines; queuing or choosing does not instantly grant a keepsake. The resulting shared portrait is drawn inside the actual residence, saves its original family and day, and gives a modest +2 comfort (up to two per home). Moves or later family separation never erase an earned memory. Older saves and offline iPhone play remain compatible. No children, fake family relationships or full multigeneration system are claimed.
 
