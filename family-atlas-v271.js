@@ -91,7 +91,7 @@ function setup(api){
  function home(id){
   if(!HOMES.includes(id))return overview();
   const g=graph(),member=residents(id),connections=g.edges.filter(e=>e.ids.some(x=>member.includes(x)));
-  api.showModal?.('family-atlas','<section class="fa271-book"><div class="fa271-cover"><small>ONE HOUSE, MANY STORIES</small><h2>🏡 '+esc(homeName(id))+'</h2><p>Current occupants are facts about housing, not proof of a family relationship.</p></div><h3>Residents</h3><div class="fa271-people">'+member.map(personButton).join('')+'</div><h3>Real links</h3><div class="fa271-links">'+(connections.length?connections.map(familyLink).join(''):'<p>Nothing to label as family yet.</p>')+'</div><h3>Memories attached to this home</h3><ol class="fa271-timeline">'+timeline(null,id)+'</ol>'+(id!=='player'?action('fa271-album',id,'🖼️ View portraits in this home'):'')+action('fa271-board','','← All connections')+'</section>');
+  api.showModal?.('family-atlas','<section class="fa271-book"><div class="fa271-cover"><small>ONE HOUSE, MANY STORIES</small><h2>🏡 '+esc(homeName(id))+'</h2><p>Current occupants are facts about housing, not proof of a family relationship.</p></div><h3>Current occupants</h3><div class="fa271-people">'+member.map(personButton).join('')+'</div><h3>Real links</h3><div class="fa271-links">'+(connections.length?connections.map(familyLink).join(''):'<p>Nothing to label as family yet.</p>')+'</div><h3>Memories attached to this home</h3><ol class="fa271-timeline">'+timeline(null,id)+'</ol>'+(id!=='player'?action('fa271-album',id,'🖼️ View portraits in this home'):'')+action('fa271-board','','← All connections')+'</section>');
  }
  function pairPage(key){
   if(!pairOK(key))return overview();
