@@ -33,7 +33,7 @@ function setup(api){
    if(c.status==='active'&&!couples.has(key))edges.push({key,ids:key.split('|'),kind:'chosen',day:c.day,active:true});
   }
   const youth=api.getYoungResident?.();
-  if(youth?.guardian==='player'&&validDay(youth.guardianDay)&&youth.guardianDay<=now)
+  if(youth?.guardian==='player'&&dayOK(youth.guardianDay)&&youth.guardianDay<=now)
    edges.push({key:'pip|player',ids:['player','pip'],kind:'guardian',day:youth.guardianDay,active:true});
   // Co-residents form a separate informational edge, never a kinship edge.
   for(const home of HOMES.slice(1)){
