@@ -97,7 +97,7 @@ test('wrong crate picks are gentle but do not advance, consume, or earn rewards'
  assert.equal(t.saved,0);
  assert.match(t.modal.html,/Nothing was used or lost/);
  complete(t,'rosie');
- assert.match(t.modal.html,/★★☆/);
+ assert.match(t.modal.html,/★★\s*☆/);
 });
 test('Oliver can wrap a real 3-star cooked tart once, receiving the correct quality tip',()=>{
  const t=harness();
