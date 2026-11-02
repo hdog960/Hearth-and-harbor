@@ -2558,7 +2558,8 @@ const hobbyStudio=window.HearthHobbyStudio.setup({
    householdRoles.complete(activeResidence,id,'hobby',true,state.day);
    roommateProjects.recordAction(activeResidence,id,'hobby',true,state.day);
    personalCorners.recordAction(activeResidence,id,'hobby',true,state.day);
-   mentorship.completed(activeResidence,id,'hobby',true,state.day);
+   const studioLesson=mentorship.completed(activeResidence,id,'hobby',true,state.day);
+   if(studioLesson?.stage==='finished'){const currentLesson=mentorship.current(activeResidence);if(currentLesson)lifeSeasons.wisdom(activeResidence,currentLesson.mentor,currentLesson.learner,true,state.day)}
    chronicle.collect();
   functionalHomes.reward(id,activeResidence,'hobby',needs,true,state.day);
   state.needs.social=clamp((state.needs.social||0)+1,0,100);
