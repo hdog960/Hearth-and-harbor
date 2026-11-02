@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.5.29 — Together at Home
+# Hearth & Harbor v2.5.30 — Shared Scenes
+
+**Roommate projects now unfold visibly inside the actual residence.** While two residents work through a breakfast, storybook, or evening-lantern project, the game draws their original shared work area, personal contribution markers and **live activity progress following each resident’s real position**. These indicators reflect the existing manual and autonomous activity timers; paused or canceled work cannot pretend to be finished.
+
+The improvement is in the playable Canvas2D game itself, not a promotional mockup. It does not alter rewards or saves, and the three earned wall-shelf keepsakes from v2.5.29 remain intact. **16 new regression cases**, target total **344**. Physical iPhone Safari visual/touch tests remain outstanding.
+
+[Read v2.5.30 implementation and quality notes](SHARED_SCENES_V2530_QA_AND_ROADMAP.md).
+
+## Previous milestone — Together at Home v2.5.29
 
 **Roommates now have projects that truly require both people.** Open an occupied two-resident home’s Daybook and choose **💗 Together at Home · Roommate Projects**. Pick one of three cooperative household stories: **A Breakfast Worth Sharing** (real meal + real tidy), **The Storybook Corner** (read + hobby), or **The Evening Lantern** (chat + meal). Each part must actually finish in the right home, completed by a different resident, on the same in-game day. You can guide residents manually or use **Add these tasks to both residents’ independent plans**, which prechecks both schedules without replacing existing work.
 
