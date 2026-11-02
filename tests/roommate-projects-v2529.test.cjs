@@ -138,7 +138,7 @@ test('swapping responsibilities resets partial progress, but keeps earned keepsa
  assert.equal(h.work.recordAction('h0','rosie','meal').stage,1);
  assert.equal(h.work.recordAction('h0','mabel','tidy').stage,2);
 });
-test('choosing a different project resets today's partial progress without changing previous history',()=>{
+test('choosing a different project resets the current day partial progress without changing previous history',()=>{
  const h=fixture(),p=project(h);h.work.recordAction('h0',p.pair[0],'meal');
  assert.equal(h.work.arm('h0','story'),true);
  assert.equal(h.work.pending('h0').done.length,0);
