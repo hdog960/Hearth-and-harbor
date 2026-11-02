@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.19 — Kitchen Craft
+# Hearth & Harbor v2.5.20 — Kitchen Polish
+
+**Hearth Kitchen is now easier to play on a small iPhone screen.** The six interactive cooking worktops introduced in v2.5.19 now share a more compact, cohesive interface with the game's existing original food illustrations. Previously, a large decorative cooking panel sat above each new worktop and pushed the actual controls further down the screen; the new design retains the artwork in a slim illustrated header and makes the tactile board the main attraction.
+
+**Practical improvements:** better responsive spacing and bigger usable touch targets; one meaningful preparation-progress indicator instead of two redundant bars; readable counts such as “2 of 3 placed”; clear feedback for each ingredient selection; keyboard/VoiceOver focus preserved after valid or mistaken taps; scrolling reset to the start of every new recipe step; and safe cleanup of the current worktop when cooking is canceled or dismissed. Reduced-motion support remains in place. The original twelve recipes, ingredients, cooking XP, saved dishes and household-meal connections have not changed.
+
+The game remains iPhone-browser-first, free, and save-compatible with the existing local save. **150 of 150 automated tests pass**, including eleven new regression checks for scrolling, craft UI composition, accessible focus, progress, closing mid-cook and offline content. A real rendered iPhone Safari visual and touch audit is still outstanding and should not be assumed from unit tests.
+
+[Read the v2.5.20 QA and Generations roadmap](KITCHEN_POLISH_V2520_QA_AND_ROADMAP.md).
+
+## Previous milestone — Kitchen Craft v2.5.19
 
 **Hearth Kitchen just got more hands-on.** The original twelve recipes now include six redesigned cooking techniques that actually play differently instead of depending on generic "tap until done" controls. Your new touch-friendly worktops let you:
 
