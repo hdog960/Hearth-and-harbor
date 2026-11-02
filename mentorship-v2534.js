@@ -78,6 +78,7 @@ function setup(api){
   if(!dayOK(state().day)||people.length!==2||!people.includes(mentor)||!own(LESSONS,lesson))return {ok:false,reason:'This lesson needs two current housemates.'};
   const learner=people.find(id=>id!==mentor);
   if(db().sessions[home]?.day===state().day&&db().sessions[home]?.stage==='finished')return {ok:false,reason:'This home already completed a lesson today.'};
+  if(current(home)?.stage==='learner')return {ok:false,reason:'Finish the learner’s practice or cancel this unfinished lesson first.'};
   if(db().practiceDay[learner]===state().day)return {ok:false,reason:'This learner already completed their daily practice.'};
   const used=api.getDone?.(mentor)||[],practiced=api.getDone?.(learner)||[];
   if(used.includes(lesson)||practiced.includes(lesson))return {ok:false,reason:'One person already finished this activity today. Try another skill or a new day.'};
@@ -88,6 +89,12 @@ function setup(api){
   db().sessions[home]={day:state().day,mentor,learner:check.learner,lesson,stage:'mentor'};
   api.save?.();api.updateUI?.();
   api.notify?.(label(mentor)+' will demonstrate '+LESSONS[lesson].title.toLowerCase()+'. Their housemate will practice after the lesson.');
+  return true;
+ }
+ function cancel(home){
+  const s=current(home);if(!s||s.stage==='finished')return false;
+  delete db().sessions[home];api.save?.();api.updateUI?.();
+  api.notify?.('The unfinished lesson was set aside. Earned skills and memories are unchanged.');
   return true;
  }
  function queue(home){
@@ -156,7 +163,7 @@ function setup(api){
     s.stage==='learner'?label(s.mentor)+' finished teaching. Now '+label(s.learner)+' needs to practice.':
      '✓ '+label(s.mentor)+' and '+label(s.learner)+' completed the lesson today.')+
    '</p><div class="mt34-steps"><span class="'+(s.stage!=='mentor'?'done':'')+'">1 · '+label(s.mentor)+' demonstrates</span><span class="'+(s.stage==='finished'?'done':'')+'">2 · '+label(s.learner)+' practices</span></div>'+
-   (s.stage==='finished'?'':'<button data-act="mt34-queue" data-id="'+home+'">🗓️ Add the next real activity to its resident’s schedule</button>')+'</section>':'';
+   (s.stage==='finished'?'':'<button data-act="mt34-queue" data-id="'+home+'">🗓️ Add the next real activity to its resident’s schedule</button><button data-act="mt34-cancel" data-id="'+home+'">Set aside this unfinished lesson</button>')+'</section>':'';
   const cardsFor=IDS.map(id=>{
    const learned=db().skills[id],detail=learned&&Object.entries(learned).filter(([key,v])=>own(LESSONS,key)&&v.count>0);
    if(!detail?.length)return '';
@@ -182,6 +189,7 @@ function setup(api){
    return board(p[0]||home);
   }
   if(action==='mt34-queue'){if(!queue(id))api.notify?.('That resident already finished the activity or has a full independent schedule. Try guiding them manually or clear a slot.');return board(id)}
+  if(action==='mt34-cancel'){cancel(id);return board(id)}
   if(action==='mt34-back')return api.back?.();
   if(action==='mt34-board')return board(HOMES.includes(id)?id:home);
   return false;
@@ -212,7 +220,7 @@ function setup(api){
   }
   g.restore();
  }
- return {clean,current,begin,queue,completed,board,handle,skill,levels,draw,canStart,get data(){return db()}};
+ return {clean,current,begin,cancel,queue,completed,board,handle,skill,levels,draw,canStart,get data(){return db()}};
 }
 root.HearthMentorship={setup,clean,LESSONS,IDS,HOMES};
 })(window);
