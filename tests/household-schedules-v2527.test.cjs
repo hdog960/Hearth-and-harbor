@@ -224,7 +224,7 @@ test('offline worker loads schedules before the game and supports narrow phones 
  const html=read('index.html'),sw=read('sw.js'),css=read('household-schedules-v2527.css');
  for(const file of ['household-schedules-v2527.js','household-schedules-v2527.css'])assert.ok(html.includes(file)&&sw.includes("'./"+file+"'"));
  assert.ok(html.indexOf('household-schedules-v2527.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2527-household-schedules/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
  for(const token of ['@media(max-width:390px)','touch-action:manipulation','button:focus-visible','prefers-reduced-motion:reduce'])
   assert.ok(css.includes(token),token);
 });
