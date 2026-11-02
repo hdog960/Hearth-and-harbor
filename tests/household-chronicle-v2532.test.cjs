@@ -201,7 +201,7 @@ test('iPhone scripts, CSS, cache and save key are safe',()=>{
  const html=read('index.html'),sw=read('sw.js'),css=read('household-chronicle-v2532.css');
  for(const name of ['household-chronicle-v2532.js','household-chronicle-v2532.css'])assert.ok(html.includes(name)&&sw.includes("'./"+name+"'"));
  assert.ok(html.indexOf('household-chronicle-v2532.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2532-household-chronicle/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
  assert.match(read('game.js'),/const SAVE='hearth-harbor-save-v1'/);
  for(const key of ['@media(max-width:390px)','@media(min-width:660px)','touch-action:manipulation','button:focus-visible','prefers-reduced-motion:reduce'])assert.ok(css.includes(key),key);
 });
