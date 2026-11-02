@@ -1,4 +1,16 @@
-# Hearth & Harbor v2.5.37 — The Heirloom Cabinet
+# Hearth & Harbor v2.6.0 — Village Memory Walk
+
+**Maplewood itself can now remember your life in the village.** The new **🌿 Village Memory Walk** connects previously completed public works to authentic stories from the Household Chronicle. Restore the Blossom Promenade, Lantern Plaza and Rosie's Orchard Cart, and earn matching real home traditions, roommate projects or shared suppers. Then travel to each spot in the playable 2.5D town to install an original illustrated public memorial. Merely selecting a story or opening a menu cannot install it.
+
+Each of the **three distinct, tappable, season-aware public exhibits** becomes a permanent feature of the village, preserving the real home and original day of the event. Visiting an installed place on foot gives a small, once-daily **+4 Fun and +2 Social**, without coins, items, paywalls, passive rewards or repeats. Once all three sites are installed, an original flower-decorated **Village Story Tree** becomes visible and there is one final small celebration.
+
+The release preserves the original `hearth-harbor-save-v1` key; old saves retain their existing homes, Chronicle, town projects and heirlooms. The new data is strictly sanitized and cached for iPhone browser offline play. **35 new regression checks** target **589 full-suite tests**. A physical iPhone Safari screenshot/touch/VoiceOver and long-session QA pass remains outstanding.
+
+**This is the requested v2.6 checkpoint. Stop development here** until we decide how to proceed toward v3.0 Generations.
+
+[Read the v2.6 technical QA and v3.0 planning handoff](V26_MEMORY_WALK_QA_AND_30_HANDOFF.md).
+
+## Previous milestone — v2.5.37 Heirloom Cabinet
 
 **Your household's actual memories can now become real possessions that travel between homes.** The new **✦ Heirloom Cabinet** lets you choose an already completed Chronicle event—a home move, roommate collaboration, supper, tradition or personal nook—and have an actual resident (or Poppy) **finish a real Hobby activity** to make its commemorative object. A button can queue that hobby into the maker's existing independent Daybook or Poppy's own cottage routine without granting an instant reward.
 
