@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.20 — Kitchen Polish
+# Hearth & Harbor v2.5.21 — Kitchen Moments
+
+**Cooking now tells a more satisfying, truthful story.** After finishing each preparation technique, the next worktop briefly celebrates what you actually achieved and shows a compact one-to-three-star technique assessment. When a dish is plated, a new **Your little kitchen moments** journal reviews every technique in the recipe with its own outcome, not a fabricated perfect result. It works with all twelve recipes and both the new craft worktops and the existing tap/gesture controls.
+
+This is a **feedback and presentation milestone**, not an economy rewrite. The original scores, 1–3-star plated-dish threshold, ingredient costs, XP, pantry, cooked plates, residents' favorites, family suppers and local save data remain unchanged. The extra feedback uses only transient scores from the current cooking session; closing a recipe cannot mint a plate. Compact responsive styles include a 390px-or-smaller layout and respect reduced-motion preferences.
+
+**Quality gate:** Seven new automated regression checks cover first-step clarity, previous-step feedback, real per-technique result grades, one/two/three-star outcomes, save/XP safety and small-screen CSS. Together with the existing 150 tests, the intended CI suite covers **157 tests**. This is not a claim of physical iPhone Safari testing or full screenshot-driven visual review; those are still outstanding before the larger household and v3.0 Generations milestones.
+
+[Read the v2.5.21 development, QA and Generations roadmap](KITCHEN_MOMENTS_V2521_QA_AND_ROADMAP.md).
+
+## Previous milestone — Kitchen Polish v2.5.20
 
 **Hearth Kitchen is now easier to play on a small iPhone screen.** The six interactive cooking worktops introduced in v2.5.19 now share a more compact, cohesive interface with the game's existing original food illustrations. Previously, a large decorative cooking panel sat above each new worktop and pushed the actual controls further down the screen; the new design retains the artwork in a slim illustrated header and makes the tactile board the main attraction.
 
