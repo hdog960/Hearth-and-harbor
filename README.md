@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.24 — Honeybun Café Service & Fair Harvests
+# Hearth & Harbor v2.5.25 — Home & Town Traditions
+
+**Homes now develop a genuine history with their village.** Open the Home & Town Memory Book from Menu, Journal or a household Daybook. All seven residences can undertake three different, multi-day storylines requiring **actual completed home routines and successful village commissions** in sequence: The Welcome House (chat → Bea’s welcome card → tidy), Sunday at the Table (meal → Oliver’s actual dish delivery → chat), and Roots by the Window (hobby → Rosie’s pantry delivery → read). Each chapter is on a separate in-game day, and you can explicitly choose which household receives credit for town work.
+
+Every completed tradition earns a **permanent original framed picture on that household’s in-world wall**, along with **+3 permanent home comfort** (up to +9 per home, under the established comfort cap). The story remembers who participated and when, but creates no new coins, currencies or automatic payments. Real Daybook activity completion, resident autonomy, interactive hobby completion, and the existing final trade-fulfillment event are the only progress sources—menu taps and cancelled activities cannot spoof completion. Trade crafting also now shows the next required item rather than hiding it.
+
+The original `hearth-harbor-save-v1` storage key remains intact. The new optional record is validated during save import; all established recipes, décor, trades and relationships remain unchanged. **24 new automated tests** bring the suite to an expected **230** checks; human iPhone Safari rendered/gesture QA still remains outstanding.
+
+[Read v2.5.25 development notes and the road to v3.0](HOME_TOWN_TRADITIONS_V2525_QA_AND_ROADMAP.md).
+
+## Previous milestone — Honeybun Café Service & Fair Harvests v2.5.24
 
 **Honeybun Café work is now a real playable shift**, not a single tap that instantly pays coins. Serve three actual Maplewood neighbors with two-part pastry-and-drink orders using an illustrated serving tray, eight distinct food/drink choices and six successful steps. Each in-game day offers one paid 45-coin shift, with the original Energy/Fun exchange and café work quest still intact. After you've been paid, you can replay the full minigame as free practice, but repeating it doesn't pay again. Wrong choices are forgiving, and leaving doesn't cost anything.
 

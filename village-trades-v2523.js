@@ -175,7 +175,7 @@ function setup(api){
   const s=session,o=s.offer,n=s.done.length,allowed=o.kind==='produce'?STOCK.slice():o.kind==='parcel'?[{id:'fold',name:'Fold the corners'},{id:'tie',name:'Tie a ribbon'},{id:'seal',name:'Stamp a seal'}]:[
    {id:'rose',name:'Rosy pink'},{id:'sage',name:'Sage green'},{id:'honey',name:'Honey gold'},{id:'sky',name:'Harbor blue'}];
   const picture=artwork(s),list=allowed.map(item=>'<button data-act="trade-choice" data-id="'+item.id+'" class="vt-option '+(s.done.includes(item.id)&&o.kind==='parcel'?'vt-used':'')+'" '+(s.done.includes(item.id)&&o.kind==='parcel'?'disabled':'')+'>'+esc(item.name||item.name)+'</button>').join('');
-  showModal('trade-game','<div class="vt-ui vt-play"><div class="vt-eyebrow">'+esc(o.place)+' · STEP '+(n+1)+' OF '+o.sequence.length+'</div><h2>'+o.name+'</h2><div class="vt-worktop">'+picture+'<div class="vt-taps" role="group" aria-label="Choose the next piece">'+list+'</div></div><div class="vt-progress" role="progressbar" aria-label="Commission progress" aria-valuemin="0" aria-valuemax="3" aria-valuenow="'+n+'"><span style="width:'+(n/3*100)+'%"></span></div><p role="status" aria-live="polite">'+(message||'Pick the next '+(o.kind==='produce'?'item for the crate':o.kind==='parcel'?'wrapping step':'paint color')+'. Every choice changes the work in front of you.')+'</p><small>'+n+' of 3 steps finished · '+s.mistakes+' gentle retries</small><button class="vt-back" data-act="trade-cancel">Leave without spending supplies</button></div>');
+  showModal('trade-game','<div class="vt-ui vt-play"><div class="vt-eyebrow">'+esc(o.place)+' · STEP '+(n+1)+' OF '+o.sequence.length+'</div><h2>'+o.name+'</h2><div class="vt-worktop">'+picture+'<p class="vt-next-piece">Next: <b>'+esc(SYMBOLS[o.sequence[n]]||'Choose the correct item')+'</b></p><div class="vt-taps" role="group" aria-label="Choose the next piece">'+list+'</div></div><div class="vt-progress" role="progressbar" aria-label="Commission progress" aria-valuemin="0" aria-valuemax="3" aria-valuenow="'+n+'"><span style="width:'+(n/3*100)+'%"></span></div><p role="status" aria-live="polite">'+(message||'Pick the next '+(o.kind==='produce'?'item for the crate':o.kind==='parcel'?'wrapping step':'paint color')+'. Every choice changes the work in front of you.')+'</p><small>'+n+' of 3 steps finished · '+s.mistakes+' gentle retries</small><button class="vt-back" data-act="trade-cancel">Leave without spending supplies</button></div>');
  }
  function choose(code){
   const s=session;if(!s||typeof code!=='string'||s.day!==state().day||completed(s.offer.id))return cancel();
@@ -218,6 +218,7 @@ function setup(api){
   world.needs.fun=clamp((world.needs.fun||0)+7,0,100);
   world.needs.social=clamp((world.needs.social||0)+5,0,100);
   world.relations[id]=clamp((world.relations[id]||0)+4,0,100);
+  api.onCompleted?.(id,world.day);
   save();updateUI();
   notify(NAMES[id]+' loved your help! +'+reward+' coins');
   const ribbon=d.totals[id]===3?'You’ve earned a permanent hand-painted ribbon at '+s.offer.place+'!':'';

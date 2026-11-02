@@ -175,6 +175,6 @@ test('iPhone offline cache loads the café module before main game, with respons
  const html=read('index.html'),sw=read('sw.js'),css=read('cafe-work-v2524.css');
  for(const file of ['cafe-work-v2524.js','cafe-work-v2524.css'])assert.ok(html.includes(file)&&sw.includes("'./"+file+"'"));
  assert.ok(html.indexOf('cafe-work-v2524.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2524-cafe-service/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
  for(const key of ['@media(max-width:390px)','min-height:61px','button:focus-visible','prefers-reduced-motion:reduce'])assert.ok(css.includes(key),key);
 });

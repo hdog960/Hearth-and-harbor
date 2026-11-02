@@ -55,3 +55,7 @@
 @media(min-width:740px){.vt-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:390px){.vt-cover{padding:13px 11px}.vt-contract{padding:10px}.vt-contract-meta{flex-direction:column;align-items:flex-start}.vt-taps{gap:6px}.vt-ui .vt-taps button{min-height:55px;font-size:11px}.vt-illustration{max-height:130px}.vt-history li{flex-wrap:wrap}.vt-history li small{margin-left:0}}
 @media(prefers-reduced-motion:reduce){.vt-result-flower{animation:none!important}.vt-progress span{transition:none!important}}
+
+/* v2.5.25 — trade instructions visible before each non-guessing craft action */
+.vt-next-piece{background:#fff6dd;border:2px solid #d9bb91;border-radius:11px;padding:8px 10px;margin:6px 0!important;color:#765e47!important;text-align:center;font-size:12px!important;font-weight:700}
+.vt-next-piece b{font-size:14px;color:#3e745a}
