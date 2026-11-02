@@ -1,4 +1,21 @@
-# Hearth & Harbor v2.5.18 — Little Passions Studio
+# Hearth & Harbor v2.5.19 — Kitchen Craft
+
+**Hearth Kitchen just got more hands-on.** The original twelve recipes now include six redesigned cooking techniques that actually play differently instead of depending on generic "tap until done" controls. Your new touch-friendly worktops let you:
+
+- **Chop** by making four deliberate cut marks across the chopping board.
+- **Season** by choosing a real spice and applying it to the correct part of the food, with different recipes requiring different combinations.
+- **Thread garden skewers** by choosing vegetables and placing each one on the next empty spot.
+- **Fill pastries** with berry, honey or garden filling depending on the recipe.
+- **Stamp biscuits** with different shaped cutters in the correct order.
+- **Garnish** real plates by selecting toppings and arranging them in their own positions; salads, pancakes, tart, fish and dumplings each have different details.
+
+The recipe book now introduces these worktops. On each one, the actual interaction is required to finish the step; the old generic tap button cannot skip it. Wrong selections have gentle retries and only a modest effect on the existing quality score. All other cooking gestures, relaxed-timing steps, recipe ingredients, cooking XP, completed dish storage, and favorite-food reactions are intact.
+
+**The game is still save-compatible:** no new saved fields, ingredients, currency or paywalls. Cooked dishes continue to work with eating, sharing and **At Our Table** household dinners. The new features are precached for iPhone offline use. Automated GitHub QA covers all twelve full recipe cooking paths and the six new techniques: **139 tests pass**, including 14 new tests. Real iPhone Safari and visual screenshot testing remain outstanding.
+
+[Read v2.5.19 Kitchen Craft development and QA notes](KITCHEN_CRAFT_V2519_QA_AND_ROADMAP.md).
+
+## Previous milestone — Little Passions Studio v2.5.18
 
 **All six Maplewood residents finally have genuinely different playable hobbies.** Visit a resident's real occupied home, then open **Daybook → Little Passions Studio** or choose Studio from Menu. Poppy walks to the corresponding in-world hobby station and launches a tactile, mobile-friendly activity tied to that specific character:
 
