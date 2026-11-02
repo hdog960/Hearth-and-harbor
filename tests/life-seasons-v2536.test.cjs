@@ -66,7 +66,7 @@ test('the first real birthday arrives on the existing seasonal year calendar, no
  assert.equal(f.life.data.history.length,0,'clock milestone never pays or completes a party');
 });
 test('each resident has their own staggered milestone and identity intact',()=>{
- const f=fixture();enable(f);f.state.day=9;assert.equal(f.life.nextDay(9),1);
+ const f=fixture();enable(f);f.state.day=9;assert.equal(f.life.nextDay(9),2,'both elapsed residents reached their first milestones');
  assert.equal(f.life.data.profiles.mabel.years,1);assert.equal(f.life.data.profiles.rosie.years,1);
  assert.equal(f.life.data.profiles.jun.years,0);assert.equal(f.life.data.pending.rosie.year,1);
 });
