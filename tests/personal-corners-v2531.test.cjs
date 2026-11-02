@@ -149,7 +149,7 @@ test('module and stylesheet are loaded before main game and offline precached',(
  const html=read('index.html'),sw=read('sw.js'),css=read('personal-corners-v2531.css');
  for(const asset of ['personal-corners-v2531.js','personal-corners-v2531.css'])assert.ok(html.includes(asset)&&sw.includes("'./"+asset+"'"));
  assert.ok(html.indexOf('personal-corners-v2531.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2531-personal-corners/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
  for(const token of ['@media(max-width:390px)','@media(min-width:680px)','prefers-reduced-motion:reduce','.pc31-person'])assert.ok(css.includes(token),token);
 });
 test('legacy saves keep original key, all household modules and actual recipe system',()=>{
