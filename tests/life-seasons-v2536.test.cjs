@@ -18,7 +18,7 @@ function fixture(extra={}){
   showModal:(key,html)=>modal={key,html},back:()=>modal={key:'daybook',html:'Home Daybook'}};
  const life=L.setup(callbacks);return {state,homes,needs,done,plans,life,messages,callbacks,get saves(){return saves},get updated(){return updated},get modal(){return modal}};
 }
-function ctx(){return {n:0,save(){this.n++},restore(){this.n++},translate(){this.n++},fillRect(){this.n++},beginPath(){this.n++},arc(){this.n++},quadraticCurveTo(){this.n++},fill(){this.n++},stroke(){this.n++},moveTo(){this.n++},lineTo(){this.n++},closePath(){this.n++},fillText(){this.n++}}}
+function ctx(){return {n:0,labels:[],save(){this.n++},restore(){this.n++},translate(){this.n++},fillRect(){this.n++},beginPath(){this.n++},arc(){this.n++},quadraticCurveTo(){this.n++},fill(){this.n++},stroke(){this.n++},moveTo(){this.n++},lineTo(){this.n++},closePath(){this.n++},fillText(value){this.n++;this.labels.push(value)}}}
 const enable=f=>{assert.equal(f.life.toggle(),true);assert.equal(f.life.data.enabled,true)};
 function birthday(f,id='mabel'){
  const p=f.life.data.profiles[id];f.state.day=p.nextDay;assert.equal(f.life.nextDay(f.state.day)>0,true);
@@ -205,7 +205,7 @@ test('earned garland and birthdays remain in save after JSON roundtrip even with
 test('visual garland and authentic pending birthday plaque render only when unlocked or active',()=>{
  const f=fixture(),g=ctx();f.life.draw(g,'h0');assert.equal(g.n,0);
  enable(f);birthday(f);f.life.begin('h0','mabel','meal');f.life.draw(g,'h0');
- assert.ok(g.n>=7,'a real birthday session paints the in-world plaque');f.life.cancel('h0');
+ assert.ok(g.labels.includes('HAPPY BIRTHDAY'),'the real birthday session paints the actual in-world lettering');f.life.cancel('h0');
  const before=g.n;f.life.draw(g,'h0');assert.equal(g.n,before);
  celebrate(f);f.state.day=f.life.data.profiles.mabel.nextDay;f.life.nextDay(f.state.day);celebrate(f);
  f.life.draw(g,'h0');assert.ok(g.n-before>18);
