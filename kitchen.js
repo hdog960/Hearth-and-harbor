@@ -87,6 +87,7 @@ window.HearthKitchen=class HearthKitchen{
   // The worktop is replaced after a tap. Remember keyboard focus so VoiceOver
   // and keyboard users stay within the live activity rather than losing position.
   const focused=!!(el&&document.activeElement&&el.contains?.(document.activeElement));
+  const previousFocus=focused?document.activeElement?.dataset?.id:null;
   const result=this.craft.act(id);
   if(result.message)this.a.notify(result.message);
   if(result.valid){
@@ -95,12 +96,14 @@ window.HearthKitchen=class HearthKitchen{
   }
   if(el&&!result.done){
    el.outerHTML=this.craft.render();
-   if(focused&&result.valid&&document.querySelector){
+   if(focused&&document.querySelector){
     const step=this.craft.state.completed.length;
-    const next=this.craft.state.kind==='chop'?'cut:'+step:
-      id.startsWith('pick:')?'place:'+step:'pick:'+this.craft.state.expected[step];
-    const target=document.querySelector('[data-act="cook-craft"][data-id="'+next+'"]');
-    if(target&&!target.disabled)target.focus({preventScroll:true});
+    const next=result.valid?(this.craft.state.kind==='chop'?'cut:'+step:
+      id.startsWith('pick:')?'place:'+step:'pick:'+this.craft.state.expected[step]):previousFocus;
+    if(typeof next==='string'&&/^(?:cut|pick|place):[a-z0-9_-]+$/.test(next)){
+     const target=document.querySelector('[data-act="cook-craft"][data-id="'+next+'"]');
+     if(target&&!target.disabled)target.focus({preventScroll:true});
+    }
    }
   }
   if(result.done&&result.valid)this.complete(result.score);
