@@ -68,7 +68,7 @@ function setup(api){
  const homeName=h=>esc(api.getHomeLabel?.(h)||h);
  function choose(id,home,source){
   const spot=byId(id),matches=spot&&proof(spot).filter(e=>e.home===home&&e.source===source);
-  if(!spot||active(spot)||!townReady(spot)||matches?.length!==1||!api.isTown?.())return false;
+  if(!spot||active(spot)||!townReady(spot)||matches?.length!==1)return false;
   // Only moving to the art installation counts; menu selection cannot award it.
   arrival=null;
   api.closeModal?.();
