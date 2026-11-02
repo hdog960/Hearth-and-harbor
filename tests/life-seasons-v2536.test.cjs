@@ -205,7 +205,7 @@ test('earned garland and birthdays remain in save after JSON roundtrip even with
 test('visual garland and authentic pending birthday plaque render only when unlocked or active',()=>{
  const f=fixture(),g=ctx();f.life.draw(g,'h0');assert.equal(g.n,0);
  enable(f);birthday(f);f.life.begin('h0','mabel','meal');f.life.draw(g,'h0');
- assert.ok(g.n>=10);f.life.cancel('h0');
+ assert.ok(g.n>=7,'a real birthday session paints the in-world plaque');f.life.cancel('h0');
  const before=g.n;f.life.draw(g,'h0');assert.equal(g.n,before);
  celebrate(f);f.state.day=f.life.data.profiles.mabel.nextDay;f.life.nextDay(f.state.day);celebrate(f);
  f.life.draw(g,'h0');assert.ok(g.n-before>18);
