@@ -1,0 +1,25 @@
+/* Hearth & Harbor v2.7.0 — warm mobile Family Portraits album */
+.fp27-book{color:#526b5e;line-height:1.45;padding:3px 0 12px}
+.fp27-cover{position:relative;overflow:hidden;padding:18px 15px;border:3px solid #f5ead4;border-bottom:5px solid #beaa8c;border-radius:19px;background:radial-gradient(circle at 98% 3%,#f6c9d0,transparent 45%),linear-gradient(135deg,#d8ead6,#fff1d9)}
+.fp27-cover h2{color:#5a755f;font-size:clamp(22px,5vw,29px)!important;line-height:1.2;margin:6px 0}
+.fp27-cover small{font-size:10px;font-weight:800;letter-spacing:.09em;color:#a07f6a}
+.fp27-cover p,.fp27-book p{font-size:12px;margin:6px 0 12px;color:#6e7e71}
+.fp27-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,215px),1fr));gap:11px;margin:14px 0}
+.fp27-house,.fp27-session,.fp27-memories{background:#fff7e8;border:2px solid #e3d7bc;border-bottom:4px solid #c9b598;border-radius:15px;padding:13px;margin:10px 0}
+.fp27-house strong,.fp27-memory strong{display:block;font-size:14px;color:#5e765e}
+.fp27-house small,.fp27-memory small{display:block;font-size:11px;color:#968475;line-height:1.5}
+.fp27-book h3{font-size:15px!important;color:#6a7c65;margin:15px 0 7px}
+.fp27-book button{display:block;width:100%;min-height:48px;border:2px solid #bacbb5;border-bottom:4px solid #92ae96;border-radius:12px;background:linear-gradient(#e3efdb,#d0e3cc);color:#476957;font-size:13px;font-weight:800;text-align:left;padding:10px;margin:8px 0;touch-action:manipulation}
+.fp27-book button small{display:block;margin-top:3px;font-size:11px;color:#657b6a;font-weight:500;line-height:1.4}
+.fp27-book button:disabled{opacity:.58;cursor:default}
+.fp27-book button:focus-visible{outline:3px solid #365e8b;outline-offset:2px}
+.fp27-book .fp27-secondary{background:#f5e8d9;border-color:#d8c0a7;color:#8a705b}
+.fp27-memory{display:flex;gap:11px;padding:10px 0;border-bottom:1px dashed #d5ccb9}
+.fp27-memory:last-child{border-bottom:0}
+.fp27-memory>span{font-size:30px}
+.fp27-step{border-top:1px solid #e4dac5;padding:9px 0}
+.fp27-step strong{font-size:13px}
+.fp27-step span{display:block;font-size:11px;color:#688672}
+.fp27-step button{max-width:100%;margin:6px 0 0}
+@media(max-width:380px){.fp27-cover{padding:13px 11px}.fp27-grid{grid-template-columns:1fr}.fp27-book button{min-height:50px}}
+@media(prefers-reduced-motion:reduce){.fp27-book *, .fp27-book *:before,.fp27-book *:after{animation:none!important;transition:none!important}}

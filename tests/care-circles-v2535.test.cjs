@@ -234,7 +234,7 @@ test('completed real guided home actions integrate care in same existing save tr
   homeAspirations:{recordAction(){}},traditions:{recordHome(){}},householdRoles:{complete(){}},
   functionalHomes:{reward(){}},manualDaybooks:{finish(){}},householdRhythms:{complete(){}},
   roommateProjects:{recordAction(){}},personalCorners:{recordAction(){}},mentorship:{completed(){}},
-  careCircles:f.c,heirlooms:{completed(){}},lifeSeasons:{completed(){},wisdom(){}},familyRoots:{completedChat(){}},chronicle:{collect(){}},notify(){},
+  careCircles:f.c,heirlooms:{completed(){}},familyPortraits:{completed(){}},lifeSeasons:{completed(){},wisdom(){}},familyRoots:{completedChat(){}},chronicle:{collect(){}},notify(){},
   save:()=>saved++,updateUI:()=>updated++
  };
  care(f);vm.runInNewContext(code,context,{filename:'game-real-care-action.js'});
