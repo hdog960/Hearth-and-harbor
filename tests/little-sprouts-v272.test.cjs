@@ -6,7 +6,7 @@ const env={window:{}};vm.runInNewContext(read('little-sprouts-v272.js'),env,{fil
 vm.runInNewContext(read('family-atlas-v271.js'),env,{filename:'family-atlas-v271.js'});
 const L=env.window.HearthLittleSprouts,A=env.window.HearthFamilyAtlas;
 function fixture(options={}){
- const state={day:5,minute:540,youngResidents:{pip:L.defaults()},weddingPlans:{},familyRoots:{chosen:{}},...options};
+ const state={day:5,minute:120,youngResidents:{pip:L.defaults()},weddingPlans:{},familyRoots:{chosen:{}},...options};
  let scene='town',player={x:740,y:890},modal={name:'',html:''},saves=0,updates=0;const notes=[];
  const api={getState:()=>state,save:()=>saves++,updateUI:()=>updates++,notify:v=>notes.push(v),showModal:(name,html)=>{modal={name,html}},
  closeModal:()=>{modal={name:'',html:''}},getScene:()=>scene,isNearby:(p,d)=>Math.hypot(player.x-p.x,player.y-p.y)<=d};
