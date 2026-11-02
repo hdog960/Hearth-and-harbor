@@ -63,7 +63,7 @@ function setup(api){
   .filter(id=>IDS.includes(id)&&api.getResidentHome?.(id)===home))].slice(0,2):[];
  const name=id=>esc(api.getPersonLabel?.(id)||id);
  const homeName=id=>esc(api.getHomeLabel?.(id)||id);
- const chapter=id=>{const p=db().profiles[id];return db().enabled&&p?stage(p.years):0};
+ const chapter=id=>{const p=db().profiles[id];return p?stage(p.years):0};
  const stageFor=id=>STAGES[chapter(id)];
  function toggle(){
   const d=db(),day=state().day;
