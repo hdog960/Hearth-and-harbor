@@ -72,7 +72,7 @@ test('import sanitizes one visit date per exhibit and bounded deduplicated histo
  assert.equal(Object.keys(x.visits).length,1);assert.equal(x.history.length,1);
 });
 test('three public stops are linked to preexisting actual public works and three different authentic stories',()=>{
- const ids=M.SPOTS.map(s=>s.id),town=M.SPOTS.map(s=>s.town);
+ const ids=Array.from(M.SPOTS,s=>s.id),town=Array.from(M.SPOTS,s=>s.town);
  assert.deepEqual(ids,['blossoms','lanterns','table']);assert.deepEqual(town,['flowers','lanterns','cart']);
  assert.equal(new Set(M.SPOTS.map(s=>s.x+'|'+s.y)).size,3);
  assert.ok(M.SPOTS.every(s=>s.walkX!==undefined&&s.walkY!==undefined));
