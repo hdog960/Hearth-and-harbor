@@ -1,0 +1,39 @@
+/* Hearth & Harbor v2.5.34 — Passing It On, touch-friendly family learning journal. */
+.mt34-page{color:#536f60}
+.mt34-tabs{display:flex;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;padding:4px 0 11px}
+.mt34-tabs button{flex:0 0 auto;white-space:nowrap}
+.mt34-page button{min-height:47px;border:2px solid #dcc5a6;border-bottom:4px solid #bc9e7b;border-radius:11px;background:#fff4dd;color:#6d7258;padding:8px 10px;font-size:12px;font-weight:850;touch-action:manipulation;cursor:pointer}
+.mt34-page button:disabled{opacity:.48;cursor:default}
+.mt34-page button:focus-visible{outline:3px solid #2b556e;outline-offset:3px}
+.mt34-tabs button[aria-pressed=true]{background:#ddedda;border-color:#8bb59b;color:#4f755c}
+.mt34-book{padding:11px;border:2px solid #ddc6a4;border-bottom:5px solid #c0a083;border-radius:18px;background:linear-gradient(145deg,#fff8e7,#e9f0e1)}
+.mt34-cover{position:relative;overflow:hidden;padding:12px;border:2px solid #fff6e2;border-radius:14px;background:radial-gradient(circle at 90% 3%,#edc4cf,transparent 45%),linear-gradient(120deg,#e2eede,#f7e4c9)}
+.mt34-cover small{color:#a48163;font-size:10px;letter-spacing:.1em;font-weight:900}
+.mt34-cover h3{font-size:21px!important;color:#4d775e;margin:6px 0}
+.mt34-book h4{font-size:14px!important;color:#55715e;margin:6px 0}
+.mt34-book p{font-size:11px;color:#74806c;line-height:1.53;margin:7px 0}
+.mt34-place{font-size:12px!important;font-weight:900;color:#53775f!important;margin:11px 0!important}
+.mt34-card-grid{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0}
+.mt34-mentor{background:#fff9e8;border:2px solid #e0ceb1;border-radius:13px;padding:10px}
+.mt34-mentor>b{display:block;font-size:12px;margin-bottom:8px;color:#547762}
+.mt34-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.mt34-options button{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;min-width:0;font-size:21px;min-height:68px}
+.mt34-options button small{font-size:10px;line-height:1.2;color:#697e69}
+.mt34-live{margin:10px 0;padding:11px;background:#e7efde;border:2px solid #b7caaa;border-radius:12px}
+.mt34-live h4{margin-top:0}
+.mt34-live button{background:#d2e7d7;border-color:#9fbb9f;border-bottom-color:#80a181;width:100%;margin-top:9px}
+.mt34-steps{display:grid;gap:6px;margin:9px 0}
+.mt34-steps span{border:1px solid #d9d1b9;background:#fbf2df;border-radius:8px;padding:7px 8px;font-size:11px;color:#92846d}
+.mt34-steps span.done{background:#d2e7d1;border-color:#9fc69a;color:#527f5f;font-weight:850}
+.mt34-history{background:#f8f0df;border:1px solid #e1cfb0;border-radius:13px;padding:11px;margin:11px 0}
+.mt34-learner{padding:7px 0;border-top:1px solid #e6d6bd}
+.mt34-learner b{font-size:11px;color:#587a63}
+.mt34-learner span{display:block;font-size:10px;color:#786f65;line-height:1.5}
+.mt34-history ul{list-style:none;padding:0;margin:0}
+.mt34-history li{font-size:11px;color:#75836f;padding:6px 0;border-bottom:1px solid #e5d8c4}
+.mt34-note{font-size:10px!important;background:#edf2e5;padding:11px;border-left:3px solid #a7bf9b;border-radius:9px}
+.mt34-back{width:100%;margin-top:10px!important;background:#e7efde!important}
+.mt34-empty{padding:12px;background:#f9f0dd;border-radius:12px}
+@media(min-width:700px){.mt34-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:390px){.mt34-book{padding:8px}.mt34-mentor{padding:8px}.mt34-options{gap:5px}.mt34-options button{min-height:62px;padding:5px}.mt34-options button small{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.mt34-page *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
