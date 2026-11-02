@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.28 — Daybook Baton
+# Hearth & Harbor v2.5.29 — Together at Home
+
+**Roommates now have projects that truly require both people.** Open an occupied two-resident home’s Daybook and choose **💗 Together at Home · Roommate Projects**. Pick one of three cooperative household stories: **A Breakfast Worth Sharing** (real meal + real tidy), **The Storybook Corner** (read + hobby), or **The Evening Lantern** (chat + meal). Each part must actually finish in the right home, completed by a different resident, on the same in-game day. You can guide residents manually or use **Add these tasks to both residents’ independent plans**, which prechecks both schedules without replacing existing work.
+
+Finishing the two complementary routines earns modest bounded friendship/need improvements, a dated memory, and an original permanent **teapot, illustrated storybook or lantern** on that particular home’s illustrated wall shelf. Each unique keepsake adds +2 permanent comfort (up to +6, within the game's existing 100 cap). Choices and queues never grant rewards by themselves; completed projects are limited to once per home per in-game day, and moving away or abandoning a project never creates phantom progress.
+
+Existing saves remain compatible under `hearth-harbor-save-v1`. New optional project data is strictly sanitized. **26 new regression tests** bring the intended total to **328**, including activity-completion and home/schedule anti-duplication safeguards. Real physical iPhone Safari visual/touch/VoiceOver QA remains outstanding.
+
+[Read v2.5.29 development and QA documentation](TOGETHER_AT_HOME_V2529_QA_AND_ROADMAP.md).
+
+## Previous milestone — Daybook Baton v2.5.28
 
 **You can switch between directly guided household residents without losing their activity plans.** The manual Daybook now remembers each person's current unfinished routine and up to three waiting tasks. Switch from Mabel to Rosie, come back to Mabel, and she resumes at her first unfinished activity; her existing timed activity restarts safely instead of granting a shortcut reward. Plans also survive returning to town and re-entering the home on the same in-game day, or a normal save reload. Intentional Clear Routine and walking interruptions still remove the selected resident's plan, not anyone else's.
 

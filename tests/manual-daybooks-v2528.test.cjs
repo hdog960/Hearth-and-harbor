@@ -207,7 +207,7 @@ test('a real finished manual Daybook action clears only its matching step in the
   hasFavoriteFurnishing:()=>false,NPCS:[{id:'mabel',name:'Mabel'}],roomResidents:()=>[{id:'mabel'}],
   state:{needs:{social:65},householdFunds:{}},homeAspirations:{recordAction:()=>awards++},
   traditions:{recordHome:()=>{}},householdRoles:{complete:()=>{}},functionalHomes:{reward:()=>{}},
-  manualDaybooks:h.book,householdRhythms:{complete:()=>{}},notify:()=>{},save:()=>saves++,updateUI:()=>{}};
+  manualDaybooks:h.book,householdRhythms:{complete:()=>{}},roommateProjects:{recordAction:()=>{}},notify:()=>{},save:()=>saves++,updateUI:()=>{}};
  vm.runInNewContext(block('function runHouseholdAction(id,kind){','function queueHouseholdAction(kind){'),c);
  assert.equal(h.book.get('h0','mabel')[0],'read');
  c.runHouseholdAction('mabel','read');
@@ -255,7 +255,7 @@ test('manual Daybooks fully preload offline and have a phone-responsive decorati
  for(const file of ['manual-daybooks-v2528.js','manual-daybooks-v2528.css'])
   assert.ok(html.includes(file)&&sw.includes("'./"+file+"'"));
  assert.ok(html.indexOf('manual-daybooks-v2528.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2528-daybook-baton/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
  for(const token of ['@media(max-width:390px)','prefers-reduced-motion:reduce','.db28-person{','.db28-book{'])assert.ok(css.includes(token),token);
- assert.match(html,/<title>Hearth & Harbor · Daybook Baton v2\.5\.28<\/title>/);
+ assert.match(html,/<title>Hearth & Harbor · [^<]+ v2\.5\.[0-9]+<\/title>/);
 });
