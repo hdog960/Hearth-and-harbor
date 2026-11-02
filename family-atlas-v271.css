@@ -38,3 +38,5 @@
 .fa271-memory{padding:16px;background:#fff6e6;border:3px double #cfb995;border-radius:15px;font-size:12px;color:#667c69;margin:12px 0}
 @media(max-width:380px){.fa271-cover{padding:12px}.fa271-link{flex-wrap:wrap}.fa271-link button{width:100%}.fa271-book button{min-height:50px}}
 @media(prefers-reduced-motion:reduce){.fa271-book *,.fa271-book *:before,.fa271-book *:after{animation:none!important;transition:none!important}}
+
+.fa271-link.guardian{border-left:6px solid #e3ad7c}

@@ -1,0 +1,28 @@
+/* Hearth & Harbor v2.7.2 — Little Sprouts pocket-sized activity book */
+.ls272-book{color:#557760;padding:4px 0 12px;line-height:1.5}
+.ls272-cover{background:radial-gradient(circle at 94% 3%,#f3c5d0,transparent 46%),linear-gradient(140deg,#d9eecf,#fff2d6);border:3px solid #fff2dd;border-bottom:5px solid #c9a686;border-radius:20px;padding:16px;overflow:hidden}
+.ls272-cover small{color:#a27e67;letter-spacing:.1em;font-size:10px;font-weight:900}
+.ls272-cover h2{font-size:clamp(23px,5.5vw,30px)!important;color:#568365;line-height:1.2;margin:6px 0}
+.ls272-cover p,.ls272-book p{font-size:12px;line-height:1.6;color:#687d6d;margin:6px 0 10px}
+.ls272-profile{display:flex;gap:13px;align-items:center;padding:12px 10px;margin:10px 0;border:2px solid #d5d5b5;border-radius:15px;background:#fcf4e5}
+.ls272-profile>span{background:#b9dbad;border-radius:15px;display:grid;place-items:center;border:3px solid #f8efd5;min-width:53px;min-height:53px;font-size:29px}
+.ls272-profile b{display:block;font-size:15px;color:#5a7e66}
+.ls272-profile small{display:block;font-size:11px;color:#8b846f;line-height:1.4}
+.ls272-stat{margin:10px 0;padding:0 3px}
+.ls272-stat label{display:block;color:#648570;font-size:11px;font-weight:800}
+.ls272-stat span{display:block;height:9px;margin-top:5px;border:1px solid #bed1b8;border-radius:8px;background:#dfebd5;overflow:hidden}
+.ls272-stat i{display:block;background:linear-gradient(90deg,#a2cdaa,#83bc9c);height:100%;border-radius:8px}
+.ls272-progress{padding:10px;background:#fff7e5;border-radius:13px;border:1px dashed #d5c9a9;font-weight:800}
+.ls272-book h3{color:#608267;font-size:15px!important;margin:15px 0 8px}
+.ls272-book button{width:100%;min-height:50px;text-align:left;background:linear-gradient(#e3f0d9,#d0e4c9);border:2px solid #b8ceb3;border-bottom:4px solid #96b79a;border-radius:13px;color:#4b7059;font-size:13px;font-weight:850;padding:10px 12px;margin:7px 0;touch-action:manipulation;cursor:pointer}
+.ls272-book button:disabled{opacity:.57;cursor:default}
+.ls272-book button:focus-visible{outline:3px solid #345f94;outline-offset:3px}
+.ls272-book button small{display:block;color:#758771;font-size:11px;font-weight:500;line-height:1.4;margin-top:3px}
+.ls272-choices,.ls272-activity{display:grid;gap:6px;margin:11px 0}
+.ls272-guardian{background:#fdf2df;border:2px solid #dfc5a5;border-bottom:4px solid #bd9c7f;border-radius:15px;padding:13px;margin:14px 0}
+.ls272-guardian strong{font-size:13px;color:#a17e5c}
+.ls272-memories{list-style:none;padding:0;margin:10px 0}
+.ls272-memories li{background:#f7efdf;border-left:5px solid #a5bf9c;padding:8px 12px;border-radius:6px;margin:7px 0;font-size:12px}
+.ls272-book .ls272-secondary{background:#f5e8dc;border-color:#dbc6ad;color:#886f5e}
+@media(max-width:380px){.ls272-cover{padding:12px}.ls272-profile{gap:8px}.ls272-book button{min-height:52px}}
+@media(prefers-reduced-motion:reduce){.ls272-book *,.ls272-book *:before,.ls272-book *:after{animation:none!important;transition:none!important}}

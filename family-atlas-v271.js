@@ -4,8 +4,8 @@
  * guardians, children, surnames, succession or lineage are inferred.
  */
 (function(root){'use strict';
-const PEOPLE=['player','mabel','rosie','oliver','jun','bea','finn'];
-const ADULTS=PEOPLE.slice(1);
+const PEOPLE=['player','mabel','rosie','oliver','jun','bea','finn','pip'];
+const ADULTS=PEOPLE.slice(1,-1);
 const HOMES=['player','h0','h1','h2','h3','h4','h5'];
 const THEMES={story:'Our Storybook Afternoon',hearth:'A Heart-to-Heart',maker:'Made with Love'};
 const obj=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
@@ -17,9 +17,9 @@ function setup(api){
  const state=()=>api.getState();
  const name=id=>String(api.getPersonLabel?.(id)||(id==='player'?'Poppy':id)).slice(0,38);
  const homeName=home=>String(api.getHomeLabel?.(home)||home).slice(0,60);
- const homeOf=id=>id==='player'?'player':api.getResidentHome?.(id);
+ const homeOf=id=>id==='player'?'player':id==='pip'?(api.getYoungResident?.()?.guardian==='player'?'player':null):api.getResidentHome?.(id);
  const today=()=>dayOK(state().day)?state().day:1;
- const residents=home=>home==='player'?['player']:ADULTS.filter(id=>homeOf(id)===home);
+ const residents=home=>home==='player'?['player',...(homeOf('pip')==='player'?['pip']:[])]:ADULTS.filter(id=>homeOf(id)===home);
  function graph(){
   const nodes=PEOPLE.map(id=>({id,home:HOMES.includes(homeOf(id))?homeOf(id):null,label:name(id)}));
   const edges=[],couples=new Set(),now=today(),weddings=obj(state().weddingPlans)?state().weddingPlans:{};
@@ -32,6 +32,9 @@ function setup(api){
    const c=chosen[key];if(!pairOK(key)||!obj(c)||!dayOK(c.day)||c.day>now||!['active','ended'].includes(c.status))continue;
    if(c.status==='active'&&!couples.has(key))edges.push({key,ids:key.split('|'),kind:'chosen',day:c.day,active:true});
   }
+  const youth=api.getYoungResident?.();
+  if(youth?.guardian==='player'&&dayOK(youth.guardianDay)&&youth.guardianDay<=now)
+   edges.push({key:'pip|player',ids:['player','pip'],kind:'guardian',day:youth.guardianDay,active:true});
   // Co-residents form a separate informational edge, never a kinship edge.
   for(const home of HOMES.slice(1)){
    const ids=residents(home);if(ids.length!==2)continue;
@@ -53,6 +56,9 @@ function setup(api){
    if(!obj(m)||!ADULTS.includes(m.who)||!ADULTS.includes(m.with)||m.who===m.with||!HOMES.slice(1).includes(m.home)||!dayOK(m.day)||m.day>now)continue;
    out.push({day:m.day,kind:'move',ids:[m.who,m.with],title:'A new shared home',detail:'The residents moved into a household',home:m.home});
   }
+  const young=api.getYoungResident?.();
+  if(young?.guardian==='player'&&dayOK(young.guardianDay)&&young.guardianDay<=now)
+   out.push({day:young.guardianDay,kind:'guardian',ids:['player','pip'],title:'A Welcoming Home for Pip',detail:'An explicitly chosen guardianship, not biological parentage',home:'player'});
   for(const home of HOMES.slice(1)){
    const portraits=api.getPortraits?.(home)||[];
    for(const p of portraits){
@@ -66,10 +72,10 @@ function setup(api){
    if(unique.has(k))return false;unique.add(k);return true;
   }).sort((a,b)=>b.day-a.day||a.kind.localeCompare(b.kind)).slice(0,70);
  }
- const labelKind=kind=>kind==='marriage'?'💍 Married partners':kind==='chosen'?'🌿 Chosen family':'🏡 Share a home';
+ const labelKind=kind=>kind==='marriage'?'💍 Married partners':kind==='chosen'?'🌿 Chosen family':kind==='guardian'?'🌱 Chosen guardian':'🏡 Share a home';
  const peopleOf=ids=>ids.map(id=>esc(name(id))).join(' & ');
  const personButton=id=>'<button class="fa271-person-link" data-act="fa271-person" data-id="'+id+'">'+esc(name(id))+'</button>';
- const familyLink=e=>'<div class="fa271-link '+e.kind+'"><span class="fa271-symbol">'+(e.kind==='marriage'?'💍':e.kind==='chosen'?'🌿':'🏡')+'</span><div><strong>'+peopleOf(e.ids)+'</strong><small>'+labelKind(e.kind)+(e.day?' · since Day '+e.day:' · currently co-residing')+'</small></div><button data-act="fa271-pair" data-id="'+e.key+'">Explore</button></div>';
+ const familyLink=e=>'<div class="fa271-link '+e.kind+'"><span class="fa271-symbol">'+(e.kind==='marriage'?'💍':e.kind==='chosen'?'🌿':e.kind==='guardian'?'🌱':'🏡')+'</span><div><strong>'+peopleOf(e.ids)+'</strong><small>'+labelKind(e.kind)+(e.day?' · since Day '+e.day:' · currently co-residing')+'</small></div><button data-act="fa271-pair" data-id="'+e.key+'">Explore</button></div>';
  const action=(act,id,label)=>'<button class="fa271-action" data-act="'+act+'"'+(id?' data-id="'+id+'"':'')+'>'+label+'</button>';
  function timeline(people=null,home=null,limit=14,requireAll=false){
   const hits=events().filter(e=>(!people||(requireAll?people.every(id=>e.ids.includes(id)):e.ids.some(id=>people.includes(id))))&&(!home||e.home===home)).slice(0,limit);
@@ -86,7 +92,7 @@ function setup(api){
   if(!PEOPLE.includes(id))return overview();
   const g=graph(),node=g.nodes.find(n=>n.id===id),active=g.edges.filter(e=>e.ids.includes(id)),proof=active.filter(e=>e.kind!=='household');
   const someone=proof.length?proof.map(familyLink).join(''):'<p>There are no recorded family ties for this person yet.</p>';
-  api.showModal?.('family-atlas','<section class="fa271-book"><div class="fa271-cover"><small>THE PEOPLE WE KNOW</small><h2>🌼 '+esc(node.label)+'</h2><p>'+esc(homeName(node.home||'player'))+' · A real resident, not an invented relative.</p></div><h3>Actual family connections</h3>'+someone+'<h3>Where they live</h3><div class="fa271-homes">'+(node.home?action('fa271-home',node.home,'🏡 '+esc(homeName(node.home))):'<p>Home unknown</p>')+'</div><h3>Memories involving '+esc(node.label)+'</h3><ol class="fa271-timeline">'+timeline([id])+'</ol>'+action('fa271-board','','← All connections')+'</section>');
+  api.showModal?.('family-atlas','<section class="fa271-book"><div class="fa271-cover"><small>THE PEOPLE WE KNOW</small><h2>🌼 '+esc(node.label)+'</h2><p>'+esc(node.home?homeName(node.home):'A visiting young resident')+' · A real resident, not an invented relative.</p></div><h3>Actual family connections</h3>'+someone+'<h3>Where they live</h3><div class="fa271-homes">'+(node.home?action('fa271-home',node.home,'🏡 '+esc(homeName(node.home))):'<p>Home unknown</p>')+'</div><h3>Memories involving '+esc(node.label)+'</h3><ol class="fa271-timeline">'+timeline([id])+'</ol>'+action('fa271-board','','← All connections')+'</section>');
  }
  function home(id){
   if(!HOMES.includes(id))return overview();
@@ -94,7 +100,7 @@ function setup(api){
   api.showModal?.('family-atlas','<section class="fa271-book"><div class="fa271-cover"><small>ONE HOUSE, MANY STORIES</small><h2>🏡 '+esc(homeName(id))+'</h2><p>Current occupants are facts about housing, not proof of a family relationship.</p></div><h3>Current occupants</h3><div class="fa271-people">'+member.map(personButton).join('')+'</div><h3>Real links</h3><div class="fa271-links">'+(connections.length?connections.map(familyLink).join(''):'<p>Nothing to label as family yet.</p>')+'</div><h3>Memories attached to this home</h3><ol class="fa271-timeline">'+timeline(null,id)+'</ol>'+(id!=='player'?action('fa271-album',id,'🖼️ View portraits in this home'):'')+action('fa271-board','','← All connections')+'</section>');
  }
  function pairPage(key){
-  if(!pairOK(key))return overview();
+  if(!pairOK(key)&&key!=='pip|player')return overview();
   const ids=key.split('|'),g=graph(),edges=g.edges.filter(e=>e.key===key),named=peopleOf(ids);
   api.showModal?.('family-atlas','<section class="fa271-book"><div class="fa271-cover"><small>OUR SHARED CHAPTER</small><h2>🌿 '+named+'</h2><p>Connections are shown only when the original game records support them.</p></div><h3>What connects them?</h3>'+ (edges.length?edges.map(familyLink).join(''):'<p>No current bond. Previous shared memories may remain below.</p>')+'<h3>Genuine past moments</h3><ol class="fa271-timeline">'+timeline(ids,null,20,true)+'</ol><div class="fa271-people">'+ids.map(personButton).join('')+'</div>'+action('fa271-board','','← All connections')+'</section>');
  }

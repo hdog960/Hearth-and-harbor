@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.7.1 — Our Connections Atlas
+# Hearth & Harbor v2.7.2 — Little Sprouts: Pip Arrives
+
+**Our first real younger resident has arrived in the playable world.** Pip is a smaller character in Maplewood, with their own name, Child stage, Joy/Curiosity/Confidence needs, proximity-based meetings, three genuine three-part activities and a saved history of earned moments. Pip appears in the Connections Atlas but is not included in adult-only jobs, marriage or romance.
+
+Spend time with Pip across three different in-game days and complete all three kinds of activities to unlock an optional guardian invitation. If the player deliberately accepts, Pip actually moves into Poppy's playable cottage, with a real avatar there and a guardian connection in the Atlas—not an invented biological family. This is an early childhood pilot, not yet schools, full parenting or v3.0.
+
+[Read the v2.7.2 QA and Generations handoff](LITTLE_SPROUTS_V272_QA_AND_GENERATIONS_HANDOFF.md).
+
+## Previous release — v2.7.1 Our Connections Atlas
 
 **The first reliable family graph is playable.** The new illustrated Connections Atlas connects each of Maplewood's seven actual residents and seven households to only those marriages, chosen-family promises, living arrangements, moves and family portraits that the original game has truly recorded. Living together is never mislabeled as marriage or ancestry. Tap any earned Family Portrait on the playable house wall to read its history, explore the two people and visit their authentic family album. The Atlas grants no coins, children, guardians, fake memories or passive bonuses. It works offline on iPhone and preserves the original save key.
 
