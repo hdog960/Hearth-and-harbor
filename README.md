@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.34 — Passing It On
+# Hearth & Harbor v2.5.35 — Little Acts of Care
+
+**Housemates can now look after one another based on their actual needs.** Visit a two-resident home, open the Daybook and choose **💗 Little Acts of Care**. When a roommate's Food, Social, Fun or Energy falls below 60, the other resident can genuinely help by completing a corresponding real Meal, Chat, Read or Tidy activity. Guide the caregiver yourself or put that specific action into their independent daily schedule; selecting the request alone never grants benefits.
+
+Successfully finishing the correct activity restores up to **12** of the recipient's current need, gives the caregiver **+2 Social** and strengthens their existing relationship by **+1**, all strictly capped and once per home and involved resident per day. Three separate genuine days of caring unlock an original **hand-stitched quilt** displayed inside that home and **+2 home comfort** under the normal 100 cap. The game remembers who helped whom, preserves authentic household history, and disallows farming by repeating tasks, changing homes, or canceling a request.
+
+The existing `hearth-harbor-save-v1` storage remains compatible; the optional caring history is carefully cleaned on import. **33 new regression tests** increase the expected full suite to **485**, including a simulation that runs the actual guided household action from `game.js`. Physical iPhone Safari rendered/touch/VoiceOver testing remains outstanding.
+
+[Read the v2.5.35 implementation, QA and Generations roadmap](LITTLE_ACTS_OF_CARE_V2535_QA_AND_ROADMAP.md).
+
+## Previous milestone — Passing It On v2.5.34
 
 **Neighbors can now actually teach and learn from one another inside the home.** Choose a mentor and learner in a two-person household and pick one of **four real skills**: reading, cooking, tidying or creative hobbies. The mentor must genuinely finish the selected activity before the learner can perform the matching real activity. Queue the next step in that resident's independent Daybook or guide them manually; the system never skips a room animation or pays rewards for a button click.
 
