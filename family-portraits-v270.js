@@ -49,8 +49,7 @@ function setup(api){
   if(wedding?.status==='married'&&dayOK(wedding.marriedDay)&&wedding.marriedDay<=at)
    return {kind:'marriage',day:wedding.marriedDay};
   const chosen=state().familyRoots?.chosen?.[key];
-  if(chosen&&dayOK(chosen.day)&&chosen.day<=at&&
-   (chosen.status==='active'||chosen.status==='ended'&&dayOK(chosen.endedDay)&&chosen.endedDay>=at))
+  if(chosen&&dayOK(chosen.day)&&chosen.day<=at&&chosen.status==='active')
    return {kind:'chosen',day:chosen.day};
   return null;
  };
