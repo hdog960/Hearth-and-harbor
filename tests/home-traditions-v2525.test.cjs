@@ -65,7 +65,7 @@ test('starting a tradition records a household intention and focuses its real sh
  assert.equal(x.traditions.record.homes.h1.welcome.started,true);
  assert.equal(x.traditions.record.homes.h1.welcome.stage,0);
  assert.equal(x.saves,1);assert.equal(x.updates,1);
- assert.match(x.last.html,/Focus village work/);
+ assert.match(x.last.html,/Town-work focus/);
 });
 test('wrong actor and wrong home do not complete a household activity',()=>{
  const x=fixture();x.traditions.start('h0','welcome');
@@ -178,7 +178,7 @@ test('book includes seven real home tabs, current progress, focus, memories and 
  assert.equal((html.match(/data-act="ht-view"/g)||[]).length,7);
  assert.match(html,/Chapter 2 of 3/);
  assert.match(html,/Day 1/);
- assert.match(html,/Focus village work/);
+ assert.match(html,/Town-work focus/);
  assert.match(html,/aria-pressed="true"/);
  assert.match(html,/ht-chapters/);
 });
