@@ -92,7 +92,7 @@ function setup(api){
   if(!PEOPLE.includes(id))return overview();
   const g=graph(),node=g.nodes.find(n=>n.id===id),active=g.edges.filter(e=>e.ids.includes(id)),proof=active.filter(e=>e.kind!=='household');
   const someone=proof.length?proof.map(familyLink).join(''):'<p>There are no recorded family ties for this person yet.</p>';
-  api.showModal?.('family-atlas','<section class="fa271-book"><div class="fa271-cover"><small>THE PEOPLE WE KNOW</small><h2>🌼 '+esc(node.label)+'</h2><p>'+esc(homeName(node.home||'player'))+' · A real resident, not an invented relative.</p></div><h3>Actual family connections</h3>'+someone+'<h3>Where they live</h3><div class="fa271-homes">'+(node.home?action('fa271-home',node.home,'🏡 '+esc(homeName(node.home))):'<p>Home unknown</p>')+'</div><h3>Memories involving '+esc(node.label)+'</h3><ol class="fa271-timeline">'+timeline([id])+'</ol>'+action('fa271-board','','← All connections')+'</section>');
+  api.showModal?.('family-atlas','<section class="fa271-book"><div class="fa271-cover"><small>THE PEOPLE WE KNOW</small><h2>🌼 '+esc(node.label)+'</h2><p>'+esc(node.home?homeName(node.home):'A visiting young resident')+' · A real resident, not an invented relative.</p></div><h3>Actual family connections</h3>'+someone+'<h3>Where they live</h3><div class="fa271-homes">'+(node.home?action('fa271-home',node.home,'🏡 '+esc(homeName(node.home))):'<p>Home unknown</p>')+'</div><h3>Memories involving '+esc(node.label)+'</h3><ol class="fa271-timeline">'+timeline([id])+'</ol>'+action('fa271-board','','← All connections')+'</section>');
  }
  function home(id){
   if(!HOMES.includes(id))return overview();
