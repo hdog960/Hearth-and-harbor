@@ -1,0 +1,33 @@
+/* Hearth & Harbor v2.5.36 — opt-in life chapters, cozy mobile birthday book */
+.ls36-book{color:#536c5f;line-height:1.5}
+.ls36-cover{position:relative;overflow:hidden;padding:15px;border:3px solid #fff3df;border-bottom:5px solid #cba783;border-radius:18px;background:radial-gradient(circle at 92% 0%,#e8c8d8,transparent 48%),linear-gradient(140deg,#e4efd9,#fae5d3)}
+.ls36-cover small{font-size:10px;color:#a98061;letter-spacing:.09em;font-weight:900}
+.ls36-cover h2{font-size:clamp(22px,5.8vw,29px)!important;color:#567a5d;margin:5px 0}
+.ls36-book p{font-size:12px;line-height:1.5;margin:7px 0;color:#738572}
+.ls36-book h3{font-size:15px!important;color:#557962;margin:6px 0}
+.ls36-book h4{font-size:13px!important;color:#597966;margin:3px 0}
+.ls36-book button{padding:9px 10px;min-height:48px;border:2px solid #e0c8ad;border-bottom:4px solid #b79c80;background:#fff3de;color:#68735b;border-radius:12px;font-size:12px;font-weight:850;touch-action:manipulation;cursor:pointer}
+.ls36-book button:disabled{opacity:.52;cursor:default}
+.ls36-book button:focus-visible{outline:3px solid #2a556b;outline-offset:3px}
+.ls36-book .ls36-toggle{width:100%;margin-top:9px;background:#d5ead6;border-color:#a7c69e;border-bottom-color:#83aa8b;color:#496950}
+.ls36-tabs{display:flex;overflow-x:auto;gap:6px;padding:10px 0;overscroll-behavior-x:contain;scrollbar-width:thin}
+.ls36-tabs button{white-space:nowrap;flex-shrink:0}
+.ls36-tabs button[aria-pressed=true]{background:#dcebd5;border-color:#8fb09a}
+.ls36-home{font-weight:900!important;color:#658266!important}
+.ls36-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.ls36-person{display:flex;align-items:flex-start;gap:11px;min-width:0;padding:12px;border:2px solid #e2cdb2;border-bottom:5px solid #c4a486;border-radius:15px;background:linear-gradient(145deg,#fff9ea,#eee9dc)}
+.ls36-person>div:last-child{flex:1;min-width:0}
+.ls36-avatar{display:grid;place-items:center;flex:0 0 43px;width:43px;height:43px;border-radius:14px;border:3px solid #fff7e6;background:var(--life-ink);color:#fff9e9;font-size:27px}
+.ls36-person small{font-size:10px;color:#a37f69;font-weight:800}
+.ls36-person p{font-size:11px}
+.ls36-actions{display:grid;gap:6px;margin-top:9px}
+.ls36-actions button{width:100%;font-size:11px;background:#e4efdc;border-color:#b5c6a6}
+.ls36-active{padding:12px;background:#e8f0e3;border:2px solid #b6c7a9;border-radius:13px;margin:10px 0}
+.ls36-history{border:1px solid #ddcdb0;border-radius:13px;padding:11px;background:#f8f0dc;margin:13px 0}
+.ls36-history ul{padding:0;margin:0;list-style:none}
+.ls36-history li{padding:7px 0;border-top:1px solid #e5d6bc;color:#72816e;font-size:11px}
+.ls36-note{padding:11px;border-radius:10px;background:#ecf2e5;border-left:4px solid #a2bb9c;font-size:10px!important}
+.ls36-back{display:block;width:100%;margin:12px 0}
+@media(min-width:680px){.ls36-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:390px){.ls36-cover{padding:11px}.ls36-person{padding:8px;gap:7px}.ls36-avatar{width:36px;height:36px;flex-basis:36px}}
+@media(prefers-reduced-motion:reduce){.ls36-book *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

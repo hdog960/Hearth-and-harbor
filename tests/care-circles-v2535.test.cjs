@@ -234,7 +234,7 @@ test('completed real guided home actions integrate care in same existing save tr
   homeAspirations:{recordAction(){}},traditions:{recordHome(){}},householdRoles:{complete(){}},
   functionalHomes:{reward(){}},manualDaybooks:{finish(){}},householdRhythms:{complete(){}},
   roommateProjects:{recordAction(){}},personalCorners:{recordAction(){}},mentorship:{completed(){}},
-  careCircles:f.c,familyRoots:{completedChat(){}},chronicle:{collect(){}},notify(){},
+  careCircles:f.c,lifeSeasons:{completed(){},wisdom(){}},familyRoots:{completedChat(){}},chronicle:{collect(){}},notify(){},
   save:()=>saved++,updateUI:()=>updated++
  };
  care(f);vm.runInNewContext(code,context,{filename:'game-real-care-action.js'});
@@ -264,6 +264,6 @@ test('iPhone loads care logic/style before the real game and precaches them for 
  const html=read('index.html'),sw=read('sw.js'),css=read('care-circles-v2535.css');
  for(const p of ['care-circles-v2535.js','care-circles-v2535.css'])assert.ok(html.includes(p)&&sw.includes("'./"+p+"'"));
  assert.ok(html.indexOf('care-circles-v2535.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2535-little-acts-of-care/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
  for(const p of ['@media(max-width:390px)','@media(min-width:710px)','touch-action:manipulation','button:focus-visible','prefers-reduced-motion:reduce'])assert.ok(css.includes(p),p);
 });

@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.35 — Little Acts of Care
+# Hearth & Harbor v2.5.36 — Seasons of Life
+
+**Optional adult life chapters have arrived.** Open **🍂 Seasons of Life · Birthdays** from the Menu, Journal, or a home's Daybook. Aging remains **off by default** for all existing saves. Enabling it uses the game's actual **28-day seasonal year**, giving each of the six adult residents a staggered birthday and gradual Young Adult → Adult → Elder chapters after two and five village years. It can be **paused and resumed** without catching up missed days, changing old saves or losing earned history.
+
+On a real birthday milestone, you can ask a current housemate to **genuinely cook a birthday meal or have a birthday conversation**; completed real manual/autonomous activities earn small capped social and relationship rewards and a permanent history. Two real birthday celebrations in a home earn an original hand-painted **birthday garland and +2 comfort**. Elders have silver-haired resident sprite variations and can grant small additional benefits from **genuinely completed mentorship**, including the Hobby Studio.
+
+No forced age changes, invented children, extra currencies, automatic birthday payouts or punitive elder stat reductions. **33 new regression tests** target **518 in total**. Existing `hearth-harbor-save-v1` storage is unchanged and new life-stage data is strictly cleaned on import. Physical iPhone Safari visual, touch and VoiceOver QA remains outstanding.
+
+[Read v2.5.36 architecture, test and Generations roadmap](SEASONS_OF_LIFE_V2536_QA_AND_ROADMAP.md).
+
+## Previous milestone — Little Acts of Care v2.5.35
 
 **Housemates can now look after one another based on their actual needs.** Visit a two-resident home, open the Daybook and choose **💗 Little Acts of Care**. When a roommate's Food, Social, Fun or Energy falls below 60, the other resident can genuinely help by completing a corresponding real Meal, Chat, Read or Tidy activity. Guide the caregiver yourself or put that specific action into their independent daily schedule; selecting the request alone never grants benefits.
 

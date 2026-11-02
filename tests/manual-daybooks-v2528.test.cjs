@@ -207,7 +207,7 @@ test('a real finished manual Daybook action clears only its matching step in the
   hasFavoriteFurnishing:()=>false,NPCS:[{id:'mabel',name:'Mabel'}],roomResidents:()=>[{id:'mabel'}],
   state:{needs:{social:65},householdFunds:{}},homeAspirations:{recordAction:()=>awards++},
   traditions:{recordHome:()=>{}},householdRoles:{complete:()=>{}},functionalHomes:{reward:()=>{}},
-  manualDaybooks:h.book,householdRhythms:{complete:()=>{}},roommateProjects:{recordAction:()=>{}},personalCorners:{recordAction:()=>{}},mentorship:{completed:()=>{}},careCircles:{completed:()=>{}},chronicle:{collect:()=>{}},notify:()=>{},save:()=>saves++,updateUI:()=>{}};
+  manualDaybooks:h.book,householdRhythms:{complete:()=>{}},roommateProjects:{recordAction:()=>{}},personalCorners:{recordAction:()=>{}},mentorship:{completed:()=>{}},careCircles:{completed:()=>{}},lifeSeasons:{completed:()=>{},wisdom:()=>{}},chronicle:{collect:()=>{}},notify:()=>{},save:()=>saves++,updateUI:()=>{}};
  vm.runInNewContext(block('function runHouseholdAction(id,kind){','function queueHouseholdAction(kind){'),c);
  assert.equal(h.book.get('h0','mabel')[0],'read');
  c.runHouseholdAction('mabel','read');
