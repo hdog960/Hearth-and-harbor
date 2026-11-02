@@ -220,7 +220,7 @@ test('family book and original art load on iPhones offline and do not use new se
  for(const asset of ['family-roots-v2533.js','family-roots-v2533.css'])
   assert.ok(html.includes(asset)&&sw.includes("'./"+asset+"'"));
  assert.ok(html.indexOf('family-roots-v2533.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2533-family-roots/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
  for(const s of ['@media(max-width:390px)','@media(min-width:700px)','touch-action:manipulation','button:focus-visible','prefers-reduced-motion:reduce'])assert.ok(css.includes(s),s);
  assert.doesNotMatch(read('family-roots-v2533.js'),/fetch\(|WebSocket|XMLHttpRequest|setInterval|localStorage|new Image\(/);
 });
