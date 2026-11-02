@@ -59,7 +59,8 @@ window.HearthKitchen=class HearthKitchen{
  const timing=TIMED.has(kind);
  this.craft=window.HearthKitchenCraft?.make(kind,s.id)||null;
  const craft=this.craft;
- this.a.showModal('cook-step',`<div class="k-experience k-step-view"><div class="k-step-top"><div><div class="k-eyebrow">✳ THE HEARTH KITCHEN</div><span class="k-small-overline">${r.name}</span></div><span class="k-counter">${String(s.index+1).padStart(2,'0')} <small>/ ${String(r.steps.length).padStart(2,'0')}</small></span></div><div class="k-step-dots">${r.steps.map((step,j)=>`<span class="${j<s.index?'done':j===s.index?'current':''}"></span>`).join('')}</div><h2 class="k-step-title">${title}</h2><p class="k-step-intro">${desc}</p><div id="kGesture" class="k-gesture k-${kind}" role="group" aria-label="${title}"><div class="k-stage-top"><span>✦ LITTLE KITCHEN STUDIO</span><span>${info[3]}</span></div><div class="k-board-art">${art.stage(s.id,kind)}</div>${timing?`<div class="k-timing" aria-hidden="true"><div class="k-target"></div><div class="k-needle"></div></div>`:''}<div class="k-stage-tip">${hint}</div><div class="k-stage-sparkle">✦</div></div>${craft?craft.render():''}<div class="k-underboard"><span id="kPercent">0% PREPARED</span><span>${timing?'WATCH THE TIMING':'TAKE YOUR TIME'}</span></div><div class="k-progress"><div id="kProgressFill"></div></div><div class="k-step-control ${craft?'k-craft-controls':''}">${craft?'<p class="k-craft-instructions">Tap the ingredients and worktop above to finish this technique. All controls work without swipes.</p>':`<button class="btn k-primary-action" data-act="cook-tap">✦ ${info[4]}</button>`}<button class="btn secondary k-secondary-action" data-act="cook-abandon">Leave</button></div><p class="k-hint">${craft?'Follow the hands-on worktop above.':timing?'Relaxed mode makes every timing step successful.':'Use the large button if you prefer not to swipe or tap the picture.'} Ingredients were used at the start.</p></div>`);
+ this.a.showModal('cook-step',`<div class="k-experience k-step-view ${craft?'k-craft-step':''}"><div class="k-step-top"><div><div class="k-eyebrow">✳ THE HEARTH KITCHEN</div><span class="k-small-overline">${r.name}</span></div><span class="k-counter">${String(s.index+1).padStart(2,'0')} <small>/ ${String(r.steps.length).padStart(2,'0')}</small></span></div><div class="k-step-dots">${r.steps.map((step,j)=>`<span class="${j<s.index?'done':j===s.index?'current':''}"></span>`).join('')}</div><h2 class="k-step-title">${title}</h2><p class="k-step-intro">${desc}</p><div id="kGesture" class="k-gesture k-${kind} ${craft?'k-craft-hero':''}" role="group" aria-label="${title}"><div class="k-stage-top"><span>✦ LITTLE KITCHEN STUDIO</span><span>${info[3]}</span></div><div class="k-board-art">${art.stage(s.id,kind)}</div>${timing?`<div class="k-timing" aria-hidden="true"><div class="k-target"></div><div class="k-needle"></div></div>`:''}<div class="k-stage-tip">${hint}</div><div class="k-stage-sparkle">✦</div></div>${craft?craft.render():''}<div class="k-underboard"><span id="kPercent" role="status" aria-live="polite">0% PREPARED</span><span>${timing?'WATCH THE TIMING':'TAKE YOUR TIME'}</span></div><div class="k-progress" id="kStepProgress" role="progressbar" aria-label="Cooking step progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="kProgressFill"></div></div><div class="k-step-control ${craft?'k-craft-controls':''}">${craft?'<p class="k-craft-instructions">Tap the ingredients and worktop above to finish this technique. All controls work without swipes.</p>':`<button class="btn k-primary-action" data-act="cook-tap">✦ ${info[4]}</button>`}<button class="btn secondary k-secondary-action" data-act="cook-abandon">Leave</button></div><p class="k-hint">${craft?'Follow the hands-on worktop above.':timing?'Relaxed mode makes every timing step successful.':'Use the large button if you prefer not to swipe or tap the picture.'} Ingredients were used at the start.</p></div>`);
+ const scrollArea=document.querySelector?.('#modal .modal-card');if(scrollArea)scrollArea.scrollTop=0;
  this.flipStart=Date.now();if(craft)return;const el=document.getElementById('kGesture');if(!el)return;
  el.addEventListener('pointerdown',e=>{e.preventDefault();if(!this.session)return;const rect=el.getBoundingClientRect();const x=(e.clientX-rect.left)/rect.width,y=(e.clientY-rect.top)/rect.height;this.pointer={x:e.clientX,y:e.clientY,angle:Math.atan2(y-.5,x-.5),lastY:e.clientY};try{el.setPointerCapture?.(e.pointerId)}catch(err){};
  if(TARGET_STEPS.has(kind)){const side=x<.5?0:1;if(kind==='crack'||kind==='knead'){if(s.lastSide!==side){s.lastSide=side;this.advance(kind==='crack'?28:19,94);}else this.a.notify('Try the other side!');}else{let slot=Math.max(0,Math.min(2,Math.floor(x*3)));if(!s.targets.includes(slot)){s.targets.push(slot);this.advance(34,94)}else this.a.notify('Try an untouched spot!');}}},{passive:false});
@@ -76,20 +77,32 @@ window.HearthKitchen=class HearthKitchen{
  },{passive:false});
  }
  setProgress(){const f=document.getElementById('kProgressFill'),p=document.getElementById('kPercent'),scene=document.getElementById('kGesture');if(!this.session)return;
- const progress=Math.floor(this.session.progress);if(f)f.style.width=progress+'%';if(p)p.textContent=progress+'% PREPARED';if(scene){scene.style.setProperty('--k-progress',String(progress/100));scene.classList.toggle('k-active',progress>0)}}
+ const progress=Math.floor(this.session.progress);if(f)f.style.width=progress+'%';if(p)p.textContent=progress+'% PREPARED';document.getElementById('kStepProgress')?.setAttribute?.('aria-valuenow',String(progress));if(scene){scene.style.setProperty('--k-progress',String(progress/100));scene.classList.toggle('k-active',progress>0)}}
  advance(amount,score){if(!this.session)return;this.session.progress=Math.min(100,this.session.progress+amount);this.setProgress();if(this.session.progress>=100)this.complete(score);}
  craftAction(id){
   if(!this.session||!this.craft||this.inAction)return;
   const kind=RECIPES[this.session.id].steps[this.session.index];
   if(kind!==this.craft.state.kind)return;
+  const el=document.getElementById('kCraft');
+  // The worktop is replaced after a tap. Remember keyboard focus so VoiceOver
+  // and keyboard users stay within the live activity rather than losing position.
+  const focused=!!(el&&document.activeElement&&el.contains?.(document.activeElement));
   const result=this.craft.act(id);
   if(result.message)this.a.notify(result.message);
   if(result.valid){
    this.session.progress=result.progress;
    this.setProgress();
   }
-  const el=document.getElementById('kCraft');
-  if(el&&!result.done)el.outerHTML=this.craft.render();
+  if(el&&!result.done){
+   el.outerHTML=this.craft.render();
+   if(focused&&result.valid&&document.querySelector){
+    const step=this.craft.state.completed.length;
+    const next=this.craft.state.kind==='chop'?'cut:'+step:
+      id.startsWith('pick:')?'place:'+step:'pick:'+this.craft.state.expected[step];
+    const target=document.querySelector('[data-act="cook-craft"][data-id="'+next+'"]');
+    if(target&&!target.disabled)target.focus({preventScroll:true});
+   }
+  }
   if(result.done&&result.valid)this.complete(result.score);
  }
  tap(){if(!this.session||this.craft)return;const kind=RECIPES[this.session.id].steps[this.session.index];if(TIMED.has(kind))this.flip();else this.advance(['stir','knead'].includes(kind)?21:34,80);}
