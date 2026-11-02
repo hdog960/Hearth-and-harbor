@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.31 — Personal Corners
+# Hearth & Harbor v2.5.32 — The Household Chronicle
+
+**Every home can now remember its own story.** The new **📖 Household Chronicle** pulls genuine previously earned milestones from your existing save—roommate moves, completed two-person projects, family suppers, full three-part traditions, and personal keepsakes—into a single warm, dated household journal. It tracks **Poppy’s cottage and all six residences separately** and preserves memories even if neighbors move elsewhere.
+
+Browse a home’s history, choose up to **two moments to display**, and watch small, original illustrated memory frames appear in the **actual 2.5D home scene**, with different art for each type of remembered moment. Visible framed memories give +1 permanent home comfort each (max +2 per home, within the game’s existing cap). Unpinning frees display space but never deletes the original event. Only genuinely recorded source events are eligible; merely opening the journal grants no rewards.
+
+Your original `hearth-harbor-save-v1` storage and older in-game progress remain compatible. The Chronicle is the foundation for future generational history, **not** forced aging, invented families or a replacement game mode. **24 new automated tests** target **390/390 regression checks** in total. Physical iPhone Safari visual, touch and VoiceOver QA remain outstanding.
+
+[Read v2.5.32 architecture, quality coverage and the Generations roadmap](HOUSEHOLD_CHRONICLE_V2532_QA_AND_ROADMAP.md).
+
+## Previous milestone — Personal Corners v2.5.31
 
 **Six different neighbors now have different homes that feel like theirs.** Mabel enjoys a real potted plant, Rosie a comfortable chair, Oliver a rug, Jun a bookcase, Bea fresh flowers, and Finn a lamp. Placing each favorite furnishing in their *current residence* creates a bespoke original in-world décor detail beside the actual furniture and **+2 home comfort per happy resident**, within the existing cap.
 
