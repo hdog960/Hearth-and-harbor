@@ -69,9 +69,9 @@ function make(kind,recipe){
   const palette=kind==='chop'?'':('<div class="kc-palette" role="group" aria-label="Choose an ingredient or tool">'+choices().map(([id,label])=>
    '<button data-act="cook-craft" data-id="pick:'+id+'" aria-pressed="'+(session.selected===id)+'">'+label+'</button>').join('')+'</div>');
   return '<section class="kc-craft" id="kCraft"><div class="kc-eyebrow">THE LITTLE KITCHEN STUDIO · '+(n+1>length?length:n+1)+' / '+length+'</div><h3>'+title()+'</h3><p>'+helper()+'</p><div class="kc-stage kc-'+kind+'"><div class="kc-woodgrain"></div><div class="kc-positions">'+marks+'</div></div>'+palette+
-   '<div class="kc-feedback" role="status">'+(done?'✨ Beautifully prepared!':
+   '<div class="kc-feedback" role="status" aria-live="polite"><span>'+(done?'✨ Beautifully prepared!':
    session.mistakes?'Try another combination. Nothing is lost.':
-   kind==='chop'?'Make the next careful cut.':!session.selected?'Select your ingredient or cutter.':'Selected '+chosenText(session.selected)+' · tap the highlighted spot.')+'</div><div class="kc-bar" aria-label="'+progress()+'% complete"><i style="width:'+progress()+'%"></i></div></section>';
+   kind==='chop'?'Make the next careful cut.':!session.selected?'Select your ingredient or cutter.':'Selected '+chosenText(session.selected)+' · tap the highlighted spot.')+'</span><b>'+n+' of '+length+' placed</b></div></section>';
  }
  function act(code){
   if(finish()||typeof code!=='string')return {valid:false,done:finish(),progress:progress(),score:score()};
