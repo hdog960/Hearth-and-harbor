@@ -1,0 +1,25 @@
+/* Hearth & Harbor v2.5.31 — lived-in resident preferences in actual Daybooks. */
+.pc31-book{margin:12px 0;padding:12px;background:linear-gradient(140deg,#fff7e6,#e7eedc);border:2px solid #ddc3a0;border-bottom:5px solid #c9a783;border-radius:18px;color:#516e5c}
+.pc31-book h3{font-size:16px!important;margin:4px 0 8px;color:#426d56}
+.pc31-book h4{font-size:13px!important;margin:3px 0 6px;color:#5e765e}
+.pc31-book p{font-size:11px;line-height:1.52;margin:4px 0 8px;color:#73816b}
+.pc31-intro{position:relative;overflow:hidden;border-radius:13px;padding:10px 11px;background:linear-gradient(135deg,#e9f1dc,#fae8d1);border:1px solid #fdf3dd}
+.pc31-intro small,.pc31-person small{font-size:10px;font-weight:850;color:#a48666;letter-spacing:.06em}
+.pc31-intro b{font-size:11px;color:#609077}
+.pc31-grid{display:grid;grid-template-columns:1fr;gap:10px;margin:11px 0}
+.pc31-person{display:flex;gap:9px;align-items:flex-start;padding:11px 10px;background:#fff9ea;border:2px solid #e5d2b4;border-radius:13px;min-width:0}
+.pc31-mark{width:41px;height:41px;flex:0 0 41px;border:3px solid #fff5e0;border-radius:13px;background:var(--pc-color);display:grid;place-items:center;box-shadow:0 2px 5px #76674f22}
+.pc31-mark span{font-size:25px;color:#fff8e7}
+.pc31-info{min-width:0;flex:1}
+.pc31-status{background:#f4e9d4;border-radius:9px;padding:8px;font-size:11px!important;color:#8f8068!important}
+.pc31-status.pc31-ready{background:#e2efda;color:#5a8667!important}
+.pc31-progress{display:flex;gap:5px;margin:7px 0 5px}
+.pc31-progress span{height:8px;flex:1 1 0;background:#d7c6a9;border-radius:10px}
+.pc31-progress span.full{background:#84b59b}
+.pc31-memory{font-size:9px!important;color:#798a70!important}
+.pc31-history{margin:0;padding:0;list-style:none}
+.pc31-history li{font-size:10px;border-top:1px solid #e0d8c2;padding:7px 3px;color:#748273}
+.pc31-note{font-size:10px!important;margin-top:10px!important}
+@media(min-width:680px){.pc31-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:390px){.pc31-book{padding:9px}.pc31-person{padding:8px}.pc31-mark{width:36px;height:36px;flex-basis:36px}.pc31-book h4{font-size:12px!important}}
+@media(prefers-reduced-motion:reduce){.pc31-book *{animation:none!important;transition:none!important}}
