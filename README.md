@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.36 — Seasons of Life
+# Hearth & Harbor v2.5.37 — The Heirloom Cabinet
+
+**Your household's actual memories can now become real possessions that travel between homes.** The new **✦ Heirloom Cabinet** lets you choose an already completed Chronicle event—a home move, roommate collaboration, supper, tradition or personal nook—and have an actual resident (or Poppy) **finish a real Hobby activity** to make its commemorative object. A button can queue that hobby into the maker's existing independent Daybook or Poppy's own cottage routine without granting an instant reward.
+
+Five distinct original Canvas2D miniatures—the First House Key, Together Figurine, Family Supper Plate, Village Memory Wreath and Favorite Nook Album—appear in carved display cabinets inside the **actual playable home**. Each object has a unique saved origin and maker and can be **gifted as a single physical item** to a real resident in another occupied home. The object moves; it never duplicates, while its original historical memory stays in its source home's Chronicle. Two kept items per home give up to **+4 home comfort** under the original 100 cap. The system has no income, currencies or fake relatives.
+
+The original `hearth-harbor-save-v1` data remains compatible; new heirloom history is stored in a safe optional field. **36 new regression checks** bring the full expected suite to **554 tests**. Physical iPhone Safari visual, touch and VoiceOver QA is still outstanding.
+
+[Read v2.5.37 architecture, test coverage and Generations roadmap](HEIRLOOM_CABINET_V2537_QA_AND_ROADMAP.md).
+
+## Previous milestone — Seasons of Life v2.5.36
 
 **Optional adult life chapters have arrived.** Open **🍂 Seasons of Life · Birthdays** from the Menu, Journal, or a home's Daybook. Aging remains **off by default** for all existing saves. Enabling it uses the game's actual **28-day seasonal year**, giving each of the six adult residents a staggered birthday and gradual Young Adult → Adult → Elder chapters after two and five village years. It can be **paused and resumed** without catching up missed days, changing old saves or losing earned history.
 

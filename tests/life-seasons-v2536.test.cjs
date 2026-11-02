@@ -272,7 +272,7 @@ test('new assets load before game.js, offline service worker caches and iPhone C
  const html=read('index.html'),sw=read('sw.js'),css=read('life-seasons-v2536.css');
  for(const p of ['life-seasons-v2536.js','life-seasons-v2536.css'])assert.ok(html.includes(p)&&sw.includes("'./"+p+"'"));
  assert.ok(html.indexOf('life-seasons-v2536.js')<html.indexOf('game.js'));
- assert.match(sw,/hearth-harbor-v2536-seasons-of-life/);
+ assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
  for(const needle of ['@media(max-width:390px)','@media(min-width:680px)','touch-action:manipulation','button:focus-visible','prefers-reduced-motion:reduce'])assert.ok(css.includes(needle),needle);
  assert.doesNotMatch(read('life-seasons-v2536.js'),/fetch\(|XMLHttpRequest|WebSocket|new Image\(|setInterval|localStorage|\.coins\s*[+]=/);
 });
