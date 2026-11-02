@@ -71,6 +71,7 @@ function setup(api){
   if(!d.enabled){
    if(d.pausedAt){const elapsed=Math.max(0,day-d.pausedAt);
     for(const p of Object.values(d.profiles))p.nextDay=clamp(p.nextDay+elapsed,1,9999);
+    for(const p of Object.values(d.pending)){p.day=clamp(p.day+elapsed,1,9999);p.until=clamp(p.until+elapsed,1,9999)}
     d.pausedAt=0;
    }
    for(const id of IDS)if(!d.profiles[id])d.profiles[id]={years:0,nextDay:clamp(day+OFFSETS[id],1,9999)};
