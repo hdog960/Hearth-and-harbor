@@ -1,0 +1,29 @@
+/* v2.5.33 — Family Roots: an accessible, touch-first family book. */
+.fr33-book{color:#557461;padding:2px 0 14px}
+.fr33-cover{position:relative;overflow:hidden;border:3px solid #fdf3dd;border-bottom:5px solid #bfa084;border-radius:20px;background:radial-gradient(circle at 99% 1%,#efcbd2,transparent 47%),linear-gradient(145deg,#e0efdf,#f9e4cc);padding:16px}
+.fr33-cover:after{content:'❦';position:absolute;right:5px;bottom:-47px;color:#accba9;font-size:115px;opacity:.3;pointer-events:none}
+.fr33-cover small{font-size:10px;color:#b18a66;font-weight:900;letter-spacing:.11em}
+.fr33-cover h2{font-size:clamp(22px,5.5vw,30px)!important;color:#47735c;margin:4px 0 8px}
+.fr33-book p{font-size:12px;line-height:1.55;color:#758270}
+.fr33-grid{display:grid;grid-template-columns:1fr;gap:11px;margin:13px 0}
+.fr33-house{background:linear-gradient(130deg,#fff9e9,#f2ead6);border:2px solid #e1ceb1;border-bottom:5px solid #c7a989;border-radius:16px;padding:12px}
+.fr33-house h3{font-size:14px!important;color:#567c63;margin:0 0 9px}
+.fr33-members{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fr33-person{display:flex;gap:7px;align-items:center;font-size:12px;color:#5a7960}
+.fr33-face{display:grid;place-items:center;width:38px;height:38px;border:2px solid #f9efda;border-radius:13px;background:#c5dac0;color:#fff9df;font-size:25px}
+.fr33-link{font-size:25px;color:#b6a17e}
+.fr33-empty{color:#8a967c;font-size:11px}
+.fr33-book button{min-height:48px;border:2px solid #bfd1b6;border-bottom:4px solid #8faf9b;background:#e4eedc;color:#537967;border-radius:12px;padding:9px 11px;font-size:12px;font-weight:850;width:100%;touch-action:manipulation}
+.fr33-book button:focus-visible{outline:3px solid #264f68;outline-offset:3px}
+.fr33-book button:disabled{opacity:.5;cursor:default}
+.fr33-house small{display:block;color:#948c75;font-size:10px;line-height:1.4;margin:8px 0}
+.fr33-history{background:#f6f0e0;border:1px solid #e0d0af;padding:11px 12px;border-radius:14px}
+.fr33-history h3{font-size:14px!important;margin:0 0 8px;color:#587b64}
+.fr33-history ul{list-style:none;padding:0;margin:0}
+.fr33-history li{padding:7px 0;border-bottom:1px solid #e7ddc7;font-size:11px;line-height:1.5;color:#697d6e}
+.fr33-history li:last-child{border:0}
+.fr33-history li button{min-height:40px;margin:5px 0 2px}
+.fr33-note{padding:11px 13px;background:#e7f0e1;border-left:4px solid #9cbc9a;border-radius:9px;font-size:11px!important;margin:13px 0}
+@media(min-width:700px){.fr33-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:390px){.fr33-cover{padding:12px}.fr33-house{padding:9px}.fr33-face{width:33px;height:33px;font-size:22px}.fr33-person{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.fr33-book *{animation:none!important;transition:none!important}}
