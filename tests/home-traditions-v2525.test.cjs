@@ -181,6 +181,7 @@ test('book includes seven real home tabs, current progress, focus, memories and 
  assert.match(html,/Town-work focus/);
  assert.match(html,/aria-pressed="true"/);
  assert.match(html,/ht-chapters/);
+ assert.match(html,/data-act="ht-trades"/);
 });
 test('completed framed keepsakes render using real Canvas artwork and no external images',()=>{
  const x=fixture();x.traditions.start('player','welcome');x.traditions.recordHome('player','player','chat');
