@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.25 — Home & Town Traditions
+# Hearth & Harbor v2.5.26 — Our Household Promises
+
+**Households now choose how they care for one another.** Open the new **Household Promises** book from Menu, Journal or Daybook. Assign residents a Home Caretaker, Family Cook, Story Keeper, Warm Host or Creative Maker responsibility; actual roommates must choose different roles, and all assignments can be changed or turned off for free. Their real Daybook actions—not button presses—fulfill the promise. After urgent needs and personal aspirations, resident autonomy now makes time for assigned responsibilities rather than relying only on generic personality loops.
+
+A genuine first daily matching activity grants a **small, once-per-resident need bonus** to the resident and their housemate (or a bounded solo benefit for Poppy). All role effects use existing needs, with no passive coin farming, new food inventory, currencies or paid services. The journal remembers little acts of care across real days. **Three successfully completed responsibilities in a home earn an original, permanently illustrated handwoven rug in that home's actual world scene.** Moving or switching roles cannot duplicate the daily rewards, and previously saved households migrate safely under the unchanged `hearth-harbor-save-v1` key.
+
+**24 new automated checks** extend the intended regression suite to **254 tests**, testing honest action completion, personalities and planner priorities, moving households, save continuity, differentiated benefits, 2.5D artwork and offline/mobile integration. Physical iPhone Safari rendering and VoiceOver validation remain outstanding and must not be inferred from automated tests.
+
+[Read v2.5.26 development, QA and the Generations roadmap](HOUSEHOLD_PROMISES_V2526_QA_AND_ROADMAP.md).
+
+## Previous milestone — Home & Town Traditions v2.5.25
 
 **Homes now develop a genuine history with their village.** Open the Home & Town Memory Book from Menu, Journal or a household Daybook. All seven residences can undertake three different, multi-day storylines requiring **actual completed home routines and successful village commissions** in sequence: The Welcome House (chat → Bea’s welcome card → tidy), Sunday at the Table (meal → Oliver’s actual dish delivery → chat), and Roots by the Window (hobby → Rosie’s pantry delivery → read). Each chapter is on a separate in-game day, and you can explicitly choose which household receives credit for town work.
 
