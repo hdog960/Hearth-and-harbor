@@ -59,7 +59,7 @@ test('final plate details both real skill scores without duplicate XP or currenc
 });
 test('accessible tap fallback produces a truthful middle-grade recap with original quality scoring',()=>{
  const x=harness();x.kitchen.begin('toast');stirByTap(x);
- assert.match(x.view.html,/Nicely prepared/);
+ assert.match(x.view.html,/Made with care!/);
  assert.match(x.view.html,/aria-label="2 out of 3 stars"/);
  x.kitchen.handle('cook-tap');
  assert.equal(x.view.screen,'cook-result');
