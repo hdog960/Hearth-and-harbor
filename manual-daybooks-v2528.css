@@ -1,0 +1,16 @@
+/* Hearth & Harbor v2.5.28 — Daybook Baton
+   Small illustrated shared household scrapbook, no new full-screen menus. */
+.db28-book{margin:12px 0;background:linear-gradient(136deg,#fff7e4,#e4f0df);border:2px solid #d8c2a4;border-bottom:5px solid #c29f7d;border-radius:17px;padding:12px;color:#56745e}
+.db28-head{display:flex;align-items:flex-start;gap:11px;margin-bottom:9px}
+.db28-symbol{display:grid;place-items:center;min-width:40px;height:40px;border-radius:12px;background:#f3d8cc;font-size:25px;color:#b47485}
+.db28-head strong{display:block;color:#47705c;font-size:14px}
+.db28-head p{font-size:11px;line-height:1.4;margin:3px 0;color:#76856b}
+.db28-person{padding:8px 9px;background:#fff8e8;border:1px solid #e1d3b2;border-radius:11px;display:flex;align-items:center;flex-wrap:wrap;gap:5px 9px;margin:6px 0}
+.db28-person strong{color:#537c64;font-size:12px}
+.db28-person span{color:#8d8062;font-size:15px;white-space:nowrap}
+.db28-person i{font-style:normal;color:#b3a07b}
+.db28-person small{color:#877968;font-size:10px;flex:1 1 115px}
+.db28-book .db28-none{padding:8px 9px;font-size:11px;background:#f7f3e5;border-radius:10px}
+.db28-book .db28-help{color:#798674;font-size:11px;line-height:1.5;margin:10px 0 0}
+@media(max-width:390px){.db28-book{padding:8px}.db28-person{padding:7px}.db28-person span{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.db28-book *{animation:none!important;transition:none!important}}
