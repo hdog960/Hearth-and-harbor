@@ -1,4 +1,14 @@
-# Hearth & Harbor v2.5.21 — Kitchen Moments
+# Hearth & Harbor v2.5.22 — Living Worktops
+
+**Hearth Kitchen now shows the food changing as you cook it.** Six existing touch-first cooking techniques have new hand-authored SVG worktop illustrations that evolve on real successful actions: sliced produce appears on the chopping board; each seasoning sits on the recipe's illustrated plate; skewers visibly fill with their actual vegetables; pastry pockets reveal the chosen berry, honey or garden filling; biscuits carry different stamped shapes; and dishes acquire the garnishes the player actually places. Choosing an ingredient previews it softly on the next position, while a wrong placement never paints a success. These images are original SVG artwork, not OS emoji used as food art.
+
+The original twelve recipes, six touch-first worktop control systems, older nine kitchen techniques, ingredient costs, one-to-three-star quality, chef XP, prepared dishes, family suppers, daily relationship caps and local saves **remain unchanged**. Visual progress is derived from the existing transient cooking state, not a new inventory or hidden progress counter. The artwork does not intercept taps: full-size HTML buttons and accessible status remain the only active input. Worktop artwork is compact at 390px and below, with reduced-motion support. All worktop assets are offline cached.
+
+**QA:** 11 new regression checks cover the six worktops, true item-specific transitions, selection previews, wrong-choice safety, invalid data, styling and asset order. Together with the previous 157 cases, the automated suite now targets **168 tests**. GitHub Actions must confirm before claiming a successful release. A physical iPhone Safari art/touch/VoiceOver audit and actual rendered screenshot review are still outstanding and must not be inferred from automated source checks.
+
+[Read the v2.5.22 QA and Generations roadmap](LIVING_WORKTOPS_V2522_QA_AND_ROADMAP.md).
+
+## Previous milestone — Kitchen Moments v2.5.21
 
 **Cooking now tells a more satisfying, truthful story.** After finishing each preparation technique, the next worktop briefly celebrates what you actually achieved and shows a compact one-to-three-star technique assessment. When a dish is plated, a new **Your little kitchen moments** journal reviews every technique in the recipe with its own outcome, not a fabricated perfect result. It works with all twelve recipes and both the new craft worktops and the existing tap/gesture controls.
 
