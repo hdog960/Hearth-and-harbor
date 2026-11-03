@@ -267,8 +267,8 @@ test('old, malformed and duplicate child friendship records are sanitized',()=>{
  {day:3,kind:'romance',first:0,last:0},{day:4,kind:'nature',first:1,last:2},
  {day:6,kind:'nature',first:1,last:0}]};
  assert.deepEqual(plain(M.clean(raw)),{friendships:[
-  {day:2,kind:'story',first:0,last:1},{day:6,kind:'nature',first:1,last:0}],club:{foundation:[],chapters:[]}});
- assert.deepEqual(plain(M.clean(null)),{friendships:[],club:{foundation:[],chapters:[]}});
+  {day:2,kind:'story',first:0,last:1},{day:6,kind:'nature',first:1,last:0}],club:{foundation:[],chapters:[],revisits:[]}});
+ assert.deepEqual(plain(M.clean(null)),{friendships:[],club:{foundation:[],chapters:[],revisits:[]}});
 });
 test('bounded older peer histories preserve newest genuine days without growing endlessly',()=>{
  const rows=Array.from({length:90},(_,i)=>({day:i+1,kind:['story','color','nature'][i%3],first:i%2,last:i%2}));
@@ -292,13 +292,13 @@ test('real family Connections Atlas knows the independent child without allowing
 });
 test('iPhone build loads Wren before save sanitization, routes world touch and uses original art',()=>{
  const game=read('game.js'),html=read('index.html'),sw=read('sw.js'),little=read('little-sprouts-v272.js');
- assert.ok(html.includes('wren-neighbor-v295.js?v=2.9.7'));
+ assert.ok(html.includes('wren-neighbor-v295.js?v=2.9.8'));
  assert.ok(html.includes('wren-neighbor-v295.css?v=2.9.6'));
  assert.ok(html.indexOf('wren-neighbor-v295.js')<html.indexOf('game.js'));
- assert.ok(html.includes('game.js?v=2.9.7'));
+ assert.ok(html.includes('game.js?v=2.9.8'));
  for(const p of ['wren-neighbor-v295.js','wren-neighbor-v295.css'])
   assert.ok(sw.includes("'./"+p+"'"));
- assert.match(sw,/hearth-harbor-v297-friendship-corner/);
+ assert.match(sw,/hearth-harbor-v298-childhood-reunions/);
  assert.match(game,/youngResidents:\{pip:window\.HearthLittleSprouts\.clean\(raw\.youngResidents\?\.pip\),wren:window\.HearthYoungNeighbors\.clean\(raw\.youngResidents\?\.wren\)\}/);
  assert.match(game,/youngNeighbors\.advance\(dt\)/);
  assert.match(game,/youngNeighbors\.hitMarker\(wx,wy\)/);
