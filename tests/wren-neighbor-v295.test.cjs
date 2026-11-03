@@ -292,13 +292,13 @@ test('real family Connections Atlas knows the independent child without allowing
 });
 test('iPhone build loads Wren before save sanitization, routes world touch and uses original art',()=>{
  const game=read('game.js'),html=read('index.html'),sw=read('sw.js'),little=read('little-sprouts-v272.js');
- assert.ok(html.includes('wren-neighbor-v295.js?v=2.9.5'));
- assert.ok(html.includes('wren-neighbor-v295.css?v=2.9.5'));
+ assert.ok(html.includes('wren-neighbor-v295.js?v=2.9.6'));
+ assert.ok(html.includes('wren-neighbor-v295.css?v=2.9.6'));
  assert.ok(html.indexOf('wren-neighbor-v295.js')<html.indexOf('game.js'));
- assert.ok(html.includes('game.js?v=2.9.5'));
+ assert.ok(html.includes('game.js?v=2.9.6'));
  for(const p of ['wren-neighbor-v295.js','wren-neighbor-v295.css'])
   assert.ok(sw.includes("'./"+p+"'"));
- assert.match(sw,/hearth-harbor-v295-wren-young-neighbor/);
+ assert.match(sw,/hearth-harbor-v296-child-friendship-moments/);
  assert.match(game,/youngResidents:\{pip:window\.HearthLittleSprouts\.clean\(raw\.youngResidents\?\.pip\),wren:window\.HearthYoungNeighbors\.clean\(raw\.youngResidents\?\.wren\)\}/);
  assert.match(game,/youngNeighbors\.advance\(dt\)/);
  assert.match(game,/youngNeighbors\.hitMarker\(wx,wy\)/);
