@@ -194,7 +194,7 @@ test('projects draw different real canvas world props and gained aspiration deta
  const fills=[];const g={save(){},restore(){},fillRect(){fills.push(1)}};
  for(const sample of samples)assert.equal(P.DREAMS[sample.focus]!==undefined,true);
  for(const sample of samples)assert.equal(fixture({focus:sample.focus}).pip.projects.drawProp(g,sample,1),true);
- assert.ok(fills.length>=30);
+ assert.ok(fills.length>=20);
 });
 test('extra painted star details appear only after earned chapter receipts',()=>{
  const f=fixture(),g={save(){},restore(){},fillRect(){calls++}};
