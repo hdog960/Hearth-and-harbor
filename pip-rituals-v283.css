@@ -1,0 +1,31 @@
+/* Hearth & Harbor v2.8.3 — Family Seasons Sampler, iPhone-first illustrated scrapbook */
+.pf283-panel{color:#5d7967;margin:14px 0 18px;padding-bottom:13px}
+.pf283-cover{padding:15px;border-radius:18px;border:3px solid #f9ebdb;border-bottom:5px solid #cdb098;background:radial-gradient(circle at 93% 4%,#f1c6d9,transparent 48%),linear-gradient(130deg,#e0edde,#fff0de)}
+.pf283-cover small{font-size:10px;color:#a77b71;font-weight:900;letter-spacing:.1em}
+.pf283-cover h3{color:#527762;font-size:19px!important;line-height:1.24;margin:6px 0}
+.pf283-cover p,.pf283-panel p{color:#718174;font-size:12px;line-height:1.55;margin:7px 0}
+.pf283-cover strong{display:block;color:#5b8069;margin:10px 0 0;font-size:12px}
+.pf283-panel h3{font-size:14px!important;color:#65816d;margin:14px 0 9px}
+.pf283-patches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}
+.pf283-patches>div{min-width:0;background:#f3eadd;border:2px solid #d9cbbb;border-radius:10px;padding:9px 3px;text-align:center;position:relative;opacity:.75}
+.pf283-patches>div.pf283-sewn{opacity:1;background:#e2eddc;border-color:#a9c6a9}
+.pf283-patches span{font-size:20px;display:block}
+.pf283-patches small{font-size:10px;display:block;margin-top:4px;color:#82917d}
+.pf283-patches b{position:absolute;right:3px;top:2px;color:#608c6e;font-size:11px}
+.pf283-item{border-radius:13px;border:2px solid #e1d3bc;background:#fcf5e7;display:flex;gap:9px;align-items:center;padding:10px;margin:8px 0;min-height:65px}
+.pf283-item>span{flex:0 0 27px;font-size:22px;text-align:center}
+.pf283-item>div{flex:1;min-width:0}
+.pf283-item strong{display:block;font-size:12px;color:#63806b}
+.pf283-item small{display:block;font-size:10px;color:#898073;line-height:1.45;margin-top:4px}
+.pf283-panel button,.pf283-story button{display:block;width:100%;min-height:52px;padding:11px 12px;font-size:12px;font-weight:850;text-align:left;border:2px solid #b7cdb7;border-bottom:4px solid #96b19b;background:linear-gradient(#e5f1df,#d4e7d1);border-radius:11px;color:#527464;touch-action:manipulation}
+.pf283-item button{width:auto!important;min-height:44px!important;padding:9px!important}
+.pf283-panel button:focus-visible,.pf283-story button:focus-visible{outline:3px solid #34618d;outline-offset:3px}
+.pf283-active{background:#f7ead7;border:2px solid #d6c09e;border-radius:12px;padding:12px}
+.pf283-active strong{color:#907762;font-size:12px}
+.pf283-active p{font-size:11px}
+.pf283-active button{margin-top:7px}
+.pf283-pages{list-style:none;margin:9px 0;padding:0}
+.pf283-pages li{background:#f9f0e2;border-left:4px solid #a7c4aa;border-radius:6px;padding:10px;margin:7px 0;color:#778573;font-size:11px}
+.pf283-note{padding:11px;background:#eaf0e2;border-radius:11px;font-size:11px!important}
+@media(max-width:380px){.pf283-cover{padding:11px}.pf283-item{padding:7px;gap:6px}.pf283-item button{padding:8px!important}.pf283-panel button{min-height:54px}}
+@media(prefers-reduced-motion:reduce){.pf283-panel *,.pf283-story *{animation:none!important;transition:none!important}}
