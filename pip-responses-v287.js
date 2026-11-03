@@ -81,8 +81,7 @@ function setup(api){
    const r=original(id),resp=response(id),d=ANSWERS[id],where=site(id);
    const msg=resp?'✓ Reflected together on Day '+resp.day:
     day()<=r.day?'Come back after today':
-    where?'Look for '+id[0].toUpperCase()+id.slice(1)+' at the keepsake · 10 AM–4 PM':
-    'Return when the world display is accessible';
+    'Meet '+id[0].toUpperCase()+id.slice(1)+' by the keepsake in Maplewood · 10 AM–4 PM';
    return '<div class="pr287-row"><span>'+root.HearthPipHelpers.PROJECTS[id].icon+'</span><div><strong>'+esc(root.HearthPipHelpers.PROJECTS[id].name)+'</strong><small>'+esc(msg)+'</small></div></div>';
   }).join('');
   return '<section class="pr287-panel"><details><summary>🌷 The Village Remembers · '+relevant.filter(done).length+'/'+relevant.length+' reflections</summary><div class="pr287-inner"><p>Villagers remember what Pip really helped create. On a later day, visit their actual keepsake between 10 AM and 4 PM with Pip following Poppy. The adult walks there during those hours. Speak to them while all three are together to make a lasting memory.</p>'+visits+'<p class="pr287-hint">Each person’s reply changes their original display. This is a small family story, not an instant reward or a new tab.</p></div></details></section>';
@@ -101,7 +100,7 @@ function setup(api){
     !eligible(session.id)||original(session.id)?.day!==session.originalDay){session=null;return false}
   const result={id:session.id,day:day(),choice:i};
   session=null;
-  const prev=remembered();if(prev.some(r=>r.id===result.id))return false;
+  const prev=remembered().filter(r=>!!response(r.id));if(prev.some(r=>r.id===result.id))return false;
   const c=child(),d=ANSWERS[result.id];
   c.neighborResponses=clean([...prev,result]);
   c.needs[d.need]=Math.min(100,Math.max(0,c.needs[d.need]||0)+4);
