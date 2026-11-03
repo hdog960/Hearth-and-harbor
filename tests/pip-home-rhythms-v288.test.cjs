@@ -200,11 +200,11 @@ test('iPhone PWA loads the new module before Pip and renders real pixel props',(
  assert.ok(html.includes('pip-home-rhythms-v288.css?v=2.8.8'));
  assert.ok(html.indexOf('pip-home-rhythms-v288.js')<html.indexOf('little-sprouts-v272.js'));
  for(const f of ['pip-home-rhythms-v288.js','pip-home-rhythms-v288.css'])assert.ok(sw.includes("'./"+f+"'"));
- assert.match(sw,/hearth-harbor-v299-stories-brought-home/);
+ assert.match(sw,/hearth-harbor-v300-chosen-generations/);
  assert.ok(html.includes('pip-home-help-v276.js?v=2.8.8'));
- assert.ok(html.includes('pip-routines-v273.js?v=2.8.8'));
- assert.ok(html.includes('little-sprouts-v272.js?v=2.9.9'));
- assert.ok(html.includes('game.js?v=2.9.9'));
+ assert.ok(html.includes('pip-routines-v273.js?v=3.0'));
+ assert.ok(html.includes('little-sprouts-v272.js?v=3.0'));
+ assert.ok(html.includes('game.js?v=3.0'));
  assert.match(game,/littleSprouts\.homeRhythms\.drawHome/);
  assert.match(routines,/api\.adjustHomePose\?\.\(actual\)/);
  assert.match(home,/api\.onSharedHomeCompleted\?\.\(record\)/);
