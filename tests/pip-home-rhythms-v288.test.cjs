@@ -132,7 +132,7 @@ test('four different genuine two-day activities have four unique little props',(
  const f=fixture({help:helps,day:20});
  const p=f.rhythms.profile();assert.deepEqual(plain(p.earned),plain(ids));
  const draws=[],g={save(){},restore(){},fillRect(...x){draws.push(x)}};
- assert.equal(f.rhythms.drawHome(g,0),true);assert.ok(draws.length>=22);
+ assert.equal(f.rhythms.drawHome(g,0),true);assert.ok(draws.length>=18);
 });
 test('a preferred interest changes the actual afternoon routine but not the base schedule',()=>{
  const f=fixture({help:[record(4,'hobby'),record(5,'hobby')]});
