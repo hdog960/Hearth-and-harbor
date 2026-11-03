@@ -1,0 +1,10 @@
+/* v2.8.5 — tactile, readable world-keepsake postcard */
+.pw285-card .ls272-cover{background:linear-gradient(135deg,#678f80,#b38d88);color:#fff4df}
+.pw285-memory{background:#fff7e4;border:2px solid #d6b48d;border-radius:14px;padding:12px;display:grid;gap:7px;margin:12px 0;color:#5e4a45}
+.pw285-memory span{color:#82666a;font-size:11px;font-weight:900;letter-spacing:.055em;text-transform:uppercase}
+.pw285-memory strong{font-size:15px;line-height:1.4}
+.pw285-memory p{padding:10px 0 0;border-top:1px dashed #d2b49b;margin:0;line-height:1.5}
+.pw285-card button{min-height:48px}
+.pw285-card :focus-visible{outline:3px solid #286e70;outline-offset:3px}
+@media(max-width:380px){.pw285-memory{padding:9px}.pw285-memory strong{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.pw285-card *{animation:none!important;transition:none!important}}
