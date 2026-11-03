@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.9.2 — Pip's Own Little Ideas
+
+**Pip can now ask Poppy to do something together.** A real nearby conversation offers one of four personally authored household activities, shaped by Pip's genuinely earned favorite interests. Poppy can let Pip lead or show them how, but the decision is saved **only after the original timed Household Daybook action really finishes with both characters at the same furniture**. Pip physically walks around the room to join. Their choices have modest lasting childhood consequences and distinct later dialogue, no invented rewards or new navigation tab.
+
+[Read the v2.9.2 family life changes and QA report](PIPS_OWN_LITTLE_IDEAS_V292_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.9.1 Pip's Living Cottage Day
+
 # Hearth & Harbor v2.9.1 — Pip's Living Cottage Day
 
 **Pip walks the cottage for real.** The existing routine and earned Homegrown Personality interests now drive a genuinely navigated child actor instead of moving Pip through walls and furniture with a clock-position interpolation. A safe grid route follows your actual cottage floor and placed furnishings. Pip uses original stride-driven animation and honors real household activities, visiting neighbors and family rituals first. A compact Daybook line shows what the child is doing, without adding a new tab, reward currency or storage key.

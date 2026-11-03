@@ -596,6 +596,7 @@ function runOwnHomeAction(kind){
  if(once)heirlooms.completed('player','player',kind,true,state.day);
  functionalHomes.reward('player','player',kind,state.needs,once,state.day);
  littleSprouts.homeHelp.complete(kind,once,state.day);
+ littleSprouts.initiatives.completed(kind,once,state.day);
  littleSprouts.familyLegacy.complete(kind,once,state.day);
  littleSprouts.rituals.complete(kind,once,state.day);
  littleSprouts.homeVisits.completed(kind,once,state.day);
@@ -2370,7 +2371,7 @@ function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){sto
    else notify('There is not a clear path to that family picture.');
    return;
   }
-  if(littleSprouts.hit(wx,wy,'home')){const p=littleSprouts.position();goTo(nearestWalkable({x:p.x-75,y:p.y+50},'home',true)||{x:690,y:810},()=>littleSprouts.entry());return}
+  if(littleSprouts.hit(wx,wy,'home')){const p=littleSprouts.position();goTo(nearestWalkable({x:p.x-75,y:p.y+50},'home',true)||{x:690,y:810},()=>{if(!littleSprouts.initiatives.request())littleSprouts.entry()});return}
    if(wy<220){notify('A lovely sunny view out of the window!');return}
   const itemIndex=state.placed.findIndex(f=>Math.hypot(wx-f.x,wy-f.z)<45);
   if(itemIndex>=0){

@@ -214,6 +214,22 @@ function setup(api){
      home:'player'});
    }
   }
+  // Pip's genuinely initiated shared day: the original timed household
+  // activity had to complete with both Poppy and Pip physically present.
+  // This is a family-history moment, not an invented kinship edge.
+  const ideasChild=state().youngResidents?.pip;
+  if(ideasChild?.guardian==='player'&&dayOK(ideasChild.guardianDay)&&
+    ideasChild.guardianDay<=now&&root.HearthPipInitiatives?.clean){
+   const memories=root.HearthPipInitiatives.clean(ideasChild.childInitiatives,ideasChild.guardianDay).records;
+   for(const r of memories){
+    if(r.day>now||!root.HearthPipInitiatives.STORIES?.[r.kind])continue;
+    out.push({day:r.day,kind:'child-home-initiative',ids:['player','pip'],
+     title:'Pip’s Own Little Idea · '+root.HearthPipInitiatives.STORIES[r.kind].name,
+     detail:r.choice===0?'Pip proposed and led an actually completed household activity with Poppy':
+      'Pip proposed a real household activity and Poppy taught them how to do it together',
+     home:'player'});
+   }
+  }
   // A true shared traditional keepsake is a childhood family memory,
   // never legal ancestry, marriage, a fictitious parent or a new guardian.
   const child=state().youngResidents?.pip,keeps=child?.legacyKeepsakes;
