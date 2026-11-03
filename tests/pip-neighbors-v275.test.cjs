@@ -3,7 +3,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=name=>fs.readFileSync(path.join(__dirname,'..',name),'utf8');
 const env={window:{}};
-for(const name of ['pip-routines-v273.js','pip-neighbors-v275.js','pip-home-help-v276.js','little-sprouts-v272.js','family-atlas-v271.js'])
+for(const name of ['pip-routines-v273.js','pip-neighbors-v275.js','pip-home-help-v276.js','pip-dreams-v277.js','little-sprouts-v272.js','family-atlas-v271.js'])
  vm.runInNewContext(read(name),env,{filename:name});
 const P=env.window.HearthPipNeighbors,L=env.window.HearthLittleSprouts,A=env.window.HearthFamilyAtlas;
 function fixture(opts={}){
@@ -186,7 +186,7 @@ test('mobile asset order, offline cache, menu and actual world update are wired'
  for(const file of ['pip-neighbors-v275.js','pip-neighbors-v275.css']){assert.ok(html.includes(file));assert.ok(sw.includes("'./"+file+"'"))}
  assert.ok(html.indexOf('pip-neighbors-v275.js')<html.indexOf('little-sprouts-v272.js'));
  assert.ok(html.indexOf('little-sprouts-v272.js')<html.indexOf('game.js'));
- assert.match(html,/v=2\.7\.6/);assert.match(sw,/hearth-harbor-v276-little-helping-hands/);
+ assert.match(html,/v=2\.7\.7/);assert.match(sw,/hearth-harbor-v277-childhood-dreams/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
  assert.match(game,/littleSprouts\.advance\(dt\)/);assert.match(game,/getAdults:\(\)=>NPCS\.map/);
  assert.match(game,/Invite Pip to learn together/);assert.match(game,/pn275-direct/);
