@@ -1,0 +1,31 @@
+/* Hearth & Harbor v2.7.3 — living childhood schedule and memory book */
+.pr273-panel{padding:5px 0 14px;color:#5d7968}
+.pr273-header{background:linear-gradient(135deg,#e4efdb,#fff1dd);border:2px solid #d1d9bd;border-bottom:5px solid #bcbb9a;border-radius:15px;padding:14px;margin:12px 0}
+.pr273-header>small{font-size:10px;letter-spacing:.09em;font-weight:850;color:#947c66;display:block}
+.pr273-header h3{font-size:17px!important;color:#547961;margin:5px 0!important}
+.pr273-header strong{display:block;color:#60816d;font-size:12px;margin-top:9px}
+.pr273-header p,.pr273-panel p{font-size:12px;color:#71806c;line-height:1.5}
+.pr273-route{border:2px solid #e3d6bd;background:#fff8eb;border-radius:13px;padding:7px;margin:11px 0}
+.pr273-schedule{display:flex;align-items:center;gap:9px;border-radius:10px;padding:10px 7px;min-height:49px}
+.pr273-schedule:not(:last-child){border-bottom:1px dashed #dfd7c2}
+.pr273-schedule.pr273-current{background:#dcebd6;box-shadow:inset 0 0 0 2px #a4c5ab}
+.pr273-schedule>span{font-size:19px;width:27px;flex:0 0 27px}
+.pr273-schedule>div{flex:1;min-width:0}
+.pr273-schedule b,.pr273-skill b{display:block;color:#5f7861;font-size:12px}
+.pr273-schedule small,.pr273-skill small{display:block;color:#8c816f;font-size:10px;line-height:1.45}
+.pr273-schedule>small{font-size:10px;white-space:nowrap;color:#947f6c}
+.pr273-panel>h3{font-size:15px!important;color:#65856b}
+.pr273-skill{display:flex;gap:11px;align-items:center;border-radius:13px;background:#fcf4e8;border:1px solid #e4d8bf;padding:10px 9px;margin:8px 0}
+.pr273-skill>span{font-size:23px}
+.pr273-skill>div{flex:1;min-width:0}
+.pr273-skill i{display:block;height:7px;background:#e7e2cd;border-radius:8px;margin:7px 0 0;overflow:hidden}
+.pr273-skill em{display:block;height:100%;background:linear-gradient(90deg,#a4c9a5,#d2a5ae);border-radius:8px}
+.pr273-night{background:#f4ebdf;border:2px solid #ddcbb0;border-bottom:4px solid #c7af92;border-radius:14px;margin:14px 0;padding:13px}
+.pr273-night strong{color:#947d62;font-size:14px}
+.pr273-night button,.pr273-book button{width:100%;min-height:50px;border:2px solid #abcbb4;border-bottom:4px solid #8fac95;border-radius:12px;padding:10px;text-align:left;background:#d8e9d3;color:#50755a;font-size:13px;font-weight:800;touch-action:manipulation}
+.pr273-night button:focus-visible,.pr273-book button:focus-visible{outline:3px solid #36628f;outline-offset:2px}
+.pr273-night>small{display:block;font-size:11px;color:#857d72}
+.pr273-memories{padding-left:22px;color:#7b806d;font-size:11px}
+.pr273-memories li{padding:3px 0}
+@media(max-width:380px){.pr273-header{padding:11px}.pr273-schedule{gap:5px;padding:9px 4px}.pr273-schedule>small{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.pr273-panel *,.pr273-panel *:before,.pr273-panel *:after{animation:none!important;transition:none!important}}
