@@ -3,7 +3,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=x=>fs.readFileSync(path.join(__dirname,'..',x),'utf8');
 const env={window:{}};
-for(const file of ['pip-growth-v280.js','pip-legacy-v282.js','pip-adventures-v281.js','pip-projects-v278.js','pip-guides-v279.js','pip-routines-v273.js','pip-neighbors-v275.js','pip-home-help-v276.js','pip-dreams-v277.js','little-sprouts-v272.js','family-atlas-v271.js'])
+for(const file of ['pip-growth-v280.js','pip-legacy-v282.js','pip-rituals-v283.js','pip-adventures-v281.js','pip-projects-v278.js','pip-guides-v279.js','pip-routines-v273.js','pip-neighbors-v275.js','pip-home-help-v276.js','pip-dreams-v277.js','little-sprouts-v272.js','family-atlas-v271.js'])
  vm.runInNewContext(read(file),env,{filename:file});
 const D=env.window.HearthPipDreams,L=env.window.HearthLittleSprouts,A=env.window.HearthFamilyAtlas;
 const compact=x=>JSON.parse(JSON.stringify(x));
@@ -181,7 +181,7 @@ test('UI and iPhone assets load childhood aspiration before child and persist ol
  const html=read('index.html'),sw=read('sw.js'),game=read('game.js'),css=read('pip-dreams-v277.css'),little=read('little-sprouts-v272.js');
  for(const file of ['pip-dreams-v277.js','pip-dreams-v277.css']){assert.ok(html.includes(file));assert.ok(sw.includes("'./"+file+"'"))}
  assert.ok(html.indexOf('pip-dreams-v277.js')<html.indexOf('little-sprouts-v272.js'));
- assert.match(html,/v=2\.8\.2/);assert.match(sw,/hearth-harbor-v282-family-legacy/);
+ assert.match(html,/v=2\.8\.3/);assert.match(sw,/hearth-harbor-v283-family-seasons/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
  assert.match(little,/dreams\.panel\(\)/);assert.match(game,/littleSprouts\.dreams\.drawKeepsake\(ctx,tick\)/);
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);

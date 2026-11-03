@@ -3,7 +3,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 const env={window:{}};
-for(const f of ['home-traditions-v2525.js','pip-growth-v280.js','pip-legacy-v282.js',
+for(const f of ['home-traditions-v2525.js','pip-growth-v280.js','pip-legacy-v282.js','pip-rituals-v283.js',
  'pip-adventures-v281.js','pip-projects-v278.js','pip-guides-v279.js','pip-routines-v273.js',
  'pip-neighbors-v275.js','pip-home-help-v276.js','pip-dreams-v277.js','little-sprouts-v272.js','family-atlas-v271.js'])
  vm.runInNewContext(read(f),env,{filename:f});
@@ -322,7 +322,7 @@ test('iPhone HTML resource order, service-worker cache and accessible styled con
   assert.ok(html.includes(file));assert.ok(sw.includes("'./"+file+"'"));
  }
  assert.ok(html.indexOf('pip-legacy-v282.js')<html.indexOf('little-sprouts-v272.js'));
- assert.match(html,/v=2\.8\.2/);assert.match(sw,/hearth-harbor-v282-family-legacy/);
+ assert.match(html,/v=2\.8\.3/);assert.match(sw,/hearth-harbor-v283-family-seasons/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
 });
 test('no network calls, second storage, passive timers, subscriptions, fictional adults or personal data are added',()=>{

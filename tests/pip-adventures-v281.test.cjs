@@ -3,7 +3,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=x=>fs.readFileSync(path.join(__dirname,'..',x),'utf8');
 const env={window:{}};
-for(const f of ['pip-growth-v280.js','pip-legacy-v282.js','pip-adventures-v281.js','pip-projects-v278.js','pip-guides-v279.js','pip-routines-v273.js','pip-neighbors-v275.js','pip-home-help-v276.js','pip-dreams-v277.js','little-sprouts-v272.js','family-atlas-v271.js'])
+for(const f of ['pip-growth-v280.js','pip-legacy-v282.js','pip-rituals-v283.js','pip-adventures-v281.js','pip-projects-v278.js','pip-guides-v279.js','pip-routines-v273.js','pip-neighbors-v275.js','pip-home-help-v276.js','pip-dreams-v277.js','little-sprouts-v272.js','family-atlas-v271.js'])
  vm.runInNewContext(read(f),env,{filename:f});
 const H=env.window.HearthPipAdventures,L=env.window.HearthLittleSprouts,A=env.window.HearthFamilyAtlas;
 const plain=x=>JSON.parse(JSON.stringify(x));
@@ -262,7 +262,7 @@ test('the v2.8.1 phone/offline cache, script order and touch accessibility are r
   assert.ok(html.includes(file));assert.ok(sw.includes("'./"+file+"'"));
  }
  assert.ok(html.indexOf('pip-adventures-v281.js')<html.indexOf('little-sprouts-v272.js'));
- assert.match(html,/v=2\.8\.2/);assert.match(sw,/hearth-harbor-v282-family-legacy/);
+ assert.match(html,/v=2\.8\.3/);assert.match(sw,/hearth-harbor-v283-family-seasons/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
 });
 test('the childhood adventure system creates no second save key, subscription or network work',()=>{
