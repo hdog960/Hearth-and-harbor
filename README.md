@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.9.0 — Guests Who Remember
+
+**Your guests now feel like participants.** When Poppy, Pip and an actual Maplewood neighbor share a timed cottage activity, the visitor and Pip each perform small original pixel-animated work, and Pip's truly earned interests influence their conversation. Afterward, six individually illustrated postcards appear in the actual cottage wall, recording the real choices made. The adult may remember the experience in later town conversations and take small, grid-routed visits back toward their normal community routines. **No extra tab, currency, account, save reset or artificial completion.**
+
+[Read the v2.9.0 features, QA notes and Generations direction](PIPS_GUESTS_WHO_REMEMBER_V290_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.8.9 Living Cottage Visits
+
 # Hearth & Harbor v2.8.9 — Living Cottage Visits
 
 **Invite Maplewood's real adults to visit Pip and Poppy at home.** Talk face-to-face in town, meet the neighbor after they actually walk to the cottage on the next day, bring them through the normal door, then join all three characters at real household furniture. Finish a genuine Poppy Daybook task and make a meaningful final decision before the game records a family memory. All six villagers have distinctive personal scenes; the original iPhone 2.5D style, prior saves and existing relationships stay intact.

@@ -194,11 +194,25 @@ function setup(api){
   name:id=>api.getAdults?.().find(a=>a.id===id)?.name||id,
   bondAdult:api.bondAdult,save:api.save,updateUI:api.updateUI,
   notify:api.notify,showModal:api.showModal,closeModal:api.closeModal,closeTalk:api.closeTalk,
-  openBook:()=>entry()
+  openBook:()=>entry(),getGallerySummary:()=>guestEcho.panel(),
+  getGuestPersonalityLine:id=>guestEcho.personalityLine(id)
  })||{panel:()=>'',advance:()=>{},childPose:()=>null,guestPose:()=>null,
   hit:()=>null,interact:()=>false,completed:()=>false,drawShared:()=>false,
   schedule:(id,e)=>e,inviteEligible:()=>false,greetEligible:()=>false,handle:()=>false};
- const position=()=>{const p=homeHelp.pose()||familyLegacy.pose()||rituals.pose()||homeVisits.childPose()||neighbors.escortPose()||routines.location();return {x:p.x,y:p.y}};
+ const guestEcho=root.HearthPipGuestEchoes?.setup?.({
+  getState:state,getChild:data,getScene:api.getScene,
+  getPlayer:api.getPlayer,nearestWalkable:api.nearestWalkable,
+  isWalkable:api.isWalkable,getHold:api.ownHold,
+  hasCompetingEvent:api.hasCompetingEvent,
+  getVisitSession:()=>homeVisits.session,
+  getGuestPose:()=>homeVisits.guestPose(),getChildPose:()=>homeVisits.childPose(),
+  getWorkPoint:kind=>root.HearthPipHomeVisits?.ROOMS?.[kind],
+  name:id=>api.getAdults?.().find(a=>a.id===id)?.name||id,
+  showModal:api.showModal,closeModal:api.closeModal
+ })||{panel:()=>'',schedule:(id,e)=>e,townDialogue:()=>null,
+  townGesture:()=>false,drawWorking:()=>false,drawGallery:()=>false,
+  hit:()=>null,approach:()=>null,inspect:()=>false,handle:()=>false};
+ const position=()=>{const p=homeVisits.childPose()||homeHelp.pose()||familyLegacy.pose()||rituals.pose()||neighbors.escortPose()||routines.location();return {x:p.x,y:p.y}};
  function status(){
   const d=data(),today=day(),current=d.daily.day===today?d.daily.done:[],ready=new Set(d.memories.filter(m=>m.day<=today).map(m=>m.day)).size>=3&&KINDS.every(k=>d.memories.some(m=>m.kind===k&&m.day<=today));
   return {id:'pip',name:'Pip',stage:growth.visual().name,guardian:d.guardian,guardianDay:d.guardianDay,home:home(),day:today,needs:{...d.needs},done:current.slice(),careDays:d.days.length,ready,memories:d.memories.slice()};
@@ -269,11 +283,12 @@ function setup(api){
  }
  function draw(g,{scene,tick=0,drawSprite}={}){
   if(!g||!drawSprite||(scene!=='town'&&scene!=='home')||scene!==api.getScene?.()||!inPlace())return;
-  const base=routines.location(),escort=neighbors.escortPose(),visitChild=homeVisits.childPose(),participation=homeHelp.pose()||familyLegacy.pose()||rituals.pose(),routine=participation?{...base,...participation,label:'Helping Poppy in the cottage',icon:'🏡'}:visitChild?{...base,...visitChild,label:'A cottage visit with Poppy',icon:'🌷'}:escort?{...base,...escort,label:'A village walk with Poppy',icon:'🌼'}:base;
+  const base=routines.location(),escort=neighbors.escortPose(),visitChild=homeVisits.childPose(),participation=homeHelp.pose()||familyLegacy.pose()||rituals.pose(),routine=visitChild?{...base,...visitChild,label:'A cottage visit with Poppy',icon:'🌷'}:participation?{...base,...participation,label:'Helping Poppy in the cottage',icon:'🏡'}:escort?{...base,...escort,label:'A village walk with Poppy',icon:'🌼'}:base;
   const pos=position(),phase=routine.moving?Math.abs(Math.sin((routine.stride??tick*4)*Math.PI))*2.7:Math.sin(tick*1.7)*.6;
   if(!escort&&!visitChild){if(routine.mentorVisit)guides.draw(g,routine,tick);else if(!participation&&routine.project)projects.drawProp(g,routine,tick);else routines.drawProp(g,routine,tick)}
   drawSprite(CHILD,pos.x,pos.y+phase,routine);
-  homeRhythms.drawParticipation(g,{x:pos.x,y:pos.y+phase},homeHelp.pending?.kind,tick);
+  if(!visitChild)homeRhythms.drawParticipation(g,{x:pos.x,y:pos.y+phase},homeHelp.pending?.kind,tick);
+  guestEcho.drawWorking(g,'pip',tick);
   growth.drawAccessory(g,pos.x,pos.y+phase,tick);
   helpers.drawRibbon(g,pos,tick);
   neighbors.drawAura(g,tick,pos);
@@ -303,6 +318,7 @@ function setup(api){
   if(action.startsWith('pw285-'))return worldKeepsakes.handle(action,id);
   if(action.startsWith('pr287-'))return responses.handle(action,id);
   if(action.startsWith('pv289-'))return homeVisits.handle(action,id);
+  if(action.startsWith('pe290-'))return guestEcho.handle(action,id);
   if(action.startsWith('pl282-'))return familyLegacy.handle(action,id);
   if(action.startsWith('pf283-'))return rituals.handle(action,id);
   if(action==='ls272-book')return entry();
@@ -314,7 +330,7 @@ function setup(api){
   if(action==='ls272-close'){session=null;return api.closeModal?.()}
   return false;
  }
- return {status,position,entry,begin,choose,page,guardian,canBegin,hit,draw,handle,tick,advance,routines,neighbors,homeHelp,homeRhythms,homeVisits,dreams,projects,guides,growth,adventures,helpers,worldKeepsakes,responses,familyLegacy,rituals,get data(){return data()},get session(){return session},CHILD,ACTIONS};
+ return {status,position,entry,begin,choose,page,guardian,canBegin,hit,draw,handle,tick,advance,routines,neighbors,homeHelp,homeRhythms,homeVisits,guestEcho,dreams,projects,guides,growth,adventures,helpers,worldKeepsakes,responses,familyLegacy,rituals,get data(){return data()},get session(){return session},CHILD,ACTIONS};
 }
 root.HearthLittleSprouts={setup,clean,defaults,CHILD,ACTIONS};
 })(window);

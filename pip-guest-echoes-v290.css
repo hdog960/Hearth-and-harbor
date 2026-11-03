@@ -1,0 +1,14 @@
+/* v2.9.0 · small memories inside existing Daybook and real wall postcard */
+.pv289-personality{background:#fff3d9;border-radius:10px;border:1px solid #d2b9a7;padding:10px;margin:8px 0;font-size:12px;line-height:1.5;color:#694d4d}
+.pe290-summary{border-top:1px solid #d8b79b;padding:10px 4px 4px;margin-top:9px;color:#66484b}
+.pe290-summary b{display:block;font-size:12px}
+.pe290-summary small{font-size:11px;line-height:1.55;display:block;margin-top:4px}
+.pe290-album .ls272-cover{background:linear-gradient(130deg,#a67e89,#8b9f98);color:#fff6df}
+.pe290-story{display:grid;gap:7px;padding:12px;margin:12px 0;border:2px solid #d9baa5;border-radius:12px;background:#fff3dc;color:#664b49}
+.pe290-story small{font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+.pe290-story strong{font-size:15px;line-height:1.4}
+.pe290-story p{border-top:1px dashed #cbad9e;margin:3px 0 0;padding-top:10px;line-height:1.5}
+.pe290-album button{min-height:48px}
+.pe290-album :focus-visible{outline:3px solid #28736b;outline-offset:3px}
+@media(max-width:380px){.pe290-story{padding:9px}.pe290-story strong{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.pe290-album *{animation:none!important;transition:none!important}}
