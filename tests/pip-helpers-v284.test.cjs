@@ -197,7 +197,7 @@ test('daybook and dialogue integration is small-screen first and backed by world
  assert.match(html,/pip-helpers-v284\.css\?v=2\.8\.4/);
  assert.ok(html.indexOf('pip-helpers-v284.js')<html.indexOf('little-sprouts-v272.js'));
  for(const f of ['pip-helpers-v284.js','pip-helpers-v284.css'])assert.ok(sw.includes("'./"+f+"'"));
- assert.match(sw,/hearth-harbor-v287-village-remembers/);
+ assert.match(sw,/hearth-harbor-v288-homegrown-personality/);
  assert.match(child,/helpers\.panel\(\)/);assert.match(child,/helpers\.drawRibbon/);
  assert.match(game,/ph284-direct/);assert.match(game,/littleSprouts\.helpers\.hit/);
  assert.match(game,/littleSprouts\.helpers\.arrive/);assert.match(game,/littleSprouts\.helpers\.draw/);
