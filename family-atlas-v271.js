@@ -274,6 +274,18 @@ function setup(api){
      home:null});
    }
   }
+  // Later at-the-sign reunions are real, optional peer reflections.
+  // The child engine validates the saved chapters and sequential dates first.
+  if(obj(peerData)&&obj(peerData.pip)&&root.HearthYoungNeighbors?.clean){
+   const moments=root.HearthYoungNeighbors.clean(peerData.wren).club?.revisits||[];
+   for(const r of moments){
+    const written=root.HearthYoungNeighbors.REUNIONS?.[r.kind];
+    if(!written||!dayOK(r.day)||r.day>now)continue;
+    out.push({day:r.day,kind:'child-peer-reunion',ids:['pip','wren','player'],
+     title:'Our Friendship Corner · '+written.name,
+     detail:written.replies[r.choice],home:null});
+   }
+  }
   // A true shared traditional keepsake is a childhood family memory,
   // never legal ancestry, marriage, a fictitious parent or a new guardian.
   const child=state().youngResidents?.pip,keeps=child?.legacyKeepsakes;
