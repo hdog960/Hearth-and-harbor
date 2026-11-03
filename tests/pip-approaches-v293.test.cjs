@@ -183,7 +183,7 @@ test('each real interest has its own hand-drawn color, without external images',
  for(const kind of ['read','tidy','meal','hobby']){
   const f=fixture({kind});f.start();f.arrive();
   const p=picture();f.m.draw(p.g,f.child,2);
-  colors.push(p.strokes[4].color);
+  colors.push(p.strokes[3].color);
  }
  assert.equal(new Set(colors).size,4);
 });
