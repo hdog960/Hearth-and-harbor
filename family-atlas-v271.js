@@ -230,6 +230,22 @@ function setup(api){
      home:'player'});
    }
   }
+  // Real chosen family reflections are earned from multiple distinct
+  // actual shared childhood days. Never interpret them as legal or
+  // biological parentage or as an extra invented adult relationship.
+  const bondChild=state().youngResidents?.pip;
+  if(bondChild?.guardian==='player'&&dayOK(bondChild.guardianDay)&&
+    bondChild.guardianDay<=now&&root.HearthPipFamilyBond?.clean){
+   const authored=root.HearthPipFamilyBond.clean(bondChild.familyBond,bondChild.guardianDay).chapters;
+   for(const r of authored){
+    if(r.day>now||!root.HearthPipFamilyBond.CHAPTERS[r.id])continue;
+    const story=root.HearthPipFamilyBond.CHAPTERS[r.id];
+    out.push({day:r.day,kind:'child-family-bond',ids:['player','pip'],
+     title:'Poppy & Pip · '+story.name,
+     detail:'After genuinely shared family days: '+story.after[r.choice],
+     home:'player'});
+   }
+  }
   // A true shared traditional keepsake is a childhood family memory,
   // never legal ancestry, marriage, a fictitious parent or a new guardian.
   const child=state().youngResidents?.pip,keeps=child?.legacyKeepsakes;
