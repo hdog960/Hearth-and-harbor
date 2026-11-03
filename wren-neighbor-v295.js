@@ -629,7 +629,7 @@ function setup(api){
  function inspectClub(){
   const rows=clubRows(),site=clubSite(),p=api.getPlayer?.();
   if(!rows.length||!site||!p||scene()!=='town'||dist(p,site)>115)return false;
-  api.showModal?.('young-neighbors','<section class="yn295-book"><header class="yn295-cover"><small>🌼 MAPLEWOOD FRIENDSHIP CORNER</small><h2>Pip & Wren’s handmade pennant · '+rows.length+' / 3</h2><p>Every ribbon was made on a different real day after a completed earlier childhood outing.</p></header><ul>'+rows.map(r=>'<li><strong>Day '+r.day+' · '+esc(CLUB.find(c=>c.kind===r.kind).name)+'</strong> · '+esc(CLUB.find(c=>c.kind===r.kind).ending[r.last])+'</li>').join('')+'</ul><p>This is a read-only memory; visiting the sign does not award anything.</p><button data-act="yn295-close">Return to the village</button></section>');
+  api.showModal?.('young-neighbors','<section class="yn295-book"><header class="yn295-cover"><small>🌼 MAPLEWOOD FRIENDSHIP CORNER</small><h2>Pip & Wren’s handmade pennant · '+rows.length+' / 3</h2><p>Every ribbon was made on a different real day after a completed earlier childhood outing.</p></header><ul>'+rows.map(r=>'<li><strong>Day '+r.day+' · '+esc(CLUB.find(c=>c.kind===r.kind).name)+'</strong> · '+esc(CLUB.find(c=>c.kind===r.kind).ending[r.last])+'</li>').join('')+'</ul><p>Inspecting the sign is read-only. Return with the children on another day for an optional new experience.</p>'+(reunionRows().length?'<p><strong>Another day together:</strong></p><ul>'+reunionRows().map(r=>'<li>Day '+r.day+' · '+esc(REUNIONS[r.kind].replies[r.choice])+'</li>').join('')+'</ul>':'')+(reunionReady()?'<button data-act="yn298-begin">🌼 Reflect with Pip and Wren</button>':'')+'<button data-act="yn295-close">Return to the village</button></section>');
   return true;
  }
  function drawAccent(g,p,tick=0){
@@ -647,6 +647,8 @@ function setup(api){
   g.restore();return true;
  }
  function handle(action,id){
+  if(action==='yn298-begin')return reunionBegin();
+  if(action==='yn298-choose')return reunionFinish(Number(id));
   if(action==='yn297-begin')return clubBegin();
   if(action==='yn297-first')return clubFirst(Number(id));
   if(action==='yn297-last')return clubFinish(Number(id));
@@ -657,9 +659,9 @@ function setup(api){
   return false;
  }
  return {pose,advance,hit,approach,talk,eligible,chooseFirst,hitMarker,arrive,
-  finish,cancel,handle,panel,history,level,title,sharedInterest,clubRows,clubSite,clubReady,clubBegin,clubFirst,clubArrive,clubFinish,hitClub,inspectClub,drawClub,drawSocial,drawAccent,drawMarker,
+  finish,cancel,handle,panel,history,level,title,sharedInterest,clubRows,clubSite,clubReady,clubBegin,clubFirst,clubArrive,clubFinish,hitClub,inspectClub,drawClub,drawTending,reunionRows,reunionNext,reunionReady,reunionBegin,reunionFinish,drawSocial,drawAccent,drawMarker,
   segment,routeTo,clean,story:kind=>STORIES[kind],
   get session(){return session},get moment(){return moment?{...moment}:null},get actor(){return actor?{...actor}:null}};
 }
-root.HearthYoungNeighbors={setup,clean,cleanClub,WREN,STORIES,CLUB,ROUTINE};
+root.HearthYoungNeighbors={setup,clean,cleanClub,WREN,STORIES,CLUB,REUNIONS,ROUTINE};
 })(window);
