@@ -47,13 +47,21 @@ function clean(raw){
    ![0,1].includes(r.first)||![0,1].includes(r.last)||days.has(r.day))continue;
   days.add(r.day);rows.push({day:r.day,key:r.key,season:r.season,first:r.first,last:r.last});
  }
- return rows.sort((a,b)=>a.day-b.day||a.key.localeCompare(b.key)).slice(-40);
+ // Preserve one genuinely completed receipt for each season forever, even
+ // after decades of daily memories. Keep all four original seasonal anchors
+ // plus the newest remaining pages within the same 40-entry save limit.
+ rows.sort((a,b)=>a.day-b.day||a.key.localeCompare(b.key));
+ const anchors=new Map();
+ for(const row of rows)if(!anchors.has(row.season))anchors.set(row.season,row);
+ const retained=new Set([...anchors.values()].map(r=>r.day));
+ const tail=rows.filter(r=>!retained.has(r.day)).slice(-(40-anchors.size));
+ return [...anchors.values(),...tail].sort((a,b)=>a.day-b.day||a.key.localeCompare(b.key));
 }
 function recordsFor(state,child,now,legacy){
  if(!obj(child)||child.guardian!=='player'||!dayOK(child.guardianDay)||child.guardianDay>now)return [];
  return clean(child.familyRituals).filter(r=>{
   if(r.day>now||r.day<child.guardianDay)return false;
-  const source=(child.legacyKeepsakes||[]).find(k=>obj(k)&&k.key===r.key&&dayOK(k.day)&&k.day<=r.day&&
+  const source=(Array.isArray(child.legacyKeepsakes)?child.legacyKeepsakes:[]).find(k=>obj(k)&&k.key===r.key&&dayOK(k.day)&&k.day<=r.day&&
    k.action===root.HearthPipLegacy.TRACKS[r.key].action);
   if(!source)return false;
   const adult=state?.homeTraditions?.homes?.player?.[r.key]?.completedDay;
