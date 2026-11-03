@@ -125,7 +125,7 @@ function setup(api){
   nearChild:d=>api.isNearby?.(position(),d)===true,
   isChildBusy:()=>!!homeHelp.pending,
   ownDone:api.ownDone,ownHold:api.ownHold,
-  queueAction:api.queueOwnAction,closeModal:api.closeModal,
+  queueAction:api.queueOwnAction,closeModal:api.closeModal,showModal:api.showModal,
   save:api.save,updateUI:api.updateUI,notify:api.notify,openBook:()=>entry()
  });
  const position=()=>{const p=homeHelp.pose()||familyLegacy.pose()||neighbors.escortPose()||routines.location();return {x:p.x,y:p.y}};
