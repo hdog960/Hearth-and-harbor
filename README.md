@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.9.1 — Pip's Living Cottage Day
+
+**Pip walks the cottage for real.** The existing routine and earned Homegrown Personality interests now drive a genuinely navigated child actor instead of moving Pip through walls and furniture with a clock-position interpolation. A safe grid route follows your actual cottage floor and placed furnishings. Pip uses original stride-driven animation and honors real household activities, visiting neighbors and family rituals first. A compact Daybook line shows what the child is doing, without adding a new tab, reward currency or storage key.
+
+[Read the v2.9.1 navigation fix, regression and Generations report](PIPS_LIVING_COTTAGE_DAY_V291_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.9.0 Guests Who Remember
+
 # Hearth & Harbor v2.9.0 — Guests Who Remember
 
 **Your guests now feel like participants.** When Poppy, Pip and an actual Maplewood neighbor share a timed cottage activity, the visitor and Pip each perform small original pixel-animated work, and Pip's truly earned interests influence their conversation. Afterward, six individually illustrated postcards appear in the actual cottage wall, recording the real choices made. The adult may remember the experience in later town conversations and take small, grid-routed visits back toward their normal community routines. **No extra tab, currency, account, save reset or artificial completion.**

@@ -1,0 +1,8 @@
+/* v2.9.1 — one calm line in the existing Pip Daybook */
+.pha291-status{display:flex;gap:8px;align-items:center;border:1px solid #d5bda7;
+ border-radius:11px;background:#f6e9d9;color:#654f4a;padding:8px 10px;margin:9px 0}
+.pha291-status .pha291-icon{font-size:19px;line-height:1}
+.pha291-status strong{display:block;font-size:12px;line-height:1.3}
+.pha291-status small{display:block;font-size:11px;line-height:1.4;opacity:.85}
+@media(max-width:380px){.pha291-status{padding:7px 8px;gap:6px}}
+@media(prefers-reduced-motion:reduce){.pha291-status *{animation:none!important;transition:none!important}}
