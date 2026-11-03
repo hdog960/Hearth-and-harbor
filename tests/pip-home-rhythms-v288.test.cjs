@@ -130,7 +130,7 @@ test('genuinely earned second day unveils a distinctive handmade prop',()=>{
 test('four different genuine two-day activities have four unique little props',()=>{
  const helps=ids.flatMap((k,i)=>[record(3+i*2,k),record(4+i*2,k)]);
  const f=fixture({help:helps,day:20});
- const p=f.rhythms.profile();assert.deepEqual(plain(p.earned),ids);
+ const p=f.rhythms.profile();assert.deepEqual(plain(p.earned),plain(ids));
  const draws=[],g={save(){},restore(){},fillRect(...x){draws.push(x)}};
  assert.equal(f.rhythms.drawHome(g,0),true);assert.ok(draws.length>=22);
 });
