@@ -138,7 +138,7 @@ function setup(api){
  function beginSmallMoment(a){
   if(moment||lastMomentDay===day()||api.isPlayerMoving?.()||api.isPaused?.()||session)return;
   const pip=validCompanion(),p=api.getPlayer?.();
-  if(!pip||!p||!finite(p.x)||!finite(p.y)||dist(a,pip)>235||dist(a,pip)<14||
+  if(!pip||!p||!finite(p.x)||!finite(p.y)||dist(a,pip)>235||
    dist(p,pip)>390)return;
   const desired={x:pip.x+48,y:pip.y+26},stop=safeAt(desired,62);
   if(!stop||dist(stop,pip)>88||dist(a,stop)>265)return;
