@@ -193,11 +193,11 @@ test('future child helper records cannot appear as dated real history',()=>{
 });
 test('daybook and dialogue integration is small-screen first and backed by world travel',()=>{
  const html=read('index.html'),sw=read('sw.js'),game=read('game.js'),child=read('little-sprouts-v272.js'),css=read('pip-helpers-v284.css');
- assert.match(html,/pip-helpers-v284\.js\?v=2\.8\.4/);
+ assert.match(html,/pip-helpers-v284\.js\?v=2\.8\.5/);
  assert.match(html,/pip-helpers-v284\.css\?v=2\.8\.4/);
  assert.ok(html.indexOf('pip-helpers-v284.js')<html.indexOf('little-sprouts-v272.js'));
  for(const f of ['pip-helpers-v284.js','pip-helpers-v284.css'])assert.ok(sw.includes("'./"+f+"'"));
- assert.match(sw,/hearth-harbor-v284-neighborhood-helpers/);
+ assert.match(sw,/hearth-harbor-v285-living-keepsakes/);
  assert.match(child,/helpers\.panel\(\)/);assert.match(child,/helpers\.drawRibbon/);
  assert.match(game,/ph284-direct/);assert.match(game,/littleSprouts\.helpers\.hit/);
  assert.match(game,/littleSprouts\.helpers\.arrive/);assert.match(game,/littleSprouts\.helpers\.draw/);
