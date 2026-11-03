@@ -173,9 +173,9 @@ test('phone asset order, cache, scrolling and accessibility gates include v2.7.3
  }
  assert.ok(html.indexOf('pip-routines-v273.js')<html.indexOf('little-sprouts-v272.js'));
  assert.ok(html.indexOf('little-sprouts-v272.js')<html.indexOf('game.js'));
- assert.match(html,/v=2\.7\.3/);assert.match(sw,/hearth-harbor-v273-pips-living-day/);
+ assert.match(html,/v=2\.7\.4/);assert.match(sw,/hearth-harbor-v274-permanent-learning/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
- assert.match(css,/prefers-reduced-motion/);assert.match(game,/Pip.s Living Day v2\.7\.3/);
+ assert.match(css,/prefers-reduced-motion/);assert.match(game,/Pip.s Living Day v2\.7\.4/);
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
 });
 test('new routines have no timers, network, embedded payment or second storage key',()=>{
