@@ -163,13 +163,16 @@ function setup(api){
   }
   return true;
  }
+ function board(){return api.showModal?.('little-sprouts','<section class="ls272-book">'+panel()+'<button data-act="pl282-pip">🌱 Open Pip’s full Daybook</button></section>')}
  function handle(action,id){
+  if(action==='pl282-board')return board();
+  if(action==='pl282-pip')return api.openBook?.();
   if(action==='pl282-plan')return plan(id);
   if(action==='pl282-cancel'){if(!pending)return false;pending=null;return api.openBook?.()}
   if(action==='pl282-book')return api.openBook?.();
   return false;
  }
- return {clean,prerequisites,canPlan,plan,complete,pose,panel,draw,earned,handle,
+ return {clean,prerequisites,canPlan,plan,complete,pose,panel,board,draw,earned,handle,
    get pending(){return active()},get records(){return records().slice()},get bonus(){return IDS.filter(earned).length}};
 }
 root.HearthPipLegacy={setup,clean,prerequisites,TRACKS,IDS};
