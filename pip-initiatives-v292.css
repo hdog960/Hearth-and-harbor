@@ -1,0 +1,17 @@
+/* v2.9.2 — a single folded part of the existing childhood Daybook */
+.pi292-panel{border:2px solid #c9aa95;background:#fff3de;border-radius:15px;margin:10px 0;overflow:hidden;color:#624a45}
+.pi292-panel summary{list-style:none;cursor:pointer;background:#eed9bd;padding:13px;font-size:13px;font-weight:900;min-height:44px;touch-action:manipulation}
+.pi292-panel summary::-webkit-details-marker{display:none}
+.pi292-panel summary:after{content:'⌄';float:right}
+.pi292-panel details[open] summary:after{content:'⌃'}
+.pi292-body{padding:10px 12px}.pi292-body p,.pi292-fine{font-size:12px;line-height:1.5}
+.pi292-progress{display:flex;gap:8px;flex-wrap:wrap;font-weight:800;font-size:11px;margin:8px 0}
+.pi292-progress span{padding:7px 8px;background:#f5e2cd;border-radius:8px}
+.pi292-records{margin:10px 0 2px;padding-left:18px;font-size:11px;line-height:1.6}
+.pi292-body button,.pi292-book button{min-height:48px}
+.pi292-context{padding:9px 11px;background:#fff1d8;border-radius:11px;margin:11px 0;color:#6e5254}
+.pi292-book .ls272-cover{background:linear-gradient(125deg,#947686,#b49b82);color:#fff6de}
+.pi292-book .ls272-activity button small{display:block;font-weight:500;font-size:11px;line-height:1.4}
+.pi292-panel :focus-visible,.pi292-book :focus-visible{outline:3px solid #327568;outline-offset:2px}
+@media(max-width:380px){.pi292-panel summary{font-size:12px;padding:12px 8px}.pi292-body{padding:8px}}
+@media(prefers-reduced-motion:reduce){.pi292-panel *,.pi292-book *{animation:none!important;transition:none!important}}
