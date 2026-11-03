@@ -174,7 +174,7 @@ function setup(api){
  }
  function handle(action,id){
   if(action==='phe299-share')return request();
-  if(action==='phe299-choose')return choose(Number(id));
+  if(action==='phe299-choose')return id==='0'||id==='1'?choose(Number(id)):false;
   if(action==='phe299-cancel'){cancel();return api.openBook?.()}
   if(action==='phe299-book'){prompt=null;return api.openBook?.()}
   return false;
