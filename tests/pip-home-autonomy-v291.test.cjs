@@ -172,7 +172,7 @@ test('placing furniture on the current position moves Pip minimally to an actual
  assert.ok(Math.hypot(p.x-700,p.y-850)<=85);
 });
 test('a completely blocked house keeps Pip stopped instead of inventing a position',()=>{
- const f=fixture();f.setWall(()=>true);f.setSchedule({x:450,y:850});
+ const f=fixture();f.step(.05);f.setWall(()=>true);f.setSchedule({x:450,y:850});
  f.step(.1);
  assert.equal(f.m.pose().moving,false);
  assert.equal(f.pathCalls,0);
