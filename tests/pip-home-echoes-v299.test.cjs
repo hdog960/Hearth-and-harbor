@@ -43,7 +43,7 @@ test('three distinct child-led home stories have meaningful two-choice responses
   assert.equal(t.choices.length,2,k);assert.equal(t.after.length,2,k);
   assert.notEqual(t.after[0],t.after[1],k);assert.ok(t.intro.length>50);
  }
- assert.deepEqual(M.STORIES.nature.tasks,['tidy','meal']);
+ assert.deepEqual(plain(M.STORIES.nature.tasks),['tidy','meal']);
 });
 test('old and malformed save data get optional empty records without resetting original save',()=>{
  assert.deepEqual(plain(M.clean(null,1)),{records:[]});
