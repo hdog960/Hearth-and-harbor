@@ -154,9 +154,9 @@ test('family daybook, real sprite and Canvas wall are actually wired into the iP
  assert.match(game,/action\.startsWith\('phe299-'\)/);
  assert.ok(index.includes('pip-home-echoes-v299.js?v=2.9.9'));
  assert.ok(index.indexOf('pip-home-echoes-v299.js')<index.indexOf('little-sprouts-v272.js'));
- assert.ok(index.includes('little-sprouts-v272.js?v=2.9.9'));
- assert.ok(index.includes('game.js?v=2.9.9'));
- assert.match(sw,/hearth-harbor-v299-stories-brought-home/);
+ assert.ok(index.includes('little-sprouts-v272.js?v=3.0'));
+ assert.ok(index.includes('game.js?v=3.0'));
+ assert.match(sw,/hearth-harbor-v300-chosen-generations/);
  assert.ok(sw.includes("'./pip-home-echoes-v299.js'"));
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
 });
