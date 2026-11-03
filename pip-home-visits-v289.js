@@ -283,7 +283,7 @@ function setup(api){
   return '<section class="pv289-panel"><details><summary>🏡 Real Cottage Visits · '+record.memories.length+'/6 remembered</summary>'+
    '<div class="pv289-inner"><p>Invite a villager Pip has already met, directly in a real town conversation. On the next day meet your guest at Poppy’s cottage door between 10 AM and 8 PM, then bring everyone inside. Tap your guest and finish a real Household Daybook activity with Pip before making a lasting choice.</p>'+
    '<strong>'+esc(summary)+'</strong><small>Nothing is earned just by inviting someone or opening this book. Visits never create new family relationships or adult jobs.</small>'+
-   (record.memories.length?'<div class="pv289-records">'+record.memories.slice().reverse().map(r=>'<small>'+VISITS[r.id].icon+' Day '+r.day+' · '+esc(VISITS[r.id].name)+'</small>').join('')+'</div>':'')+'</div></details></section>';
+   (record.memories.length?'<div class="pv289-records">'+record.memories.slice().reverse().map(r=>'<small>'+VISITS[r.id].icon+' Day '+r.day+' · '+esc(VISITS[r.id].name)+'</small>').join('')+'</div>':'')+(api.getGallerySummary?.()||'')+'</div></details></section>';
  }
  function drawShared(g,tick=0){
   if(!g||!home()||!guest||!pip)return false;
