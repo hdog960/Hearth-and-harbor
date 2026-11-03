@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.7.5 — Pip's Neighbor Walks
+# Hearth & Harbor v2.7.6 — Little Helping Hands
+
+**Pip now participates in Poppy's actual cottage routines.** After choosing guardianship, stand beside Pip and invite them to read, tidy, set the table or create together. Poppy's existing Daybook walks her to real household furniture and finishes the normal timed activity. Only that genuine first daily completion creates a childhood memory; opening a menu or queuing a task gives nothing.
+
+Pip appears near the real furniture while helping. Three different shared tasks on three distinct days earn an original handmade cloth banner illustrated on the playable cottage wall and a small capped comfort benefit. No coins, invented family relationships, punitive care rules or new storage accounts. Every previous save, adult household feature, childhood activity, neighbor walk and bedtime memory remains compatible.
+
+[Read the v2.7.6 implementation, quality gates and Generations roadmap](LITTLE_HELPING_HANDS_V276_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.7.5 Pip's Neighbor Walks
 
 **Pip can now join a real village walk and meet actual residents.** After opting into guardianship, visit Pip in the cottage and take a stroll; Pip follows Poppy's position in the playable 2.5D town. The live child is more than a static menu icon, with movement, directional sprite frames, and a small illustrated companion ribbon.
 
