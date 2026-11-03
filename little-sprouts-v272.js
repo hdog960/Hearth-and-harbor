@@ -64,6 +64,7 @@ function setup(api){
  const inPlace=()=>neighbors.walkingNow()||api.getScene?.()===routines.location().scene;
  const routines=root.HearthPipRoutines.setup({
   getState:state,getChild:data,getScene:api.getScene,isNearby:api.isNearby,
+  getAdults:api.getAdults,isWalkable:api.isWalkable,
   showModal:api.showModal,notify:api.notify,save:api.save,
   updateUI:api.updateUI,openBook:()=>entry()
  });
