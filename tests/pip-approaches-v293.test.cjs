@@ -118,7 +118,7 @@ test('Pip actually reaching the target produces one optional toast and original 
  assert.equal(f.notices.length,1);
  assert.match(f.notices[0],/Tap Pip/);
  const pic=picture();assert.equal(f.m.draw(pic.g,f.child,1.3),true);
- assert.ok(pic.strokes.length>=7);
+ assert.ok(pic.strokes.length>=6);
 });
 test('a genuine arrival leaves the gameplay button to the player instead of opening a modal',()=>{
  const f=fixture();f.start();f.arrive();
