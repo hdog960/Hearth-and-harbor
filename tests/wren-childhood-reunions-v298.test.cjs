@@ -178,8 +178,8 @@ test('actual in-game touch routes both v2.9.7 club buttons and new v2.9.8 reunio
 test('iPhone offline cache and live Canvas script use v2.9.8 without changing original storage',()=>{
  const html=read('index.html'),sw=read('sw.js'),game=read('game.js');
  assert.ok(html.includes('wren-neighbor-v295.js?v=2.9.8'));
- assert.ok(html.includes('game.js?v=2.9.8'));
- assert.match(sw,/hearth-harbor-v298-childhood-reunions/);
+ assert.ok(html.includes('game.js?v=2.9.9'));
+ assert.match(sw,/hearth-harbor-v299-stories-brought-home/);
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
  const src=read('wren-neighbor-v295.js');
  assert.doesNotMatch(src,/fetch\(|XMLHttpRequest|WebSocket|localStorage|setInterval|setTimeout/);
