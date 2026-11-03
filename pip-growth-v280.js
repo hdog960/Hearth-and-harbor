@@ -1,4 +1,4 @@
-/* Hearth & Harbor v2.8.0 — Pip's Growing Seasons.
+/* Hearth & Harbor v3.0 — Pip's Chosen Growing Years.
  * Two OPTIONAL, earned childhood developmental milestones that change the
  * actual 2.5D child sprite, world appearance and childhood home routines.
  * This is NOT biological aging, an unearned year, school, or adult status.
@@ -8,7 +8,8 @@
 const STAGES=[
  {name:'Child',title:'A Little Sprout',icon:'🌱',scale:.76,color:'#b9cfa7'},
  {name:'Growing Child',title:'Finding My Own Feet',icon:'🌼',scale:.84,color:'#e6b6a1'},
- {name:'Independent Child',title:'Ready for Bigger Adventures',icon:'⭐',scale:.92,color:'#b6a1c6'}
+ {name:'Independent Child',title:'Ready for Bigger Adventures',icon:'⭐',scale:.92,color:'#b6a1c6'},
+ {name:'Young Teen',title:'The Next Little Horizon',icon:'🪁',scale:1.045,color:'#a4c5b8'}
 ];
 const CHAPTERS=[
  {name:'Finding My Own Feet',icon:'🌼',description:'Pip grows more capable through shared care, learning and the people of Maplewood.',
@@ -28,6 +29,14 @@ const CHAPTERS=[
    {key:'evenings',min:3,label:'Complete three bedtime rituals'},
    {key:'projects',min:3,label:'Join three real independent projects'},
    {key:'finishedDreams',min:1,label:'Earn both chapters of a chosen childhood dream'}
+  ]},
+ {name:'The Next Little Horizon',icon:'🪁',description:'An entirely optional early-teen chapter, chosen together after Pip has built both village friendships and a real life at home.',
+  goals:[
+   {key:'postIndependentDays',min:7,label:'Let seven village days pass after Pip becomes an Independent Child'},
+   {key:'peerDays',min:5,label:'Complete five genuine Pip and Wren friendship outings'},
+   {key:'clubChapters',min:2,label:'Make two different real Friendship Corner chapters'},
+   {key:'homeStories',min:2,label:'Bring two genuine earlier friendship stories home'},
+   {key:'familyBond',min:2,label:'Share two earned Poppy and Pip family-bond chapters'}
   ]}
 ];
 const obj=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
@@ -38,10 +47,22 @@ function clean(raw){
  const r=obj(raw)?raw:{},first=dayOK(r.firstDay)?r.firstDay:0,
   second=dayOK(r.secondDay)&&r.secondDay>=first?r.secondDay:0;
  const requested=Number.isInteger(r.stage)?r.stage:0;
- const stage=requested>=2&&first&&second?2:requested>=1&&first?1:0;
- return {stage,firstDay:stage>=1?first:0,secondDay:stage>=2?second:0};
+ const third=dayOK(r.thirdDay)&&r.thirdDay>second?r.thirdDay:0;
+ const choice=[0,1].includes(r.thirdChoice)?r.thirdChoice:-1;
+ const stage=requested===3&&first&&second&&third&&choice!==-1?3:
+   requested>=2&&first&&second?2:requested>=1&&first?1:0;
+ const base={stage,firstDay:stage>=1?first:0,secondDay:stage>=2?second:0};
+ return stage===3?{...base,thirdDay:third,thirdChoice:choice}:base;
 }
-function evidence(child,day){
+function evidence(child,day,peerData=null){
+ const peer=root.HearthYoungNeighbors?.clean?.(peerData)||{friendships:[],club:{chapters:[]}};
+ const outings=Array.isArray(peer.friendships)?peer.friendships.filter(x=>x.day<=day):[];
+ const club=Array.isArray(peer.club?.chapters)?peer.club.chapters.filter(x=>x.day<=day):[];
+ const homeStories=root.HearthPipHomeEchoes?.clean?.(child?.homeEchoes,child?.guardianDay)?.records||[];
+ const bonds=root.HearthPipFamilyBond?.clean?.(child?.familyBond,child?.guardianDay)?.chapters||[];
+ const raw=clean(child?.growth);
+ const postIndependentDays=raw.stage>=2&&raw.secondDay<=day?
+   Math.max(0,day-raw.secondDay):0;
  const c=obj(child)?child:{},skills=obj(c.skills)?c.skills:{};
  const measured={};
  for(const kind of ['story','garden','art']){
@@ -70,30 +91,34 @@ function evidence(child,day){
  const practice=measured.story+measured.garden+measured.art;
  return {practice,kinds:Object.values(measured).filter(x=>x>0).length,
   kindsAdvanced:Object.values(measured).filter(x=>x>=2).length,
-  home,neighbors,neighborKinds,evenings,projects,finishedDreams,skills:measured};
+  home,neighbors,neighborKinds,evenings,projects,finishedDreams,skills:measured,
+  postIndependentDays,peerDays:new Set(outings.map(x=>x.day)).size,
+  clubChapters:club.length,homeStories:homeStories.filter(x=>x.day<=day).length,
+  familyBond:bonds.filter(x=>x.day<=day).length};
 }
 function lifeStage(child,now){
  const c=obj(child)?child:{},raw=clean(c.growth);
  if(c.guardian!=='player'||!dayOK(c.guardianDay)||c.guardianDay>now||raw.stage<1||raw.firstDay>now)return 0;
+ if(raw.stage>=3&&raw.secondDay<=now&&raw.thirdDay<=now)return 3;
  return raw.stage>=2&&raw.secondDay<=now?2:1;
 }
-function progress(child,now){
+function progress(child,now,peerData=null){
  const c=obj(child)?child:{},raw=clean(c.growth);
  const guarded=c.guardian==='player'&&dayOK(c.guardianDay)&&c.guardianDay<=now;
  const stage=lifeStage(c,now);
- const counts=evidence(c,now);
+ const counts=evidence(c,now,peerData);
  const chapters=CHAPTERS.map((cfg,i)=>{
   const level=i+1,claimed=stage>=level,prerequisite=i===0||stage>=i;
   const goals=cfg.goals.map(g=>({...g,current:Math.min(g.min,counts[g.key]),actual:counts[g.key],done:counts[g.key]>=g.min}));
   return {...cfg,level,claimed,ready:guarded&&!claimed&&prerequisite&&goals.every(g=>g.done),goals};
  });
  return {stage,label:STAGES[stage].name,scale:STAGES[stage].scale,title:STAGES[stage].title,
-  firstDay:raw.firstDay,secondDay:raw.secondDay,chapters,counts,guarded};
+  firstDay:raw.firstDay,secondDay:raw.secondDay,thirdDay:raw.thirdDay||0,thirdChoice:raw.thirdChoice,chapters,counts,guarded};
 }
 function setup(api){
  const state=()=>api.getState(),child=()=>api.getChild();
  const today=()=>dayOK(state().day)?state().day:1;
- const actual=()=>progress(child(),today());
+ const actual=()=>progress(child(),today(),state().youngResidents?.wren);
  const phase=()=>lifeStage(child(),today());
  const isNear=()=>api.getScene?.()==='home'&&api.nearChild?.(130)===true;
  const canClaim=level=>[1,2].includes(level)&&isNear()&&actual().chapters[level-1]?.ready===true;
