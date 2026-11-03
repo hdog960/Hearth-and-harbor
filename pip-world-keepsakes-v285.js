@@ -170,13 +170,13 @@ function setup(api){
     !records().some(r=>r.day===record.day&&r.id===record.id))return false;
   const p=(api.getPlayer?.()||{});
   if(!finite(p.x)||!finite(p.y))return false;
-  celebration={id:record.id,x:p.x,y:p.y,seconds:4.5};
+  celebration={id:record.id,day:record.day,x:p.x,y:p.y,seconds:4.5};
   cachedKey=''; // make the new persistent real art appear immediately.
   return true;
  }
  function advance(dt){
   if(!celebration)return;
-  if(api.getScene?.()!=='town'||now()!==getState().youngResidents?.pip?.helperProjects?.find(r=>r.id===celebration.id&&r.day===now())?.day){
+  if(api.getScene?.()!=='town'||now()!==celebration.day){
    celebration=null;return;
   }
   if(!finite(dt)||dt<=0||api.isPaused?.())return;
