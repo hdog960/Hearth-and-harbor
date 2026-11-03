@@ -63,6 +63,13 @@ test('child suggestions are afternoon events, not automatic overnight jobs',()=>
  }
  assert.equal(fixture({minute:660}).m.ready(),true);
 });
+test('nearby is necessary to open an idea, not to have an idea in the first place',()=>{
+ const f=fixture();f.setPlayer(1300,1350);
+ assert.equal(f.m.ready(),false);
+ assert.equal(f.m.canOffer(),true,'Pip may plan to approach Poppy while far away');
+ f.setOther(true);assert.equal(f.m.canOffer(),false);
+});
+
 test('a real in-world conversation requires Poppy close to Pip',()=>{
  const f=fixture();f.setPlayer(1400,1300);
  assert.equal(f.m.ready(),false);assert.equal(f.m.request(),false);
@@ -254,16 +261,16 @@ test('the actual timed household hold renders distinct original child-led hand a
 test('phone source uses existing real 3.8s action and child world tap, no new navigation tab',()=>{
  const html=read('index.html'),sw=read('sw.js'),game=read('game.js'),
   little=read('little-sprouts-v272.js'),css=read('pip-initiatives-v292.css');
- assert.ok(html.includes('pip-initiatives-v292.js?v=2.9.2'));
+ assert.ok(html.includes('pip-initiatives-v292.js?v=2.9.3'));
  assert.ok(html.includes('pip-initiatives-v292.css?v=2.9.2'));
  assert.ok(html.indexOf('pip-initiatives-v292.js')<html.indexOf('little-sprouts-v272.js'));
  for(const f of ['pip-initiatives-v292.js','pip-initiatives-v292.css'])
   assert.ok(sw.includes("'./"+f+"'"));
- assert.match(sw,/hearth-harbor-v292-pips-own-ideas/);
+ assert.match(sw,/hearth-harbor-v293-pip-comes-to-you/);
  assert.match(game,/littleSprouts\.initiatives\.completed\(kind,once,state\.day\)/);
  assert.match(game,/if\(!littleSprouts\.initiatives\.request\(\)\)littleSprouts\.entry\(\)/);
  assert.match(game,/householdHold=\{kind,where,id,remaining:3\.8,duration:3\.8\}/);
- assert.match(little,/getSchedule:\(\)=>initiatives\.schedule\(routines\.location\(\)\)/);
+ assert.match(little,/getSchedule:\(\)=>approaches\.schedule\(initiatives\.schedule\(routines\.location\(\)\)\)/);
  assert.match(little,/initiatives\.drawDuringHold\(g,pos,tick\)/);
  assert.match(little,/initiatives\.panel\(\)/);
  assert.match(little,/childInitiatives:root\.HearthPipInitiatives\?\.clean/);

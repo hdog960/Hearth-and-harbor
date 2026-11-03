@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.9.3 — Pip Comes to You
+
+**Pip can seek Poppy out in the playable cottage.** After real chosen guardianship and while Poppy is quietly at home, Pip may take a short genuine path around furniture to stand beside her and ask to share a little idea. The invitation appears as small original in-world child artwork, not a forced pop-up. Tap Pip to accept or simply carry on. All actual rewards still require the original completed, timed Poppy Daybook activity, with no extra money or save reset.
+
+[Read the v2.9.3 development, mobile performance and QA report](PIP_COMES_TO_YOU_V293_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.9.2 Pip's Own Little Ideas
+
 # Hearth & Harbor v2.9.2 — Pip's Own Little Ideas
 
 **Pip can now ask Poppy to do something together.** A real nearby conversation offers one of four personally authored household activities, shaped by Pip's genuinely earned favorite interests. Poppy can let Pip lead or show them how, but the decision is saved **only after the original timed Household Daybook action really finishes with both characters at the same furniture**. Pip physically walks around the room to join. Their choices have modest lasting childhood consequences and distinct later dialogue, no invented rewards or new navigation tab.

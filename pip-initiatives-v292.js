@@ -82,9 +82,12 @@ function setup(api){
   const c=api.getChildPosition?.(),p=api.getPlayer?.();
   return c&&p&&[c.x,c.y,p.x,p.y].every(finite)&&dist(c,p)<=135;
  }
- function ready(){
+ function canOffer(){
   return owned()&&scene()==='home'&&activeHours()&&!already()&&!pending&&
-   !prompt&&!blocked()&&!api.isOwnRoutineBusy?.()&&near()&&!!category()&&!!spot(category());
+   !prompt&&!blocked()&&!api.isOwnRoutineBusy?.()&&!!category()&&!!spot(category());
+ }
+ function ready(){
+  return canOffer()&&near();
  }
  function request(){
   if(!ready())return false;
@@ -208,7 +211,7 @@ function setup(api){
   if(action==='pi292-daybook'){prompt=null;return api.openBook?.()}
   return false;
  }
- return {clean,schedule,request,ready,choose,cancel,completed,advance,panel,
+ return {clean,schedule,request,ready,canOffer,choose,cancel,completed,advance,panel,
   drawHint,drawDuringHold,handle,category,spot,saved,
   get pending(){return pending},get prompt(){return prompt}};
 }

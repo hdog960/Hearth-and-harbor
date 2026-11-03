@@ -2371,7 +2371,7 @@ function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){sto
    else notify('There is not a clear path to that family picture.');
    return;
   }
-  if(littleSprouts.hit(wx,wy,'home')){const p=littleSprouts.position();goTo(nearestWalkable({x:p.x-75,y:p.y+50},'home',true)||{x:690,y:810},()=>{if(!littleSprouts.initiatives.request())littleSprouts.entry()});return}
+  if(littleSprouts.hit(wx,wy,'home')){const p=littleSprouts.position();goTo(nearestWalkable({x:p.x-75,y:p.y+50},'home',true)||{x:690,y:810},()=>{if(!littleSprouts.initiatives.request())littleSprouts.entry();littleSprouts.approaches.interacted()});return}
    if(wy<220){notify('A lovely sunny view out of the window!');return}
   const itemIndex=state.placed.findIndex(f=>Math.hypot(wx-f.x,wy-f.z)<45);
   if(itemIndex>=0){
@@ -2576,6 +2576,7 @@ const littleSprouts=window.HearthLittleSprouts.setup({
  findPath:(from,to,w)=>findPath(from,to,w),
  hasCompetingEvent:id=>!!neighborScenes.current()?.pair?.includes(id)||(()=>{const n=NPCS.find(x=>x.id===id);return !!n&&!!(activeWedding(n)||activePromise(n)||activeMeeting(n)||activeCoupleRitual(n)||activeFriendVisit(n)||dateMoment?.id===id)})(),
  isMovementBlocked:()=>!!modal||!!talk,
+ isPlayerMoving:()=>!!player.target,
  isPaused:()=>!!modal||!!talk||speed===0,
  ownDone:kind=>residentDayRecord('player').done.includes(kind),
  isQueued:kind=>householdCurrent===kind||householdQueue.includes(kind),
