@@ -194,7 +194,8 @@ function setup(api){
   name:id=>api.getAdults?.().find(a=>a.id===id)?.name||id,
   bondAdult:api.bondAdult,save:api.save,updateUI:api.updateUI,
   notify:api.notify,showModal:api.showModal,closeModal:api.closeModal,closeTalk:api.closeTalk,
-  openBook:()=>entry(),getGallerySummary:()=>guestEcho.panel()
+  openBook:()=>entry(),getGallerySummary:()=>guestEcho.panel(),
+  getGuestPersonalityLine:id=>guestEcho.personalityLine(id)
  })||{panel:()=>'',advance:()=>{},childPose:()=>null,guestPose:()=>null,
   hit:()=>null,interact:()=>false,completed:()=>false,drawShared:()=>false,
   schedule:(id,e)=>e,inviteEligible:()=>false,greetEligible:()=>false,handle:()=>false};
