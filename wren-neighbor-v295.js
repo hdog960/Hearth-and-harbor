@@ -458,7 +458,7 @@ function setup(api){
     metToday()?'Pip and Wren already shared a genuine moment today.':
     api.isPipBusy?.()?'Pip is finishing another childhood adventure.':'Wren is enjoying a quiet afternoon.';
    api.showModal?.('young-neighbors','<section class="yn295-book"><header class="yn295-cover"><small>🪶 A YOUNGER MAPLEWOOD NEIGHBOR</small><h2>Wren · '+esc(title())+'</h2><p>'+esc(message)+'</p></header><p>Wren loves handmade stories, painting the sky and gentle nature exploring. Wren is a village child, not a member of Poppy’s household.</p>'+(last?'<p>Last shared memory: '+esc(STORIES[last.kind].ending[last.last])+'</p>':'')+
-    '<p>What Wren is thinking about: '+esc(shared.line)+'</p><button data-act="yn295-close">Return to Maplewood</button></section>');return true;
+    '<p>What Wren is thinking about: '+esc(shared.line)+'</p>'+(reunionRows().length?'<p>Wren remembers: '+esc(REUNIONS[reunionRows().slice(-1)[0].kind].replies[reunionRows().slice(-1)[0].choice])+'</p>':'')+'<button data-act="yn295-close">Return to Maplewood</button></section>');return true;
   }
   session={day:day(),slot,kind,first:null,last:null,phase:'first',marker:null};
   api.showModal?.('young-neighbors','<section class="yn295-book"><header class="yn295-cover"><small>🪶 WREN & PIP · A REAL TOWN AFTERNOON</small><h2>'+t.icon+' '+esc(t.name)+'</h2><p>'+esc(t.intro)+'</p></header><p>Wren and Pip are both here. Choose how they begin, then walk to the little paper marker together before deciding how the story ends.</p><div class="yn295-choices">'+
@@ -535,7 +535,7 @@ function setup(api){
   return '<section class="yn295-panel"><details><summary>🪶 Wren · '+esc(tier)+'</summary><div class="yn295-inner"><p>Wren is a distinct younger Maplewood resident with their own daytime route. Wren is not an adult and is not automatically part of Poppy’s household.</p><p>For a real friendship memory, bring Pip to Wren, talk face-to-face, and walk together to the nearby original paper marker. Pip can come on an escorted village walk.</p><strong>'+list.length+' completed shared childhood afternoons · '+new Set(list.map(x=>x.kind)).size+' kinds of play</strong><ul>'+
    (list.length?list.slice(-4).reverse().map(r=>'<li>Day '+r.day+' · '+STORIES[r.kind].icon+' '+esc(STORIES[r.kind].name)+' · '+esc(STORIES[r.kind].ending[r.last])+'</li>').join(''):
    '<li>Meet Wren in the playable village to begin a genuine childhood friendship.</li>')+
-   '</ul><p>🌼 Friendship Corner: '+clubRows().length+' of 3 permanent handmade chapters. After three varied real outings, finish a shared outing and return to Wren near Bea’s art lane with Pip to make the next piece on a later day.</p><p>🍃 Wren sometimes walks over to Pip for a little unprompted greeting. These tiny moments never award automatic friendship points.</p><p>Current interest: '+esc(sharedInterest().line)+'</p></div></details></section>';
+   '</ul><p>🌼 Friendship Corner: '+clubRows().length+' of 3 permanent handmade chapters. After three varied real outings, finish a shared outing and return to Wren near Bea’s art lane with Pip to make the next piece on a later day.</p><p>🍃 Wren sometimes walks over to Pip for a little unprompted greeting. These tiny moments never award automatic friendship points.</p><p>Current interest: '+esc(sharedInterest().line)+'</p><p>Quiet follow-up memories: '+reunionRows().length+' / 3 · Visit the real sign with both children on a later day when Wren is tending it.</p></div></details></section>';
  }
  function drawMarker(g,tick=0){
   const marker=['walking','club-walking'].includes(session?.phase)?session.marker:null;
@@ -594,10 +594,31 @@ function setup(api){
    g.fillStyle=r.first===0?'#fff1c3':'#ede0f0';g.fillRect(bx+3,y-49,6,7);
    g.fillStyle=r.last===0?'#ffcf93':'#547e79';g.fillRect(bx+4,y-37,5,5);
   }
+  // Knots appear only after genuine later reunions.
+  for(const r of reunionRows()){
+   const idx=KIND.indexOf(r.kind),bx=x-14+idx*13;
+   g.fillStyle=r.choice===0?'#7cc0b7':'#d8a0a6';
+   g.fillRect(bx,y-22,9,5);
+   g.fillStyle='#fff2d3';g.fillRect(bx+3,y-24,3,3);
+  }
   if(rows.length===3){
    g.fillStyle='#e9b97a';g.fillRect(x-4,y-80,8,10);g.fillRect(x-10,y-77,20,4);
    g.fillStyle='#fff2d3';g.fillRect(x-2,y-77,4,5);
   }
+  g.restore();return true;
+ }
+ // Original hand-work symbol only when the actual Wren actor reached the sign.
+ function drawTending(g,tick=0){
+  const w=pose(),at=clubSite(),r=routine();
+  if(!g||!w||!at||scene()!=='town'||!clubRows().length||
+   r?.slot!==4||w.moving||dist(w,at)>85||session)return false;
+  const x=Math.round(w.x+19),y=Math.round(w.y-74+Math.sin(tick*3)*2),kind=r.kind;
+  g.save();
+  g.fillStyle='#4c6560';g.fillRect(x-11,y-8,23,19);
+  g.fillStyle='#fff2d6';g.fillRect(x-9,y-10,19,16);
+  g.fillStyle=kind==='story'?'#8ca3c4':kind==='color'?'#cea3b5':'#95b989';
+  g.fillRect(x-6,y-7,13,11);
+  g.fillStyle='#f9e8bf';g.fillRect(x+6,y+7,4,10);
   g.restore();return true;
  }
  function hitClub(x,y){
