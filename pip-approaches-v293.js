@@ -15,13 +15,13 @@ function setup(api){
    child().guardianDay<=day();
  let epoch=0,phase='idle',target=null,origin=null,stable=0,elapsed=0,
   stall=0,lastChild=null,attempts=0,offered=false,received=false,noticed=false,
-  eligibilityWait=0,eligibility=false,accent='#93b8a0';
+  eligibilityWait=0,eligibility=false,accent='#93b8a0',bondTier=0;
  const snapshot=x=>x&&finite(x.x)&&finite(x.y)?{x:x.x,y:x.y}:null;
  function resetDay(){
   const d=day();
   if(d!==epoch){epoch=d;phase='idle';target=null;origin=null;stable=0;
    elapsed=0;stall=0;lastChild=null;attempts=0;offered=false;received=false;noticed=false;
-   eligibilityWait=0;eligibility=false;accent='#93b8a0'}
+   eligibilityWait=0;eligibility=false;accent='#93b8a0';bondTier=0}
  }
  function clear(keepOffered=false){
   phase='idle';target=null;origin=null;stable=0;elapsed=0;stall=0;lastChild=null;
@@ -55,6 +55,7 @@ function setup(api){
   eligibilityWait-=step;
   if(eligibilityWait<=0){
    eligibility=api.getCanOffer?.()===true;
+   bondTier=Math.max(0,Math.min(3,Number(api.getBondStage?.())||0));
    eligibilityWait=.65;
   }
   if(!p||!c){clear();return}
@@ -62,7 +63,7 @@ function setup(api){
    if(offered||attempts>=2||!suitable())return;
    if(!origin||dist(p,origin)>5){origin=p;stable=0;return}
    stable+=step;
-   if(stable<.9||dist(p,c)>375)return;
+   if(stable<(bondTier>=2?.65:.9)||dist(p,c)>(bondTier>=2?445:375))return;
    const to=spot(p,c);
    if(!to){attempts++;stable=0;return}
    // Start ONLY at a genuine reachable world position. The shared
@@ -84,7 +85,8 @@ function setup(api){
     phase='near';elapsed=0;offered=true;
     if(!noticed){
      noticed=true;
-     api.notify?.('🌱 Pip came over with an idea! Tap Pip to hear it, or carry on with your day.');
+     const recalled=api.getBondGreeting?.();
+     api.notify?.('🌱 Pip came over with an idea! Tap Pip to hear it, or carry on with your day.'+(recalled?' '+recalled:''));
     }
     return;
    }
@@ -129,6 +131,7 @@ function setup(api){
   g.fillRect(x+7,y+5,9,11);
   g.fillStyle='#edc18b';g.fillRect(x+19,y+5,7,7);
   g.fillStyle='#aa8f88';g.fillRect(x+19,y+16,7,2);
+  if(bondTier>=2){g.fillStyle='#f5c58c';g.fillRect(x+25,y+2,4,4)}
   g.restore();return true;
  }
  return {advance,schedule,draw,interacted,isNear,status,spot,
