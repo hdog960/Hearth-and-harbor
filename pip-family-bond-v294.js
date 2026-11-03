@@ -86,7 +86,13 @@ function setup(api){
   today=()=>cleanDay(state()?.day)?state().day:1,scene=()=>api.getScene?.();
  const guarded=()=>child()?.guardian==='player'&&cleanDay(child()?.guardianDay)&&child().guardianDay<=today();
  const records=()=>clean(child()?.familyBond,child()?.guardianDay);
- const profile=()=>evidence(state(),child(),today());
+ const profile=()=>{
+  const current=evidence(state(),child(),today());
+  // A genuinely earned family chapter remains part of the relationship
+  // even when the original bounded old scrapbook eventually rolls over.
+  const last=records().chapters.slice(-1)[0]?.id||0;
+  return {...current,stage:Math.max(current.stage,last)};
+ };
  let prompt=null,display={chapters:[],stage:0},wait=0;
  function sync(){const p=profile();display={chapters:records().chapters,stage:p.stage};return p}
  function next(){
@@ -100,7 +106,7 @@ function setup(api){
  }
  function ready(){
   if(!guarded()||scene()!=='home'||!next()||!near()||
-   api.isBusy?.()||api.isPaused?.()||prompt)return false;
+   api.isBusy?.()||prompt)return false;
   return true;
  }
  function request(){
