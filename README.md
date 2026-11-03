@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.7.2 — Little Sprouts: Pip Arrives
+# Hearth & Harbor v2.7.3 — Pip's Living Day
+
+**Pip now lives a visible daily rhythm.** Maplewood's first younger resident moves smoothly through four in-world routines with animated walking/facing and handmade little activity props. After you choose to become Pip's guardian, a different household routine runs inside Poppy's cottage. Pip's Daybook shows real current activities, daily schedules and three earned learning tracks based on completed Story, Nature and Art activities.
+
+A new two-part cozy bedtime ritual, available only after 6 PM when the guardian visits Pip in the cottage, creates a genuine saved bedtime memory on completion, once per day. It gives a small Joy/Confidence benefit—no coins, forced aging, fake parentage or instant menu rewards. Original local saves, six adults, their homes, marriages and earlier gameplay stay intact.
+
+[Read the v2.7.3 QA and Generations handoff](PIPS_LIVING_DAY_V273_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.7.2 Little Sprouts: Pip Arrives
 
 **Our first real younger resident has arrived in the playable world.** Pip is a smaller character in Maplewood, with their own name, Child stage, Joy/Curiosity/Confidence needs, proximity-based meetings, three genuine three-part activities and a saved history of earned moments. Pip appears in the Connections Atlas but is not included in adult-only jobs, marriage or romance.
 
