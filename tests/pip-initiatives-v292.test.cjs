@@ -142,7 +142,7 @@ test('the child is not granted a fake destination when custom furniture blocks t
  const f=fixture();f.m.request();f.m.choose(0);
  f.setBlocked(true);
  const base={x:720,y:800};assert.equal(f.m.schedule(base),base);
- assert.equal(f.m.completeReal('read',true),false);
+ assert.equal(f.completeReal('read',true),false);
  assert.equal(f.saves,0);
 });
 test('a genuine timed completion must be once=true, exact kind and exact game day',()=>{
