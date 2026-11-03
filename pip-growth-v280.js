@@ -72,10 +72,15 @@ function evidence(child,day){
   kindsAdvanced:Object.values(measured).filter(x=>x>=2).length,
   home,neighbors,neighborKinds,evenings,projects,finishedDreams,skills:measured};
 }
+function lifeStage(child,now){
+ const c=obj(child)?child:{},raw=clean(c.growth);
+ if(c.guardian!=='player'||!dayOK(c.guardianDay)||c.guardianDay>now||raw.stage<1||raw.firstDay>now)return 0;
+ return raw.stage>=2&&raw.secondDay<=now?2:1;
+}
 function progress(child,now){
  const c=obj(child)?child:{},raw=clean(c.growth);
  const guarded=c.guardian==='player'&&dayOK(c.guardianDay)&&c.guardianDay<=now;
- const stage=guarded?(raw.firstDay<=now&&raw.stage>=1?(raw.stage>=2&&raw.secondDay<=now?2:1):0):0;
+ const stage=lifeStage(c,now);
  const counts=evidence(c,now);
  const chapters=CHAPTERS.map((cfg,i)=>{
   const level=i+1,claimed=stage>=level,prerequisite=i===0||stage>=i;
@@ -89,6 +94,7 @@ function setup(api){
  const state=()=>api.getState(),child=()=>api.getChild();
  const today=()=>dayOK(state().day)?state().day:1;
  const actual=()=>progress(child(),today());
+ const phase=()=>lifeStage(child(),today());
  const isNear=()=>api.getScene?.()==='home'&&api.nearChild?.(130)===true;
  const canClaim=level=>[1,2].includes(level)&&isNear()&&actual().chapters[level-1]?.ready===true;
  function celebrate(level){
@@ -119,7 +125,7 @@ function setup(api){
    '<p class="pg280-fine">Milestones change Pip’s actual sprite size, accessories, cottage growth chart and interests. Pip remains a child. They do not invent a birthday, biological parent, school or adult rights, and never generate passive coins.</p></section>';
  }
  function drawAccessory(g,x,y,tick=0){
-  const stage=actual().stage;if(stage<1||!g)return false;
+  const stage=phase();if(stage<1||!g)return false;
   g.save();const sway=Math.round(Math.sin(tick*1.9)*1.5),xx=Math.round(x+19),yy=Math.round(y-39+sway);
   g.fillStyle='#654c56';g.fillRect(xx-1,yy-17,4,20);
   g.fillStyle=stage===1?'#d5a880':'#9fa7c8';g.fillRect(xx-5,yy-7,18,19);
@@ -132,21 +138,21 @@ function setup(api){
   g.restore();return true;
  }
  function drawWall(g,tick=0){
-  const p=actual();if(p.stage<1||api.getScene?.()!=='home'||!g)return false;
+  const stage=phase();if(stage<1||api.getScene?.()!=='home'||!g)return false;
   g.save();const x=278,y=270;
   g.fillStyle='#94735e';g.fillRect(x-36,y-37,73,90);
   g.fillStyle='#f5e5c8';g.fillRect(x-32,y-33,65,80);
   g.fillStyle='#c7a596';g.fillRect(x-26,y-23,53,5);
   g.fillStyle='#9db8aa';g.fillRect(x-21,y-8,6,54);
   g.fillStyle='#d4ab93';g.fillRect(x-5,y-16,6,62);
-  if(p.stage>=2){g.fillStyle='#ab98c1';g.fillRect(x+11,y-23,7,69)}
+  if(stage>=2){g.fillStyle='#ab98c1';g.fillRect(x+11,y-23,7,69)}
   g.fillStyle='#e4b67b';g.fillRect(x-24,y+31,42,3);
   g.fillStyle='#735d60';g.font='bold 9px monospace';g.textAlign='center';g.fillText('PIP GROWS',x,y-42);
-  if(p.stage>=2){g.fillStyle='#f2cb86';g.fillRect(x+19,y-30+Math.round(Math.sin(tick*2)*2),8,8)}
+  if(stage>=2){g.fillStyle='#f2cb86';g.fillRect(x+19,y-30+Math.round(Math.sin(tick*2)*2),8,8)}
   g.restore();return true;
  }
  function handle(action,id){if(action==='pg280-celebrate')return celebrate(Number(id));if(action==='pg280-book')return api.openBook?.();return false}
- return {celebrate,canClaim,panel,drawAccessory,drawWall,progress:actual,handle,get stage(){return actual().stage}};
+ return {celebrate,canClaim,panel,drawAccessory,drawWall,progress:actual,handle,visual:()=>STAGES[phase()],get stage(){return phase()}};
 }
-root.HearthPipGrowth={setup,clean,evidence,progress,STAGES,CHAPTERS};
+root.HearthPipGrowth={setup,clean,evidence,progress,lifeStage,STAGES,CHAPTERS};
 })(window);
