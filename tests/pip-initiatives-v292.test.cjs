@@ -63,6 +63,13 @@ test('child suggestions are afternoon events, not automatic overnight jobs',()=>
  }
  assert.equal(fixture({minute:660}).m.ready(),true);
 });
+test('nearby is necessary to open an idea, not to have an idea in the first place',()=>{
+ const f=fixture();f.setPlayer(1300,1350);
+ assert.equal(f.m.ready(),false);
+ assert.equal(f.m.canOffer(),true,'Pip may plan to approach Poppy while far away');
+ f.setOther(true);assert.equal(f.m.canOffer(),false);
+});
+
 test('a real in-world conversation requires Poppy close to Pip',()=>{
  const f=fixture();f.setPlayer(1400,1300);
  assert.equal(f.m.ready(),false);assert.equal(f.m.request(),false);
