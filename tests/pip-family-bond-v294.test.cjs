@@ -235,12 +235,12 @@ test('phone build loads bond engine, saved family history, and actual in-world g
   css=read('pip-family-bond-v294.css');
  for(const file of ['pip-family-bond-v294.js','pip-family-bond-v294.css'])
   assert.ok(sw.includes("'./"+file+"'"));
- assert.match(sw,/hearth-harbor-v299-stories-brought-home/);
+ assert.match(sw,/hearth-harbor-v300-chosen-generations/);
  assert.ok(html.includes('pip-family-bond-v294.js?v=2.9.4'));
  assert.ok(html.includes('pip-family-bond-v294.css?v=2.9.4'));
  assert.ok(html.indexOf('pip-family-bond-v294.js')<html.indexOf('little-sprouts-v272.js'));
- assert.ok(html.includes('family-atlas-v271.js?v=2.9.9'));
- assert.ok(html.includes('game.js?v=2.9.9'));
+ assert.ok(html.includes('family-atlas-v271.js?v=3.0'));
+ assert.ok(html.includes('game.js?v=3.0'));
  assert.match(game,/littleSprouts\.familyBond\.drawWall\(ctx,tick\)/);
  assert.match(game,/littleSprouts\.familyBond\.request\(\)/);
  assert.match(game,/action\.startsWith\('pi292-'\)/);
