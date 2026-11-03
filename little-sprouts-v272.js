@@ -124,6 +124,7 @@ function setup(api){
   getState:state,getChild:data,getScene:api.getScene,
   nearChild:d=>api.isNearby?.(position(),d)===true,
   isChildBusy:()=>!!homeHelp.pending,
+  isQueued:api.isQueued,
   ownDone:api.ownDone,ownHold:api.ownHold,
   queueAction:api.queueOwnAction,closeModal:api.closeModal,showModal:api.showModal,
   save:api.save,updateUI:api.updateUI,notify:api.notify,openBook:()=>entry()
