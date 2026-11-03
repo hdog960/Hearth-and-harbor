@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.9.6 — Living Child Friendships
+
+**Pip and Wren now have little spontaneous moments between their actual planned afternoons.** When Pip is genuinely nearby in Maplewood, Wren can independently walk over along safe village paths and briefly share original paper-picture greetings without interrupting the player. Their topic reflects actually earned friendship days and past interests. Real two-stop activities remain the only way to grow the saved friendship; idle encounters grant no coins, relationship points, fake memories or adult/family ties. No additional tab, save key, account, or reset.
+
+[Read the v2.9.6 living-friendship implementation and QA roadmap](WREN_LIVING_FRIENDSHIPS_V296_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.9.5 Wren of Maplewood
+
 # Hearth & Harbor v2.9.5 — Wren of Maplewood
 
 **Maplewood has a second genuine younger resident.** Wren is a unique child with original character art, a daylong town schedule, real walking around houses and scenery, and three in-world friendship experiences with Pip. Bring Pip into the village to meet Wren, make an authored choice together, **actually walk both children to the little marked discovery spot**, and only then decide how to remember the afternoon. These real shared days change their peer friendship and Connections Atlas. Wren is **not** an adult, romantic option or automatically part of Poppy's household. No new navigation tab, account, currency or save reset.
