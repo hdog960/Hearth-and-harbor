@@ -1,0 +1,16 @@
+/* v2.9.4 — folded family chapters inside Pip's existing Daybook */
+.pb294-panel{margin:10px 0;border:2px solid #d3b2aa;border-radius:15px;background:#fff2df;color:#664b4c;overflow:hidden}
+.pb294-panel summary{padding:12px;min-height:45px;background:#ebd4ce;font-size:13px;font-weight:900;cursor:pointer;touch-action:manipulation;list-style:none}
+.pb294-panel summary::-webkit-details-marker{display:none}
+.pb294-panel summary:after{content:'⌄';float:right}
+.pb294-panel details[open] summary:after{content:'⌃'}
+.pb294-body{padding:10px 13px}.pb294-body p,.pb294-body small{font-size:12px;line-height:1.5}
+.pb294-body small{display:block;opacity:.85;margin:7px 0}
+.pb294-count{display:flex;gap:5px;flex-wrap:wrap;margin:9px 0}
+.pb294-count span{padding:5px 7px;border-radius:8px;background:#f6e1ce;font-size:11px;font-weight:800}
+.pb294-history{margin:8px 0 0;padding-left:17px;font-size:11px;line-height:1.6}
+.pb294-book .ls272-cover{background:linear-gradient(135deg,#9b7684,#9aa98b);color:#fff7de}
+.pb294-body button,.pb294-book button{min-height:48px}
+.pb294-panel :focus-visible,.pb294-book :focus-visible{outline:3px solid #39786b;outline-offset:3px}
+@media(max-width:380px){.pb294-body{padding:8px}.pb294-panel summary{font-size:12px;padding:10px}}
+@media(prefers-reduced-motion:reduce){.pb294-panel *,.pb294-book *{animation:none!important;transition:none!important}}

@@ -100,7 +100,8 @@ function setup(api){
    'Pip remembers how patiently Poppy has taught them and feels ready to try again.':
    earned===kind?'Pip is excited because this has become one of their real favorite things.':
    'Pip is trying something new, in their own small way.';
-  api.showModal?.('little-sprouts','<section class="ls272-book pi292-book"><header class="ls272-cover"><small>🌱 PIP HAS AN IDEA · DAY '+day()+'</small><h2>'+t.icon+' '+esc(t.name)+'</h2><p>'+esc(t.intro)+'</p></header><p class="pi292-context">'+esc(notice)+'</p><div class="ls272-activity">'+
+  const family=api.getFamilyLine?.();
+  api.showModal?.('little-sprouts','<section class="ls272-book pi292-book"><header class="ls272-cover"><small>🌱 PIP HAS AN IDEA · DAY '+day()+'</small><h2>'+t.icon+' '+esc(t.name)+'</h2><p>'+esc(t.intro)+'</p></header><p class="pi292-context">'+esc(notice)+(family?' '+esc(family):'')+'</p><div class="ls272-activity">'+
    '<button data-act="pi292-choose" data-id="0">🌼 Let Pip take the lead<small>'+esc(t.lead)+'</small></button>'+
    '<button data-act="pi292-choose" data-id="1">💛 Show Pip how<small>'+esc(t.learn)+'</small></button></div>'+
    '<p class="pi292-fine">The choice is remembered only after the actual timed household activity finishes with Pip nearby.</p>'+

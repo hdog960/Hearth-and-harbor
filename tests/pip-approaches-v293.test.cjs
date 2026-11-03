@@ -210,16 +210,16 @@ test('iPhone Home Screen loads all updated scripts in correct order and cache',(
  const html=read('index.html'),sw=read('sw.js'),game=read('game.js'),
   little=read('little-sprouts-v272.js'),idea=read('pip-initiatives-v292.js'),
   css=read('pip-approaches-v293.css');
- assert.ok(html.includes('pip-approaches-v293.js?v=2.9.3'));
+ assert.ok(html.includes('pip-approaches-v293.js?v=2.9.4'));
  assert.ok(html.includes('pip-approaches-v293.css?v=2.9.3'));
- assert.ok(html.includes('pip-initiatives-v292.js?v=2.9.3'));
+ assert.ok(html.includes('pip-initiatives-v292.js?v=2.9.4'));
  assert.ok(html.indexOf('pip-initiatives-v292.js')<html.indexOf('pip-approaches-v293.js'));
  assert.ok(html.indexOf('pip-approaches-v293.js')<html.indexOf('little-sprouts-v272.js'));
- assert.ok(html.includes('little-sprouts-v272.js?v=2.9.3'));
- assert.ok(html.includes('game.js?v=2.9.3'));
+ assert.ok(html.includes('little-sprouts-v272.js?v=2.9.4'));
+ assert.ok(html.includes('game.js?v=2.9.4'));
  for(const a of ['pip-approaches-v293.js','pip-approaches-v293.css'])
   assert.ok(sw.includes("'./"+a+"'"));
- assert.match(sw,/hearth-harbor-v293-pip-comes-to-you/);
+ assert.match(sw,/hearth-harbor-v294-bond-built-by-living/);
  assert.match(game,/isPlayerMoving:\(\)=>!!player\.target/);
  assert.match(game,/littleSprouts\.approaches\.interacted\(\)/);
  assert.match(little,/approaches\.draw\(g,pos,tick\)/);
