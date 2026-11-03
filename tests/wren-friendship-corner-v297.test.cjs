@@ -58,8 +58,8 @@ test('three wholly different authored chapters with meaningful two-stage choices
  }
 });
 test('new and malformed saves migrate to the same key with an empty optional club',()=>{
- assert.deepEqual(plain(M.clean(null)),{friendships:[],club:{foundation:[],chapters:[]}});
- assert.deepEqual(plain(M.clean({friendships:basic})).club,{foundation:[],chapters:[]});
+ assert.deepEqual(plain(M.clean(null)),{friendships:[],club:{foundation:[],chapters:[],revisits:[]}});
+ assert.deepEqual(plain(M.clean({friendships:basic})).club,{foundation:[],chapters:[],revisits:[]});
  const game=read('game.js');
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
  assert.match(game,/wren:window\.HearthYoungNeighbors\.clean\(raw\.youngResidents\?\.wren\)/);
@@ -184,9 +184,9 @@ test('real game world taps, responsive PWA and old saves use the new milestone',
  assert.match(game,/youngNeighbors\.hitClub\(wx,wy\)/);
  assert.match(game,/youngNeighbors\.drawClub\(ctx,tick\)/);
  assert.match(game,/youngNeighbors\.inspectClub\(\)/);
- assert.ok(html.includes('wren-neighbor-v295.js?v=2.9.7'));
- assert.ok(html.includes('game.js?v=2.9.7'));
- assert.match(sw,/hearth-harbor-v297-friendship-corner/);
+ assert.ok(html.includes('wren-neighbor-v295.js?v=2.9.8'));
+ assert.ok(html.includes('game.js?v=2.9.8'));
+ assert.match(sw,/hearth-harbor-v298-childhood-reunions/);
  const w=read('wren-neighbor-v295.js');
  assert.doesNotMatch(w,/fetch\(|WebSocket|XMLHttpRequest|localStorage|setInterval|setTimeout/);
  assert.doesNotMatch(w,/adultRomance|marriagePlans|coins\s*\+=/);
