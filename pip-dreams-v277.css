@@ -1,0 +1,22 @@
+/* Hearth & Harbor v2.7.7 — childhood dreambook, phone-first illustrated journal */
+.pd277-book{color:#567363;margin:14px 0;padding-bottom:14px}
+.pd277-cover{padding:15px;border-radius:18px;background:radial-gradient(circle at 95% 4%,#e9bed1,transparent 48%),linear-gradient(125deg,#ddedda,#fff2dd);border:3px solid #fff1db;border-bottom:5px solid #c2a88e}
+.pd277-cover small{font-size:10px;letter-spacing:.1em;color:#ab816f;font-weight:900}
+.pd277-cover h3{font-size:19px!important;line-height:1.25;color:#537762;margin:5px 0}
+.pd277-cover p,.pd277-book p{font-size:12px;line-height:1.55;color:#708071;margin:7px 0}
+.pd277-book h3{font-size:15px!important;color:#61846d;margin:16px 0 8px}
+.pd277-dreams{display:grid;gap:8px}
+.pd277-book button{width:100%;min-height:53px;text-align:left;font-size:12px;font-weight:850;line-height:1.4;padding:10px 12px;background:linear-gradient(#e3efdb,#d2e5d0);color:#4e755f;border:2px solid #b9d0b8;border-bottom:4px solid #9cba9f;border-radius:14px;touch-action:manipulation}
+.pd277-book button[aria-pressed=true]{background:linear-gradient(#f8e4de,#f9e5c7);border-color:#d7b3a5;border-bottom-color:#c39f8b}
+.pd277-book button:disabled{opacity:.54;cursor:default}
+.pd277-book button:focus-visible{outline:3px solid #31618d;outline-offset:3px}
+.pd277-book button small{display:block;font-size:11px;font-weight:500;color:#758678;margin-top:4px}
+.pd277-chapter{background:#fcf5e7;border:2px solid #e5d6bc;border-bottom:4px solid #cfb89b;border-radius:13px;padding:13px;margin:10px 0}
+.pd277-chapter strong{font-size:13px;color:#816b64}
+.pd277-chapter ul{list-style:none;padding:0;margin:9px 0}
+.pd277-chapter li{font-size:11px;color:#8c8276;line-height:1.5;margin:6px 0}
+.pd277-chapter li.pd277-goal-done{color:#527f63;font-weight:850}
+.pd277-chapter>small{font-size:11px;color:#878272}
+.pd277-note{padding:10px;background:#edf0df;border-radius:11px;border:1px solid #c9d4b7}
+@media(max-width:380px){.pd277-cover{padding:11px}.pd277-book button{min-height:55px}.pd277-chapter{padding:10px}}
+@media(prefers-reduced-motion:reduce){.pd277-book *,.pd277-book *:before,.pd277-book *:after{animation:none!important;transition:none!important}}
