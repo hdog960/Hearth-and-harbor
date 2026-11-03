@@ -48,20 +48,36 @@ const dayOK=n=>Number.isInteger(n)&&n>=1&&n<=9999;
 const finite=Number.isFinite,obj=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function validReceipt(r){
+ return obj(r)&&dayOK(r.day)&&KIND.includes(r.kind)&&
+  [0,1].includes(r.first)&&[0,1].includes(r.last);
+}
 function cleanClub(raw,friendships){
- const eligible=Array.isArray(friendships)?friendships:[];
+ // Three actual earlier outings are stored once as bounded receipts, because
+ // the ordinary 48-entry Wren scrapbook eventually rolls older days off.
+ const supplied=Array.isArray(raw?.foundation)?raw.foundation:[];
+ const foundation=supplied.length===3&&supplied.every(validReceipt)&&
+  new Set(supplied.map(r=>r.day)).size===3&&
+  new Set(supplied.map(r=>r.kind)).size>=2?
+  supplied.map(r=>({day:r.day,kind:r.kind,first:r.first,last:r.last})).sort((a,b)=>a.day-b.day):[];
  const out=[],chapters=Array.isArray(raw?.chapters)?raw.chapters.slice(0,16):[];
  for(const r of chapters){
   const next=CLUB[out.length];
   if(!next||!obj(r)||r.kind!==next.kind||!dayOK(r.day)||
     ![0,1].includes(r.first)||![0,1].includes(r.last)||
     (out.length&&r.day<=out[out.length-1].day))continue;
-  const prior=eligible.filter(f=>f.day<r.day);
-  if(prior.length<3||new Set(prior.map(f=>f.kind)).size<2||
-    !prior.some(f=>f.kind===r.kind))continue;
-  out.push({kind:r.kind,day:r.day,first:r.first,last:r.last});
+  const prior=friendships.filter(f=>f.day<r.day);
+  const sourceInHistory=prior.find(f=>f.kind===r.kind);
+  const source=sourceInHistory||(validReceipt(r.source)&&r.source.kind===r.kind&&
+   r.source.day<r.day?r.source:null);
+  const base=[...prior,...foundation.filter(f=>f.day<r.day)];
+  const enough=base.length>=3&&new Set(base.map(f=>f.day)).size>=3&&
+   new Set(base.map(f=>f.kind)).size>=2;
+  if(!source||!enough||!foundation.length||foundation.some(f=>f.day>=r.day))continue;
+  out.push({kind:r.kind,day:r.day,first:r.first,last:r.last,
+   source:{day:source.day,kind:source.kind,first:source.first,last:source.last}});
  }
- return {chapters:out};
+ return {foundation,chapters:out};
 }
 function clean(raw){
  const seen=new Set(),out=[];
@@ -159,8 +175,23 @@ function setup(api){
    !clubCoPresent(s,88))return false;
   const row={kind:next.kind,day:day(),first:s.first,last};
   const young=state().youngResidents;
-  const prior=clean(young.wren);
-  const updated=clean({friendships:prior.friendships,club:{chapters:[...cur,row]}});
+  const prior=clean(young.wren),older=history().filter(f=>f.day<day());
+  const source=older.find(f=>f.kind===row.kind);
+  if(!source)return false;
+  // Keep three distinct original pre-chapter outing receipts for long saves.
+  // Prefer varied kinds instead of just the final three recent entries.
+  let foundation=prior.club.foundation;
+  if(!foundation.length){
+   const chosen=[],used=new Set();
+   for(const f of older){
+    if(!used.has(f.kind)){chosen.push(f);used.add(f.kind)}
+    if(chosen.length>=3)break;
+   }
+   for(const f of older)if(chosen.length<3&&!chosen.some(g=>g.day===f.day))chosen.push(f);
+   foundation=chosen.slice(0,3);
+  }
+  const updated=clean({friendships:prior.friendships,
+   club:{foundation,chapters:[...cur,{...row,source}]}});
   if(updated.club.chapters.length!==cur.length+1)return false;
   young.wren=updated;session=null;api.save?.();api.updateUI?.();
   api.notify?.('🌼 A real Friendship Corner chapter is now visible in Maplewood.');
@@ -352,7 +383,7 @@ function setup(api){
   const w=pose();
   if(!w||!nearby(156))return false;
   if(session&&(session.phase==='walking'||session.phase==='club-walking')){
-   api.notify?.('Find the little paper marker with Pip and tap it together.');return false;
+   api.notify?.(session.phase==='club-walking'?'Walk to the Friendship Corner with Pip, then tap the colorful paper marker.':'Find the little paper marker with Pip and tap it together.');return false;
   }
   const kind=kindToday(),t=STORIES[kind],last=history().slice(-1)[0],shared=sharedInterest();
   // An optional tap interrupts the idle social cue; player activities take priority.
