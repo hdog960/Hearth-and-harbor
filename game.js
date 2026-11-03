@@ -2662,7 +2662,9 @@ function talkChoices(mode='main'){
  if(mode==='main'&&scene==='town'&&['mabel','bea','finn','rosie'].includes(talk))options.splice(1,0,['stew-board','🌿 Improve the village']);
  if(mode==='main'&&scene==='town'&&festivalMarket.open()&&['bea','rosie','oliver'].includes(talk))options.splice(1,0,['fmarket-overview','🎪 Visit the festival stalls']);
  if(mode==='main'&&scene==='town'&&community.festivalOpen()&&community.hosts().some(m=>m.id===talk))options.splice(1,0,['comm-talk','🎪 Help with the festival']);
- if(mode==='main'&&scene==='town'&&littleSprouts.neighbors.adultNear(talk)&&
+ if(mode==='main'&&scene==='town'&&littleSprouts.guides.eligible()&&littleSprouts.routines.location().mentorId===talk)
+    options.splice(1,0,['pm279-direct','🌼 Join Pip’s guide reflection']);
+  if(mode==='main'&&scene==='town'&&littleSprouts.neighbors.adultNear(talk)&&
     !littleSprouts.data.meetings.some(m=>m.id===talk&&m.day===state.day))
     options.splice(1,0,['pn275-direct','🌼 Invite Pip to learn together']);
   $('talkActions').innerHTML=options.map(([act,label])=>'<button data-act="'+act+'">'+label+'</button>').join('');
@@ -2801,6 +2803,11 @@ function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0'
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
 function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Maplewood’s Little Guides v2.7.9 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Postcards'+(todaysPostcard()?.status==='pending'?' · New!':''),'postcards')}${btn('💌 Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🦋 Field Guide & Curiosity Cabinet','nature-guide')}${btn('🕸️ Meadow Net · Catch insects','bug-hunt')}${btn('🎣 Pond Almanac · Go fishing','fish-guide')}${btn('🌲 Cloverbank Grove · Explore','grove-travel')}${btn('🎪 Festival Calendar','festival-calendar')}${btn('💌 Together in Maplewood','comm-board')}${btn('🌿 Build the Village','stew-board')}${btn('🧺 Village Trades & Kindness','trade-board')}${btn('🎪 Festival Market','fmarket-overview')}${btn('🌷 Village Community Diary','vl-board')}${btn('💌 Neighbors Together','nm-book')}${btn('🏡 Roots & Keepsakes','asp-board')}${btn('🖼️ Home & Town Traditions','ht-board')}${btn('🌿 Village Memory Walk · v2.6','mw26-board')}${btn('✦ The Heirloom Cabinet','hl37-board')}${btn('🖼️ Family Portraits · Generations','fp27-board')}${btn('🌳 Connections Atlas','fa271-board')}${btn('🌱 Pip & Little Sprouts','ls272-book')}${btn('🍂 Seasons of Life · Birthdays','ls36-board')}${btn('💗 Little Acts of Care','cc35-board')}${btn('🎓 Passing It On · Mentorship','mt34-board')}${btn('🌿 Family Roots & Connections','fr33-board')}${btn('📖 Household Chronicle','hc32-board')}${btn('🧺 Household Promises','hr26-board')}${btn('🪑 Rooms With Purpose','hf-board')}${btn('🍳 Hearth Kitchen','cook-book')}${btn('🍽️ At Our Table','ft-board')}${scene==='residence'?btn('🌷 Helping Hands','hh-board')+btn('🎨 Little Passions Studio','hs-board'):''}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
 function handleAction(action,id){
+ if(action==='pm279-direct'){
+  const selected=talk;
+  if(!selected||!littleSprouts.guides.eligible()||littleSprouts.routines.location().mentorId!==selected)return;
+  closeTalk();return littleSprouts.guides.start();
+ }
  if(action==='pn275-direct'){
   const who=talk;
   if(!who||!littleSprouts.neighbors.adultNear(who))return;
