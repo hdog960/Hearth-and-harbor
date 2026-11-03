@@ -2134,7 +2134,7 @@ function drawScene(){if(!W||!H)return;
   if(scene==='residence')drawResidenceFurniture(ctx);else if(scene==='home')drawHomeFurniture(ctx);
   drawCharacter(ctx,playerDef(),player.x,player.y,player.facing,!!player.target,householdHold?.kind==='chat'?'happy':'neutral');
   if(householdHold&&householdHold.where===scene)drawHouseholdActivity(ctx,player.x,player.y,householdHold.kind,1-householdHold.remaining/householdHold.duration,3);
-  if(scene==='home'){littleSprouts.homeHelp.drawBanner(ctx,tick);littleSprouts.homeRhythms.drawHome(ctx,tick);littleSprouts.dreams.drawKeepsake(ctx,tick);littleSprouts.growth.drawWall(ctx,tick);littleSprouts.familyLegacy.draw(ctx,tick);littleSprouts.rituals.draw(ctx,tick);littleSprouts.draw(ctx,{scene,tick,drawSprite:(child,x,y,routine)=>{ellipse(ctx,'#21474444',x,y,21,6);drawArt(ctx,charArt(child,routine?.facing||'front',routine?.moving?(Number.isFinite(routine.stride)?Math.floor(routine.stride)%2:Math.floor(tick*8)%2):routine?.project?Math.floor(tick*2.5)%2:0,'happy'),x,y,littleSprouts.growth.visual().scale)}});
+  if(scene==='home'){littleSprouts.homeHelp.drawBanner(ctx,tick);littleSprouts.homeRhythms.drawHome(ctx,tick);littleSprouts.familyBond.drawWall(ctx,tick);littleSprouts.dreams.drawKeepsake(ctx,tick);littleSprouts.growth.drawWall(ctx,tick);littleSprouts.familyLegacy.draw(ctx,tick);littleSprouts.rituals.draw(ctx,tick);littleSprouts.draw(ctx,{scene,tick,drawSprite:(child,x,y,routine)=>{ellipse(ctx,'#21474444',x,y,21,6);drawArt(ctx,charArt(child,routine?.facing||'front',routine?.moving?(Number.isFinite(routine.stride)?Math.floor(routine.stride)%2:Math.floor(tick*8)%2):routine?.project?Math.floor(tick*2.5)%2:0,'happy'),x,y,littleSprouts.growth.visual().scale)}});
    const cottageGuest=littleSprouts.homeVisits.guestPose();
    if(cottageGuest){littleSprouts.homeVisits.drawShared(ctx,tick);
     const actualGuest=NPCS.find(n=>n.id===cottageGuest.id);
@@ -2371,7 +2371,7 @@ function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){sto
    else notify('There is not a clear path to that family picture.');
    return;
   }
-  if(littleSprouts.hit(wx,wy,'home')){const p=littleSprouts.position();goTo(nearestWalkable({x:p.x-75,y:p.y+50},'home',true)||{x:690,y:810},()=>{if(!littleSprouts.initiatives.request())littleSprouts.entry();littleSprouts.approaches.interacted()});return}
+  if(littleSprouts.hit(wx,wy,'home')){const p=littleSprouts.position();goTo(nearestWalkable({x:p.x-75,y:p.y+50},'home',true)||{x:690,y:810},()=>{if(!littleSprouts.initiatives.request()&&!littleSprouts.familyBond.request())littleSprouts.entry();littleSprouts.approaches.interacted()});return}
    if(wy<220){notify('A lovely sunny view out of the window!');return}
   const itemIndex=state.placed.findIndex(f=>Math.hypot(wx-f.x,wy-f.z)<45);
   if(itemIndex>=0){
