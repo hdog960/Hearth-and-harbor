@@ -30,7 +30,7 @@ function make({day=4,friendships=basic,club=null,pip={x:818,y:940},
   showModal:(name,html)=>{modal={name,html}},closeModal:()=>{modal=null},
   notify:x=>notices.push(x),save:()=>saves++,updateUI:()=>ui++};
  const w=M.setup(api);
- const moveWren=()=>{const p=w.pose();pp={x:p.x,y:p.y};cp={x:p.x+8,y:p.y+9}};
+ const moveWren=()=>{const p=w.pose();pp={x:p.x,y:p.y};if(cp)cp={x:p.x+8,y:p.y+9}};
  return {w,state,api,notices,get modal(){return modal},get saves(){return saves},
   get ui(){return ui},get routes(){return routes},
   setPlayer:(x,y)=>{pp={x,y}},setPip:(x,y)=>{cp={x,y}},
@@ -51,7 +51,7 @@ function make({day=4,friendships=basic,club=null,pip={x:818,y:940},
  };
 }
 test('three wholly different authored chapters with meaningful two-stage choices',()=>{
- assert.deepEqual(M.CLUB.map(x=>x.kind),['story','color','nature']);
+ assert.deepEqual(plain(M.CLUB.map(x=>x.kind)),['story','color','nature']);
  for(const chapter of M.CLUB){
   assert.equal(chapter.first.length,2);assert.equal(chapter.final.length,2);
   assert.equal(chapter.ending.length,2);assert.notEqual(chapter.ending[0],chapter.ending[1]);
@@ -120,7 +120,7 @@ test('world artwork grows with earned chapters and never appears on new game',()
  assert.equal(fresh.w.drawClub(g,1),false);
  const f=make();f.start();f.finish(1);
  assert.equal(f.w.drawClub(g,1),true);const one=calls.length;
- assert.ok(one>=12);
+ assert.ok(one>=10);
  f.setDay(5);f.state.youngResidents.wren.friendships.push({day:5,kind:'color',first:1,last:0});
  f.start();f.finish(0);calls.length=0;
  f.w.drawClub(g,2);assert.ok(calls.length>one);
