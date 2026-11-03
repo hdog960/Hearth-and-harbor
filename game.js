@@ -2099,7 +2099,9 @@ function drawScene(){if(!W||!H)return;
  if(scene==='town'){drawTownGround(ctx);stewardship.drawProjects(ctx,{season:state.season,tick});memoryWalk.draw(ctx,{season:state.season,tick});stewardship.festivalStalls(ctx,{season:state.season,day:state.day,tick});festivalMarket.decorate(ctx,{season:state.season,day:state.day,tick});festival.drawTown(ctx,{season:state.season,day:state.day,tick});community.drawTown(ctx,{season:state.season,day:state.day,tick});villageLife.drawDecor(ctx,{season:state.season,day:state.day,tick});neighborScenes.draw(ctx,{tick});drawWeddingVenue(ctx);}else if(scene==='grove')HearthGrove.draw(ctx,{season:state.season,record:groveRecord(),tick});else if(scene==='museum')HearthMuseum.drawRoom(ctx,{species:NATURE_SPECIES,donated:state.nature.donated,tick,season:state.season});else if(scene==='residence'){drawResidenceGround(ctx);heirlooms.draw(ctx,activeResidence);familyPortraits.draw(ctx,activeResidence);lifeSeasons.draw(ctx,activeResidence);careCircles.draw(ctx,activeResidence);mentorship.draw(ctx,activeResidence);familyRoots.draw(ctx,activeResidence);chronicle.draw(ctx,activeResidence);sharedScenes.drawStage(ctx,{home:activeResidence,tick});roommateProjects.drawWall(ctx,activeResidence);householdRoles.drawFloor(ctx,activeResidence);homeAspirations.drawWall(ctx,{home:activeResidence,members:roomResidents().map(n=>n.id)});traditions.drawWall(ctx,activeResidence);functionalHomes.draw(ctx,activeResidence);familyTable.draw(ctx,{home:activeResidence,day:state.day,tick});helpingHands.draw(ctx,{home:activeResidence,tick});hobbyStudio.draw(ctx,{home:activeResidence,tick});}else{drawHomeGround(ctx);littleSprouts.guestEcho.drawGallery(ctx,tick);heirlooms.draw(ctx,'player');chronicle.draw(ctx,'player');householdRoles.drawFloor(ctx,'player');homeAspirations.drawWall(ctx,{home:'player'});traditions.drawWall(ctx,'player');functionalHomes.draw(ctx,'player');familyTable.draw(ctx,{home:'player',day:state.day,tick});}
  if(scene==='town'){
   const wrenPose=youngNeighbors.pose();
-  const ordered=objects.map(o=>({...o,draw:0})).concat(littleSprouts.worldKeepsakes.displays().map(o=>({...o,draw:1})),NPCS.map(o=>({...o,type:'npc',draw:1})),wrenPose?[{type:'young-neighbor',id:'wren',x:wrenPose.x,y:wrenPose.y,draw:1}]:[],[{type:'player',x:player.x,y:player.y,draw:2}]).sort((a,b)=>a.y-b.y);
+  const cornerPose=youngNeighbors.clubRows().length?youngNeighbors.clubSite():null;
+  const ordered=objects.map(o=>({...o,draw:0})).concat(littleSprouts.worldKeepsakes.displays().map(o=>({...o,draw:1})),NPCS.map(o=>({...o,type:'npc',draw:1})),cornerPose?[{type:'friendship-corner',x:cornerPose.x,y:cornerPose.y,draw:1}]:[],
+   wrenPose?[{type:'young-neighbor',id:'wren',x:wrenPose.x,y:wrenPose.y,draw:1}]:[],[{type:'player',x:player.x,y:player.y,draw:2}]).sort((a,b)=>a.y-b.y);
   for(const o of ordered){if(Math.abs(o.x-cam.x)>W/worldScale*.85+230||Math.abs(o.y-cam.y)>H/worldScale*.85+230)continue;
    if(o.type==='npc'){
     const original=NPCS.find(n=>n.id===o.id);
@@ -2117,6 +2119,8 @@ function drawScene(){if(!W||!H)return;
      if(original.moving===0&&!talk){const activity=original.villageEntry?.guestEcho?original.villageEntry:currentRoutine(original);
       ctx.font='18px system-ui';ctx.textAlign='center';ctx.fillText(activity.icon,o.x+48,o.y-169+Math.sin(tick*1.5+o.x)*2);ctx.textAlign='left'}
     }
+   }else if(o.type==='friendship-corner'){
+    youngNeighbors.drawClub(ctx,tick);
    }else if(o.type==='young-neighbor'){
     const w=youngNeighbors.pose();
     if(w){
@@ -2139,7 +2143,6 @@ function drawScene(){if(!W||!H)return;
   littleSprouts.adventures.draw(ctx,tick);
   littleSprouts.helpers.draw(ctx,tick);
   youngNeighbors.drawMarker(ctx,tick);
-  youngNeighbors.drawClub(ctx,tick);
   littleSprouts.draw(ctx,{scene,tick,drawSprite:(child,x,y,routine)=>{ellipse(ctx,'#21474444',x,y,21,6);drawArt(ctx,charArt(child,routine?.facing||'front',routine?.moving?(Number.isFinite(routine.stride)?Math.floor(routine.stride)%2:Math.floor(tick*8)%2):routine?.project?Math.floor(tick*2.5)%2:0,'happy'),x,y,littleSprouts.growth.visual().scale);littleSprouts.worldKeepsakes.drawActor(ctx,'child','pip',{x,y},tick);littleSprouts.responses.drawChild(ctx,{x,y},tick)}});
    youngNeighbors.drawSocial(ctx,tick);
    littleSprouts.worldKeepsakes.drawCelebration(ctx,tick);
@@ -2406,9 +2409,19 @@ function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){sto
  }
  const peerSpot=youngNeighbors.hitMarker(wx,wy);
  if(peerSpot){goTo(peerSpot,()=>youngNeighbors.arrive());return}
- const corner=youngNeighbors.hitClub(wx,wy);
+ const corner=youngNeighbors.hitClub(wx,wy),wren=youngNeighbors.hit(wx,wy);
+ // Wren can stand in front of the handmade sign. Resolve overlapping mobile
+ // hit areas by closeness to the actual child or sign art, never by order alone.
+ const wp=youngNeighbors.pose();
+ const childTap=!!wren&&(!corner||!wp||
+  Math.hypot(wx-wp.x,wy-(wp.y-51))<=Math.hypot(wx-corner.x,wy-(corner.y-36)));
+ if(childTap){
+  const access=youngNeighbors.approach();
+  if(access)goTo(access,()=>youngNeighbors.talk());
+  else notify('Wren is on the other side of the village path right now.');
+  return;
+ }
  if(corner){goTo(corner,()=>youngNeighbors.inspectClub());return}
- const wren=youngNeighbors.hit(wx,wy);
  if(wren){
   const access=youngNeighbors.approach();
   if(access)goTo(access,()=>youngNeighbors.talk());
