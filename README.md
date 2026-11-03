@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.8.4 — Pip's Neighborhood Helpers
+
+**New: six authored, physically played crafts with Maplewood's real adults.** Once Pip has met a resident and reached the first optional growth chapter, Poppy and Pip can help the real villager in town. Choose an idea, physically walk to and tap two glowing craft pieces, and make a final thoughtful choice. Only a genuinely finished project becomes a small memory and strengthens the appropriate child need and adult friendship. Three different completed neighbor projects earn a little community ribbon visible on Pip's playable character. Existing saves and earlier adult, Pip and seasonal family systems are preserved.
+
+[Read the v2.8.4 activity implementation, quality checks and Generations handoff](PIPS_NEIGHBORHOOD_HELPERS_V284_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.8.3 The Family Seasons Sampler
+
 # Hearth & Harbor v2.8.3 — The Family Seasons Sampler
 
 **Poppy and Pip can now revisit their genuinely earned handmade family keepsakes through three playable rituals.** Begin in person beside Pip in the cottage, walk to the physical wall frame, make a meaningful first choice, then finish a real timed Poppy household activity beside the actual furniture before making a final choice. The Welcome Ribbon inspires a letter, the Sunday Recipe Card a supper, and the Orchard Print a creative nature memory. Queuing, canceling or opening a menu never generates an instant reward.
