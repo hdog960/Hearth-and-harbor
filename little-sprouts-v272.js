@@ -212,7 +212,7 @@ function setup(api){
  })||{panel:()=>'',schedule:(id,e)=>e,townDialogue:()=>null,
   townGesture:()=>false,drawWorking:()=>false,drawGallery:()=>false,
   hit:()=>null,approach:()=>null,inspect:()=>false,handle:()=>false};
- const position=()=>{const p=homeHelp.pose()||familyLegacy.pose()||rituals.pose()||homeVisits.childPose()||neighbors.escortPose()||routines.location();return {x:p.x,y:p.y}};
+ const position=()=>{const p=homeVisits.childPose()||homeHelp.pose()||familyLegacy.pose()||rituals.pose()||neighbors.escortPose()||routines.location();return {x:p.x,y:p.y}};
  function status(){
   const d=data(),today=day(),current=d.daily.day===today?d.daily.done:[],ready=new Set(d.memories.filter(m=>m.day<=today).map(m=>m.day)).size>=3&&KINDS.every(k=>d.memories.some(m=>m.kind===k&&m.day<=today));
   return {id:'pip',name:'Pip',stage:growth.visual().name,guardian:d.guardian,guardianDay:d.guardianDay,home:home(),day:today,needs:{...d.needs},done:current.slice(),careDays:d.days.length,ready,memories:d.memories.slice()};
@@ -283,11 +283,11 @@ function setup(api){
  }
  function draw(g,{scene,tick=0,drawSprite}={}){
   if(!g||!drawSprite||(scene!=='town'&&scene!=='home')||scene!==api.getScene?.()||!inPlace())return;
-  const base=routines.location(),escort=neighbors.escortPose(),visitChild=homeVisits.childPose(),participation=homeHelp.pose()||familyLegacy.pose()||rituals.pose(),routine=participation?{...base,...participation,label:'Helping Poppy in the cottage',icon:'🏡'}:visitChild?{...base,...visitChild,label:'A cottage visit with Poppy',icon:'🌷'}:escort?{...base,...escort,label:'A village walk with Poppy',icon:'🌼'}:base;
+  const base=routines.location(),escort=neighbors.escortPose(),visitChild=homeVisits.childPose(),participation=homeHelp.pose()||familyLegacy.pose()||rituals.pose(),routine=visitChild?{...base,...visitChild,label:'A cottage visit with Poppy',icon:'🌷'}:participation?{...base,...participation,label:'Helping Poppy in the cottage',icon:'🏡'}:escort?{...base,...escort,label:'A village walk with Poppy',icon:'🌼'}:base;
   const pos=position(),phase=routine.moving?Math.abs(Math.sin((routine.stride??tick*4)*Math.PI))*2.7:Math.sin(tick*1.7)*.6;
   if(!escort&&!visitChild){if(routine.mentorVisit)guides.draw(g,routine,tick);else if(!participation&&routine.project)projects.drawProp(g,routine,tick);else routines.drawProp(g,routine,tick)}
   drawSprite(CHILD,pos.x,pos.y+phase,routine);
-  homeRhythms.drawParticipation(g,{x:pos.x,y:pos.y+phase},homeHelp.pending?.kind,tick);
+  if(!visitChild)homeRhythms.drawParticipation(g,{x:pos.x,y:pos.y+phase},homeHelp.pending?.kind,tick);
   guestEcho.drawWorking(g,'pip',tick);
   growth.drawAccessory(g,pos.x,pos.y+phase,tick);
   helpers.drawRibbon(g,pos,tick);
