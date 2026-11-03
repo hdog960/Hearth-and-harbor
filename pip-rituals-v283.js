@@ -171,7 +171,7 @@ function setup(api){
  }
  function inspect(key){
   if(!home()||!source(key))return false;
-  return board();
+  board();return true;
  }
  function frameHit(x,y){
   if(!home()||!Number.isFinite(x)||!Number.isFinite(y))return null;
