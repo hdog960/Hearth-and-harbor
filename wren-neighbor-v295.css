@@ -1,0 +1,22 @@
+/* v2.9.5 — only an original small encounter, not a whole new app tab */
+.yn295-book{color:#624d4e}.yn295-cover{padding:16px;border:2px solid #b2bfb4;
+ border-radius:13px;background:linear-gradient(135deg,#719d95,#9da6c5);color:#fff8e2}
+.yn295-cover small{font-size:11px;letter-spacing:.07em}
+.yn295-cover h2{font-size:21px;margin:7px 0}
+.yn295-cover p{font-size:13px;line-height:1.5;margin:6px 0 0}
+.yn295-book p{font-size:13px;line-height:1.55}
+.yn295-choices{display:grid;gap:8px;margin:12px 0}
+.yn295-choices button,.yn295-book button{min-height:48px;border-radius:11px}
+.yn295-subtle{opacity:.85}
+.yn295-panel{border:2px solid #b5c5bb;background:#f1f3e3;color:#435d57;
+ border-radius:14px;overflow:hidden;margin:9px 0}
+.yn295-panel summary{list-style:none;background:#dce6cf;cursor:pointer;
+ font-size:13px;font-weight:900;padding:12px;min-height:45px}
+.yn295-panel summary::-webkit-details-marker{display:none}
+.yn295-panel summary:after{content:'⌄';float:right}
+.yn295-panel details[open] summary:after{content:'⌃'}
+.yn295-inner{padding:11px}.yn295-inner p{font-size:12px;line-height:1.5;margin:8px 0}
+.yn295-inner strong{font-size:11px}.yn295-inner ul{padding-left:17px;font-size:11px;line-height:1.6}
+.yn295-book :focus-visible,.yn295-panel :focus-visible{outline:3px solid #246e64;outline-offset:3px}
+@media(max-width:380px){.yn295-cover{padding:12px}.yn295-cover h2{font-size:18px}.yn295-inner{padding:8px}}
+@media(prefers-reduced-motion:reduce){.yn295-book *,.yn295-panel *{animation:none!important;transition:none!important}}
