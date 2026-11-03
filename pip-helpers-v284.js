@@ -171,6 +171,7 @@ function setup(api){
   c.needs.joy=Math.min(100,Math.max(0,c.needs.joy||0)+1);
   api.bondAdult?.(done.id,2);
   api.save?.();api.updateUI?.();
+  api.onProjectCompleted?.(done);
   api.notify?.('🌼 A real kindness project with '+(api.name?.(done.id)||done.id)+' is remembered. '+d.need+' +6.');
   api.showModal?.('little-sprouts','<section class="ls272-book ph284-modal"><div class="ls272-cover"><small>✦ A SHARED VILLAGE MEMORY</small><h2>'+d.icon+' '+esc(d.name)+'</h2><p>'+esc(d.closing[choice])+'</p></div><p>Day '+done.day+' · Poppy, Pip and '+esc(api.name?.(done.id)||done.id)+' finished a real world project. '+(hasRibbon()?'Pip’s handmade community ribbon is now visible in the village!':'Help more neighbors to earn a handmade ribbon.')+'</p><button data-act="ph284-book">Return to Pip’s Daybook</button></section>');
   return true;
