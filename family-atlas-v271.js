@@ -179,6 +179,20 @@ function setup(api){
       home:null});
    }
   }
+  // Real return visits only after earlier earned projects. This is a
+  // dated adult-child village experience, never family parentage/romance.
+  const responseChild=state().youngResidents?.pip;
+  if(responseChild?.guardian==='player'&&dayOK(responseChild.guardianDay)&&responseChild.guardianDay<=now){
+   const projects=root.HearthPipHelpers.clean(responseChild.helperProjects);
+   for(const r of root.HearthPipResponses.clean(responseChild.neighborResponses)){
+    const source=projects.find(p=>p.id===r.id&&p.day<r.day&&p.day>=responseChild.guardianDay);
+    if(!source||r.day>now||root.HearthPipGrowth.lifeStage(responseChild,source.day)<1)continue;
+    out.push({day:r.day,kind:'child-neighbor-response',ids:['player','pip',r.id],
+     title:'The Village Remembers · '+root.HearthPipHelpers.PROJECTS[r.id].name,
+     detail:'Poppy and Pip returned in person to the completed village keepsake while its real adult maker was present',
+     home:null});
+   }
+  }
   // A true shared traditional keepsake is a childhood family memory,
   // never legal ancestry, marriage, a fictitious parent or a new guardian.
   const child=state().youngResidents?.pip,keeps=child?.legacyKeepsakes;
