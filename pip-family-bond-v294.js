@@ -146,7 +146,7 @@ function setup(api){
   const nextRule=p.stage<3?CHAPTERS[p.stage+1]:null;
   const details=nextRule?'<small>Next: '+Math.max(0,nextRule.days-p.days)+' more unique shared days, '+Math.max(0,nextRule.kinds-p.kinds.length)+' more kinds of activity and '+Math.max(0,nextRule.post-p.post)+' more days after moving in.</small>':
    '<small>These three chapters have grown through the real days you shared.</small>';
-  const rows=old.chapters.map(r=>'<li>Day '+r.day+' · '+CHAPTERS[r.id].icon+' '+esc(CHAPTERS[r.id].name)+' · '+esc(CHAPTERS[r.id].choices[r.choice])+'</li>').join('');
+  const rows=old.map(r=>'<li>Day '+r.day+' · '+CHAPTERS[r.id].icon+' '+esc(CHAPTERS[r.id].name)+' · '+esc(CHAPTERS[r.id].choices[r.choice])+'</li>').join('');
   return '<section class="pb294-panel"><details><summary>💛 Poppy & Pip · '+esc(reached)+'</summary><div class="pb294-body"><p>This bond grows from real childhood afternoons, care, household actions and family visits—not from a friendship button.</p><div class="pb294-count"><span>🌼 '+p.days+' shared days</span><span>🏡 '+p.post+' days since moving in</span><span>🎨 '+p.kinds.length+' ways of connecting</span></div>'+
    details+(nextId?'<p><strong>'+CHAPTERS[nextId].icon+' '+esc(CHAPTERS[nextId].name)+'</strong> is ready to talk about together.</p>':'')+
    (ready()?'<button data-act="pb294-reflect">Have a real family conversation</button>':nextId?'<small>Visit Pip in the cottage when both of you are free to share this moment.</small>':'')+
