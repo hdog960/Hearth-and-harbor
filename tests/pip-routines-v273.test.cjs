@@ -4,7 +4,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 const context={window:{}};
 vm.runInNewContext(read('pip-routines-v273.js'),context,{filename:'pip-routines-v273.js'});
-vm.runInNewContext(read('pip-neighbors-v275.js'),context,{filename:'pip-neighbors-v275.js'});vm.runInNewContext(read('pip-home-help-v276.js'),context,{filename:'pip-home-help-v276.js'});vm.runInNewContext(read('little-sprouts-v272.js'),context,{filename:'little-sprouts-v272.js'});
+vm.runInNewContext(read('pip-neighbors-v275.js'),context,{filename:'pip-neighbors-v275.js'});vm.runInNewContext(read('pip-home-help-v276.js'),context,{filename:'pip-home-help-v276.js'});vm.runInNewContext(read('pip-dreams-v277.js'),context,{filename:'pip-dreams-v277.js'});vm.runInNewContext(read('little-sprouts-v272.js'),context,{filename:'little-sprouts-v272.js'});
 const P=context.window.HearthPipRoutines,L=context.window.HearthLittleSprouts;
 function fixture(options={}){
  const state={day:8,minute:120,coins:250,weddingPlans:{},familyRoots:{chosen:{}},youngResidents:{pip:L.defaults()},...options};
@@ -173,9 +173,9 @@ test('phone asset order, cache, scrolling and accessibility gates include v2.7.3
  }
  assert.ok(html.indexOf('pip-routines-v273.js')<html.indexOf('little-sprouts-v272.js'));
  assert.ok(html.indexOf('little-sprouts-v272.js')<html.indexOf('game.js'));
- assert.match(html,/v=2\.7\.6/);assert.match(sw,/hearth-harbor-v276-little-helping-hands/);
+ assert.match(html,/v=2\.7\.7/);assert.match(sw,/hearth-harbor-v277-childhood-dreams/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
- assert.match(css,/prefers-reduced-motion/);assert.match(game,/Little Helping Hands v2\.7\.6/);
+ assert.match(css,/prefers-reduced-motion/);assert.match(game,/Pip.s Little Dreams v2\.7\.7/);
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
 });
 test('new routines have no timers, network, embedded payment or second storage key',()=>{
