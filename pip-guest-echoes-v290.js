@@ -55,6 +55,20 @@ function setup(api){
   });
  };
  const receipt=id=>works().find(r=>r.id===id)||null;
+ function favorite(){
+  const c=child(),rhythms=root.HearthPipHomeRhythms;
+  if(!c||c.guardian!=='player'||!rhythms?.clean||!rhythms?.favorite)return null;
+  return rhythms.favorite(rhythms.clean(c.homeRhythms,c.homeHelps,c.guardianDay));
+ }
+ function personalityLine(id){
+  const visit=root.HearthPipHomeVisits?.VISITS?.[id],interest=favorite();
+  if(!visit||!interest)return '';
+  const names={read:'little stories',meal:'setting the family table',hobby:'making pictures',tidy:'caring for shared spaces'};
+  return visit.kind===interest?
+   'Pip has genuinely grown fond of '+names[interest]+'. '+id[0].toUpperCase()+id.slice(1)+
+   ' notices how naturally Pip joins this activity.':
+   'Pip has been practicing '+names[interest]+'. This family visit brings another way to learn together.';
+ }
  const time=()=>finite(state().minute)?state().minute:-1;
  const todayEcho=id=>{
   const r=receipt(id);
@@ -113,7 +127,7 @@ function setup(api){
   const point=api.getWorkPoint?.(s.kind);
   if(!point||!finite(point.x)||!finite(point.y)||
    dist(adult,point)>150||dist(pip,point)>180)return null;
-  return {s,adult,pip,hold,point,style:THEME[s.kind]};
+  return {s,adult,pip,hold,point,style:THEME[s.kind],matched:favorite()===s.kind};
  }
  // These distinct original working objects follow the REAL adult's hands.
  function drawWorking(g,who,tick=0){
@@ -125,7 +139,7 @@ function setup(api){
   g.save();
   g.fillStyle='#e8bf98';g.fillRect(x-6,y+6,10,9);
   g.fillStyle='#785c60';g.fillRect(x-2,y+4,18,4);
-  g.fillStyle=w.style.edge;g.fillRect(x,y-17,22,23);
+  g.fillStyle=w.matched?'#78a897':w.style.edge;g.fillRect(x,y-17,22,23);
   g.fillStyle=w.style.paper;g.fillRect(x+3,y-13,16,15);
   if(w.s.kind==='read'){
    g.fillStyle='#b58f84';g.fillRect(x+10,y-13,2,15);
@@ -238,7 +252,7 @@ function setup(api){
   if(action!=='pe290-back')return false;
   api.closeModal?.();return true;
  }
- return {works,receipt,destination,schedule,todayEcho,townDialogue,townGesture,
+ return {works,receipt,favorite,personalityLine,destination,schedule,todayEcho,townDialogue,townGesture,
   roleWork,drawWorking,cards,drawGallery,hit,approach,inspect,panel,handle};
 }
 root.HearthPipGuestEchoes={setup,FRAMES,STOPS,THOUGHTS};
