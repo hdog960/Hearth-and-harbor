@@ -215,11 +215,11 @@ test('iPhone Home Screen loads all updated scripts in correct order and cache',(
  assert.ok(html.includes('pip-initiatives-v292.js?v=2.9.4'));
  assert.ok(html.indexOf('pip-initiatives-v292.js')<html.indexOf('pip-approaches-v293.js'));
  assert.ok(html.indexOf('pip-approaches-v293.js')<html.indexOf('little-sprouts-v272.js'));
- assert.ok(html.includes('little-sprouts-v272.js?v=2.9.4'));
- assert.ok(html.includes('game.js?v=2.9.4'));
+ assert.ok(html.includes('little-sprouts-v272.js?v=2.9.5'));
+ assert.ok(html.includes('game.js?v=2.9.5'));
  for(const a of ['pip-approaches-v293.js','pip-approaches-v293.css'])
   assert.ok(sw.includes("'./"+a+"'"));
- assert.match(sw,/hearth-harbor-v294-bond-built-by-living/);
+ assert.match(sw,/hearth-harbor-v295-wren-young-neighbor/);
  assert.match(game,/isPlayerMoving:\(\)=>!!player\.target/);
  assert.match(game,/littleSprouts\.approaches\.interacted\(\)/);
  assert.match(little,/approaches\.draw\(g,pos,tick\)/);
