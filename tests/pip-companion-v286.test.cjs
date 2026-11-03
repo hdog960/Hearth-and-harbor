@@ -144,8 +144,8 @@ test('older phone PWA saves and resource order remain intact for v2.8.6',()=>{
  for(const file of ['pip-neighbors-v275.js','pip-adventures-v281.js','pip-helpers-v284.js'])
   assert.ok(html.includes(file+'?v=2.8.6'));
  for(const file of ['little-sprouts-v272.js','game.js'])
-  assert.ok(html.includes(file+'?v=2.9.0'));
- assert.match(sw,/hearth-harbor-v290-guests-who-remember/);
+  assert.ok(html.includes(file+'?v=2.9.1'));
+ assert.match(sw,/hearth-harbor-v291-living-cottage-day/);
  assert.ok(sw.includes("'./pip-neighbors-v275.js'"));
  assert.ok(sw.includes("'./little-sprouts-v272.js'"));
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
