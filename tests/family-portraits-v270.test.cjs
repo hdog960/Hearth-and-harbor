@@ -131,7 +131,7 @@ test('iPhone HTML loads portrait assets before the game and includes offline cac
   assert.ok(html.includes(asset));assert.ok(sw.includes("'./"+asset+"'"));
  }
  assert.ok(html.indexOf('family-portraits-v270.js')<html.indexOf('game.js'));
- assert.match(html,/v=2\.7\.4/);assert.match(sw,/hearth-harbor-v274-permanent-learning/);
+ assert.match(html,/v=2\.7\.5/);assert.match(sw,/hearth-harbor-v275-neighbor-walks/);
  assert.match(css,/@media\(max-width:380px\)/);assert.match(css,/:focus-visible/);
  for(const hook of ['window.HearthFamilyPortraits.clean(raw.familyPortraits)','window.HearthFamilyPortraits.setup({','familyPortraits.completed(activeResidence,n.id','familyPortraits.completed(activeResidence,id','familyPortraits.draw(ctx,activeResidence)','familyPortraits.comfort(home)','familyPortraits.handle(action,id)'])
   assert.ok(game.includes(hook),'missing real integration '+hook);

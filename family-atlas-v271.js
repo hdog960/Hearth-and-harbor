@@ -59,6 +59,19 @@ function setup(api){
   const young=api.getYoungResident?.();
   if(young?.guardian==='player'&&dayOK(young.guardianDay)&&young.guardianDay<=now)
    out.push({day:young.guardianDay,kind:'guardian',ids:['player','pip'],title:'A Welcoming Home for Pip',detail:'An explicitly chosen guardianship, not biological parentage',home:'player'});
+  // Completed real child/neighbor encounters are historical memories, never
+  // marriage, parentage, guardianship or proof of an active family relationship.
+  const visits=state().youngResidents?.pip?.meetings;
+  if(Array.isArray(visits)){
+   const visited=new Set();
+   for(const m of visits.slice(-100)){
+    if(!obj(m)||!ADULTS.includes(m.id)||!dayOK(m.day)||m.day>now||
+     !Number.isInteger(m.mask)||m.mask<0||m.mask>3)continue;
+    const key=m.day+'|'+m.id;if(visited.has(key))continue;visited.add(key);
+    out.push({day:m.day,kind:'child-neighbor',ids:['pip',m.id],
+     title:'A little neighbor moment',detail:'Pip met a real nearby resident and finished their two-part activity',home:null});
+   }
+  }
   for(const home of HOMES.slice(1)){
    const portraits=api.getPortraits?.(home)||[];
    for(const p of portraits){
