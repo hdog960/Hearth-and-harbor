@@ -3,7 +3,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 const context={window:{}};
-vm.runInNewContext(read('pip-growth-v280.js'),context,{filename:'pip-growth-v280.js'});vm.runInNewContext(read('pip-projects-v278.js'),context,{filename:'pip-projects-v278.js'});vm.runInNewContext(read('pip-guides-v279.js'),context,{filename:'pip-guides-v279.js'});vm.runInNewContext(read('pip-routines-v273.js'),context,{filename:'pip-routines-v273.js'});
+vm.runInNewContext(read('pip-growth-v280.js'),context,{filename:'pip-growth-v280.js'});vm.runInNewContext(read('pip-adventures-v281.js'),context,{filename:'pip-adventures-v281.js'});vm.runInNewContext(read('pip-projects-v278.js'),context,{filename:'pip-projects-v278.js'});vm.runInNewContext(read('pip-guides-v279.js'),context,{filename:'pip-guides-v279.js'});vm.runInNewContext(read('pip-routines-v273.js'),context,{filename:'pip-routines-v273.js'});
 vm.runInNewContext(read('pip-neighbors-v275.js'),context,{filename:'pip-neighbors-v275.js'});vm.runInNewContext(read('pip-home-help-v276.js'),context,{filename:'pip-home-help-v276.js'});vm.runInNewContext(read('pip-dreams-v277.js'),context,{filename:'pip-dreams-v277.js'});vm.runInNewContext(read('little-sprouts-v272.js'),context,{filename:'little-sprouts-v272.js'});
 const P=context.window.HearthPipRoutines,L=context.window.HearthLittleSprouts;
 function fixture(options={}){
@@ -173,9 +173,9 @@ test('phone asset order, cache, scrolling and accessibility gates include v2.7.3
  }
  assert.ok(html.indexOf('pip-routines-v273.js')<html.indexOf('little-sprouts-v272.js'));
  assert.ok(html.indexOf('little-sprouts-v272.js')<html.indexOf('game.js'));
- assert.match(html,/v=2\.8\.0/);assert.match(sw,/hearth-harbor-v280-growing-seasons/);
+ assert.match(html,/v=2\.8\.1/);assert.match(sw,/hearth-harbor-v281-growing-adventures/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
- assert.match(css,/prefers-reduced-motion/);assert.match(game,/Pip.s Growing Seasons v2\.8\.0/);
+ assert.match(css,/prefers-reduced-motion/);assert.match(game,/Pip.s Growing Adventures v2\.8\.1/);
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
 });
 test('new routines have no timers, network, embedded payment or second storage key',()=>{
