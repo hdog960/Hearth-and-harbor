@@ -33,6 +33,10 @@ function fixture({guardian=true,day=10,scene='home',start={x:700,y:850},
    return pathFn?pathFn(a,b):[{...b}];}
  };
  const m=M.setup(api);
+ // Seed the real original cottage position before changing the itinerary.
+ // This mirrors the first render on the player's phone and prevents tests
+ // from unintentionally spawning Pip directly at the new destination.
+ m.pose();
  return {m,api,state,child,get schedule(){return schedule},
   get pathCalls(){return pathCalls},get nearestCalls(){return nearestCalls},get history(){return history},
   setScene:s=>where=s,setDay:d=>state.day=d,setMinute:n=>state.minute=n,
