@@ -89,7 +89,7 @@ function setup(api){
  let session=null;
  const present=()=>{
   const p=current();
-  return !!p&&p.project&&IDS.includes(p.focus)&&api.getScene?.()==='home'&&child().guardian==='player'&&
+  return !!p&&p.project===true&&IDS.includes(p.focus)&&api.getScene?.()==='home'&&child().guardian==='player'&&
    dayOK(child().guardianDay)&&child().guardianDay<=day()&&api.nearChild?.(125)===true;
  };
  const completedToday=()=>records().some(r=>r.day===day());
