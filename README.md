@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.8.5 — Living Neighborhood Keepsakes
+
+**Maplewood now remembers Pip's genuinely completed neighborhood projects in its actual 2.5D town.** Six separate original hand-crafted pixel decorations appear after you truly help those particular villagers. Tap a finished keepsake, walk to it in the world, and read the exact choices your household made. During real craft work, Poppy, Pip and the adult neighbor now visibly participate with grounded hand-and-paper animation; after completion, a short celebration marks the moment. All records stay in the same original old-save-compatible system, without new accounts, passive prizes or added currencies.
+
+[Read the v2.8.5 development report, release QA and Generations direction](PIPS_LIVING_NEIGHBORHOOD_V285_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.8.4 Neighborhood Helpers
+
 # Hearth & Harbor v2.8.4 — Pip's Neighborhood Helpers
 
 **New: six authored, physically played crafts with Maplewood's real adults.** Once Pip has met a resident and reached the first optional growth chapter, Poppy and Pip can help the real villager in town. Choose an idea, physically walk to and tap two glowing craft pieces, and make a final thoughtful choice. Only a genuinely finished project becomes a small memory and strengthens the appropriate child need and adult friendship. Three different completed neighbor projects earn a little community ribbon visible on Pip's playable character. Existing saves and earlier adult, Pip and seasonal family systems are preserved.
