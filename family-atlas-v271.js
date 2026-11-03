@@ -90,6 +90,22 @@ function setup(api){
     }
    }
   }
+  // Only completed real companion project days become history; unplayed
+  // autonomous routines do not magically earn relationship or lineage links.
+  const projects=state().youngResidents?.pip?.projects;
+  if(Array.isArray(projects)){
+   const seen=new Set();
+   for(const rec of projects.slice(-24)){
+    if(!obj(rec)||!['stories','kindness','discover'].includes(rec.dream)||
+     !dayOK(rec.day)||rec.day>now||![1,2].includes(rec.slot)||
+     !Number.isInteger(rec.mask)||rec.mask<0||rec.mask>3||seen.has(rec.day))continue;
+    seen.add(rec.day);
+    const names={stories:'A Shared Story Workshop',kindness:'A Welcome Home Project',discover:'A Tiny Discovery Journal'};
+    out.push({day:rec.day,kind:'child-project',ids:['player','pip'],
+     title:names[rec.dream],detail:'An actual cottage project completed together',
+     home:'player'});
+   }
+  }
   for(const home of HOMES.slice(1)){
    const portraits=api.getPortraits?.(home)||[];
    for(const p of portraits){

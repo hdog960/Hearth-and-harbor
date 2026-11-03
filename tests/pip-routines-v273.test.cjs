@@ -3,7 +3,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 const context={window:{}};
-vm.runInNewContext(read('pip-routines-v273.js'),context,{filename:'pip-routines-v273.js'});
+vm.runInNewContext(read('pip-projects-v278.js'),context,{filename:'pip-projects-v278.js'});vm.runInNewContext(read('pip-routines-v273.js'),context,{filename:'pip-routines-v273.js'});
 vm.runInNewContext(read('pip-neighbors-v275.js'),context,{filename:'pip-neighbors-v275.js'});vm.runInNewContext(read('pip-home-help-v276.js'),context,{filename:'pip-home-help-v276.js'});vm.runInNewContext(read('pip-dreams-v277.js'),context,{filename:'pip-dreams-v277.js'});vm.runInNewContext(read('little-sprouts-v272.js'),context,{filename:'little-sprouts-v272.js'});
 const P=context.window.HearthPipRoutines,L=context.window.HearthLittleSprouts;
 function fixture(options={}){
@@ -161,7 +161,7 @@ test('ritual buttons are never actionable merely by opening Pip’s menu',()=>{
 });
 test('Pip uses genuine in-world animation, not a prerecorded decorative sticker',()=>{
  const game=read('game.js'),pip=read('little-sprouts-v272.js');
- assert.match(game,/routine\?\.moving\?Math\.floor\(tick\*8\)%2:0/);
+ assert.match(game,/routine\?\.moving\?Math\.floor\(tick\*8\)%2:routine\?\.project\?Math\.floor\(tick\*2\.5\)%2:0/);
  assert.match(game,/routine\?\.facing\|\|'front'/);
  assert.match(pip,/routines\.location\(\)/);assert.match(pip,/routines\.drawProp\(g,routine,tick\)/);
  assert.match(pip,/drawSprite\(CHILD,pos\.x,pos\.y\+phase,routine\)/);
@@ -173,9 +173,9 @@ test('phone asset order, cache, scrolling and accessibility gates include v2.7.3
  }
  assert.ok(html.indexOf('pip-routines-v273.js')<html.indexOf('little-sprouts-v272.js'));
  assert.ok(html.indexOf('little-sprouts-v272.js')<html.indexOf('game.js'));
- assert.match(html,/v=2\.7\.7/);assert.match(sw,/hearth-harbor-v277-childhood-dreams/);
+ assert.match(html,/v=2\.7\.8/);assert.match(sw,/hearth-harbor-v278-independent-projects/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
- assert.match(css,/prefers-reduced-motion/);assert.match(game,/Pip.s Little Dreams v2\.7\.7/);
+ assert.match(css,/prefers-reduced-motion/);assert.match(game,/Pip.s Independent Projects v2\.7\.8/);
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
 });
 test('new routines have no timers, network, embedded payment or second storage key',()=>{

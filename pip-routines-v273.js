@@ -72,7 +72,7 @@ function cleanEvenings(raw){
 }
 function setup(api){
  const state=()=>api.getState(),child=()=>api.getChild(),day=()=>validDay(state().day)?state().day:1;
- const guardian=()=>child().guardian==='player',location=()=>plan(state().minute,child().guardian);
+ const guardian=()=>child().guardian==='player',location=()=>root.HearthPipProjects.schedule(state().minute,child(),day(),plan);
  const records=()=>child().evenings||[];
  let session=null;
  const evening=()=>guardian()&&Number(state().minute)>=1080&&Number(state().minute)<1440;

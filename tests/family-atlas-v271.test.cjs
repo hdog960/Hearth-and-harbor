@@ -156,7 +156,7 @@ test('iPhone load order, offline assets, menu and wall interaction are all wired
  const html=read('index.html'),sw=read('sw.js'),game=read('game.js'),css=read('family-atlas-v271.css');
  for(const file of ['family-atlas-v271.js','family-atlas-v271.css']){assert.ok(html.includes(file));assert.ok(sw.includes("'./"+file+"'"))}
  assert.ok(html.indexOf('family-atlas-v271.js')<html.indexOf('game.js'));
- assert.match(html,/v=2\.7\.7/);assert.match(sw,/hearth-harbor-v277-childhood-dreams/);
+ assert.match(html,/v=2\.7\.8/);assert.match(sw,/hearth-harbor-v278-independent-projects/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);assert.match(css,/prefers-reduced-motion/);
  for(const hook of ['window.HearthFamilyAtlas.setup({','familyAtlas.portrait(activeResidence,portraitIndex)','familyPortraits.hit(activeResidence,wx,wy)','familyAtlas.handle(action,id)',"btn('🌳 Connections Atlas','fa271-board')"])assert.ok(game.includes(hook),hook);
  assert.doesNotMatch(game,/fp27-board'\)\}\}/);
