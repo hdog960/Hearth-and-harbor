@@ -6,7 +6,7 @@ const read=x=>fs.readFileSync(path.join(__dirname,'..',x),'utf8');
 const env={window:{}};
 for(const f of ['wren-neighbor-v295.js','pip-home-echoes-v299.js',
  'pip-family-bond-v294.js','pip-growth-v280.js','pip-projects-v278.js',
- 'pip-guides-v279.js','pip-routines-v273.js','family-atlas-v271.js'])
+ 'pip-guides-v279.js','pip-routines-v273.js','pip-home-autonomy-v291.js','family-atlas-v271.js'])
  vm.runInNewContext(read(f),env,{filename:f});
 const {HearthPipGrowth:G,HearthYoungNeighbors:W,HearthPipHomeEchoes:H,
  HearthPipFamilyBond:B,HearthPipRoutines:R,HearthFamilyAtlas:A}=env.window;
@@ -243,4 +243,28 @@ test('new stage adds no network, background aging, timers, jobs or romance to Pi
  const core=read('game.js'),adults=core.slice(core.indexOf('const NPCS=['),core.indexOf('const HEX=n=>'));
  assert.doesNotMatch(adults,/id:'pip'/);
  assert.match(sources,/A choice, NEVER A TIMER|GENERATION/i);
+});
+
+test('a chosen teen walks to changed dream stations without scheduled teleportation',()=>{
+ const f=fixture();f.pick('0');
+ const H=env.window.HearthPipHomeAutonomy;
+ let destination={scene:'home',x:700,y:730,project:true,growthStage:3,
+  facing:'front',label:'First activity',prop:'book',slot:2,icon:'📘'};
+ const h=H.setup({getState:()=>f.state,getChild:()=>f.c,getScene:()=> 'home',
+  getSchedule:()=>destination,getOverridePose:()=>null,isChildSessionActive:()=>false,
+  isWalkable:()=>true,nearestWalkable:p=>p,findPath:(_from,to)=>[to],
+  isPaused:()=>false});
+ h.advance(.05);
+ const start=h.pose();assert.ok(start,'project work is now an actual walking actor');
+ assert.equal(start.x,700);
+ destination={...destination,x:610,y:760,label:'New self-chosen dream station'};
+ h.advance(.1);
+ const next=h.pose();assert.ok(next);
+ assert.ok(next.x<700&&next.x>610,'Pip must walk toward the new station, not teleport');
+ assert.ok(next.moving);
+ const old=H.setup({getState:()=>f.state,getChild:()=>({...f.c,growth:{stage:2,firstDay:14,secondDay:20}}),
+  getScene:()=> 'home',getSchedule:()=>({...destination,growthStage:2}),getOverridePose:()=>null,
+  isChildSessionActive:()=>false,isWalkable:()=>true,nearestWalkable:p=>p,
+  findPath:(_a,b)=>[b],isPaused:()=>false});
+ old.advance(.1);assert.equal(old.pose(),null,'preexisting guided project behavior remains');
 });
