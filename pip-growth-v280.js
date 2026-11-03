@@ -122,6 +122,39 @@ function setup(api){
  const phase=()=>lifeStage(child(),today());
  const isNear=()=>api.getScene?.()==='home'&&api.nearChild?.(130)===true;
  const canClaim=level=>[1,2].includes(level)&&isNear()&&actual().chapters[level-1]?.ready===true;
+ let teenPrompt=null;
+ const teenStory=[
+  {choice:0,title:'Explore with Curiosity',text:'Pip will use their growing confidence to plan thoughtful new adventures, with their own sketchbook and map.'},
+  {choice:1,title:'Grow Through Kindness',text:'Pip will use their growing confidence to make everyday spaces more welcoming, with a care journal and handmade ribbons.'}
+ ];
+ const teenReady=()=>isNear()&&actual().stage===2&&
+  actual().chapters[2]?.ready===true&&
+  !api.isOtherFamilyActivity?.()&&!api.isPlayerMoving?.();
+ function consider(){
+  if(!teenReady()||teenPrompt)return false;
+  teenPrompt={day:today(),secondDay:clean(child().growth).secondDay};
+  api.showModal?.('little-sprouts','<section class="pg280-book"><div class="pg280-cover"><small>🌼 GENERATIONS v3.0 · A CHOICE, NEVER A TIMER</small><h3>🪁 The Next Little Horizon</h3><p>Pip has lived many different days: with Wren, at the Friendship Corner, and with Poppy in their cottage. You can choose whether Pip is ready for an early-teen chapter.</p></div><p>This is optional. Pip stays in your household with their chosen guardian, keeps every memory, and receives no adult jobs, romance, wages or automatic aging. How should this next chapter feel?</p><div class="ls272-activity">'+teenStory.map((t,i)=>'<button data-act="pg300-choose" data-id="'+i+'"><strong>'+t.title+'</strong><small>'+t.text+'</small></button>').join('')+'</div><button data-act="pg300-cancel">Keep our childhood as it is</button></section>');
+  return true;
+ }
+ function decide(choice){
+  const old=teenPrompt;teenPrompt=null;
+  if(!old||![0,1].includes(choice)||old.day!==today()||
+   old.secondDay!==clean(child().growth).secondDay||!teenReady()||
+   api.isDialogOpen?.()===false)return false;
+  const cur=clean(child().growth);
+  if(cur.stage!==2)return false;
+  const next=clean({...cur,stage:3,thirdDay:today(),thirdChoice:choice});
+  if(next.stage!==3)return false;
+  child().growth=next;api.save?.();api.updateUI?.();
+  api.notify?.('🪁 Pip chose a new early-teen chapter. Their life at home and their real friendships continue.');
+  api.showModal?.('little-sprouts','<section class="pg280-book"><div class="pg280-cover"><small>🪁 AN OPTIONAL GROWING YEAR · DAY '+today()+'</small><h3>'+teenStory[choice].title+'</h3><p>'+teenStory[choice].text+'</p></div><p>The real Pip sprite, cottage growth chart and daily creative routine will now reflect this choice. All friendships and family memories remain intact.</p><button data-act="pg300-book">Return to Pip’s Daybook</button></section>');
+  return true;
+ }
+ function cancelTeen(){const had=!!teenPrompt;teenPrompt=null;return had}
+ function advance(){
+  if(teenPrompt&&(teenPrompt.day!==today()||api.getScene?.()!=='home'||
+   api.isDialogOpen?.()===false))teenPrompt=null;
+ }
  function celebrate(level){
   if(!canClaim(level))return false;
   const c=child(),r=clean(c.growth),d=today(),next={...r};
@@ -141,13 +174,13 @@ function setup(api){
   const header='<div class="pg280-cover"><small>GENERATIONS · GROWING TOGETHER</small><h3>🌱 Pip’s Growing Seasons</h3><p>Childhood progresses through real shared life—not an automatic timer. Pip changes visibly only when you choose to celebrate a genuinely earned milestone.</p><strong>'+STAGES[p.stage].icon+' '+p.label+' · '+p.title+'</strong></div>';
   const content=CHAPTERS.map((ch,i)=>{
    const g=p.chapters[i],checks=g.goals.map(goal=>'<li class="'+(goal.done?'pg280-complete':'')+'"><span>'+(goal.done?'✓':'○')+'</span><div>'+goal.label+'<small>'+goal.current+' / '+goal.min+'</small></div></li>').join('');
-   const button=g.claimed?'<small>✓ Earned on Day '+(i===0?p.firstDay:p.secondDay)+'</small>':
-    g.ready?(near?'<button data-act="pg280-celebrate" data-id="'+g.level+'">🌟 Celebrate '+ch.name+'</button>':'<small>All goals earned! Stand beside Pip inside your cottage to celebrate.</small>'):
+   const button=g.claimed?'<small>✓ Earned on Day '+([p.firstDay,p.secondDay,p.thirdDay][i])+'</small>':
+    g.ready?(near?(i===2?'<button data-act="pg300-consider">🪁 Talk about growing into the teen years</button>':'<button data-act="pg280-celebrate" data-id="'+g.level+'">🌟 Celebrate '+ch.name+'</button>'):'<small>All goals earned! Stand beside Pip inside your cottage to celebrate.</small>'):
     '<small>'+(i&&p.stage<1?'First celebrate the earlier milestone.':'Complete the genuine life experiences above.')+'</small>';
    return '<article class="pg280-chapter"><header><span>'+ch.icon+'</span><div><strong>Chapter '+g.level+' · '+ch.name+'</strong><p>'+ch.description+'</p></div></header><ul>'+checks+'</ul>'+button+'</article>';
   }).join('');
   return '<section class="pg280-book">'+header+(p.guarded?content:'<p>Choose guardianship through real shared care before beginning these optional family milestones.</p>')+
-   '<p class="pg280-fine">Milestones change Pip’s actual sprite size, accessories, cottage growth chart and interests. Pip remains a child. They do not invent a birthday, biological parent, school or adult rights, and never generate passive coins.</p></section>';
+   '<p class="pg280-fine">Each milestone changes Pip’s real sprite, cottage growth chart and interests. The optional third chapter represents early teen years, not adulthood: no invented birthday, biological parent, school, adult romance, job or passive coins.</p></section>';
  }
  function drawAccessory(g,x,y,tick=0){
   const stage=phase();if(stage<1||!g)return false;
@@ -156,6 +189,14 @@ function setup(api){
   g.fillStyle=stage===1?'#d5a880':'#9fa7c8';g.fillRect(xx-5,yy-7,18,19);
   g.fillStyle='#f4dfb8';g.fillRect(xx-2,yy-3,12,8);
   g.fillStyle='#8b655c';g.fillRect(xx+2,yy,4,4);
+  if(stage===3){
+   const choice=clean(child().growth).thirdChoice;
+   g.fillStyle=choice===0?'#83b9ab':'#bc98ac';
+   g.fillRect(xx-12,yy-31,28,8);
+   g.fillStyle='#f9dfb4';g.fillRect(xx-9,yy-29,20,4);
+   g.fillStyle='#596f79';g.fillRect(xx+7,yy-12,7,15);
+   g.fillStyle='#fce6ce';g.fillRect(xx+9,yy-9,3,9);
+  }
   if(stage>=2){
    g.fillStyle='#e3bd8d';g.fillRect(xx-11,yy-27,24,6);
    g.fillStyle='#fff1d5';g.fillRect(xx-6,yy-24,12,3);
@@ -171,13 +212,24 @@ function setup(api){
   g.fillStyle='#9db8aa';g.fillRect(x-21,y-8,6,54);
   g.fillStyle='#d4ab93';g.fillRect(x-5,y-16,6,62);
   if(stage>=2){g.fillStyle='#ab98c1';g.fillRect(x+11,y-23,7,69)}
+  if(stage>=3){
+   const choice=clean(child().growth).thirdChoice;
+   g.fillStyle=choice===0?'#87bdad':'#d3a7b8';
+   g.fillRect(x+23,y-31,7,77);
+   g.fillStyle='#fff0d0';g.fillRect(x+17,y-34,17,5);
+  }
   g.fillStyle='#e4b67b';g.fillRect(x-24,y+31,42,3);
   g.fillStyle='#735d60';g.font='bold 9px monospace';g.textAlign='center';g.fillText('PIP GROWS',x,y-42);
   if(stage>=2){g.fillStyle='#f2cb86';g.fillRect(x+19,y-30+Math.round(Math.sin(tick*2)*2),8,8)}
   g.restore();return true;
  }
- function handle(action,id){if(action==='pg280-celebrate')return celebrate(Number(id));if(action==='pg280-book')return api.openBook?.();return false}
- return {celebrate,canClaim,panel,drawAccessory,drawWall,progress:actual,handle,visual:()=>STAGES[phase()],get stage(){return phase()}};
+ function handle(action,id){if(action==='pg280-celebrate')return celebrate(Number(id));if(action==='pg280-book')return api.openBook?.();
+ if(action==='pg300-consider')return consider();
+ if(action==='pg300-choose')return id==='0'||id==='1'?decide(Number(id)):false;
+ if(action==='pg300-cancel'){cancelTeen();return api.openBook?.()}
+ if(action==='pg300-book')return api.openBook?.();
+ return false}
+ return {celebrate,canClaim,consider,decide,cancelTeen,advance,panel,drawAccessory,drawWall,progress:actual,handle,visual:()=>STAGES[phase()],get stage(){return phase()},get teenPrompt(){return teenPrompt}};
 }
 root.HearthPipGrowth={setup,clean,evidence,progress,lifeStage,STAGES,CHAPTERS};
 })(window);
