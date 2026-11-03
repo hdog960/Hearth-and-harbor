@@ -179,6 +179,27 @@ function setup(api){
      home:'player'});
    }
   }
+  // A completed wall-to-furniture family ritual is a genuine event, never
+  // a new parent, legal tie or marriage edge.
+  const resident=state().youngResidents?.pip,rituals=resident?.familyRituals;
+  if(resident?.guardian==='player'&&dayOK(resident.guardianDay)&&resident.guardianDay<=now&&Array.isArray(rituals)){
+   const recognized={welcome:'A Welcome Worth Remembering',supper:'The Story Behind Sunday Supper',
+    orchard:'Our Little Orchard Almanac'},action={welcome:'tidy',supper:'meal',orchard:'hobby'},seen=new Set();
+   for(const r of rituals.slice(-65)){
+    if(!obj(r)||!Object.hasOwn(recognized,r.key)||!dayOK(r.day)||r.day>now||
+     r.day<resident.guardianDay||!Number.isInteger(r.season)||r.season<0||r.season>3||
+     ![0,1].includes(r.first)||![0,1].includes(r.last)||seen.has(r.day))continue;
+    const craft=resident.legacyKeepsakes?.find(m=>obj(m)&&m.key===r.key&&m.action===action[r.key]&&
+     dayOK(m.day)&&m.day<=r.day);
+    const house=state().homeTraditions?.homes?.player?.[r.key]?.completedDay;
+    if(!craft||!dayOK(house)||house>craft.day)continue;
+    seen.add(r.day);
+    out.push({day:r.day,kind:'child-family-ritual',ids:['player','pip'],
+     title:recognized[r.key],
+     detail:'Poppy and Pip physically visited their family keepsake, finished a real cottage activity and remembered the season',
+     home:'player'});
+   }
+  }
   for(const home of HOMES.slice(1)){
    const portraits=api.getPortraits?.(home)||[];
    for(const p of portraits){
