@@ -598,6 +598,7 @@ function runOwnHomeAction(kind){
  littleSprouts.homeHelp.complete(kind,once,state.day);
  littleSprouts.familyLegacy.complete(kind,once,state.day);
  littleSprouts.rituals.complete(kind,once,state.day);
+ littleSprouts.homeVisits.completed(kind,once,state.day);
  notify(`${a.icon} ${kind==='chat'?'A sweet letter is on its way!':a.desc}${once?' ✨':' (a little less restorative this time)'}`);
  updateUI();save();
 }
@@ -2131,7 +2132,13 @@ function drawScene(){if(!W||!H)return;
   if(scene==='residence')drawResidenceFurniture(ctx);else if(scene==='home')drawHomeFurniture(ctx);
   drawCharacter(ctx,playerDef(),player.x,player.y,player.facing,!!player.target,householdHold?.kind==='chat'?'happy':'neutral');
   if(householdHold&&householdHold.where===scene)drawHouseholdActivity(ctx,player.x,player.y,householdHold.kind,1-householdHold.remaining/householdHold.duration,3);
-  if(scene==='home'){littleSprouts.homeHelp.drawBanner(ctx,tick);littleSprouts.homeRhythms.drawHome(ctx,tick);littleSprouts.dreams.drawKeepsake(ctx,tick);littleSprouts.growth.drawWall(ctx,tick);littleSprouts.familyLegacy.draw(ctx,tick);littleSprouts.rituals.draw(ctx,tick);littleSprouts.draw(ctx,{scene,tick,drawSprite:(child,x,y,routine)=>{ellipse(ctx,'#21474444',x,y,21,6);drawArt(ctx,charArt(child,routine?.facing||'front',routine?.moving?(Number.isFinite(routine.stride)?Math.floor(routine.stride)%2:Math.floor(tick*8)%2):routine?.project?Math.floor(tick*2.5)%2:0,'happy'),x,y,littleSprouts.growth.visual().scale)}});}
+  if(scene==='home'){littleSprouts.homeHelp.drawBanner(ctx,tick);littleSprouts.homeRhythms.drawHome(ctx,tick);littleSprouts.dreams.drawKeepsake(ctx,tick);littleSprouts.growth.drawWall(ctx,tick);littleSprouts.familyLegacy.draw(ctx,tick);littleSprouts.rituals.draw(ctx,tick);littleSprouts.draw(ctx,{scene,tick,drawSprite:(child,x,y,routine)=>{ellipse(ctx,'#21474444',x,y,21,6);drawArt(ctx,charArt(child,routine?.facing||'front',routine?.moving?(Number.isFinite(routine.stride)?Math.floor(routine.stride)%2:Math.floor(tick*8)%2):routine?.project?Math.floor(tick*2.5)%2:0,'happy'),x,y,littleSprouts.growth.visual().scale)}});
+   const cottageGuest=littleSprouts.homeVisits.guestPose();
+   if(cottageGuest){littleSprouts.homeVisits.drawShared(ctx,tick);
+    const actualGuest=NPCS.find(n=>n.id===cottageGuest.id);
+    if(actualGuest){drawCharacter(ctx,actualGuest,cottageGuest.x,cottageGuest.y,cottageGuest.facing,cottageGuest.moving,'happy');drawName(ctx,actualGuest.name,cottageGuest.x,cottageGuest.y-151)}
+   }
+  }
    if(scene==='residence')sharedScenes.drawOverlay(ctx,{home:activeResidence,tick});
   if(scene==='home'||scene==='residence')familyTable.drawFront(ctx,{home:scene==='home'?'player':activeResidence,tick});
  }
@@ -2340,6 +2347,13 @@ function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){sto
   goTo({x:clamp(wx,228,945),y:clamp(wy,275,1000)});return;
  }
  if(scene==='home'){
+  const visitingGuest=littleSprouts.homeVisits.hit(wx,wy);
+  if(visitingGuest){
+   const access=nearestWalkable({x:visitingGuest.x-75,y:visitingGuest.y+39},'home',true);
+   if(access)goTo(access,()=>littleSprouts.homeVisits.interact());
+   else notify('There is no clear place to stand beside our guest.');
+   return;
+  }
   const memoryFrame=littleSprouts.rituals.frameHit(wx,wy);
   if(memoryFrame){
    const framed=window.HearthPipRituals.THEMES[memoryFrame].frame;
@@ -2410,7 +2424,7 @@ function update(dt){tick+=dt;if(speed>0){familyTable.update(dt);helpingHands.upd
  if(scene==='residence')updateRoomAutonomy(dt);
  if(scene==='town'&&!talk&&!modal&&speed>0){
   for(let i=0;i<NPCS.length;i++){
-   const n=NPCS[i],normal=currentRoutine(n),baseEntry=neighborScenes.schedule(n.id,villageLife.schedule(n.id,normal)),entry=littleSprouts.responses.schedule(n.id,baseEntry),key=`${state.day}:${entry.h}`;
+   const n=NPCS[i],normal=currentRoutine(n),baseEntry=neighborScenes.schedule(n.id,villageLife.schedule(n.id,normal)),entry=littleSprouts.homeVisits.schedule(n.id,littleSprouts.responses.schedule(n.id,baseEntry)),key=`${state.day}:${entry.h}`;
    n.villageEntry=entry;n.neighborEntry=entry;
    if(player.target?.npcId===n.id){n.moving=0;continue}
    if(n.routineKey!==key){
@@ -2715,6 +2729,10 @@ function talkChoices(mode='main'){
    options.splice(1,0,['ph284-direct','🧵 Make a neighborhood craft with Pip']);
  if(mode==='main'&&scene==='town'&&littleSprouts.responses.eligible(talk))
    options.splice(1,0,['pr287-direct','🌷 Remember Pip’s neighborhood project']);
+ if(mode==='main'&&scene==='town'&&littleSprouts.homeVisits.inviteEligible(talk))
+   options.splice(1,0,['pv289-invite','🏡 Invite a friend to meet Pip at home']);
+ if(mode==='main'&&scene==='town'&&littleSprouts.homeVisits.greetEligible(talk))
+   options.splice(1,0,['pv289-greet','🌷 Greet our cottage visitor']);
  if(mode==='main'&&scene==='town'&&littleSprouts.guides.eligible()&&littleSprouts.routines.location().mentorId===talk)
     options.splice(1,0,['pm279-direct','🌼 Join Pip’s guide reflection']);
   if(mode==='main'&&scene==='town'&&littleSprouts.neighbors.adultNear(talk)&&
@@ -2856,6 +2874,13 @@ function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0'
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
 function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Family Seasons Sampler v2.8.3 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Postcards'+(todaysPostcard()?.status==='pending'?' · New!':''),'postcards')}${btn('💌 Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🦋 Field Guide & Curiosity Cabinet','nature-guide')}${btn('🕸️ Meadow Net · Catch insects','bug-hunt')}${btn('🎣 Pond Almanac · Go fishing','fish-guide')}${btn('🌲 Cloverbank Grove · Explore','grove-travel')}${btn('🎪 Festival Calendar','festival-calendar')}${btn('💌 Together in Maplewood','comm-board')}${btn('🌿 Build the Village','stew-board')}${btn('🧺 Village Trades & Kindness','trade-board')}${btn('🎪 Festival Market','fmarket-overview')}${btn('🌷 Village Community Diary','vl-board')}${btn('💌 Neighbors Together','nm-book')}${btn('🏡 Roots & Keepsakes','asp-board')}${btn('🖼️ Home & Town Traditions','ht-board')}${btn('🌿 Village Memory Walk · v2.6','mw26-board')}${btn('✦ The Heirloom Cabinet','hl37-board')}${btn('🖼️ Family Portraits · Generations','fp27-board')}${btn('🌳 Connections Atlas','fa271-board')}${btn('🌱 Pip & Little Sprouts','ls272-book')}${btn('🧵 Our Little Legacy Shelf','pl282-board')}${btn('🧶 Family Seasons Sampler','pf283-board')}${btn('🍂 Seasons of Life · Birthdays','ls36-board')}${btn('💗 Little Acts of Care','cc35-board')}${btn('🎓 Passing It On · Mentorship','mt34-board')}${btn('🌿 Family Roots & Connections','fr33-board')}${btn('📖 Household Chronicle','hc32-board')}${btn('🧺 Household Promises','hr26-board')}${btn('🪑 Rooms With Purpose','hf-board')}${btn('🍳 Hearth Kitchen','cook-book')}${btn('🍽️ At Our Table','ft-board')}${scene==='residence'?btn('🌷 Helping Hands','hh-board')+btn('🎨 Little Passions Studio','hs-board'):''}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
 function handleAction(action,id){
+ if(action==='pv289-invite'||action==='pv289-greet'){
+  const who=talk;if(!who)return;
+  if(action==='pv289-invite'&&!littleSprouts.homeVisits.inviteEligible(who))return;
+  if(action==='pv289-greet'&&!littleSprouts.homeVisits.greetEligible(who))return;
+  return littleSprouts.homeVisits.handle(action,who);
+ }
+ if(action.startsWith('pv289-'))return littleSprouts.homeVisits.handle(action,id);
  if(action==='pr287-direct'){
   const who=talk;if(!who||!littleSprouts.responses.eligible(who))return;
   closeTalk();return littleSprouts.responses.begin(who);
