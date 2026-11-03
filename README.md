@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.8.2 — The Little Legacy Shelf
+# Hearth & Harbor v2.8.3 — The Family Seasons Sampler
+
+**Poppy and Pip can now revisit their genuinely earned handmade family keepsakes through three playable rituals.** Begin in person beside Pip in the cottage, walk to the physical wall frame, make a meaningful first choice, then finish a real timed Poppy household activity beside the actual furniture before making a final choice. The Welcome Ribbon inspires a letter, the Sunday Recipe Card a supper, and the Orchard Print a creative nature memory. Queuing, canceling or opening a menu never generates an instant reward.
+
+Each actual completed moment records the day, season, heirloom and two selected decisions. As Poppy and Pip make memories across different in-game seasons, **a new seasonal quilt sampler gradually appears as original illustrated artwork on the playable cottage wall**. Three distinct seasons complete it, with only +1 home comfort. Earlier saves and adult/child gameplay remain intact without forcing aging, fictitious relatives or passive money.
+
+[Read the v2.8.3 implementation, QA and Generations roadmap](PIPS_FAMILY_SEASONS_V283_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.8.2 The Little Legacy Shelf
 
 **Poppy and Pip can now turn real long-running family traditions into three handmade keepsakes in the playable cottage.** Each is grounded in one of the original adult Home & Town Traditions (Welcome House, Sunday at the Table, Roots by the Window), authentic completed childhood experiences, and a final real Poppy Daybook household routine with Pip physically joining. Merely opening a menu or queuing earns nothing.
 
