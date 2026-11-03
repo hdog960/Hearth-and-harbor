@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.7.4 — Permanent Child Learning
+# Hearth & Harbor v2.7.5 — Pip's Neighbor Walks
+
+**Pip can now join a real village walk and meet actual residents.** After opting into guardianship, visit Pip in the cottage and take a stroll; Pip follows Poppy's position in the playable 2.5D town. The live child is more than a static menu icon, with movement, directional sprite frames, and a small illustrated companion ribbon.
+
+Bring Pip near the actual six residents to play distinct two-step child-appropriate activities. Both parts and a genuinely present adult are required before an authentic memory is earned; events are saved with the real game day and added to the Connections Atlas as history, never as a fictitious family relationship. Adult marriages, jobs, friendship and household finances remain untouched. Previous iPhone saves and all earlier Pip activities are preserved.
+
+[Read the v2.7.5 implementation and Generations handoff](PIPS_NEIGHBOR_WALKS_V275_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.7.4 Permanent Child Learning
 
 **Pip's genuine childhood growth now survives long playthroughs.** The three Storytelling, Nature and Creativity practice records only advance after real completed activities, and permanently retain earned milestones when the bounded scrapbook rolls over after many days. Earlier saves migrate safely from their real remaining memories. The original save key, all adults, Pip's routine, cottage, guardianship and bedtime gameplay remain unchanged.
 
