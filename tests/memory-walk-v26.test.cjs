@@ -261,7 +261,7 @@ test('all v2.6 mobile assets are correctly preloaded and offline cached',()=>{
  for(const file of ['memory-walk-v26.js','memory-walk-v26.css'])
   assert.ok(html.includes(file)&&sw.includes("'./"+file+"'"));
  assert.ok(html.indexOf('memory-walk-v26.js')<html.indexOf('game.js'));
- assert.match(html,/v=2\.7\.3/);assert.match(sw,/hearth-harbor-v273-pips-living-day/);
+ assert.match(html,/v=2\.7\.4/);assert.match(sw,/hearth-harbor-v274-permanent-learning/);
  for(const a of ['@media(max-width:390px)','@media(min-width:700px)','touch-action:manipulation','button:focus-visible','prefers-reduced-motion:reduce'])assert.ok(css.includes(a),a);
  assert.doesNotMatch(read('memory-walk-v26.js'),/fetch\(|WebSocket|XMLHttpRequest|new Image\(|setInterval|localStorage|\.coins\s*[+]=/);
 });
