@@ -161,7 +161,8 @@ test('ritual buttons are never actionable merely by opening Pip’s menu',()=>{
 });
 test('Pip uses genuine in-world animation, not a prerecorded decorative sticker',()=>{
  const game=read('game.js'),pip=read('little-sprouts-v272.js');
- assert.match(game,/routine\?\.moving\?Math\.floor\(tick\*8\)%2:routine\?\.project\?Math\.floor\(tick\*2\.5\)%2:0/);
+ assert.match(game,/Number\.isFinite\(routine\.stride\)\?Math\.floor\(routine\.stride\)%2/);
+ assert.match(game,/routine\?\.project\?Math\.floor\(tick\*2\.5\)%2:0/);
  assert.match(game,/routine\?\.facing\|\|'front'/);
  assert.match(pip,/routines\.location\(\)/);assert.match(pip,/routines\.drawProp\(g,routine,tick\)/);
  assert.match(pip,/drawSprite\(CHILD,pos\.x,pos\.y\+phase,routine\)/);
