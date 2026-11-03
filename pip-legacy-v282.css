@@ -1,0 +1,27 @@
+/* Hearth & Harbor v2.8.2 — A Little Legacy Shelf, cozy illustrated iPhone book */
+.pl282-panel{color:#587765;margin:13px 0 18px;padding-bottom:10px}
+.pl282-cover{border-radius:17px;padding:14px;border:3px solid #f8ebda;border-bottom:5px solid #c9aa92;background:radial-gradient(circle at 92% 5%,#eac0d5,transparent 48%),linear-gradient(135deg,#ddeddc,#fff0da)}
+.pl282-cover small{font-size:10px;font-weight:850;letter-spacing:.09em;color:#a27d6d}
+.pl282-cover h3{font-size:18px!important;line-height:1.25;color:#587763;margin:6px 0}
+.pl282-cover p,.pl282-panel p{color:#758476;font-size:12px;line-height:1.55;margin:8px 0}
+.pl282-cover strong{display:block;margin-top:8px;font-size:12px;color:#647f67}
+.pl282-panel h3{font-size:14px!important;color:#637f68;margin:15px 0 9px}
+.pl282-grid{display:grid;gap:10px}
+.pl282-card{padding:12px;border:2px solid #e4d3ba;border-bottom:4px solid #c9b39b;border-radius:13px;background:linear-gradient(145deg,#fff7e8,#f5efdf)}
+.pl282-head{display:flex;align-items:start;gap:10px}
+.pl282-head>span{font-size:25px;flex:0 0 29px}
+.pl282-head strong{display:block;font-size:13px;color:#71806c}
+.pl282-head small{display:block;font-size:11px;line-height:1.4;color:#8b8375;margin-top:3px}
+.pl282-card ul{list-style:none;padding:0;margin:9px 0}
+.pl282-card li{font-size:11px;line-height:1.5;color:#807d6e;padding:5px 4px;border-top:1px dashed #e7d9c2}
+.pl282-card>small{display:block;padding:6px 0;color:#918775;font-size:11px;line-height:1.4}
+.pl282-panel button{display:block;width:100%;min-height:52px;border:2px solid #b5cdb8;border-bottom:4px solid #94b09c;background:linear-gradient(#e6f0df,#d1e4d2);border-radius:12px;padding:11px 13px;font-size:12px;font-weight:850;line-height:1.4;color:#537462;text-align:left;touch-action:manipulation}
+.pl282-panel button:focus-visible{outline:3px solid #345e8e;outline-offset:3px}
+.pl282-earned{color:#527b61;font-size:12px;padding:11px;background:#e9f2e1;border-radius:9px;font-weight:850}
+.pl282-active{padding:10px;border:2px solid #c9bca3;border-radius:11px;background:#f7ecd7;color:#826d62;font-size:12px;line-height:1.5}
+.pl282-active button{margin-top:8px}
+.pl282-history{list-style:none;margin:8px 0;padding:0}
+.pl282-history li{padding:9px;border-left:4px solid #a7c8af;background:#f8f1e5;border-radius:5px;margin:7px 0;color:#7d826f;font-size:11px}
+.pl282-fine{font-size:11px!important;padding:11px;background:#eaf0e2;border-radius:10px}
+@media(max-width:380px){.pl282-cover{padding:11px}.pl282-card{padding:10px}.pl282-panel button{min-height:55px}}
+@media(prefers-reduced-motion:reduce){.pl282-panel *,.pl282-panel *:before,.pl282-panel *:after{animation:none!important;transition:none!important}}
