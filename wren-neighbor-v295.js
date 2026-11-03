@@ -1,4 +1,4 @@
-/* Hearth & Harbor v2.9.5 — Wren of Maplewood.
+/* Hearth & Harbor v2.9.6 — spontaneous childhood friendships (builds on v2.9.5).
  * One ORIGINAL, independent younger resident with their own world schedule,
  * obstacle-checked movement and three different truly shared peer outings.
  * Wren is not an adult NPC, worker, marriage candidate, orphan, automatic
@@ -59,6 +59,8 @@ function setup(api){
  };
  const title=()=>['A new face','A growing friendship','True village friends'][level()];
  let actor=null,epoch='',route=[],goal=null,repath=0,slot=-1,session=null,toast=0;
+ // Session-only unprompted encounters; no fake friendship or currency saved.
+ let moment=null,lastMomentDay=0;
  function routine(){
   const m=minute();
   if(!finite(m))return null;
@@ -72,7 +74,7 @@ function setup(api){
   if(!walkable(x)||dist(x,p)>limit)return null;
   return {x:x.x,y:x.y};
  }
- function clear(){actor=null;route=[];goal=null;slot=-1;repath=0;epoch='';session=null}
+ function clear(){actor=null;route=[];goal=null;slot=-1;repath=0;epoch='';session=null;moment=null}
  function ensure(){
   if(!present())return null;
   const mark='town:'+day(),r=routine();
@@ -101,8 +103,64 @@ function setup(api){
   if(!list.length||dist(list[list.length-1],to)>33)return [];
   return list;
  }
+ // Observed shared interests use only genuinely completed child outings.
+ // Pip's earned story/art/garden skills break ties, not fabricated points.
+ function sharedInterest(){
+  const rows=history(),counts={story:0,color:0,nature:0};
+  for(const r of rows)counts[r.kind]++;
+  const skills=api.getPip?.()?.skills||{};
+  const learned={story:Math.min(3,Math.max(0,Number(skills.story)||0)),
+   color:Math.min(3,Math.max(0,Number(skills.art)||0)),
+   nature:Math.min(3,Math.max(0,Number(skills.garden)||0))};
+  const daily=routine()?.kind||'story';
+  const kind=rows.length?KIND.slice().sort((a,b)=>
+   (counts[b]*5+learned[b])-(counts[a]*5+learned[a])||
+   (a===daily?-1:b===daily?1:KIND.indexOf(a)-KIND.indexOf(b)))[0]:daily;
+  const lines={
+   story:['Wren is folding a paper story for another day.',
+    'Wren and Pip exchange ideas for their next paper-boat chapter.',
+    'The two friends keep adding chapters to their imaginary map.'],
+   color:['Wren has been watching the colors of the Maplewood sky.',
+    'Wren and Pip compare the colors they spotted together.',
+    'Pip and Wren keep a whole rainbow of shared ideas.'],
+   nature:['Wren is looking for beautiful fallen leaves on the path.',
+    'Pip and Wren remember their gentle meadow discoveries.',
+    'The friends recognize each other’s favorite little nature finds.']
+  }[kind];
+  return {kind,label:STORIES[kind].name,icon:STORIES[kind].icon,
+   line:lines[level()],completed:counts[kind]};
+ }
+ function validCompanion(){
+  const p=api.getPipPosition?.();
+  return api.isPipPresent?.()===true&&!api.isPipBusy?.()&&
+   p&&finite(p.x)&&finite(p.y)?p:null;
+ }
+ function beginSmallMoment(a){
+  if(moment||lastMomentDay===day()||api.isPlayerMoving?.()||api.isPaused?.()||session)return;
+  const pip=validCompanion(),p=api.getPlayer?.();
+  if(!pip||!p||!finite(p.x)||!finite(p.y)||dist(a,pip)>235||dist(a,pip)<14||
+   dist(p,pip)>390)return;
+  const desired={x:pip.x+48,y:pip.y+26},stop=safeAt(desired,62);
+  if(!stop||dist(stop,pip)>88||dist(a,stop)>265)return;
+  moment={day:day(),phase:'approach',elapsed:0,target:stop,kind:sharedInterest().kind};
+  route=[];goal=null;repath=0;
+ }
+ function settleSmallMoment(a){
+  if(!moment||moment.phase!=='approach')return false;
+  const pip=validCompanion();
+  if(!pip||moment.day!==day()||dist(a,pip)>288||dist(pip,moment.target)>124||
+   api.isPlayerMoving?.()||moment.elapsed>12){
+   // Blocked child paths cannot loop all afternoon on an iPhone.
+   moment=null;lastMomentDay=day();route=[];goal=null;return false;
+  }
+  if(dist(a,pip)<=79){
+   moment.phase='greeting';moment.elapsed=0;lastMomentDay=day();
+   route=[];goal=null;a.moving=false;return true;
+  }
+  return false;
+ }
  function advance(dt){
-  if(!present()){if(actor||session)clear();return}
+  if(!present()){if(actor||session||moment)clear();return}
   const a=ensure();if(!a)return;
   if(session&&(session.day!==day()||session.slot!==slot)){session=null}
   // The game's shared X button may dismiss an activity modal directly.
@@ -111,9 +169,21 @@ function setup(api){
     api.isDialogOpen?.()===false)session=null;
   if(!finite(dt)||dt<=0){a.moving=false;return}
   if(api.isPaused?.()||session){a.moving=false;return}
-  const r=routine(),target=safeAt(r,110);
+  if(moment&&moment.day!==day())moment=null;
+  beginSmallMoment(a);
+  if(moment?.phase==='greeting'){
+   const pip=validCompanion();
+   moment.elapsed+=Math.min(dt,.16);a.moving=false;
+   if(!pip||dist(a,pip)>138||moment.elapsed>5.5){moment=null;route=[];goal=null}
+   return;
+  }
+  if(moment?.phase==='approach'){
+   moment.elapsed+=Math.min(dt,.16);
+   if(settleSmallMoment(a))return;
+  }
+  const r=routine(),target=moment?.phase==='approach'?safeAt(moment.target,65):safeAt(r,110);
   if(!target){a.moving=false;route=[];return}
-  if(r.slot!==slot){slot=r.slot;route=[];goal=null;repath=0}
+  if(r.slot!==slot&&!moment){slot=r.slot;route=[];goal=null;repath=0}
   if(dist(a,target)<11){a.moving=false;route=[];return}
   repath-=Math.min(dt,.15);
   if(!goal||dist(goal,target)>37||repath<=0){
@@ -131,6 +201,7 @@ function setup(api){
    if(step>=d-1)route.shift();
   }
   a.moving=moved>1;
+  settleSmallMoment(a);
  }
  function pose(){
   const a=ensure();
@@ -177,14 +248,16 @@ function setup(api){
   if(session?.phase==='walking'){
    api.notify?.('Find the little paper marker with Pip and tap it together.');return false;
   }
-  const kind=kindToday(),t=STORIES[kind],last=history().slice(-1)[0];
+  const kind=kindToday(),t=STORIES[kind],last=history().slice(-1)[0],shared=sharedInterest();
+  // An optional tap interrupts the idle social cue; player activities take priority.
+  if(moment){moment=null;route=[];goal=null}
   if(!eligible()){
    const message=!pipHere()?'Pip is not here. Wren can tell you about the village, but only children who actually meet can make a shared memory.':
     !peerNear()?'Pip is still a little too far away to join Wren. Walk together in the village.':
     metToday()?'Pip and Wren already shared a genuine moment today.':
     api.isPipBusy?.()?'Pip is finishing another childhood adventure.':'Wren is enjoying a quiet afternoon.';
    api.showModal?.('young-neighbors','<section class="yn295-book"><header class="yn295-cover"><small>🪶 A YOUNGER MAPLEWOOD NEIGHBOR</small><h2>Wren · '+esc(title())+'</h2><p>'+esc(message)+'</p></header><p>Wren loves handmade stories, painting the sky and gentle nature exploring. Wren is a village child, not a member of Poppy’s household.</p>'+(last?'<p>Last shared memory: '+esc(STORIES[last.kind].ending[last.last])+'</p>':'')+
-    '<button data-act="yn295-close">Return to Maplewood</button></section>');return true;
+    '<p>What Wren is thinking about: '+esc(shared.line)+'</p><button data-act="yn295-close">Return to Maplewood</button></section>');return true;
   }
   session={day:day(),slot,kind,first:null,last:null,phase:'first',marker:null};
   api.showModal?.('young-neighbors','<section class="yn295-book"><header class="yn295-cover"><small>🪶 WREN & PIP · A REAL TOWN AFTERNOON</small><h2>'+t.icon+' '+esc(t.name)+'</h2><p>'+esc(t.intro)+'</p></header><p>Wren and Pip are both here. Choose how they begin, then walk to the little paper marker together before deciding how the story ends.</p><div class="yn295-choices">'+
@@ -260,7 +333,7 @@ function setup(api){
   return '<section class="yn295-panel"><details><summary>🪶 Wren · '+esc(tier)+'</summary><div class="yn295-inner"><p>Wren is a distinct younger Maplewood resident with their own daytime route. Wren is not an adult and is not automatically part of Poppy’s household.</p><p>For a real friendship memory, bring Pip to Wren, talk face-to-face, and walk together to the nearby original paper marker. Pip can come on an escorted village walk.</p><strong>'+list.length+' completed shared childhood afternoons · '+new Set(list.map(x=>x.kind)).size+' kinds of play</strong><ul>'+
    (list.length?list.slice(-4).reverse().map(r=>'<li>Day '+r.day+' · '+STORIES[r.kind].icon+' '+esc(STORIES[r.kind].name)+' · '+esc(STORIES[r.kind].ending[r.last])+'</li>').join(''):
    '<li>Meet Wren in the playable village to begin a genuine childhood friendship.</li>')+
-   '</ul></div></details></section>';
+   '</ul><p>🍃 Wren sometimes walks over to Pip for a little unprompted greeting. These tiny moments never award automatic friendship points.</p><p>Current interest: '+esc(sharedInterest().line)+'</p></div></details></section>';
  }
  function drawMarker(g,tick=0){
   const marker=session?.phase==='walking'?session.marker:null;
@@ -274,6 +347,33 @@ function setup(api){
   g.fillStyle='#bb8c92';g.fillRect(x+11,y-7,5,6);
   g.fillStyle='#fff4c8';g.fillRect(x-4,y-27,5,5);
   g.restore();return true;
+ }
+ // Original paired pixel-paper speech bubbles, shown only when both child
+ // actors are physically together. No modal or duplicate sprite.
+ function drawSocial(g,tick=0){
+  const m=moment,w=pose(),p=validCompanion();
+  if(!g||m?.phase!=='greeting'||!w||!p||dist(w,p)>138||scene()!=='town')return false;
+  const color={story:'#899fbd',color:'#c996b0',nature:'#98b895'}[m.kind];
+  function badge(x,y,other){
+   const lift=Math.round(Math.sin(tick*3+(other?1.1:0))*2);
+   x=Math.round(x+(other?-12:17));y=Math.round(y-114+lift);
+   g.fillStyle='#395f60';g.fillRect(x-14,y-10,30,24);
+   g.fillStyle='#f8efd7';g.fillRect(x-12,y-12,26,21);
+   g.fillStyle=color;g.fillRect(x-9,y-9,20,15);
+   if(m.kind==='story'){
+    g.fillStyle='#fff7dc';g.fillRect(x-6,y-6,6,11);g.fillRect(x+2,y-6,6,11);
+    g.fillStyle='#4b7778';g.fillRect(x,y-5,2,10);
+   }else if(m.kind==='color'){
+    g.fillStyle='#f6e3ad';g.fillRect(x-6,y-5,7,7);
+    g.fillStyle='#8cbeb0';g.fillRect(x+2,y-2,7,7);
+    g.fillStyle='#fff4e0';g.fillRect(x+1,y-7,5,5);
+   }else{
+    g.fillStyle='#e9f1bd';g.fillRect(x-4,y-6,8,10);g.fillRect(x-8,y-2,16,4);
+    g.fillStyle='#456f58';g.fillRect(x,y-6,2,11);
+   }
+   g.fillStyle='#f8efd7';g.fillRect(x-3,y+9,6,5);
+  }
+  g.save();badge(w.x,w.y,false);badge(p.x,p.y,true);g.restore();return true;
  }
  function drawAccent(g,p,tick=0){
   if(!g||!p||!finite(p.x)||!finite(p.y)||scene()!=='town')return false;
@@ -297,9 +397,9 @@ function setup(api){
   return false;
  }
  return {pose,advance,hit,approach,talk,eligible,chooseFirst,hitMarker,arrive,
-  finish,cancel,handle,panel,history,level,title,drawAccent,drawMarker,
+  finish,cancel,handle,panel,history,level,title,sharedInterest,drawSocial,drawAccent,drawMarker,
   segment,routeTo,clean,story:kind=>STORIES[kind],
-  get session(){return session},get actor(){return actor?{...actor}:null}};
+  get session(){return session},get moment(){return moment?{...moment}:null},get actor(){return actor?{...actor}:null}};
 }
 root.HearthYoungNeighbors={setup,clean,WREN,STORIES,ROUTINE};
 })(window);
