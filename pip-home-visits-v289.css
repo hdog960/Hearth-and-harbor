@@ -1,0 +1,16 @@
+/* v2.8.9 — compact, folded inside existing Pip Daybook */
+.pv289-panel{margin:10px 0;border-radius:15px;overflow:hidden;border:2px solid #b59b91;background:#fff2dc;color:#634a48}
+.pv289-panel summary{cursor:pointer;padding:13px 12px;min-height:45px;background:#e6d4c3;font-size:13px;font-weight:900;touch-action:manipulation;list-style:none}
+.pv289-panel summary::-webkit-details-marker{display:none}
+.pv289-panel summary:after{content:'⌄';float:right}
+.pv289-panel details[open] summary:after{content:'⌃'}
+.pv289-inner{padding:11px 13px}
+.pv289-inner p{font-size:12px;line-height:1.5;margin:3px 0 12px}
+.pv289-inner strong,.pv289-inner small{display:block;font-size:12px;line-height:1.4}
+.pv289-inner small{font-size:11px;opacity:.85;margin:4px 0}
+.pv289-records{border-top:1px solid #d9b9a5;margin-top:8px;padding-top:5px}
+.pv289-modal .ls272-cover{background:linear-gradient(130deg,#846f79,#ad9086);color:#fff5dd}
+.pv289-modal button{min-height:48px}
+.pv289-modal :focus-visible,.pv289-panel :focus-visible{outline:3px solid #236c66;outline-offset:3px}
+@media(max-width:380px){.pv289-inner{padding:8px}.pv289-panel summary{font-size:12px;padding:12px 8px}}
+@media(prefers-reduced-motion:reduce){.pv289-panel *,.pv289-modal *{animation:none!important;transition:none!important}}

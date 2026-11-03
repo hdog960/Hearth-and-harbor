@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.8.9 — Living Cottage Visits
+
+**Invite Maplewood's real adults to visit Pip and Poppy at home.** Talk face-to-face in town, meet the neighbor after they actually walk to the cottage on the next day, bring them through the normal door, then join all three characters at real household furniture. Finish a genuine Poppy Daybook task and make a meaningful final decision before the game records a family memory. All six villagers have distinctive personal scenes; the original iPhone 2.5D style, prior saves and existing relationships stay intact.
+
+[Read the v2.8.9 family visit implementation, quality checks and Generations roadmap](PIPS_LIVING_COTTAGE_VISITS_V289_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.8.8 Homegrown Personality
+
 # Hearth & Harbor v2.8.8 — Pip's Homegrown Personality
 
 **Pip develops four distinct real household interests from the things you actually do together.** Read, tidy, cook or create with Pip through the existing timed Poppy Daybook action: after two genuine completed days of that kind, Pip gains an original little handmade cottage decoration and starts naturally choosing related activities in the actual world. The strongest interest shapes Pip's afternoon. During the real household activity Pip now visibly carries the appropriate little book, basket, napkin or crayons. No new scrolling menu, currency, save reset or artificial reward system.
