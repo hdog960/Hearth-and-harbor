@@ -1,4 +1,4 @@
-/* Hearth & Harbor v2.9.7 — Friendship Corner, real shared child legacy.
+/* Hearth & Harbor v2.9.8 — Childhood Reunions and Friendship Corner follow-through.
  * One ORIGINAL, independent younger resident with their own world schedule,
  * obstacle-checked movement and three different truly shared peer outings.
  * Wren is not an adult NPC, worker, marriage candidate, orphan, automatic
@@ -25,6 +25,20 @@ const STORIES={
   ending:['Wren and Pip become gentle observers of the meadow.','Wren and Pip hope another child will enjoy the trail.'],ink:'#96af88'}
 };
 const KIND=['story','color','nature'];
+const REUNIONS={
+ story:{name:'The Map Still Has Room',question:'The map is still hanging on the board. What should your friends remember?',
+  choices:['Leave a winding path for another adventure','Draw a warm road back to one another'],
+  replies:['Wren adds a blue trail so every new story can find a beginning.',
+   'Pip adds a little lantern on the path so their friends can find their way home.']},
+ color:{name:'Our Changing Colors',question:'The painted ribbon has weathered another village day. What should it stand for?',
+  choices:['Let every friend bring their own color','Keep a small patch for a friend who is shy'],
+  replies:['Wren stitches little individual color blocks along the same ribbon.',
+   'Pip leaves a gentle open space so new friends can find a place.']},
+ nature:{name:'The Meadow Keeps Growing',question:'Their meadow emblem still reminds them of the little path. What promise will they keep?',
+  choices:['Watch the changing leaves without picking them','Care for the path so others can enjoy it'],
+  replies:['Both children trace the color of the fallen leaves in their tiny field guide.',
+   'Both children agree to keep the path welcoming to everyone.']}
+};
 // Three authored, earned creative chapters, each requiring a real older outing.
 const CLUB=[
  {kind:'story',name:'A Place for Our Stories',icon:'📘',first:['Draw a winding adventure map','Sketch the friends on the map'],
@@ -77,7 +91,15 @@ function cleanClub(raw,friendships){
   out.push({kind:r.kind,day:r.day,first:r.first,last:r.last,
    source:{day:source.day,kind:source.kind,first:source.first,last:source.last}});
  }
- return {foundation,chapters:out};
+ const revisits=[],given=Array.isArray(raw?.revisits)?raw.revisits.slice(0,12):[];
+ for(const r of given){
+  const chapter=out[revisits.length];
+  if(!chapter||!obj(r)||r.kind!==chapter.kind||!dayOK(r.day)||
+     r.day<=chapter.day||![0,1].includes(r.choice)||
+     (revisits.length&&r.day<=revisits[revisits.length-1].day))continue;
+  revisits.push({kind:r.kind,day:r.day,choice:r.choice});
+ }
+ return {foundation,chapters:out,revisits};
 }
 function clean(raw){
  const seen=new Set(),out=[];
@@ -105,6 +127,46 @@ function setup(api){
  let actor=null,epoch='',route=[],goal=null,repath=0,slot=-1,session=null,toast=0;
  // Session-only unprompted encounters; no fake friendship or currency saved.
  let moment=null,lastMomentDay=0,siteCache=undefined;
+ function reunionRows(){return clean(state().youngResidents?.wren).club.revisits.filter(r=>r.day<=day())}
+ function reunionNext(){
+  const chapters=clubRows(),rows=reunionRows(),chapter=chapters[rows.length];
+  if(!chapter||day()<=chapter.day||
+    (rows.length&&day()<=rows[rows.length-1].day))return null;
+  return {chapter,story:REUNIONS[chapter.kind]};
+ }
+ function reunionPresent(){
+  const at=clubSite(),w=pose(),player=api.getPlayer?.(),pip=api.getPipPosition?.();
+  return !!at&&!!w&&!!player&&!!pip&&scene()==='town'&&
+   present()&&api.isPipPresent?.()===true&&!api.isPipBusy?.()&&
+   !api.isPlayerMoving?.()&&[player.x,player.y,pip.x,pip.y].every(finite)&&
+   dist(player,at)<=100&&dist(pip,at)<=122&&dist(w,at)<=131&&
+   dist(w,pip)<=163;
+ }
+ function reunionReady(){return !!reunionNext()&&!session&&reunionPresent()}
+ function reunionBegin(){
+  const next=reunionNext();
+  if(!next||!reunionReady())return false;
+  moment=null;route=[];goal=null;
+  session={phase:'reunion',day:day(),kind:next.chapter.kind,slot};
+  api.showModal?.('young-neighbors','<section class="yn295-book"><header class="yn295-cover"><small>🌼 ONE MORE DAY TOGETHER</small><h2>'+esc(next.story.name)+'</h2><p>'+esc(next.story.question)+'</p></header><p>Poppy, Pip and Wren are really standing by the handmade sign. Choose how this actual friendship continues.</p><div class="yn295-choices">'+next.story.choices.map((t,i)=>'<button data-act="yn298-choose" data-id="'+i+'">'+esc(t)+'</button>').join('')+'</div><button class="yn295-subtle" data-act="yn295-cancel">Remember another day</button></section>');
+  return true;
+ }
+ function reunionFinish(choice){
+  const s=session,next=reunionNext();
+  if(!s||s.phase!=='reunion'||s.day!==day()||!next||
+    s.kind!==next.chapter.kind||![0,1].includes(choice)||
+    !reunionPresent())return false;
+  const raw=clean(state().youngResidents?.wren),existing=reunionRows(),
+    row={kind:s.kind,day:day(),choice},young=state().youngResidents;
+  const changed=clean({friendships:raw.friendships,
+   club:{foundation:raw.club.foundation,chapters:raw.club.chapters,
+    revisits:[...existing,row]}});
+  if(changed.club.revisits.length!==existing.length+1)return false;
+  young.wren=changed;session=null;api.save?.();api.updateUI?.();
+  api.notify?.('🌼 Pip and Wren made a lasting follow-up memory at their real Friendship Corner.');
+  api.showModal?.('young-neighbors','<section class="yn295-book"><header class="yn295-cover"><small>🌼 A LIVED FRIENDSHIP · DAY '+day()+'</small><h2>'+esc(next.story.name)+'</h2><p>'+esc(next.story.replies[choice])+'</p></header><p>A tiny new stitch appears on the real Friendship Corner sign. No coins or points were added.</p><button data-act="yn295-close">Back to Maplewood</button></section>');
+  return true;
+ }
  function clubRows(){return clean(state().youngResidents?.wren).club.chapters.filter(r=>r.day<=day())}
  function clubSite(){
   if(siteCache===undefined)siteCache=safeAt({x:865,y:994},82);
@@ -201,6 +263,7 @@ function setup(api){
  function routine(){
   const m=minute();
   if(!finite(m))return null;
+  if(m>=780&&m<900&&clubRows().length){const site=clubSite();if(site)return {start:780,x:site.x-24,y:site.y+26,label:'Looking after the Friendship Corner',icon:'🧵',kind:clubRows().slice(-1)[0].kind,slot:4}}
   for(let i=ROUTINE.length-1;i>=0;i--)if(m>=ROUTINE[i].start)return {...ROUTINE[i],slot:i};
   return null;
  }
@@ -302,7 +365,7 @@ function setup(api){
   if(session&&(session.day!==day()||session.slot!==slot)){session=null}
   // The game's shared X button may dismiss an activity modal directly.
   // Abandon unfinished questions rather than leaving Wren frozen in town.
-  if(session&&(['first','last','club-first','club-final'].includes(session.phase))&&
+  if(session&&(['first','last','club-first','club-final','reunion'].includes(session.phase))&&
     api.isDialogOpen?.()===false)session=null;
   if(!finite(dt)||dt<=0){a.moving=false;return}
   if(api.isPaused?.()||session){a.moving=false;return}
@@ -395,7 +458,7 @@ function setup(api){
     metToday()?'Pip and Wren already shared a genuine moment today.':
     api.isPipBusy?.()?'Pip is finishing another childhood adventure.':'Wren is enjoying a quiet afternoon.';
    api.showModal?.('young-neighbors','<section class="yn295-book"><header class="yn295-cover"><small>🪶 A YOUNGER MAPLEWOOD NEIGHBOR</small><h2>Wren · '+esc(title())+'</h2><p>'+esc(message)+'</p></header><p>Wren loves handmade stories, painting the sky and gentle nature exploring. Wren is a village child, not a member of Poppy’s household.</p>'+(last?'<p>Last shared memory: '+esc(STORIES[last.kind].ending[last.last])+'</p>':'')+
-    '<p>What Wren is thinking about: '+esc(shared.line)+'</p><button data-act="yn295-close">Return to Maplewood</button></section>');return true;
+    '<p>What Wren is thinking about: '+esc(shared.line)+'</p>'+(reunionRows().length?'<p>Wren remembers: '+esc(REUNIONS[reunionRows().slice(-1)[0].kind].replies[reunionRows().slice(-1)[0].choice])+'</p>':'')+'<button data-act="yn295-close">Return to Maplewood</button></section>');return true;
   }
   session={day:day(),slot,kind,first:null,last:null,phase:'first',marker:null};
   api.showModal?.('young-neighbors','<section class="yn295-book"><header class="yn295-cover"><small>🪶 WREN & PIP · A REAL TOWN AFTERNOON</small><h2>'+t.icon+' '+esc(t.name)+'</h2><p>'+esc(t.intro)+'</p></header><p>Wren and Pip are both here. Choose how they begin, then walk to the little paper marker together before deciding how the story ends.</p><div class="yn295-choices">'+
@@ -472,7 +535,7 @@ function setup(api){
   return '<section class="yn295-panel"><details><summary>🪶 Wren · '+esc(tier)+'</summary><div class="yn295-inner"><p>Wren is a distinct younger Maplewood resident with their own daytime route. Wren is not an adult and is not automatically part of Poppy’s household.</p><p>For a real friendship memory, bring Pip to Wren, talk face-to-face, and walk together to the nearby original paper marker. Pip can come on an escorted village walk.</p><strong>'+list.length+' completed shared childhood afternoons · '+new Set(list.map(x=>x.kind)).size+' kinds of play</strong><ul>'+
    (list.length?list.slice(-4).reverse().map(r=>'<li>Day '+r.day+' · '+STORIES[r.kind].icon+' '+esc(STORIES[r.kind].name)+' · '+esc(STORIES[r.kind].ending[r.last])+'</li>').join(''):
    '<li>Meet Wren in the playable village to begin a genuine childhood friendship.</li>')+
-   '</ul><p>🌼 Friendship Corner: '+clubRows().length+' of 3 permanent handmade chapters. After three varied real outings, finish a shared outing and return to Wren near Bea’s art lane with Pip to make the next piece on a later day.</p><p>🍃 Wren sometimes walks over to Pip for a little unprompted greeting. These tiny moments never award automatic friendship points.</p><p>Current interest: '+esc(sharedInterest().line)+'</p></div></details></section>';
+   '</ul><p>🌼 Friendship Corner: '+clubRows().length+' of 3 permanent handmade chapters. After three varied real outings, finish a shared outing and return to Wren near Bea’s art lane with Pip to make the next piece on a later day.</p><p>🍃 Wren sometimes walks over to Pip for a little unprompted greeting. These tiny moments never award automatic friendship points.</p><p>Current interest: '+esc(sharedInterest().line)+'</p><p>Quiet follow-up memories: '+reunionRows().length+' / 3 · Visit the real sign with both children on a later day when Wren is tending it.</p></div></details></section>';
  }
  function drawMarker(g,tick=0){
   const marker=['walking','club-walking'].includes(session?.phase)?session.marker:null;
@@ -531,10 +594,31 @@ function setup(api){
    g.fillStyle=r.first===0?'#fff1c3':'#ede0f0';g.fillRect(bx+3,y-49,6,7);
    g.fillStyle=r.last===0?'#ffcf93':'#547e79';g.fillRect(bx+4,y-37,5,5);
   }
+  // Knots appear only after genuine later reunions.
+  for(const r of reunionRows()){
+   const idx=KIND.indexOf(r.kind),bx=x-14+idx*13;
+   g.fillStyle=r.choice===0?'#7cc0b7':'#d8a0a6';
+   g.fillRect(bx,y-22,9,5);
+   g.fillStyle='#fff2d3';g.fillRect(bx+3,y-24,3,3);
+  }
   if(rows.length===3){
    g.fillStyle='#e9b97a';g.fillRect(x-4,y-80,8,10);g.fillRect(x-10,y-77,20,4);
    g.fillStyle='#fff2d3';g.fillRect(x-2,y-77,4,5);
   }
+  g.restore();return true;
+ }
+ // Original hand-work symbol only when the actual Wren actor reached the sign.
+ function drawTending(g,tick=0){
+  const w=pose(),at=clubSite(),r=routine();
+  if(!g||!w||!at||scene()!=='town'||!clubRows().length||
+   r?.slot!==4||w.moving||dist(w,at)>85||session)return false;
+  const x=Math.round(w.x+19),y=Math.round(w.y-74+Math.sin(tick*3)*2),kind=r.kind;
+  g.save();
+  g.fillStyle='#4c6560';g.fillRect(x-11,y-8,23,19);
+  g.fillStyle='#fff2d6';g.fillRect(x-9,y-10,19,16);
+  g.fillStyle=kind==='story'?'#8ca3c4':kind==='color'?'#cea3b5':'#95b989';
+  g.fillRect(x-6,y-7,13,11);
+  g.fillStyle='#f9e8bf';g.fillRect(x+6,y+7,4,10);
   g.restore();return true;
  }
  function hitClub(x,y){
@@ -545,7 +629,7 @@ function setup(api){
  function inspectClub(){
   const rows=clubRows(),site=clubSite(),p=api.getPlayer?.();
   if(!rows.length||!site||!p||scene()!=='town'||dist(p,site)>115)return false;
-  api.showModal?.('young-neighbors','<section class="yn295-book"><header class="yn295-cover"><small>🌼 MAPLEWOOD FRIENDSHIP CORNER</small><h2>Pip & Wren’s handmade pennant · '+rows.length+' / 3</h2><p>Every ribbon was made on a different real day after a completed earlier childhood outing.</p></header><ul>'+rows.map(r=>'<li><strong>Day '+r.day+' · '+esc(CLUB.find(c=>c.kind===r.kind).name)+'</strong> · '+esc(CLUB.find(c=>c.kind===r.kind).ending[r.last])+'</li>').join('')+'</ul><p>This is a read-only memory; visiting the sign does not award anything.</p><button data-act="yn295-close">Return to the village</button></section>');
+  api.showModal?.('young-neighbors','<section class="yn295-book"><header class="yn295-cover"><small>🌼 MAPLEWOOD FRIENDSHIP CORNER</small><h2>Pip & Wren’s handmade pennant · '+rows.length+' / 3</h2><p>Every ribbon was made on a different real day after a completed earlier childhood outing.</p></header><ul>'+rows.map(r=>'<li><strong>Day '+r.day+' · '+esc(CLUB.find(c=>c.kind===r.kind).name)+'</strong> · '+esc(CLUB.find(c=>c.kind===r.kind).ending[r.last])+'</li>').join('')+'</ul><p>Inspecting the sign is read-only. Return with the children on another day for an optional new experience.</p>'+(reunionRows().length?'<p><strong>Another day together:</strong></p><ul>'+reunionRows().map(r=>'<li>Day '+r.day+' · '+esc(REUNIONS[r.kind].replies[r.choice])+'</li>').join('')+'</ul>':'')+(reunionReady()?'<button data-act="yn298-begin">🌼 Reflect with Pip and Wren</button>':'')+'<button data-act="yn295-close">Return to the village</button></section>');
   return true;
  }
  function drawAccent(g,p,tick=0){
@@ -563,6 +647,8 @@ function setup(api){
   g.restore();return true;
  }
  function handle(action,id){
+  if(action==='yn298-begin')return reunionBegin();
+  if(action==='yn298-choose')return reunionFinish(Number(id));
   if(action==='yn297-begin')return clubBegin();
   if(action==='yn297-first')return clubFirst(Number(id));
   if(action==='yn297-last')return clubFinish(Number(id));
@@ -573,9 +659,9 @@ function setup(api){
   return false;
  }
  return {pose,advance,hit,approach,talk,eligible,chooseFirst,hitMarker,arrive,
-  finish,cancel,handle,panel,history,level,title,sharedInterest,clubRows,clubSite,clubReady,clubBegin,clubFirst,clubArrive,clubFinish,hitClub,inspectClub,drawClub,drawSocial,drawAccent,drawMarker,
+  finish,cancel,handle,panel,history,level,title,sharedInterest,clubRows,clubSite,clubReady,clubBegin,clubFirst,clubArrive,clubFinish,hitClub,inspectClub,drawClub,drawTending,reunionRows,reunionNext,reunionReady,reunionBegin,reunionFinish,drawSocial,drawAccent,drawMarker,
   segment,routeTo,clean,story:kind=>STORIES[kind],
   get session(){return session},get moment(){return moment?{...moment}:null},get actor(){return actor?{...actor}:null}};
 }
-root.HearthYoungNeighbors={setup,clean,cleanClub,WREN,STORIES,CLUB,ROUTINE};
+root.HearthYoungNeighbors={setup,clean,cleanClub,WREN,STORIES,CLUB,REUNIONS,ROUTINE};
 })(window);
