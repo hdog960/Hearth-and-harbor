@@ -108,7 +108,7 @@ test('formal authored outings still take precedence over idle greetings',()=>{
 });
 test('existing old saves and peer records remain unchanged',()=>{
  const old=M.clean({friendships:[{day:2,kind:'story',first:0,last:1}]});
- assert.deepEqual(flat(old),{friendships:[{day:2,kind:'story',first:0,last:1}]});
+ assert.deepEqual(flat(old),{friendships:[{day:2,kind:'story',first:0,last:1}],club:{foundation:[],chapters:[]}});
  const f=fixture({day:12,history:old.friendships}),before=flat(f.state.youngResidents);
  f.step(180);assert.deepEqual(flat(f.state.youngResidents),before);
 });
