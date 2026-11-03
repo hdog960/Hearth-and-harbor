@@ -1,0 +1,20 @@
+/* v2.8.4 Neighborhood Helpers: small screen, no giant new Daybook block */
+.ph284-panel{margin:12px 0;border:2px solid #a77d78;border-radius:18px;background:#fff3db;box-shadow:0 3px 0 #c49a80;overflow:hidden;color:#5e493f}
+.ph284-panel summary{cursor:pointer;list-style:none;padding:15px 13px;font-weight:900;font-size:15px;background:linear-gradient(135deg,#e6c6ad,#fae6c5);touch-action:manipulation}
+.ph284-panel summary::-webkit-details-marker{display:none}
+.ph284-panel summary:after{content:'⌄';float:right;color:#78545e}
+.ph284-panel details[open] summary:after{content:'⌃'}
+.ph284-content{padding:12px 13px 16px}
+.ph284-content>p{font-size:13px;line-height:1.5;margin:3px 0 12px}
+.ph284-list{display:grid;gap:6px}
+.ph284-person{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:9px;background:#fffaf0;border:1px solid #dcb9a7;border-radius:12px;padding:8px}
+.ph284-person>span{font-size:22px}
+.ph284-person strong{font-size:13px;display:block}
+.ph284-person small{font-size:11px;line-height:1.35;display:block;opacity:.8}
+.ph284-person button,.ph284-content>button{min-height:44px;min-width:62px;border:0;border-radius:12px;background:#6e8c72;color:white;font-weight:800;padding:9px}
+.ph284-note{color:#695953}.ph284-active{font-weight:bold;color:#59705d}
+.ph284-modal .ls272-cover{background:linear-gradient(145deg,#9d6f83,#d89993);color:#fff8eb}
+.ph284-modal button{min-height:48px}
+.ph284-panel :focus-visible,.ph284-modal :focus-visible{outline:3px solid #236c68;outline-offset:3px}
+@media(max-width:380px){.ph284-panel summary{font-size:13px;padding:13px 9px}.ph284-content{padding:10px 8px}.ph284-person{gap:5px;padding:7px}.ph284-person strong{font-size:12px}.ph284-person small{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.ph284-panel *,.ph284-modal *{animation:none!important;transition:none!important}}

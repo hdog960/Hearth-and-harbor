@@ -162,6 +162,23 @@ function setup(api){
      home:null});
    }
   }
+  // Neighborhood Helpers: authentic in-town work with Poppy, Pip and one
+  // real adult; no fabricated kinship, adult job or passive village payoff.
+  const helperChild=state().youngResidents?.pip,helperRows=helperChild?.helperProjects;
+  if(helperChild?.guardian==='player'&&dayOK(helperChild.guardianDay)&&helperChild.guardianDay<=now&&Array.isArray(helperRows)){
+   const titles={mabel:'Petal Welcome Flags',rosie:'A Neighborly Market Basket',
+    oliver:'The Little Recipe Exchange',jun:'The Village Story Pennant',
+    bea:'The Kindness Color Swatches',finn:'A Gentle Pond Notice'},used=new Set();
+   for(const r of helperRows.slice(-120)){
+    if(!obj(r)||!Object.hasOwn(titles,r.id)||!dayOK(r.day)||r.day>now||
+      r.day<helperChild.guardianDay||![0,1].includes(r.plan)||![0,1].includes(r.finish)||
+      used.has(r.day)||root.HearthPipGrowth.lifeStage(helperChild,r.day)<1)continue;
+    used.add(r.day);
+    out.push({day:r.day,kind:'child-helper',ids:['player','pip',r.id],
+      title:titles[r.id],detail:'Poppy, Pip and a real villager finished two physical craft stops and made shared decisions',
+      home:null});
+   }
+  }
   // A true shared traditional keepsake is a childhood family memory,
   // never legal ancestry, marriage, a fictitious parent or a new guardian.
   const child=state().youngResidents?.pip,keeps=child?.legacyKeepsakes;
