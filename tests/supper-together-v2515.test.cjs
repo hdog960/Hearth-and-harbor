@@ -190,7 +190,7 @@ test('renderer uses real resident sprites, actual animated poses, and pauses aut
   'onDinnerStart:(guests)=>',
   'roomAutonomy.set(id,'
  ])assert.ok(core.includes(token),token);
- assert.match(core,/Hearth & Harbor: [^\n]+v2\.(?:5\.\d+|6\.\d+|7\.\d+|8\.\d+)/);
+ assert.match(core,/Hearth & Harbor: [^\n]+v2\.(?:5\.\d+|6\.\d+|7\.\d+|8\.\d+|9\.\d+)/);
  assert.ok(html.includes('supper-together-v2515.css'));
  assert.ok(sw.includes("'./supper-together-v2515.css'"));
  assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/); // Release cache changes each version.

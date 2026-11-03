@@ -229,7 +229,7 @@ test('the original home schedule and character personality are truly integrated'
  assert.ok(html.includes('pip-home-autonomy-v291.js?v=2.9.1'));
  assert.ok(html.includes('pip-home-autonomy-v291.css?v=2.9.1'));
  assert.ok(html.indexOf('pip-home-autonomy-v291.js')<html.indexOf('little-sprouts-v272.js'));
- assert.match(sw,/hearth-harbor-v295-wren-young-neighbor/);
+ assert.match(sw,/hearth-harbor-v296-child-friendship-moments/);
  for(const a of ['pip-home-autonomy-v291.js','pip-home-autonomy-v291.css'])
   assert.ok(sw.includes("'./"+a+"'"));
  assert.match(little,/const homeAutonomy=root\.HearthPipHomeAutonomy\?\.setup/);

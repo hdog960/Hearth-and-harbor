@@ -266,7 +266,7 @@ test('phone source uses existing real 3.8s action and child world tap, no new na
  assert.ok(html.indexOf('pip-initiatives-v292.js')<html.indexOf('little-sprouts-v272.js'));
  for(const f of ['pip-initiatives-v292.js','pip-initiatives-v292.css'])
   assert.ok(sw.includes("'./"+f+"'"));
- assert.match(sw,/hearth-harbor-v295-wren-young-neighbor/);
+ assert.match(sw,/hearth-harbor-v296-child-friendship-moments/);
  assert.match(game,/littleSprouts\.initiatives\.completed\(kind,once,state\.day\)/);
  assert.match(game,/if\(action\.startsWith\('pi292-'\)\|\|action\.startsWith\('pb294-'\)\)return littleSprouts\.handle\(action,id\)/);
  assert.match(game,/if\(!littleSprouts\.initiatives\.request\(\)&&!littleSprouts\.familyBond\.request\(\)\)littleSprouts\.entry\(\)/);
