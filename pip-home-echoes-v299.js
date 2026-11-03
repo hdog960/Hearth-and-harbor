@@ -8,7 +8,7 @@ const obj=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const dayOK=x=>Number.isInteger(x)&&x>0&&x<=9999;
 const finite=Number.isFinite;
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const STORIES={
  story:{name:'The Tale That Came Home',icon:'📘',tasks:['read'],
   intro:'Pip remembers a story made with Wren, and how that adventure changed after everyone found a way home.',
