@@ -1,4 +1,4 @@
-/* Hearth & Harbor v2.7.3 — Little Sprouts + Pip’s Living Day.
+/* Hearth & Harbor v2.7.5 — Little Sprouts + Pip’s Neighbor Walks.
  * First ACTUAL younger character, Pip. Separate from adult romance, employment,
  * resident housing array and optional adult aging. Guardianship is a player
  * choice, earned through three genuine days of face-to-face child activities.
@@ -27,7 +27,7 @@ const KINDS=Object.keys(ACTIONS),obj=x=>x!==null&&typeof x==='object'&&!Array.is
 const validDay=x=>Number.isInteger(x)&&x>=1&&x<=9999;
 const clamp=x=>Math.max(0,Math.min(100,Number.isFinite(x)?x:0));
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const defaults=()=>({guardian:null,guardianDay:0,needs:{joy:62,curiosity:55,confidence:50},daily:{day:0,done:[]},days:[],memories:[],evenings:[],skills:{story:0,garden:0,art:0}});
+const defaults=()=>({guardian:null,guardianDay:0,needs:{joy:62,curiosity:55,confidence:50},daily:{day:0,done:[]},days:[],memories:[],evenings:[],skills:{story:0,garden:0,art:0},meetings:[]});
 function clean(raw){
  const src=obj(raw)?raw:{},d=defaults(),needs=obj(src.needs)?src.needs:{},daily=obj(src.daily)?src.daily:{},memories=[],days=[];
  const guardian=src.guardian==='player'&&validDay(src.guardianDay)?'player':null;
@@ -48,26 +48,35 @@ function clean(raw){
  }
  const safeDaily=validDay(daily.day)?daily.day:0;
  const done=Array.isArray(daily.done)?[...new Set(daily.done.filter(x=>KINDS.includes(x)))].slice(0,3):[];
- return {guardian,guardianDay,needs:Object.fromEntries(Object.keys(d.needs).map(k=>[k,typeof needs[k]==='number'&&Number.isFinite(needs[k])?clamp(needs[k]):d.needs[k]])),daily:{day:safeDaily,done},days,memories:memories.slice(-40),evenings:root.HearthPipRoutines.cleanEvenings(src.evenings),skills};
+ return {guardian,guardianDay,needs:Object.fromEntries(Object.keys(d.needs).map(k=>[k,typeof needs[k]==='number'&&Number.isFinite(needs[k])?clamp(needs[k]):d.needs[k]])),daily:{day:safeDaily,done},days,memories:memories.slice(-40),evenings:root.HearthPipRoutines.cleanEvenings(src.evenings),skills,meetings:root.HearthPipNeighbors.clean(src.meetings)};
 }
 function setup(api){
  const state=()=>api.getState(),data=()=>{
   const s=state();if(!obj(s.youngResidents)||!obj(s.youngResidents.pip))s.youngResidents={pip:defaults()};
   const c=s.youngResidents.pip;
-  if(!obj(c.needs)||!obj(c.daily)||!Array.isArray(c.days)||!Array.isArray(c.memories)||!Array.isArray(c.evenings)||!obj(c.skills))s.youngResidents.pip=clean(c);
+  if(!obj(c.needs)||!obj(c.daily)||!Array.isArray(c.days)||!Array.isArray(c.memories)||!Array.isArray(c.evenings)||!obj(c.skills)||!Array.isArray(c.meetings))s.youngResidents.pip=clean(c);
   return s.youngResidents.pip;
  };
  let session=null;
  const day=()=>validDay(state().day)?state().day:1;
  const isHome=()=>data().guardian==='player';
  const home=()=>isHome()?'player':null;
- const inPlace=()=>api.getScene?.()===(isHome()?'home':'town');
+ const inPlace=()=>neighbors.walkingNow()||api.getScene?.()===(isHome()?'home':'town');
  const routines=root.HearthPipRoutines.setup({
   getState:state,getChild:data,getScene:api.getScene,isNearby:api.isNearby,
   showModal:api.showModal,notify:api.notify,save:api.save,
   updateUI:api.updateUI,openBook:()=>entry()
  });
- const position=()=>{const p=routines.location();return {x:p.x,y:p.y}};
+ const neighbors=root.HearthPipNeighbors.setup({
+  getState:state,getChild:data,getScene:api.getScene,
+  getAdults:api.getAdults,getPlayer:api.getPlayer,
+  goTown:api.goTown,nearestWalkable:api.nearestWalkable,isWalkable:api.isWalkable,
+  isPaused:api.isPaused,showModal:api.showModal,notify:api.notify,
+  save:api.save,updateUI:api.updateUI,openBook:()=>entry(),
+  childPosition:()=>position(),isPlayerNearChild:d=>api.isNearby?.(position(),d)===true,
+  nameOfAdult:id=>api.getAdults?.().find(a=>a.id===id)?.name||id
+ });
+ const position=()=>{const p=neighbors.escortPose()||routines.location();return {x:p.x,y:p.y}};
  function status(){
   const d=data(),today=day(),current=d.daily.day===today?d.daily.done:[],ready=new Set(d.memories.filter(m=>m.day<=today).map(m=>m.day)).size>=3&&KINDS.every(k=>d.memories.some(m=>m.kind===k&&m.day<=today));
   return {id:'pip',name:'Pip',stage:'Child',guardian:d.guardian,guardianDay:d.guardianDay,home:home(),day:today,needs:{...d.needs},done:current.slice(),careDays:d.days.length,ready,memories:d.memories.slice()};
@@ -82,7 +91,7 @@ function setup(api){
   const bars=Object.entries(s.needs).map(([key,val])=>'<div class="ls272-stat"><label>'+esc(key[0].toUpperCase()+key.slice(1))+' · '+val+'/100</label><span><i style="width:'+val+'%"></i></span></div>').join('');
   const nearby=inPlace()&&api.isNearby?.(position(),115);
   const activities=KINDS.map(k=>'<button data-act="ls272-start" data-id="'+k+'" '+(s.done.includes(k)||!nearby?'disabled':'')+'><b>'+ACTIONS[k].icon+' '+ACTIONS[k].name+'</b><small>'+(s.done.includes(k)?'A happy memory already made today':!nearby?'Visit Pip in the world first':'Play a real three-part activity together')+'</small></button>').join('');
-  api.showModal?.('little-sprouts','<section class="ls272-book"><header class="ls272-cover"><small>GENERATIONS · THE FIRST LITTLE SPROUT</small><h2>🌱 Pip’s Daybook</h2><p>'+friend+' Pip is a child and has their own needs, drawings and memories—not adult jobs or romance.</p></header><div class="ls272-profile"><span>🌼</span><div><b>Pip · Child</b><small>'+(s.guardian?'Poppy is Pip’s chosen guardian · since Day '+s.guardianDay:'A young friend learning about Maplewood')+'</small></div></div>'+bars+'<p class="ls272-progress">'+s.careDays+' / 3 different care days · All three kinds of shared activities needed to offer guardianship.</p><h3>Spend a real afternoon together</h3>'+(nearby?'':'<button data-act="ls272-visit">📍 Visit Pip in the playable world</button>')+'<div class="ls272-choices">'+activities+'</div>'+(s.ready&&!s.guardian&&nearby?'<div class="ls272-guardian"><strong>🏡 An invitation of trust</strong><p>After these real shared days, you may choose to welcome Pip into your cottage as a guardian. This is optional, not automatic. Pip will live with you in the playable cottage, while other adults and save records remain unchanged.</p><button data-act="ls272-guardian">🌷 Become Pip’s guardian</button></div>':'')+(s.guardian?'<div class="ls272-guardian"><strong>🏡 Your shared cottage</strong><p>Pip lives at your cottage and joins you for stories, nature walks and sketching. No forced aging, penalties or invented biological family links.</p></div>':'')+'<p class="ls272-progress">'+routine.icon+' Today: '+routine.label+'</p>'+routines.card()+'<h3>Our actual memories</h3><ul class="ls272-memories">'+(s.memories.length?s.memories.slice(-12).reverse().map(m=>'<li>Day '+m.day+' · '+ACTIONS[m.kind].icon+' '+ACTIONS[m.kind].name+'</li>').join(''):'<li>Spend time together to start a genuine scrapbook.</li>')+'</ul><button class="ls272-secondary" data-act="ls272-close">Close Pip’s Daybook</button></section>');
+  api.showModal?.('little-sprouts','<section class="ls272-book"><header class="ls272-cover"><small>GENERATIONS · THE FIRST LITTLE SPROUT</small><h2>🌱 Pip’s Daybook</h2><p>'+friend+' Pip is a child and has their own needs, drawings and memories—not adult jobs or romance.</p></header><div class="ls272-profile"><span>🌼</span><div><b>Pip · Child</b><small>'+(s.guardian?'Poppy is Pip’s chosen guardian · since Day '+s.guardianDay:'A young friend learning about Maplewood')+'</small></div></div>'+bars+'<p class="ls272-progress">'+s.careDays+' / 3 different care days · All three kinds of shared activities needed to offer guardianship.</p><h3>Spend a real afternoon together</h3>'+(nearby?'':'<button data-act="ls272-visit">📍 Visit Pip in the playable world</button>')+'<div class="ls272-choices">'+activities+'</div>'+(s.ready&&!s.guardian&&nearby?'<div class="ls272-guardian"><strong>🏡 An invitation of trust</strong><p>After these real shared days, you may choose to welcome Pip into your cottage as a guardian. This is optional, not automatic. Pip will live with you in the playable cottage, while other adults and save records remain unchanged.</p><button data-act="ls272-guardian">🌷 Become Pip’s guardian</button></div>':'')+(s.guardian?'<div class="ls272-guardian"><strong>🏡 Your shared cottage</strong><p>Pip lives at your cottage and joins you for stories, nature walks and sketching. No forced aging, penalties or invented biological family links.</p></div>':'')+'<p class="ls272-progress">'+routine.icon+' Today: '+routine.label+'</p>'+routines.card()+'<h3>Our actual memories</h3><ul class="ls272-memories">'+(s.memories.length?s.memories.slice(-12).reverse().map(m=>'<li>Day '+m.day+' · '+ACTIONS[m.kind].icon+' '+ACTIONS[m.kind].name+'</li>').join(''):'<li>Spend time together to start a genuine scrapbook.</li>')+'</ul>'+neighbors.page()+'<button class="ls272-secondary" data-act="ls272-close">Close Pip’s Daybook</button></section>');
  }
  function begin(kind){
   if(!canBegin(kind)){api.notify?.('Visit Pip in person and choose an activity not yet enjoyed today.');return false}
@@ -138,9 +147,11 @@ function setup(api){
  }
  function draw(g,{scene,tick=0,drawSprite}={}){
   if(!g||!drawSprite||(scene!=='town'&&scene!=='home')||scene!==api.getScene?.()||!inPlace())return;
-  const routine=routines.location(),pos=position(),phase=Math.sin(tick*2.5)*1.5;
-  routines.drawProp(g,routine,tick);
+  const base=routines.location(),escort=neighbors.escortPose(),routine=escort?{...base,...escort,label:'A village walk with Poppy',icon:'🌼'}:base;
+  const pos=position(),phase=Math.sin(tick*2.5)*1.5;
+  if(!escort)routines.drawProp(g,routine,tick);
   drawSprite(CHILD,pos.x,pos.y+phase,routine);
+  neighbors.drawAura(g,tick,pos);
   if(scene==='town'||scene==='home'){
    g.save();g.font='bold 13px monospace';g.textAlign='center';
    g.fillStyle='#39685c';g.fillRect(pos.x-32,pos.y-92,64,21);
@@ -148,12 +159,14 @@ function setup(api){
    g.restore();
   }
  }
+ function advance(dt){neighbors.advance(dt)}
  function hit(x,y,scene){
   if(scene!==api.getScene?.()||!inPlace()||!Number.isFinite(x)||!Number.isFinite(y))return false;
   const p=position();return Math.abs(x-p.x)<=46&&Math.abs(y-(p.y-46))<=71;
  }
  function handle(action,id){
   if(action.startsWith('pr273-'))return routines.handle(action,id);
+  if(action.startsWith('pn275-'))return neighbors.handle(action,id);
   if(action==='ls272-book')return entry();
   if(action==='ls272-start')return begin(id);
   if(action==='ls272-choose')return choose(Number(id));
@@ -163,7 +176,7 @@ function setup(api){
   if(action==='ls272-close'){session=null;return api.closeModal?.()}
   return false;
  }
- return {status,position,entry,begin,choose,page,guardian,canBegin,hit,draw,handle,tick,routines,get data(){return data()},get session(){return session},CHILD,ACTIONS};
+ return {status,position,entry,begin,choose,page,guardian,canBegin,hit,draw,handle,tick,advance,routines,neighbors,get data(){return data()},get session(){return session},CHILD,ACTIONS};
 }
 root.HearthLittleSprouts={setup,clean,defaults,CHILD,ACTIONS};
 })(window);
