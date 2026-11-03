@@ -141,9 +141,11 @@ test('touch markers offer useful wait-for-Pip feedback rather than silently fail
 });
 test('older phone PWA saves and resource order remain intact for v2.8.6',()=>{
  const html=read('index.html'),sw=read('sw.js'),game=read('game.js');
- for(const file of ['pip-neighbors-v275.js','pip-adventures-v281.js','pip-helpers-v284.js','little-sprouts-v272.js','game.js'])
+ for(const file of ['pip-neighbors-v275.js','pip-adventures-v281.js','pip-helpers-v284.js'])
   assert.ok(html.includes(file+'?v=2.8.6'));
- assert.match(sw,/hearth-harbor-v286-companion-paths/);
+ for(const file of ['little-sprouts-v272.js','game.js'])
+  assert.ok(html.includes(file+'?v=2.8.7'));
+ assert.match(sw,/hearth-harbor-v287-village-remembers/);
  assert.ok(sw.includes("'./pip-neighbors-v275.js'"));
  assert.ok(sw.includes("'./little-sprouts-v272.js'"));
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);

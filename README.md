@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.8.7 — The Village Remembers
+
+**Maplewood's adults remember what Pip actually helped create.** After a genuine project, its maker now walks back to the saved pixel-art keepsake during the day. Bring Poppy and Pip to the real site, talk with the villager, and choose a personal follow-through. Each outcome becomes a true family-history memory, affects later dialogue, and adds a lasting original pixel ribbon to the actual world object. The original child and adult relationships, save file, mobile art direction and prior updates remain intact.
+
+[Read the v2.8.7 development and quality report](PIPS_VILLAGE_REMEMBERS_V287_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.8.6 Companion Paths
+
 # Hearth & Harbor v2.8.6 — Pip's Companion Paths
 
 **Pip now actually navigates Maplewood around houses, gardens, ponds and fences rather than trying to walk straight through scenery.** The optional escort reuses Poppy's existing grid pathfinding, follows changes of direction, never teleports across obstacles, pauses cleanly for dialogue, and moves with distance-driven child animation. Family crafts and adventures now explain when Pip has not reached their actual object yet, so Poppy can wait and retry. Older saves, village crafts and handmade keepsakes remain unchanged.

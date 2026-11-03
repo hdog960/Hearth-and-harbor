@@ -1,0 +1,20 @@
+/* v2.8.7 · compact family echoes in Pip's existing Daybook */
+.pr287-panel{margin:10px 0;border:2px solid #bba08c;border-radius:15px;background:#fff5df;color:#654b4a;overflow:hidden}
+.pr287-panel summary{cursor:pointer;list-style:none;min-height:46px;display:block;padding:14px 12px;font-size:14px;font-weight:900;background:#efd9bc;touch-action:manipulation}
+.pr287-panel summary::-webkit-details-marker{display:none}
+.pr287-panel summary:after{content:'⌄';float:right}
+.pr287-panel details[open] summary:after{content:'⌃'}
+.pr287-inner{padding:9px 12px 12px}
+.pr287-inner p{font-size:12px;line-height:1.55;margin:4px 0 10px}
+.pr287-row{display:grid;grid-template-columns:25px minmax(0,1fr);gap:8px;align-items:center;border-top:1px solid #dfcbb5;padding:8px 3px}
+.pr287-row>span{font-size:20px}
+.pr287-row strong{font-size:12px;display:block}
+.pr287-row small{font-size:11px;display:block;opacity:.81;margin-top:2px}
+.pr287-remember{padding:12px;border-radius:10px;background:#fff4da;border:2px solid #cba58c;line-height:1.4;margin:9px 0}
+.pr287-remember small{font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+.pr287-remember p{font-weight:800;font-size:14px;margin:7px 0 0}
+.pr287-book .ls272-cover{background:linear-gradient(130deg,#8d8472,#a47b83);color:#fff5df}
+.pr287-book button{min-height:48px}
+.pr287-panel :focus-visible,.pr287-book :focus-visible{outline:3px solid #256d68;outline-offset:3px}
+@media(max-width:380px){.pr287-inner{padding:8px}.pr287-panel summary{font-size:13px}.pr287-row strong{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.pr287-panel *,.pr287-book *{animation:none!important;transition:none!important}}
