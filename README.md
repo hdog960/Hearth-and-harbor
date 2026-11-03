@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.8.1 — Pip's Growing Adventures
+# Hearth & Harbor v2.8.2 — The Little Legacy Shelf
+
+**Poppy and Pip can now turn real long-running family traditions into three handmade keepsakes in the playable cottage.** Each is grounded in one of the original adult Home & Town Traditions (Welcome House, Sunday at the Table, Roots by the Window), authentic completed childhood experiences, and a final real Poppy Daybook household routine with Pip physically joining. Merely opening a menu or queuing earns nothing.
+
+The Welcome Ribbon, Sunday Recipe Card and Orchard Window Print are illustrated as distinct permanent framed artworks on the actual 2.5D cottage wall, with a small +1 home comfort each. The Connections Atlas preserves the true family memory date, without inventing biological kinship, adult employment or another guardian. Existing saves, earlier resident household traditions and all previous Pip progression remain compatible.
+
+[Read the v2.8.2 implementation, QA and Generations handoff](PIPS_FAMILY_LEGACY_V282_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.8.1 Pip's Growing Adventures
 
 **Pip's Growing Child and Independent Child stages now unlock six distinct physical activities in the actual 2.5D village.** Growing children can explore flowers with Mabel, help Rosie make the market welcoming, and practice color with Bea. Independent children can put together stories with Jun, plan recipe ideas with Oliver, and learn about the pond with Finn.
 
