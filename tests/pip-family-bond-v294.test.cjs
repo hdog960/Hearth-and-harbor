@@ -243,6 +243,7 @@ test('phone build loads bond engine, saved family history, and actual in-world g
  assert.ok(html.includes('game.js?v=2.9.4'));
  assert.match(game,/littleSprouts\.familyBond\.drawWall\(ctx,tick\)/);
  assert.match(game,/littleSprouts\.familyBond\.request\(\)/);
+ assert.match(game,/if\(action\.startsWith\('pi292-'\)\|\|action\.startsWith\('pb294-'\)\)return littleSprouts\.handle\(action,id\)/);
  assert.match(little,/familyBond\.drawGesture\(g,pos,tick\)/);
  assert.match(little,/familyBond\.panel\(\)/);
  assert.match(little,/familyBond:root\.HearthPipFamilyBond\?\.clean/);
