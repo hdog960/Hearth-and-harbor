@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.9.4 — A Bond Built by Living
+
+**Poppy and Pip's family bond now evolves from actual shared days.** Three authored family chapters unlock through real childhood care, home activities, personal initiative and social memories—not a click-to-fill relationship meter. Each optional, face-to-face reflection saves a lasting two-choice memory that affects Pip's future dialogue, original sprite gestures and confidence approaching Poppy, adds a unique handmade piece to the cottage wall, and appears in the Connections Atlas. Aging remains optional; no new navigation tab, currency, paywall or save reset.
+
+[Read the v2.9.4 family relationship implementation, QA plan and Generations direction](POPPY_PIP_BOND_V294_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.9.3 Pip Comes to You
+
 # Hearth & Harbor v2.9.3 — Pip Comes to You
 
 **Pip can seek Poppy out in the playable cottage.** After real chosen guardianship and while Poppy is quietly at home, Pip may take a short genuine path around furniture to stand beside her and ask to share a little idea. The invitation appears as small original in-world child artwork, not a forced pop-up. Tap Pip to accept or simply carry on. All actual rewards still require the original completed, timed Poppy Daybook activity, with no extra money or save reset.
