@@ -23,13 +23,13 @@ function fixture({stage=1,guardian=true,day=25,tradition=true,near=true,scene='h
  let where=scene,closeCount=0,saves=0,updates=0,busy=false,hold=null,modal='';
  let actuallyNear=near,canQueue=queue;
  const api={getState:()=>state,getChild:()=>state.youngResidents.pip,getScene:()=>where,
-  nearChild:()=>actuallyNear,isChildBusy:()=>busy,ownDone:k=>done.has(k),
+  nearChild:()=>actuallyNear,isChildBusy:()=>busy,isQueued:k=>queued.includes(k),ownDone:k=>done.has(k),
   ownHold:()=>hold,queueAction:k=>{if(!canQueue)return false;queued.push(k);return true},
   closeModal:()=>closeCount++,showModal:(id,html)=>{modal=html},
   save:()=>saves++,updateUI:()=>updates++,notify:x=>notices.push(x),openBook:()=>{modal='full Pip Daybook'}};
  const handoff=H.setup(api);
  return {handoff,state,api,queued,notices,done,get saves(){return saves},get updates(){return updates},
-  get closeCount(){return closeCount},get modal(){return modal},child:()=>state.youngResidents.pip,
+  get closeCount(){return closeCount},get modal(){return modal},child:()=>state.youngResidents.pip,clearQueue:()=>{queued.length=0},
   setScene:x=>where=x,setNear:x=>actuallyNear=x,setBusy:x=>busy=x,setHold:x=>hold=x,setQueue:x=>canQueue=x};
 }
 function finish(f,key){
@@ -201,6 +201,25 @@ test('leaving the cottage clears an unfinished plan and prevents later fake cred
  const f=fixture();f.handoff.plan('welcome');f.setScene('town');
  assert.equal(f.handoff.pending,null);
  f.setScene('home');assert.equal(f.handoff.complete('tidy',true,25),false);
+});
+test('clearing a queued Poppy Daybook task cancels the associated heirloom intention',()=>{
+ const f=fixture();f.handoff.plan('welcome');
+ f.clearQueue();
+ assert.equal(f.handoff.pending,null);
+ assert.equal(f.handoff.complete('tidy',true,25),false);
+ assert.equal(f.saves,0);
+});
+test('imported keepsake without a genuinely finished original adult tradition earns no bonus',()=>{
+ const f=fixture({tradition:false});
+ f.child().legacyKeepsakes=[{key:'welcome',day:20,action:'tidy'}];
+ assert.equal(f.handoff.earned('welcome'),false);assert.equal(f.handoff.bonus,0);
+});
+test('imported keepsake cannot appear before actual chosen guardian and child stage dates',()=>{
+ const f=fixture();
+ f.child().legacyKeepsakes=[{key:'welcome',day:4,action:'tidy'}];
+ assert.equal(f.handoff.earned('welcome'),false);
+ f.child().legacyKeepsakes=[{key:'welcome',day:20,action:'tidy'}];
+ assert.equal(f.handoff.earned('welcome'),true);
 });
 test('day rollover invalidates unfinished craft intentions without a reward',()=>{
  const f=fixture();f.handoff.plan('welcome');
