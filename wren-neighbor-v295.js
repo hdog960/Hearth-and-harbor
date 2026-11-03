@@ -105,6 +105,10 @@ function setup(api){
   if(!present()){if(actor||session)clear();return}
   const a=ensure();if(!a)return;
   if(session&&(session.day!==day()||session.slot!==slot)){session=null}
+  // The game's shared X button may dismiss an activity modal directly.
+  // Abandon unfinished questions rather than leaving Wren frozen in town.
+  if(session&&(session.phase==='first'||session.phase==='last')&&
+    api.isDialogOpen?.()===false)session=null;
   if(!finite(dt)||dt<=0){a.moving=false;return}
   if(api.isPaused?.()||session){a.moving=false;return}
   const r=routine(),target=safeAt(r,110);
