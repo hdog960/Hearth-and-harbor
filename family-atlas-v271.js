@@ -162,6 +162,23 @@ function setup(api){
      home:null});
    }
   }
+  // A true shared traditional keepsake is a childhood family memory,
+  // never legal ancestry, marriage, a fictitious parent or a new guardian.
+  const child=state().youngResidents?.pip,keeps=child?.legacyKeepsakes;
+  if(child?.guardian==='player'&&dayOK(child.guardianDay)&&child.guardianDay<=now&&Array.isArray(keeps)){
+   const tracks={welcome:['The Welcome Ribbon','tidy'],supper:['The Sunday Recipe Card','meal'],
+    orchard:['The Orchard Window Print','hobby']},seen=new Set();
+   for(const r of keeps.slice(-10)){
+    if(!obj(r)||!Object.hasOwn(tracks,r.key)||r.action!==tracks[r.key][1]||
+     !dayOK(r.day)||r.day>now||r.day<child.guardianDay||seen.has(r.key))continue;
+    const adultDay=state().homeTraditions?.homes?.player?.[r.key]?.completedDay;
+    if(!dayOK(adultDay)||adultDay>r.day)continue;
+    seen.add(r.key);
+    out.push({day:r.day,kind:'child-family-legacy',ids:['player','pip'],
+     title:tracks[r.key][0],detail:'Pip and Poppy genuinely completed a household tradition and crafted a shared keepsake',
+     home:'player'});
+   }
+  }
   for(const home of HOMES.slice(1)){
    const portraits=api.getPortraits?.(home)||[];
    for(const p of portraits){

@@ -3,7 +3,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 const env={window:{}};
-for(const file of ['pip-growth-v280.js','pip-adventures-v281.js','pip-projects-v278.js','pip-guides-v279.js','pip-routines-v273.js',
+for(const file of ['pip-growth-v280.js','pip-legacy-v282.js','pip-adventures-v281.js','pip-projects-v278.js','pip-guides-v279.js','pip-routines-v273.js',
  'pip-neighbors-v275.js','pip-home-help-v276.js','pip-dreams-v277.js','little-sprouts-v272.js','family-atlas-v271.js'])
  vm.runInNewContext(read(file),env,{filename:file});
 const G=env.window.HearthPipGrowth,P=env.window.HearthPipProjects,R=env.window.HearthPipRoutines,L=env.window.HearthLittleSprouts,A=env.window.HearthFamilyAtlas;
@@ -251,7 +251,7 @@ test('new child growth module maintains existing save key, PWA offline assets an
  for(const file of ['pip-growth-v280.js','pip-growth-v280.css']){assert.ok(html.includes(file));assert.ok(sw.includes("'./"+file+"'"))}
  assert.ok(html.indexOf('pip-growth-v280.js')<html.indexOf('pip-projects-v278.js'));
  assert.ok(html.indexOf('pip-growth-v280.js')<html.indexOf('little-sprouts-v272.js'));
- assert.match(html,/v=2\.8\.1/);assert.match(sw,/hearth-harbor-v281-growing-adventures/);
+ assert.match(html,/v=2\.8\.2/);assert.match(sw,/hearth-harbor-v282-family-legacy/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
  assert.match(child,/growth\.panel\(\)/);assert.match(child,/growth\.drawAccessory\(g,pos\.x/);
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
