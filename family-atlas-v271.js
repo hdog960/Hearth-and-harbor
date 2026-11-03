@@ -141,6 +141,16 @@ function setup(api){
       title:'Pip Is Ready for Bigger Adventures',
       detail:'A second optional childhood milestone earned through long-term genuine experiences',
       home:'player'});
+     // A third stage is explicitly chosen, not an automatic birthday.
+     const teen=root.HearthPipGrowth?.clean?.(earnedGrowth);
+     if(teen?.stage===3&&dayOK(teen.thirdDay)&&teen.thirdDay>second&&teen.thirdDay<=now){
+      out.push({day:teen.thirdDay,kind:'child-growth',ids:['player','pip'],
+       title:'Pip · The Next Little Horizon',
+       detail:teen.thirdChoice===0?
+        'Poppy and Pip chose a new, voluntary early-teen chapter of thoughtful exploration.':
+        'Poppy and Pip chose a new, voluntary early-teen chapter of kindness and belonging.',
+       home:'player'});
+     }
     }
    }
   }
