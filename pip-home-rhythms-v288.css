@@ -1,0 +1,8 @@
+/* v2.8.8: one compact inline identity in the existing Helping Hands section */
+.ph288-identity{margin:10px 0 6px;padding:9px 11px;border:1px solid #d7bda9;border-radius:11px;background:#fff5e5;color:#634b49}
+.ph288-identity strong{display:block;font-size:13px;margin-bottom:2px}
+.ph288-identity small{display:block;font-size:11px;line-height:1.4;opacity:.85}
+.ph288-marks{display:flex;gap:5px;flex-wrap:wrap;margin:9px 0}
+.ph288-marks span{border:1px solid #d8bda9;background:#f7e5d2;border-radius:9px;padding:5px 9px;font-size:12px;font-weight:800}
+@media(max-width:380px){.ph288-identity{padding:8px}.ph288-marks{gap:4px}.ph288-marks span{padding:4px 6px}}
+@media(prefers-reduced-motion:reduce){.ph288-identity *{animation:none!important;transition:none!important}}

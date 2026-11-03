@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.8.8 — Pip's Homegrown Personality
+
+**Pip develops four distinct real household interests from the things you actually do together.** Read, tidy, cook or create with Pip through the existing timed Poppy Daybook action: after two genuine completed days of that kind, Pip gains an original little handmade cottage decoration and starts naturally choosing related activities in the actual world. The strongest interest shapes Pip's afternoon. During the real household activity Pip now visibly carries the appropriate little book, basket, napkin or crayons. No new scrolling menu, currency, save reset or artificial reward system.
+
+[Read the v2.8.8 quality and Generations development report](PIPS_HOMEGROWN_PERSONALITY_V288_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.8.7 The Village Remembers
+
 # Hearth & Harbor v2.8.7 — The Village Remembers
 
 **Maplewood's adults remember what Pip actually helped create.** After a genuine project, its maker now walks back to the saved pixel-art keepsake during the day. Bring Poppy and Pip to the real site, talk with the villager, and choose a personal follow-through. Each outcome becomes a true family-history memory, affects later dialogue, and adds a lasting original pixel ribbon to the actual world object. The original child and adult relationships, save file, mobile art direction and prior updates remain intact.
