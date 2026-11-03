@@ -89,8 +89,15 @@ function setup(api){
    // not snap Pip back to an old schedule position.
    sync(actual);return;
   }
-  if(isSpecial(base)){a.moving=false;route=[];goal=null;return}
+  if(isSpecial(base)){sync(base);return}
   if(!finite(dt)||dt<=0||api.isPaused?.()){a.moving=false;return}
+  // Furniture may be placed exactly where Pip was standing. Reposition
+  // minimally to a verified open tile, rather than staying inside the item.
+  if(!walkable(a)){
+   const open=reachable(a,85);
+   if(!open){a.moving=false;route=[];goal=null;return}
+   a.x=open.x;a.y=open.y;route=[];goal=null;repath=0;
+  }
   const target=reachable(base,120);
   if(!target){a.moving=false;route=[];return}
   a.label=base.label;
