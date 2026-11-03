@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.9.8 — Childhood Reunions
+
+**Wren now independently checks on the actual Friendship Corner** once a genuine chapter has been created. Visit the painted sign with both children on a later day to make one of three individually written follow-up memories; each choice adds its own permanent stitched detail to the world artwork and changes real later dialogue. Physical presence, genuine previous chapter provenance and separate days are mandatory. This also repairs the v2.9.7 club buttons, which previously weren't connected through the main in-game action handler. No new save key, currency, paywall, account, fabricated family ties or instant relationship rewards.
+
+[Read the v2.9.8 implementation, regression safeguards and Generations direction](WREN_CHILDHOOD_REUNIONS_V298_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.9.7 Friendship Corner
+
 # Hearth & Harbor v2.9.7 — The Friendship Corner
 
 **Pip and Wren can build a little permanent handmade place in Maplewood over three genuine days.** Each original story, color and nature chapter requires an earlier actual shared outing, a completed outing that day, physically traveling together to the real village project site, and choosing how to finish. Each chapter changes the original pixel-art friendship pennant in the playable world; the physical sign can be tapped to revisit true saved choices. No free click rewards, fake child memories, economy changes, new account or save reset.
