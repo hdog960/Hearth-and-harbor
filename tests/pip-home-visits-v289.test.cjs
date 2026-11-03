@@ -257,7 +257,7 @@ test('iPhone source and offline PWA include real visits before Pip without reset
  assert.ok(html.indexOf('pip-home-visits-v289.js')<html.indexOf('little-sprouts-v272.js'));
  for(const a of ['pip-home-visits-v289.js','pip-home-visits-v289.css'])
   assert.ok(sw.includes("'./"+a+"'"));
- assert.match(sw,/hearth-harbor-v296-child-friendship-moments/);
+ assert.match(sw,/hearth-harbor-v297-friendship-corner/);
  assert.match(game,/homeVisits\.schedule\(n\.id,littleSprouts\.responses\.schedule/);
  assert.match(game,/homeVisits\.completed\(kind,once,state\.day\)/);
  assert.match(game,/pv289-greet/);assert.match(game,/pv289-invite/);
