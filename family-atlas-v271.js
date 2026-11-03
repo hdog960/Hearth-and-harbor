@@ -72,6 +72,24 @@ function setup(api){
      title:'A little neighbor moment',detail:'Pip met a real nearby resident and finished their two-part activity',home:null});
    }
   }
+  // Authentic optional childhood aspiration milestones belong to Pip's real
+  // household history, never a biological or marital kinship edge.
+  const dreams=state().youngResidents?.pip?.dream;
+  if(obj(dreams)&&obj(dreams.achievements)){
+   const names={stories:['A Little Tale to Tell','The Storyteller’s Star'],
+    kindness:['A Helping Hand','Home’s Little Hero'],
+    discover:['First Clover Trail','A World of Wonders']};
+   for(const [dream,titles] of Object.entries(names)){
+    const entries=dreams.achievements[dream];
+    if(!Array.isArray(entries))continue;
+    for(const earned of entries.slice(0,2)){
+     if(!obj(earned)||![1,2].includes(earned.stage)||!dayOK(earned.day)||earned.day>now)continue;
+     out.push({day:earned.day,kind:'child-dream',ids:['player','pip'],
+      title:titles[earned.stage-1],detail:'A chapter of Pip’s chosen aspiration was earned through actual care and play',
+      home:'player'});
+    }
+   }
+  }
   for(const home of HOMES.slice(1)){
    const portraits=api.getPortraits?.(home)||[];
    for(const p of portraits){
