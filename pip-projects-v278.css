@@ -1,0 +1,15 @@
+/* Hearth & Harbor v2.7.8 — Pip's Independent Projects: cozy illustrated phone book */
+.pi278-panel{color:#5b7767;margin:12px 0 16px;padding-bottom:13px}
+.pi278-header{padding:15px;border:3px solid #f6ecdc;border-bottom:5px solid #c8ae94;border-radius:17px;background:radial-gradient(circle at 95% 8%,#eabacf,transparent 49%),linear-gradient(125deg,#ddedd6,#fff1df)}
+.pi278-header small{font-size:10px;letter-spacing:.09em;font-weight:900;color:#a17d68}
+.pi278-header h3{font-size:18px!important;color:#557a63;margin:5px 0;line-height:1.2}
+.pi278-header p,.pi278-panel p{font-size:12px;line-height:1.55;color:#71806f;margin:7px 0}
+.pi278-header strong{display:block;margin-top:9px;font-size:13px;color:#527967}
+.pi278-panel h3{font-size:15px!important;margin:14px 0 7px;color:#62836c}
+.pi278-status{font-size:12px;color:#68836c;background:#f6f1df;border:1px solid #d8d6ba;border-radius:11px;padding:12px;margin:10px 0}
+.pi278-panel button,.pi278-story button{display:block;width:100%;min-height:52px;padding:11px 13px;text-align:left;border:2px solid #b8cdb5;border-bottom:4px solid #98b59b;border-radius:12px;background:linear-gradient(#e4f0dd,#d2e5d0);font-size:13px;color:#4f755e;font-weight:850;touch-action:manipulation}
+.pi278-panel button:focus-visible,.pi278-story button:focus-visible{outline:3px solid #305c8f;outline-offset:3px}
+.pi278-history{padding:0;margin:8px 0;list-style:none}
+.pi278-history li{padding:10px 12px;border-radius:7px;margin:7px 0;background:#fbf2e1;border-left:4px solid #b5c9af;color:#77816e;font-size:11px}
+@media(max-width:380px){.pi278-header{padding:12px}.pi278-panel button,.pi278-story button{min-height:54px}}
+@media(prefers-reduced-motion:reduce){.pi278-panel *,.pi278-story *{animation:none!important;transition:none!important}}
