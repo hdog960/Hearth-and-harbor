@@ -33,7 +33,10 @@ function setup(api){
   return p&&finite(p.x)&&finite(p.y)?p:null;
  }
  function isSpecial(base){
-  return !!(base?.project||base?.mentorVisit||api.isChildSessionActive?.());
+  // Stage-three self-directed dream work is part of Pip's ordinary real
+  // cottage route. Preserve existing child-led sessions and mentor visits.
+  return !!(base?.mentorVisit||api.isChildSessionActive?.()||
+   (base?.project&&base.growthStage!==3));
  }
  function sync(p){
   const at=reachable(p,110);
