@@ -232,7 +232,7 @@ function setup(api){
   getCanOffer:()=>initiatives.canOffer?.()===true,
   getInterest:()=>homeRhythms.profile(),
   isPaused:api.isPaused,isPlayerMoving:api.isPlayerMoving,
-  isChildOccupied:()=>!!session||!!homeHelp.pending||!!homeVisits.childPose()||
+  isChildOccupied:()=>!!session||!!homeHelp.pending||api.isOwnRoutineBusy?.()||!!homeVisits.childPose()||
    !!familyLegacy.pose()||!!rituals.pose(),
   nearestWalkable:api.nearestWalkable,isWalkable:api.isWalkable,
   notify:api.notify
