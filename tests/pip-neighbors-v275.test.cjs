@@ -61,7 +61,7 @@ test('a villager far from Pip cannot be selected through a menu',()=>{
 });
 test('moving the actual neighbor away removes that encounter option',()=>{
  const f=fixture();f.adults.find(a=>a.id==='bea').x=1300;
- assert.equal(f.pip.neighbors.adultNear()?.id,null);
+ assert.equal(f.pip.neighbors.adultNear(),null);
  assert.equal(f.pip.neighbors.start('bea'),false);
 });
 test('one button does not reward anything; the encounter needs both genuine choices',()=>{
@@ -189,6 +189,7 @@ test('mobile asset order, offline cache, menu and actual world update are wired'
  assert.match(html,/v=2\.7\.5/);assert.match(sw,/hearth-harbor-v275-neighbor-walks/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
  assert.match(game,/littleSprouts\.advance\(dt\)/);assert.match(game,/getAdults:\(\)=>NPCS\.map/);
+ assert.match(game,/Invite Pip to learn together/);assert.match(game,/pn275-direct/);
  assert.match(little,/neighbors\.page\(\)/);assert.match(little,/neighbors\.escortPose\(\)/);
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
 });
