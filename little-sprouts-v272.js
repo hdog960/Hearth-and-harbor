@@ -27,7 +27,7 @@ const KINDS=Object.keys(ACTIONS),obj=x=>x!==null&&typeof x==='object'&&!Array.is
 const validDay=x=>Number.isInteger(x)&&x>=1&&x<=9999;
 const clamp=x=>Math.max(0,Math.min(100,Number.isFinite(x)?x:0));
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const defaults=()=>({guardian:null,guardianDay:0,needs:{joy:62,curiosity:55,confidence:50},daily:{day:0,done:[]},days:[],memories:[],evenings:[],skills:{story:0,garden:0,art:0},meetings:[],homeHelps:[],dream:root.HearthPipDreams.clean(null),projects:[],mentor:root.HearthPipGuides.clean(null,[]),growth:root.HearthPipGrowth.clean(null),adventures:[],legacyKeepsakes:[],familyRituals:[],helperProjects:[],neighborResponses:[]});
+const defaults=()=>({guardian:null,guardianDay:0,needs:{joy:62,curiosity:55,confidence:50},daily:{day:0,done:[]},days:[],memories:[],evenings:[],skills:{story:0,garden:0,art:0},meetings:[],homeHelps:[],dream:root.HearthPipDreams.clean(null),projects:[],mentor:root.HearthPipGuides.clean(null,[]),growth:root.HearthPipGrowth.clean(null),adventures:[],legacyKeepsakes:[],familyRituals:[],helperProjects:[],neighborResponses:[],homeRhythms:{totals:{read:0,tidy:0,meal:0,hobby:0},last:null}});
 function clean(raw){
  const src=obj(raw)?raw:{},d=defaults(),needs=obj(src.needs)?src.needs:{},daily=obj(src.daily)?src.daily:{},memories=[],days=[];
  const guardian=src.guardian==='player'&&validDay(src.guardianDay)?'player':null;
@@ -48,13 +48,13 @@ function clean(raw){
  }
  const safeDaily=validDay(daily.day)?daily.day:0;
  const done=Array.isArray(daily.done)?[...new Set(daily.done.filter(x=>KINDS.includes(x)))].slice(0,3):[];
- return {guardian,guardianDay,needs:Object.fromEntries(Object.keys(d.needs).map(k=>[k,typeof needs[k]==='number'&&Number.isFinite(needs[k])?clamp(needs[k]):d.needs[k]])),daily:{day:safeDaily,done},days,memories:memories.slice(-40),evenings:root.HearthPipRoutines.cleanEvenings(src.evenings),skills,meetings:root.HearthPipNeighbors.clean(src.meetings),homeHelps:root.HearthPipHomeHelp.clean(src.homeHelps),dream:root.HearthPipDreams.clean(src.dream),projects:root.HearthPipProjects.clean(src.projects),mentor:root.HearthPipGuides.clean(src.mentor,src.meetings),growth:root.HearthPipGrowth.clean(src.growth),adventures:root.HearthPipAdventures.clean(src.adventures),legacyKeepsakes:root.HearthPipLegacy.clean(src.legacyKeepsakes),familyRituals:root.HearthPipRituals.clean(src.familyRituals),helperProjects:root.HearthPipHelpers?.clean?.(src.helperProjects)||[],neighborResponses:root.HearthPipResponses?.clean?.(src.neighborResponses)||[]};
+ return {guardian,guardianDay,needs:Object.fromEntries(Object.keys(d.needs).map(k=>[k,typeof needs[k]==='number'&&Number.isFinite(needs[k])?clamp(needs[k]):d.needs[k]])),daily:{day:safeDaily,done},days,memories:memories.slice(-40),evenings:root.HearthPipRoutines.cleanEvenings(src.evenings),skills,meetings:root.HearthPipNeighbors.clean(src.meetings),homeHelps:root.HearthPipHomeHelp.clean(src.homeHelps),dream:root.HearthPipDreams.clean(src.dream),projects:root.HearthPipProjects.clean(src.projects),mentor:root.HearthPipGuides.clean(src.mentor,src.meetings),growth:root.HearthPipGrowth.clean(src.growth),adventures:root.HearthPipAdventures.clean(src.adventures),legacyKeepsakes:root.HearthPipLegacy.clean(src.legacyKeepsakes),familyRituals:root.HearthPipRituals.clean(src.familyRituals),helperProjects:root.HearthPipHelpers?.clean?.(src.helperProjects)||[],neighborResponses:root.HearthPipResponses?.clean?.(src.neighborResponses)||[],homeRhythms:root.HearthPipHomeRhythms?.clean?.(src.homeRhythms,src.homeHelps,guardianDay)||{totals:{read:0,tidy:0,meal:0,hobby:0},last:null}};
 }
 function setup(api){
  const state=()=>api.getState(),data=()=>{
   const s=state();if(!obj(s.youngResidents)||!obj(s.youngResidents.pip))s.youngResidents={pip:defaults()};
   const c=s.youngResidents.pip;
-  if(!obj(c.needs)||!obj(c.daily)||!Array.isArray(c.days)||!Array.isArray(c.memories)||!Array.isArray(c.evenings)||!obj(c.skills)||!Array.isArray(c.meetings)||!Array.isArray(c.homeHelps)||!obj(c.dream)||!Array.isArray(c.projects)||!obj(c.mentor)||!obj(c.growth)||!Array.isArray(c.adventures)||!Array.isArray(c.legacyKeepsakes)||!Array.isArray(c.familyRituals)||!Array.isArray(c.helperProjects)||!Array.isArray(c.neighborResponses))s.youngResidents.pip=clean(c);
+  if(!obj(c.needs)||!obj(c.daily)||!Array.isArray(c.days)||!Array.isArray(c.memories)||!Array.isArray(c.evenings)||!obj(c.skills)||!Array.isArray(c.meetings)||!Array.isArray(c.homeHelps)||!obj(c.dream)||!Array.isArray(c.projects)||!obj(c.mentor)||!obj(c.growth)||!Array.isArray(c.adventures)||!Array.isArray(c.legacyKeepsakes)||!Array.isArray(c.familyRituals)||!Array.isArray(c.helperProjects)||!Array.isArray(c.neighborResponses)||!obj(c.homeRhythms))s.youngResidents.pip=clean(c);
   return s.youngResidents.pip;
  };
  let session=null;
@@ -62,9 +62,16 @@ function setup(api){
  const isHome=()=>data().guardian==='player';
  const home=()=>isHome()?'player':null;
  const inPlace=()=>neighbors.walkingNow()||api.getScene?.()===routines.location().scene;
+ const homeRhythms=root.HearthPipHomeRhythms?.setup?.({
+  getState:state,getChild:data,getScene:api.getScene,
+  getHold:api.ownHold,isWalkable:api.isWalkable,
+  nearestWalkable:api.nearestWalkable,notify:api.notify
+ })||{completed:()=>false,adjustPose:p=>p,panel:()=>'',drawHome:()=>false,
+  drawParticipation:()=>false,profile:()=>({kind:null,earned:[]})};
  const routines=root.HearthPipRoutines.setup({
   getState:state,getChild:data,getScene:api.getScene,isNearby:api.isNearby,
   getAdults:api.getAdults,isWalkable:api.isWalkable,
+  adjustHomePose:p=>homeRhythms.adjustPose(p),
   showModal:api.showModal,notify:api.notify,save:api.save,
   updateUI:api.updateUI,openBook:()=>entry()
  });
@@ -85,6 +92,8 @@ function setup(api){
   nearChild:d=>api.isNearby?.(position(),d)===true,
   ownDone:api.ownDone,ownHold:api.ownHold,
   queueAction:api.queueOwnAction,closeModal:api.closeModal,
+  onSharedHomeCompleted:r=>homeRhythms.completed(r),
+  getHomeRhythmsPanel:()=>homeRhythms.panel(),
   save:api.save,updateUI:api.updateUI,notify:api.notify,openBook:()=>entry()
  });
  const dreams=root.HearthPipDreams.setup({
@@ -249,6 +258,7 @@ function setup(api){
   const pos=position(),phase=routine.moving?Math.abs(Math.sin((routine.stride??tick*4)*Math.PI))*2.7:Math.sin(tick*1.7)*.6;
   if(!escort){if(routine.mentorVisit)guides.draw(g,routine,tick);else if(!participation&&routine.project)projects.drawProp(g,routine,tick);else routines.drawProp(g,routine,tick)}
   drawSprite(CHILD,pos.x,pos.y+phase,routine);
+  homeRhythms.drawParticipation(g,{x:pos.x,y:pos.y+phase},homeHelp.pending?.kind,tick);
   growth.drawAccessory(g,pos.x,pos.y+phase,tick);
   helpers.drawRibbon(g,pos,tick);
   neighbors.drawAura(g,tick,pos);
@@ -288,7 +298,7 @@ function setup(api){
   if(action==='ls272-close'){session=null;return api.closeModal?.()}
   return false;
  }
- return {status,position,entry,begin,choose,page,guardian,canBegin,hit,draw,handle,tick,advance,routines,neighbors,homeHelp,dreams,projects,guides,growth,adventures,helpers,worldKeepsakes,responses,familyLegacy,rituals,get data(){return data()},get session(){return session},CHILD,ACTIONS};
+ return {status,position,entry,begin,choose,page,guardian,canBegin,hit,draw,handle,tick,advance,routines,neighbors,homeHelp,homeRhythms,dreams,projects,guides,growth,adventures,helpers,worldKeepsakes,responses,familyLegacy,rituals,get data(){return data()},get session(){return session},CHILD,ACTIONS};
 }
 root.HearthLittleSprouts={setup,clean,defaults,CHILD,ACTIONS};
 })(window);
