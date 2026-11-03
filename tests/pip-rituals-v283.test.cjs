@@ -282,6 +282,25 @@ test('three memories from the same season never unlock a false seasonal quilt',(
  assert.equal(f.ritual.earnedSeasons().length,1);
  assert.equal(f.ritual.quilt,false);assert.equal(f.ritual.bonus,0);
 });
+test('oldest completed seasonal patches remain permanently proven after more than forty family days',()=>{
+ let list=[];
+ const seeds=[{day:10,key:'welcome',season:0,first:0,last:0},
+ {day:11,key:'supper',season:1,first:0,last:0},
+ {day:12,key:'orchard',season:2,first:0,last:0}];
+ for(const row of seeds)list=R.clean([...list,row]);
+ for(let day=13;day<=88;day++)list=R.clean([...list,{day,key:'welcome',season:3,first:0,last:0}]);
+ assert.equal(list.length,40);
+ assert.deepEqual(plain(list.filter(r=>r.day<=13).map(r=>r.day)),[10,11,12,13]);
+ assert.equal(new Set(list.map(r=>r.season)).size,4);
+ const f=fixture({day:90});f.c().familyRituals=list;
+ assert.equal(f.ritual.quilt,true);assert.equal(f.ritual.bonus,1);
+});
+test('a malformed saved heirloom collection cannot crash family season history',()=>{
+ const f=fixture();f.c().legacyKeepsakes={welcome:'not-a-list'};
+ f.c().familyRituals=[{day:12,key:'welcome',season:0,first:0,last:0}];
+ assert.deepEqual(plain(f.ritual.history()),[]);
+ assert.equal(f.ritual.bonus,0);
+});
 test('season sampler evolves visually from the first patch to complete quilt artwork',()=>{
  const f=fixture(),calls=[],g={save(){},restore(){},fillRect(){calls.push(1)}};
  assert.equal(f.ritual.draw(g,1),false);
