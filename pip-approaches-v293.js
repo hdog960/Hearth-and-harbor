@@ -14,12 +14,14 @@ function setup(api){
  const guarded=()=>child()?.guardian==='player'&&dayOK(child()?.guardianDay)&&
    child().guardianDay<=day();
  let epoch=0,phase='idle',target=null,origin=null,stable=0,elapsed=0,
-  stall=0,lastChild=null,attempts=0,offered=false,received=false,noticed=false;
+  stall=0,lastChild=null,attempts=0,offered=false,received=false,noticed=false,
+  eligibilityWait=0,eligibility=false,accent='#93b8a0';
  const snapshot=x=>x&&finite(x.x)&&finite(x.y)?{x:x.x,y:x.y}:null;
  function resetDay(){
   const d=day();
   if(d!==epoch){epoch=d;phase='idle';target=null;origin=null;stable=0;
-   elapsed=0;stall=0;lastChild=null;attempts=0;offered=false;received=false;noticed=false}
+   elapsed=0;stall=0;lastChild=null;attempts=0;offered=false;received=false;noticed=false;
+   eligibilityWait=0;eligibility=false;accent='#93b8a0'}
  }
  function clear(keepOffered=false){
   phase='idle';target=null;origin=null;stable=0;elapsed=0;stall=0;lastChild=null;
@@ -28,7 +30,7 @@ function setup(api){
  function suitable(){
   const minute=Number(state()?.minute);
   return guarded()&&scene()==='home'&&finite(minute)&&minute>=720&&minute<990&&
-    api.getCanOffer?.()===true&&!api.isPaused?.()&&!api.isPlayerMoving?.()&&
+    eligibility&&!api.isPaused?.()&&!api.isPlayerMoving?.()&&
     !api.isChildOccupied?.();
  }
  function spot(player,from){
@@ -48,6 +50,13 @@ function setup(api){
   if(scene()!=='home'||!guarded()){clear();return}
   if(!finite(dt)||dt<=0||api.isPaused?.())return;
   const step=Math.min(dt,.16),p=snapshot(api.getPlayer?.()),c=snapshot(api.getChildPosition?.());
+  // Check the slightly more expensive real household/furniture eligibility
+  // only ~1.5 times/second, not on every iPhone animation frame.
+  eligibilityWait-=step;
+  if(eligibilityWait<=0){
+   eligibility=api.getCanOffer?.()===true;
+   eligibilityWait=.65;
+  }
   if(!p||!c){clear();return}
   if(phase==='idle'){
    if(offered||attempts>=2||!suitable())return;
@@ -59,6 +68,7 @@ function setup(api){
    // Start ONLY at a genuine reachable world position. The shared
    // child-home walker owns routefinding and segment collision checks.
    target=to;phase='approaching';elapsed=0;stall=0;lastChild=c;attempts++;
+   accent=INTERESTS[api.getInterest?.()?.kind]||'#93b8a0';
    return;
   }
   if(!suitable()||!target||!origin||dist(p,origin)>30){
@@ -111,12 +121,11 @@ function setup(api){
   if(!g||!pos||!finite(pos.x)||!finite(pos.y)||!isNear()||
     scene()!=='home'||!guarded())return false;
   const x=Math.round(pos.x+21),y=Math.round(pos.y-133+Math.sin(tick*2)*2);
-  const kind=api.getInterest?.()?.kind;
   g.save();
   g.fillStyle='#75645a';g.fillRect(x-1,y-2,34,27);
   g.fillStyle='#fff2d9';g.fillRect(x+2,y,28,22);
   g.fillStyle='#75645a';g.fillRect(x+7,y+24,7,6);
-  g.fillStyle=INTERESTS[kind]||'#93b8a0';
+  g.fillStyle=accent;
   g.fillRect(x+7,y+5,9,11);
   g.fillStyle='#edc18b';g.fillRect(x+19,y+5,7,7);
   g.fillStyle='#aa8f88';g.fillRect(x+19,y+16,7,2);
