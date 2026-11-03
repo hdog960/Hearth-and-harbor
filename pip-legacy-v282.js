@@ -62,12 +62,17 @@ function setup(api){
  const state=()=>api.getState(),child=()=>api.getChild(),now=()=>dayOK(state().day)?state().day:1;
  const records=()=>Array.isArray(child().legacyKeepsakes)?child().legacyKeepsakes:[];
  const eligibleAt=key=>prerequisites(state(),child(),key,now());
- const earned=key=>records().some(r=>r.key===key&&r.day<=now()&&r.action===TRACKS[key]?.action);
+ const earned=key=>records().some(r=>{
+  const t=TRACKS[key],adultDay=state().homeTraditions?.homes?.player?.[key]?.completedDay,d=child();
+  return !!t&&r.key===key&&r.action===t.action&&dayOK(r.day)&&r.day<=now()&&
+   d.guardian==='player'&&dayOK(d.guardianDay)&&d.guardianDay<=r.day&&
+   dayOK(adultDay)&&adultDay<=r.day&&root.HearthPipGrowth.lifeStage(d,r.day)>=t.stage;
+ });
  const isHome=()=>api.getScene?.()==='home'&&child().guardian==='player';
  const near=()=>isHome()&&api.nearChild?.(145)===true;
  let pending=null;
  const active=()=>{
-  if(pending&&(!isHome()||pending.day!==now()||!eligibleAt(pending.key).ready||earned(pending.key)))pending=null;
+  if(pending&&(!isHome()||pending.day!==now()||!eligibleAt(pending.key).ready||earned(pending.key)||api.isQueued?.(pending.action)===false))pending=null;
   return pending;
  };
  const busy=()=>!!api.isChildBusy?.();
@@ -164,15 +169,16 @@ function setup(api){
   return true;
  }
  function board(){return api.showModal?.('little-sprouts','<section class="ls272-book">'+panel()+'<button data-act="pl282-pip">🌱 Open Pip’s full Daybook</button></section>')}
+ function cancel(){if(!pending)return false;pending=null;return true}
  function handle(action,id){
   if(action==='pl282-board')return board();
   if(action==='pl282-pip')return api.openBook?.();
   if(action==='pl282-plan')return plan(id);
-  if(action==='pl282-cancel'){if(!pending)return false;pending=null;return api.openBook?.()}
+  if(action==='pl282-cancel'){if(!cancel())return false;return api.openBook?.()}
   if(action==='pl282-book')return api.openBook?.();
   return false;
  }
- return {clean,prerequisites,canPlan,plan,complete,pose,panel,board,draw,earned,handle,
+ return {clean,prerequisites,canPlan,plan,cancel,complete,pose,panel,board,draw,earned,handle,
    get pending(){return active()},get records(){return records().slice()},get bonus(){return IDS.filter(earned).length}};
 }
 root.HearthPipLegacy={setup,clean,prerequisites,TRACKS,IDS};
