@@ -1,0 +1,21 @@
+/* Hearth & Harbor v2.7.6 — Pip's Little Helping Hands, iPhone cottage journal */
+.ph276-house{padding:6px 0 16px;color:#587361}
+.ph276-cover{padding:15px 13px;border-radius:18px;border:3px solid #f5e9d4;border-bottom:5px solid #c6a788;background:radial-gradient(circle at 94% 4%,#f2c7ca,transparent 47%),linear-gradient(135deg,#e2edd6,#fff1de)}
+.ph276-cover small{font-size:10px;letter-spacing:.09em;font-weight:850;color:#ab8068}
+.ph276-cover h3{font-size:19px!important;line-height:1.2;margin:5px 0;color:#5b8063}
+.ph276-house p{font-size:12px;line-height:1.55;color:#718171;margin:7px 0}
+.ph276-house h3{font-size:15px!important;color:#69856c;margin:14px 0 8px}
+.ph276-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,175px),1fr));gap:9px;margin:10px 0}
+.ph276-house button{display:block;width:100%;min-height:51px;background:linear-gradient(#e4efdc,#d3e5d0);border:2px solid #b4cab5;border-bottom:4px solid #94ac97;border-radius:13px;padding:11px;text-align:left;font-size:12px;color:#54745d;font-weight:850;touch-action:manipulation}
+.ph276-house button small{display:block;font-size:11px;color:#788674;font-weight:500;line-height:1.4;margin-top:4px}
+.ph276-house button:disabled{opacity:.57;cursor:default}
+.ph276-house button:focus-visible{outline:3px solid #315b90;outline-offset:3px}
+.ph276-pending{border-radius:14px;border:2px solid #d2c5a8;background:#f6efdb;padding:13px;margin:10px 0}
+.ph276-pending strong{font-size:13px;color:#88765f}
+.ph276-progress{border-radius:14px;border:3px double #d5bfa1;background:linear-gradient(#fff8e6,#f5ebd7);padding:13px;margin:12px 0}
+.ph276-progress strong{font-size:14px;color:#92775d}
+.ph276-progress small{display:block;font-size:11px;color:#70806d;font-weight:850}
+.ph276-memories{list-style:none;padding:0;margin:8px 0}
+.ph276-memories li{border-left:5px solid #b5c7a4;background:#f7f0e3;border-radius:6px;padding:9px 11px;margin:6px 0;font-size:11px;color:#77806d}
+@media(max-width:380px){.ph276-cover,.ph276-progress{padding:11px}.ph276-choices{grid-template-columns:1fr}.ph276-house button{min-height:53px}}
+@media(prefers-reduced-motion:reduce){.ph276-house *,.ph276-house *:before,.ph276-house *:after{animation:none!important;transition:none!important}}
