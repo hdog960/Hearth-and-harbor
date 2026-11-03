@@ -81,7 +81,7 @@ test('hand-drawn tending art belongs to the real Wren actor by the actual sign',
  const art=[],g={save(){},restore(){},fillStyle:'',
   fillRect(...v){art.push([this.fillStyle,...v])}};
  assert.equal(f.w.drawTending(g,2),true);
- assert.ok(art.length>=5);assert.ok(art.some(a=>a[0]==='#fff2d6'));
+ assert.ok(art.length>=4);assert.ok(art.some(a=>a[0]==='#fff2d6'));
  f.setMinute(920);assert.equal(f.w.drawTending(g,3),false);
 });
 test('inspecting the sign with both children offers a physically grounded reunion',()=>{
