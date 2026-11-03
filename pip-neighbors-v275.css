@@ -1,0 +1,18 @@
+/* Hearth & Harbor v2.7.5 — Pip's Neighbor Walks, cozy iPhone companion journal */
+.pn275-panel{margin:12px 0 16px;color:#597b67}
+.pn275-heading{padding:14px 13px;border:3px solid #f9ecd9;border-bottom:5px solid #c4ad91;background:radial-gradient(circle at 95% 7%,#eebed1,transparent 50%),linear-gradient(130deg,#dcecd0,#fff0dd);border-radius:17px}
+.pn275-heading small{font-size:10px;letter-spacing:.08em;color:#997e69;font-weight:900}
+.pn275-heading h3{font-size:18px!important;color:#4e765e;margin:5px 0}
+.pn275-heading p,.pn275-walk p,.pn275-neighbor p{font-size:12px;color:#6e816f;line-height:1.55;margin:8px 0}
+.pn275-walk,.pn275-neighbor,.pn275-no-neighbor{background:#fff8e8;border:2px solid #e3d3b7;border-bottom:4px solid #cfba99;border-radius:14px;padding:12px;margin:10px 0}
+.pn275-neighbor{background:#e9f2df;border-color:#b9ceb4}
+.pn275-walk strong,.pn275-neighbor strong{font-size:14px;color:#648065}
+.pn275-panel button,.pn275-activity button{display:block;width:100%;min-height:49px;margin:7px 0;border:2px solid #acc5b1;border-bottom:4px solid #8bac96;border-radius:12px;background:linear-gradient(#e4f1d9,#d1e4cb);text-align:left;color:#46705b;font-weight:850;font-size:13px;padding:10px;touch-action:manipulation}
+.pn275-panel button:focus-visible,.pn275-activity button:focus-visible{outline:3px solid #31608b;outline-offset:2px}
+.pn275-walk small,.pn275-neighbor small{display:block;font-size:11px;color:#827d6c}
+.pn275-panel>h3{font-size:14px!important;color:#66816a;margin:15px 0 6px}
+.pn275-memory{list-style:none;margin:8px 0;padding:0}
+.pn275-memory li{background:#f7efe1;border-left:4px solid #a5bfa4;border-radius:6px;padding:9px 12px;margin:6px 0;font-size:11px;color:#79806f}
+.pn275-no-neighbor{color:#887f72;font-size:11px;line-height:1.5}
+@media(max-width:380px){.pn275-heading{padding:11px}.pn275-panel button{min-height:52px}}
+@media(prefers-reduced-motion:reduce){.pn275-panel *,.pn275-activity *{animation:none!important;transition:none!important}}
