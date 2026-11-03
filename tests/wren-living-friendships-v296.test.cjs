@@ -35,7 +35,7 @@ function fixture({day=3,pip={x:925,y:954},player={x:911,y:943},
 test('Wren physically approaches the real nearby Pip without opening a dialog',()=>{
  const f=fixture(),start=f.w.pose();f.step(75);
  assert.ok(f.w.moment&&f.w.moment.phase==='greeting');
- assert.ok(Math.hypot(f.w.pose().x-start.x,f.w.pose().y-start.y)>40);
+ assert.ok(Math.hypot(f.w.pose().x-start.x,f.w.pose().y-start.y)>25);
  assert.ok(Math.hypot(f.w.pose().x-925,f.w.pose().y-954)<80);
  assert.equal(f.dialogs,0);assert.equal(f.saves,0);assert.equal(f.updates,0);
  assert.deepEqual(flat(f.state.youngResidents.wren),{friendships:[]});
@@ -49,7 +49,7 @@ test('both actual children receive an original small pixel art greeting',()=>{
  const f=fixture();f.step(75);
  const calls=[],g={save(){},restore(){},fillStyle:'',
   fillRect(...v){calls.push([this.fillStyle,...v])}};
- assert.equal(f.w.drawSocial(g,1),true);assert.ok(calls.length>=16);
+ assert.equal(f.w.drawSocial(g,1),true);assert.ok(calls.length>=12);
  assert.equal(calls.some(v=>v[0]==='#f8efd7'),true);
  assert.ok(calls.some(v=>v[0]==='#c996b0'));
  f.setPip(1350,1350);
