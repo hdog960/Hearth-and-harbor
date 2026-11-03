@@ -250,5 +250,5 @@ test('new module loads before the real game, is cached offline and the release i
  assert.ok(html.indexOf('household-roles-v2526.js')<html.indexOf('game.js'));
  assert.ok(html.indexOf('household-roles-v2526.js')<html.indexOf('household-rhythms-v2516.js'));
  assert.match(sw,/const CACHE='hearth-harbor-v[0-9]+-[a-z-]+'/);
- assert.match(html,/<title>Hearth & Harbor · [^<]+ v2\.(?:5\.\d+|6\.\d+|7\.\d+|8\.\d+|9\.\d+)<\/title>/);
+ assert.match(html,/<title>Hearth & Harbor · [^<]+ (?:v2\.(?:5\.\d+|6\.\d+|7\.\d+|8\.\d+|9\.\d+)|v3\.0)<\/title>/);
 });

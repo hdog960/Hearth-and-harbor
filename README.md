@@ -1,3 +1,13 @@
+# Hearth & Harbor v3.0 — Generations: Chosen Growing Years
+
+**Our agreed creative review milestone is here.** Pip's existing optional childhood growth now has a distinct, *never automatic*, early-teen chapter called **The Next Little Horizon**. After an Independent Child milestone, seven more village days and substantial genuine memories with Wren, the Friendship Corner, Poppy and their real cottage, you can choose whether Pip is ready to grow. The two directions—**Explore with Curiosity** and **Grow Through Kindness**—affect Pip's original character artwork, scale, cottage growth chart, self-directed creative routine, existing dream project themes and truthful Connections Atlas family history. Adult romance, jobs, school, artificial relationship rewards, new family claims, accounts and save resets are not introduced.
+
+**Also fixed:** the game's main input handler now correctly forwards the **old** `pg280-*` growth buttons, which had been disconnected, as well as the new `pg300-*` decision controls. Every previous childhood stage is preserved on the original `hearth-harbor-save-v1` key.
+
+[Read the complete v3.0 QA and player review guide](GENERATIONS_V300_REVIEW_AND_QA.md).
+
+## Previous release — v2.9.9 Stories Brought Home
+
 # Hearth & Harbor v2.9.9 — Stories Brought Home
 
 **A real childhood friendship can now change life inside Poppy and Pip's cottage.** After a genuine Pip–Wren village outing on an earlier day, Poppy and Pip must complete a matching *real, timed shared household activity* to unlock one of three original, personally meaningful family conversations. Your response produces a small permanent, choice-colored pixel painting on the cottage wall and an authentic Connections Atlas memory. Three different earned stories become a little family gallery. No artificial auto-completion, new family ties, fake rewards, account, paywall or save reset.

@@ -74,6 +74,17 @@ function schedule(minute,child,day,baseline){
   afternoon.title='An Independent '+def.afternoon.title;
   afternoon.note='Pip plans the next step on their own, ready to share it with Poppy';
  }
+ // A teen's selected direction affects their already real aspiration station;
+ // it never fabricates completion of that project's separate play steps.
+ if(growth>=3){
+  const choice=root.HearthPipGrowth.clean(child.growth).thirdChoice;
+  afternoon.x+=choice===0?21:-13;
+  afternoon.y+=choice===0?4:15;
+  afternoon.title=(choice===0?'A Curious ':'A Caring ')+def.afternoon.title;
+  afternoon.note=choice===0?
+   'Pip independently sketches a map for a new thoughtful adventure':
+   'Pip plans how this skill might make Maplewood more welcoming';
+ }
  const route=[
   {start:0,x:765,y:756,title:'Quiet rest',icon:'🌙',prop:'pillow',note:'A safe little cottage morning'},
   {start:360,...morning},
