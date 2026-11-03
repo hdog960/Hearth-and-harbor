@@ -224,7 +224,7 @@ function setup(api){
    return false;
   }
   session.phase='opening';const d=VISITS[session.id];
-  api.showModal?.('little-sprouts','<section class="ls272-book pv289-modal"><header class="ls272-cover"><small>🌷 THREE PEOPLE · A LIVED HOME VISIT</small><h2>'+d.icon+' '+esc(d.name)+'</h2><p>'+esc(d.greet)+'</p></header><div class="ls272-activity">'+
+  api.showModal?.('little-sprouts','<section class="ls272-book pv289-modal"><header class="ls272-cover"><small>🌷 THREE PEOPLE · A LIVED HOME VISIT</small><h2>'+d.icon+' '+esc(d.name)+'</h2><p>'+esc(d.greet)+'</p></header>'+ (api.getGuestPersonalityLine?.(session.id)?'<p class="pv289-personality">'+esc(api.getGuestPersonalityLine(session.id))+'</p>':'')+'<div class="ls272-activity">'+
    d.open.map((label,i)=>'<button data-act="pv289-open" data-id="'+i+'">'+esc(label)+'</button>').join('')+
    '</div><button class="ls272-secondary" data-act="pv289-cancel">Leave this for another time</button></section>');
   return true;
