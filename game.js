@@ -2120,14 +2120,14 @@ function drawScene(){if(!W||!H)return;
   }
   littleSprouts.adventures.draw(ctx,tick);
   littleSprouts.helpers.draw(ctx,tick);
-  littleSprouts.draw(ctx,{scene,tick,drawSprite:(child,x,y,routine)=>{ellipse(ctx,'#21474444',x,y,21,6);drawArt(ctx,charArt(child,routine?.facing||'front',routine?.moving?Math.floor(tick*8)%2:routine?.project?Math.floor(tick*2.5)%2:0,'happy'),x,y,littleSprouts.growth.visual().scale);littleSprouts.worldKeepsakes.drawActor(ctx,'child','pip',{x,y},tick)}});
+  littleSprouts.draw(ctx,{scene,tick,drawSprite:(child,x,y,routine)=>{ellipse(ctx,'#21474444',x,y,21,6);drawArt(ctx,charArt(child,routine?.facing||'front',routine?.moving?(Number.isFinite(routine.stride)?Math.floor(routine.stride)%2:Math.floor(tick*8)%2):routine?.project?Math.floor(tick*2.5)%2:0,'happy'),x,y,littleSprouts.growth.visual().scale);littleSprouts.worldKeepsakes.drawActor(ctx,'child','pip',{x,y},tick)}});
    littleSprouts.worldKeepsakes.drawCelebration(ctx,tick);
    drawCoupleSparkles(ctx);
  }else{
   if(scene==='residence')drawResidenceFurniture(ctx);else if(scene==='home')drawHomeFurniture(ctx);
   drawCharacter(ctx,playerDef(),player.x,player.y,player.facing,!!player.target,householdHold?.kind==='chat'?'happy':'neutral');
   if(householdHold&&householdHold.where===scene)drawHouseholdActivity(ctx,player.x,player.y,householdHold.kind,1-householdHold.remaining/householdHold.duration,3);
-  if(scene==='home'){littleSprouts.homeHelp.drawBanner(ctx,tick);littleSprouts.dreams.drawKeepsake(ctx,tick);littleSprouts.growth.drawWall(ctx,tick);littleSprouts.familyLegacy.draw(ctx,tick);littleSprouts.rituals.draw(ctx,tick);littleSprouts.draw(ctx,{scene,tick,drawSprite:(child,x,y,routine)=>{ellipse(ctx,'#21474444',x,y,21,6);drawArt(ctx,charArt(child,routine?.facing||'front',routine?.moving?Math.floor(tick*8)%2:routine?.project?Math.floor(tick*2.5)%2:0,'happy'),x,y,littleSprouts.growth.visual().scale)}});}
+  if(scene==='home'){littleSprouts.homeHelp.drawBanner(ctx,tick);littleSprouts.dreams.drawKeepsake(ctx,tick);littleSprouts.growth.drawWall(ctx,tick);littleSprouts.familyLegacy.draw(ctx,tick);littleSprouts.rituals.draw(ctx,tick);littleSprouts.draw(ctx,{scene,tick,drawSprite:(child,x,y,routine)=>{ellipse(ctx,'#21474444',x,y,21,6);drawArt(ctx,charArt(child,routine?.facing||'front',routine?.moving?(Number.isFinite(routine.stride)?Math.floor(routine.stride)%2:Math.floor(tick*8)%2):routine?.project?Math.floor(tick*2.5)%2:0,'happy'),x,y,littleSprouts.growth.visual().scale)}});}
    if(scene==='residence')sharedScenes.drawOverlay(ctx,{home:activeResidence,tick});
   if(scene==='home'||scene==='residence')familyTable.drawFront(ctx,{home:scene==='home'?'player':activeResidence,tick});
  }
@@ -2546,6 +2546,8 @@ const littleSprouts=window.HearthLittleSprouts.setup({
  goTown:()=>goScene('town'),
  nearestWalkable:(p,w)=>nearestWalkable(p,w,true),
  isWalkable:(x,y,w)=>isWalkable(x,y,w,true),
+ findPath:(from,to,w)=>findPath(from,to,w),
+ isMovementBlocked:()=>!!modal||!!talk,
  isPaused:()=>!!modal||!!talk||speed===0,
  ownDone:kind=>residentDayRecord('player').done.includes(kind),
  isQueued:kind=>householdCurrent===kind||householdQueue.includes(kind),

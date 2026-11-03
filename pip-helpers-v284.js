@@ -150,7 +150,11 @@ function setup(api){
  function arrive(step){
   if(!valid()||session.phase!=='work'||step!==session.step)return false;
   const p=session.spots[step],who=player(),c=pip();
-  if(!who||!c||dist(p,who)>48||dist(p,c)>115)return false;
+  if(!who||!c||dist(p,who)>48)return false;
+  if(dist(p,c)>115){
+   api.notify?.('🌼 Pip is still catching up. Stay beside this craft marker and tap it again when Pip arrives.');
+   return false;
+  }
   session.step++;
   if(session.step<2){api.notify?.('🌷 '+PROJECTS[session.id].tasks[step]+' complete. Now find the second illustrated craft piece.');return true}
   session.phase='finish';

@@ -163,8 +163,8 @@ test('game-world architecture has correct load order and safe old save key',()=>
  assert.ok(html.includes('pip-world-keepsakes-v285.css?v=2.8.5'));
  assert.ok(html.indexOf('pip-helpers-v284.js')<html.indexOf('pip-world-keepsakes-v285.js'));
  assert.ok(html.indexOf('pip-world-keepsakes-v285.js')<html.indexOf('little-sprouts-v272.js'));
- assert.ok(html.includes('little-sprouts-v272.js?v=2.8.5'));
- assert.ok(html.includes('game.js?v=2.8.5'));
+ assert.ok(html.includes('little-sprouts-v272.js?v=2.8.6'));
+ assert.ok(html.includes('game.js?v=2.8.6'));
  assert.match(sw,/hearth-harbor-v285-living-keepsakes/);
  for(const file of ['pip-world-keepsakes-v285.js','pip-world-keepsakes-v285.css'])
   assert.ok(sw.includes("'./"+file+"'"));

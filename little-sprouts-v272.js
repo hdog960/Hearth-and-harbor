@@ -72,6 +72,7 @@ function setup(api){
   getState:state,getChild:data,getScene:api.getScene,
   getAdults:api.getAdults,getPlayer:api.getPlayer,
   goTown:api.goTown,nearestWalkable:api.nearestWalkable,isWalkable:api.isWalkable,
+  findPath:api.findPath,isMovementBlocked:api.isMovementBlocked,
   isPaused:api.isPaused,showModal:api.showModal,notify:api.notify,
   save:api.save,updateUI:api.updateUI,openBook:()=>entry(),
   childPosition:()=>position(),isPlayerNearChild:d=>api.isNearby?.(position(),d)===true,
@@ -233,7 +234,7 @@ function setup(api){
  function draw(g,{scene,tick=0,drawSprite}={}){
   if(!g||!drawSprite||(scene!=='town'&&scene!=='home')||scene!==api.getScene?.()||!inPlace())return;
   const base=routines.location(),escort=neighbors.escortPose(),participation=homeHelp.pose()||familyLegacy.pose()||rituals.pose(),routine=participation?{...base,...participation,label:'Helping Poppy in the cottage',icon:'🏡'}:escort?{...base,...escort,label:'A village walk with Poppy',icon:'🌼'}:base;
-  const pos=position(),phase=Math.sin(tick*2.5)*1.5;
+  const pos=position(),phase=routine.moving?Math.abs(Math.sin((routine.stride??tick*4)*Math.PI))*2.7:Math.sin(tick*1.7)*.6;
   if(!escort){if(routine.mentorVisit)guides.draw(g,routine,tick);else if(!participation&&routine.project)projects.drawProp(g,routine,tick);else routines.drawProp(g,routine,tick)}
   drawSprite(CHILD,pos.x,pos.y+phase,routine);
   growth.drawAccessory(g,pos.x,pos.y+phase,tick);

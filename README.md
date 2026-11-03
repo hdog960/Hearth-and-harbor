@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.8.6 — Pip's Companion Paths
+
+**Pip now actually navigates Maplewood around houses, gardens, ponds and fences rather than trying to walk straight through scenery.** The optional escort reuses Poppy's existing grid pathfinding, follows changes of direction, never teleports across obstacles, pauses cleanly for dialogue, and moves with distance-driven child animation. Family crafts and adventures now explain when Pip has not reached their actual object yet, so Poppy can wait and retry. Older saves, village crafts and handmade keepsakes remain unchanged.
+
+[Read the v2.8.6 movement changes, QA and Generations roadmap](PIPS_COMPANION_PATHS_V286_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.8.5 Living Neighborhood Keepsakes
+
 # Hearth & Harbor v2.8.5 — Living Neighborhood Keepsakes
 
 **Maplewood now remembers Pip's genuinely completed neighborhood projects in its actual 2.5D town.** Six separate original hand-crafted pixel decorations appear after you truly help those particular villagers. Tap a finished keepsake, walk to it in the world, and read the exact choices your household made. During real craft work, Poppy, Pip and the adult neighbor now visibly participate with grounded hand-and-paper animation; after completion, a short celebration marks the moment. All records stay in the same original old-save-compatible system, without new accounts, passive prizes or added currencies.

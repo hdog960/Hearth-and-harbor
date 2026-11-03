@@ -109,7 +109,13 @@ function setup(api){
  function arrive(step){
   if(!valid()||session.readyChoice||session.step!==step)return false;
   const p=session.spots[step],player=api.getPlayer?.();
-  if(!player||!finite(player.x)||!finite(player.y)||distance(player,p)>48||!present(session.id))return false;
+  if(!player||!finite(player.x)||!finite(player.y)||distance(player,p)>48)return false;
+  const pip=api.childPosition?.();
+  if(!pip||!finite(pip.x)||!finite(pip.y)||distance(pip,p)>115){
+   api.notify?.('🌼 Pip is still coming along. Wait together at the glowing object and tap it again when Pip arrives.');
+   return false;
+  }
+  if(!present(session.id))return false;
   session.step++;
   if(session.step<3){
    api.notify?.('🌼 '+LOCATIONS[session.id].tasks[step]+' · '+session.step+'/3. Find the next glowing object!');
