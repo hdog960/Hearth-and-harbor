@@ -2565,7 +2565,7 @@ const littleSprouts=window.HearthLittleSprouts.setup({
  nearestWalkable:(p,w)=>nearestWalkable(p,w,true),
  isWalkable:(x,y,w)=>isWalkable(x,y,w,true),
  findPath:(from,to,w)=>findPath(from,to,w),
- hasCompetingEvent:id=>!!neighborScenes.current()?.pair?.includes(id),
+ hasCompetingEvent:id=>!!neighborScenes.current()?.pair?.includes(id)||(()=>{const n=NPCS.find(x=>x.id===id);return !!n&&!!(activeWedding(n)||activePromise(n)||activeMeeting(n)||activeCoupleRitual(n)||activeFriendVisit(n)||dateMoment?.id===id)})(),
  isMovementBlocked:()=>!!modal||!!talk,
  isPaused:()=>!!modal||!!talk||speed===0,
  ownDone:kind=>residentDayRecord('player').done.includes(kind),
