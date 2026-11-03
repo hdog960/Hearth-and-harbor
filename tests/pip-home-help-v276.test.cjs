@@ -2,7 +2,7 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=x=>fs.readFileSync(path.join(__dirname,'..',x),'utf8');
-const env={window:{}};for(const f of ['pip-routines-v273.js','pip-neighbors-v275.js','pip-home-help-v276.js','little-sprouts-v272.js'])vm.runInNewContext(read(f),env,{filename:f});
+const env={window:{}};for(const f of ['pip-routines-v273.js','pip-neighbors-v275.js','pip-home-help-v276.js','pip-dreams-v277.js','little-sprouts-v272.js'])vm.runInNewContext(read(f),env,{filename:f});
 const H=env.window.HearthPipHomeHelp,L=env.window.HearthLittleSprouts;
 function fixture({guardian=true,close=true,queue=true}={}){
  const state={day:7,minute:720,coins:550,youngResidents:{pip:L.defaults()},familyRoots:{chosen:{}},weddingPlans:{}};
@@ -154,7 +154,7 @@ test('iPhone offline load order, save key and actual world drawing are connected
  for(const file of ['pip-home-help-v276.js','pip-home-help-v276.css']){assert.ok(html.includes(file));assert.ok(sw.includes("'./"+file+"'"))}
  assert.ok(html.indexOf('pip-home-help-v276.js')<html.indexOf('little-sprouts-v272.js'));
  assert.ok(html.indexOf('little-sprouts-v272.js')<html.indexOf('game.js'));
- assert.match(html,/v=2\.7\.6/);assert.match(sw,/hearth-harbor-v276-little-helping-hands/);
+ assert.match(html,/v=2\.7\.7/);assert.match(sw,/hearth-harbor-v277-childhood-dreams/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
  assert.match(game,/littleSprouts\.homeHelp\.drawBanner\(ctx,tick\)/);
  assert.match(game,/littleSprouts\.homeHelp\.profile\(\)\.keepsake\?2:0/);
