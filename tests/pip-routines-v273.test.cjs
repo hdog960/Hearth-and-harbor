@@ -40,7 +40,7 @@ test('daily route changes character position and physical tap hitbox',()=>{
  assert.equal(f.pip.hit(f.pip.position().x,f.pip.position().y-45,'town'),true);
 });
 test('player-led activities remain proximity checked at Pip’s new scheduled location',()=>{
- const f=fixture();f.state.minute=490;
+ const f=fixture();f.state.minute=490;f.setPlayer(200,500);
  assert.equal(f.pip.begin('story'),false);
  const p=f.pip.position();f.setPlayer(p.x,p.y);
  assert.equal(f.pip.begin('story'),true);
