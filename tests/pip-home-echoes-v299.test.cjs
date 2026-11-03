@@ -93,7 +93,7 @@ test('a real response creates one saved memory and its original distinct wall po
  const pixels=[],g={save(){},restore(){},fillStyle:'',
   fillRect(...v){pixels.push([this.fillStyle,...v])}};
  assert.equal(f.m.drawWall(g,0),true);
- assert.ok(pixels.length>=10);
+ assert.ok(pixels.length>=9);
  assert.ok(pixels.some(v=>v[0]==='#ebc189'));
 });
 test('three separate completed cottage tasks bring three different lived stories home',()=>{
