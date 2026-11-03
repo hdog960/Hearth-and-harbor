@@ -142,7 +142,7 @@ function setup(api){
  })||{completed:()=>false,drawActor:()=>false,drawDisplay:()=>false,
   drawCelebration:()=>false,displays:()=>[],hit:()=>null,approach:()=>null,
   inspect:()=>false,actorMood:()=>false,advance:()=>{},handle:()=>false};
- const responses=root.HearthPipResponses.setup({
+ const responses=root.HearthPipResponses?.setup?.({
   getState:state,getChild:data,getScene:api.getScene,
   getDisplays:()=>worldKeepsakes.displays(),getAdults:api.getAdults,
   getPlayer:api.getPlayer,getChildPosition:()=>position(),
@@ -152,7 +152,8 @@ function setup(api){
   bondAdult:api.bondAdult,save:api.save,updateUI:api.updateUI,
   notify:api.notify,showModal:api.showModal,closeTalk:api.closeTalk,
   openBook:()=>entry()
- });
+ })||{panel:()=>'',handle:()=>false,mark:()=>false,drawAdult:()=>false,
+  drawChild:()=>false,schedule:(id,entry)=>entry,eligible:()=>false,dialogue:()=>null};
  const familyLegacy=root.HearthPipLegacy.setup({
   getState:state,getChild:data,getScene:api.getScene,
   nearChild:d=>api.isNearby?.(position(),d)===true,
