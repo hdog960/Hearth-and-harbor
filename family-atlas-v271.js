@@ -184,7 +184,7 @@ function setup(api){
   const responseChild=state().youngResidents?.pip;
   if(responseChild?.guardian==='player'&&dayOK(responseChild.guardianDay)&&responseChild.guardianDay<=now){
    const projects=root.HearthPipHelpers.clean(responseChild.helperProjects);
-   for(const r of root.HearthPipResponses.clean(responseChild.neighborResponses)){
+   for(const r of (root.HearthPipResponses?.clean?.(responseChild.neighborResponses)||[])){
     const source=projects.find(p=>p.id===r.id&&p.day<r.day&&p.day>=responseChild.guardianDay);
     if(!source||r.day>now||root.HearthPipGrowth.lifeStage(responseChild,source.day)<1)continue;
     out.push({day:r.day,kind:'child-neighbor-response',ids:['player','pip',r.id],
