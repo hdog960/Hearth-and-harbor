@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.9.5 — Wren of Maplewood
+
+**Maplewood has a second genuine younger resident.** Wren is a unique child with original character art, a daylong town schedule, real walking around houses and scenery, and three in-world friendship experiences with Pip. Bring Pip into the village to meet Wren, make an authored choice together, **actually walk both children to the little marked discovery spot**, and only then decide how to remember the afternoon. These real shared days change their peer friendship and Connections Atlas. Wren is **not** an adult, romantic option or automatically part of Poppy's household. No new navigation tab, account, currency or save reset.
+
+[Read the v2.9.5 new-young-resident development and QA report](WREN_OF_MAPLEWOOD_V295_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.9.4 A Bond Built by Living
+
 # Hearth & Harbor v2.9.4 — A Bond Built by Living
 
 **Poppy and Pip's family bond now evolves from actual shared days.** Three authored family chapters unlock through real childhood care, home activities, personal initiative and social memories—not a click-to-fill relationship meter. Each optional, face-to-face reflection saves a lasting two-choice memory that affects Pip's future dialogue, original sprite gestures and confidence approaching Poppy, adds a unique handmade piece to the cottage wall, and appears in the Connections Atlas. Aging remains optional; no new navigation tab, currency, paywall or save reset.
