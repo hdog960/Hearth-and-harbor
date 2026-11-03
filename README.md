@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.7.6 — Little Helping Hands
+# Hearth & Harbor v2.7.7 — Pip's Little Dreams
+
+**Pip can now pursue a real, chosen childhood aspiration.** Keeper of Stories, A Heart for Home and The Wonder Collector combine already-playable Story, Nature, Art, neighboring-villager conversations, cozy bedtime memories and actual household help into six earned chapters across three lifelong interests. Standing beside Pip after optional guardianship lets you choose or switch dreams; switching never erases previous achievements.
+
+Real completed activities, not instant menu clicks, make progress. Claiming an unlocked chapter gives a small one-time encouragement, an original visible aspiration emblem on Pip, and—on completing both chapters of a dream—an illustrated framed keepsake in the playable cottage. True dated achievements also appear in the Connections Atlas, without invented biological parentage or new adult-romance rules. All existing saves and the original iPhone offline game remain compatible.
+
+[Read the v2.7.7 technical QA and Generations handoff](PIPS_LITTLE_DREAMS_V277_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.7.6 Little Helping Hands
 
 **Pip now participates in Poppy's actual cottage routines.** After choosing guardianship, stand beside Pip and invite them to read, tidy, set the table or create together. Poppy's existing Daybook walks her to real household furniture and finishes the normal timed activity. Only that genuine first daily completion creates a childhood memory; opening a menu or queuing a task gives nothing.
 
