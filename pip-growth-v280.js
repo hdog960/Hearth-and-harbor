@@ -50,7 +50,7 @@ function evidence(child,day){
   measured[kind]=Math.max(persisted,validMemories);
  }
  const aids=Array.isArray(c.homeHelps)?c.homeHelps:[],home=uniqueDays(aids,x=>['read','tidy','meal','hobby'].includes(x.kind),day);
- const evening=uniqueDays(c.evenings,x=>Number.isInteger(x.mask)&&x.mask>=0&&x.mask<=3,day);
+ const evenings=uniqueDays(c.evenings,x=>Number.isInteger(x.mask)&&x.mask>=0&&x.mask<=3,day);
  const projects=uniqueDays(c.projects,x=>['stories','kindness','discover'].includes(x.dream)&&[1,2].includes(x.slot)&&Number.isInteger(x.mask)&&x.mask>=0&&x.mask<=3,day);
  const scores=obj(c.mentor?.counts)?c.mentor.counts:{};let neighbors=0,neighborKinds=0;
  for(const id of ['mabel','rosie','oliver','jun','bea','finn']){
