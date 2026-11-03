@@ -58,15 +58,48 @@ function setup(api){
   const p=api.childPosition?.();if(!p||!Number.isFinite(p.x)||!Number.isFinite(p.y))return null;
   return adults().filter(a=>dist(a,p)<=150&&(!id||a.id===id)).sort((a,b)=>dist(a,p)-dist(b,p))[0]||null;
  };
- const walkingNow=()=>!!walking&&town()&&isGuardian();
- const escortPose=()=>walkingNow()?{x:walking.x,y:walking.y,moving:walking.moving,facing:walking.facing}:null;
+ const walkingNow=()=>!!walking&&walking.day===day()&&town()&&isGuardian();
+ const escortPose=()=>walkingNow()?{x:walking.x,y:walking.y,moving:walking.moving,facing:walking.facing,stride:walking.stride}:null;
+ const finite=Number.isFinite;
+ const gap=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+ // Sample the entire traveled segment, not just its final coordinate, to
+ // prevent cut-through on diagonal joins between the original grid nodes.
+ function clearSegment(a,b){
+  if(!a||!b||![a.x,a.y,b.x,b.y].every(finite))return false;
+  if(typeof api.isWalkable!=='function')return true;
+  const n=Math.max(1,Math.ceil(gap(a,b)/11));
+  for(let i=1;i<=n;i++){
+   const p={x:a.x+(b.x-a.x)*i/n,y:a.y+(b.y-a.y)*i/n};
+   if(api.isWalkable(p.x,p.y,'town')!==true)return false;
+  }
+  return true;
+ }
+ function safeGoal(player){
+  const desired={x:player.x-35,y:player.y+26};
+  const target=api.nearestWalkable?.(desired,'town')||desired;
+  if(![target.x,target.y].every(finite)||gap(target,desired)>115||
+   api.isWalkable?.(target.x,target.y,'town')===false)return null;
+  return target;
+ }
+ function routeTo(from,dest){
+  const supplied=api.findPath?.({x:from.x,y:from.y},{x:dest.x,y:dest.y},'town');
+  const raw=Array.isArray(supplied)?supplied:[dest];
+  const points=[];
+  for(const p of raw.slice(0,80)){
+   if(!p||![p.x,p.y].every(finite)||api.isWalkable?.(p.x,p.y,'town')===false)return [];
+   if(!points.length||gap(p,points[points.length-1])>2)points.push({x:p.x,y:p.y});
+  }
+  return points;
+ }
  function startWalk(){
   if(walkingNow()||session||!isGuardian()||api.getScene?.()!=='home'||!api.isPlayerNearChild?.(130))return false;
   api.goTown?.();
   if(!town())return false;
   const p=api.getPlayer?.();if(!p)return false;
   const origin=api.nearestWalkable?.({x:p.x-38,y:p.y+27},'town')||{x:p.x-38,y:p.y+27};
-  walking={x:origin.x,y:origin.y,moving:false,facing:'front',day:day()};
+  if(!origin||![origin.x,origin.y].every(finite)||api.isWalkable?.(origin.x,origin.y,'town')===false)return false;
+  walking={x:origin.x,y:origin.y,moving:false,facing:'front',day:day(),
+   stride:0,route:[],goal:null,repath:0,blocked:0};
   api.notify?.('🌼 Pip joins your village stroll! Walk near a real neighbor to share a little moment.');
   api.updateUI?.();api.openBook?.();return true;
  }
@@ -79,23 +112,41 @@ function setup(api){
  function advance(dt){
   if(!walking)return;
   if(!town()||!isGuardian()||walking.day!==day()){walking=null;session=null;return}
-  if(!Number.isFinite(dt)||dt<=0||session||api.isPaused?.())return;
-  const player=api.getPlayer?.();if(!player)return;
-  const target=api.nearestWalkable?.({x:player.x-35,y:player.y+26},'town')||{x:player.x-35,y:player.y+26};
-  let dx=target.x-walking.x,dy=target.y-walking.y,dd=Math.hypot(dx,dy);
-  if(dd<5){walking.moving=false;return}
-  if(dd>460){
-   // Rejoin at a validated walkable tile if the player was teleported or a
-   // scene door repositioned them. Never move through town scenery.
-   walking.x=target.x;walking.y=target.y;walking.moving=false;return;
+  if(!finite(dt)||dt<=0)return;
+  if(session||(api.isMovementBlocked?api.isMovementBlocked():api.isPaused?.())){
+   walking.moving=false;return;
   }
-  const step=Math.min(dd,dt*215),nx=walking.x+dx/dd*step,ny=walking.y+dy/dd*step;
-  const valid=api.isWalkable?.(nx,ny,'town')??true;
-  const vx=valid?nx:api.isWalkable?.(nx,walking.y,'town')?nx:walking.x;
-  const vy=valid?ny:api.isWalkable?.(walking.x,ny,'town')?ny:walking.y;
-  if(vx===walking.x&&vy===walking.y){walking.moving=false;return}
-  walking.facing=dy< -20?'back':Math.abs(dx)>=Math.abs(dy)?'side':'front';
-  walking.x=vx;walking.y=vy;walking.moving=true;
+  const player=api.getPlayer?.();
+  if(!player||![player.x,player.y].every(finite)){walking.moving=false;return}
+  const target=safeGoal(player);
+  if(!target){walking.moving=false;walking.route=[];return}
+  const here={x:walking.x,y:walking.y};
+  if(gap(here,target)<9){walking.moving=false;walking.route=[];walking.goal=target;return}
+  walking.repath-=Math.min(dt,.3);
+  // Track the player's *live* position; plan over the original solid map
+  // rather than walking directly across fences, houses and water.
+  if(!walking.goal||gap(walking.goal,target)>65||walking.repath<=0){
+   walking.route=routeTo(here,target);walking.goal={x:target.x,y:target.y};
+   walking.repath=.45;
+  }
+  const path=walking.route;
+  if(!path?.length){walking.moving=false;return}
+  let budget=Math.min(dt,.18)*205,travelled=0;
+  for(let count=0;count<4&&path.length&&budget>0;count++){
+   const next=path[0],current={x:walking.x,y:walking.y},d=gap(current,next);
+   if(d<3){path.shift();continue}
+   const step=Math.min(budget,d),candidate={x:current.x+(next.x-current.x)*step/d,
+    y:current.y+(next.y-current.y)*step/d};
+   if(!clearSegment(current,candidate)){
+    walking.route=[];walking.repath=0;break;
+   }
+   walking.x=candidate.x;walking.y=candidate.y;
+   walking.facing=next.y-current.y< -12?'back':
+    Math.abs(next.x-current.x)>=Math.abs(next.y-current.y)?'side':'front';
+   walking.stride+=step/18;travelled+=step;budget-=step;
+   if(step>=d-1)path.shift();
+  }
+  walking.moving=travelled>1;
  }
  function page(){
   const saved=meetings().filter(m=>m.day<=day());
@@ -103,7 +154,7 @@ function setup(api){
   const heading='<div class="pn275-heading"><small>CHILDHOOD · FRIENDLY VILLAGE MOMENTS</small><h3>🌼 Meet the Neighbors</h3><p>Pip meets real villagers only when you are walking together and they are nearby. No imagined conversations from a distant menu.</p></div>';
   const walkingPanel=isGuardian()?
    (api.isMentorVisit?.()?'<div class="pn275-walk"><strong>🌷 A village guide afternoon</strong><p>Pip is spending time near a real Maplewood guide. Meet the villager in town to share a genuine memory.</p></div>':
-    walkingNow()?'<div class="pn275-walk"><strong>🚶 Walking together</strong><p>Pip follows you in the actual Maplewood world. Find a neighbor, then open Pip’s Daybook again to share a moment.</p><button data-act="pn275-stop">Finish our stroll</button></div>':
+    walkingNow()?'<div class="pn275-walk"><strong>🚶 Walking together</strong><p>Pip follows your actual walking route around Maplewood’s buildings and garden paths. Stay close at activity markers so Pip can help, too.</p><button data-act="pn275-stop">Finish our stroll</button></div>':
     '<div class="pn275-walk"><strong>🏡 Take Pip for a walk</strong><p>Visit Pip in your cottage to begin an accompanied stroll through the real village.</p>'+ (api.getScene?.()==='home'&&api.isPlayerNearChild?.(130)?'<button data-act="pn275-walk">Take a village stroll</button>':'<small>Find Pip at home first to start a walk.</small>')+'</div>'):'';
   const encounter=now?'<div class="pn275-neighbor"><strong>'+STORIES[now.id].icon+' '+esc(now.name)+' is really here</strong><p>'+esc(STORIES[now.id].title)+' · '+(already?'You have already shared today’s moment.':'Choose a tiny two-part activity together.')+'</p>'+(already?'<small>✓ Today’s visit is remembered.</small>':'<button data-act="pn275-start" data-id="'+now.id+'">Share a real neighbor moment</button>')+'</div>':'<div class="pn275-no-neighbor">No villager is close to Pip right now. Look for one in the playable town—not everyone is available all the time.</div>';
   const memories=saved.slice(-8).reverse().map(m=>'<li>'+STORIES[m.id].icon+' Day '+m.day+' · '+esc(STORIES[m.id].title)+'</li>').join('');
