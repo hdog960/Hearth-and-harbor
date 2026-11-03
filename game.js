@@ -2522,6 +2522,7 @@ const littleSprouts=window.HearthLittleSprouts.setup({
  isWalkable:(x,y,w)=>isWalkable(x,y,w,true),
  isPaused:()=>!!modal||!!talk||speed===0,
  ownDone:kind=>residentDayRecord('player').done.includes(kind),
+ isQueued:kind=>householdCurrent===kind||householdQueue.includes(kind),
  ownHold:()=>householdHold?.where==='home'?{kind:householdHold.kind,remaining:householdHold.remaining,duration:householdHold.duration}:null,
  queueOwnAction:kind=>queueOwnHomeAction(kind)
 });
