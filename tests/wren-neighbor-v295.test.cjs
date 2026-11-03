@@ -19,7 +19,7 @@ function fixture({day=1,minute=780,scene='town',player={x:810,y:935},
  const api={getState:()=>state,getScene:()=>where,getPlayer:()=>({...pp}),
   getPip:()=>state.youngResidents.pip,getPipPosition:()=>cp?{...cp}:null,
   isPipPresent:()=>here,isPipBusy:()=>occupied,
-  isPlayerMoving:()=>moving,isPaused:()=>freeze,
+  isPlayerMoving:()=>moving,isPaused:()=>freeze,isDialogOpen:()=>!!menu,
   isWalkable:(x,y)=>safe({x,y}),nearestWalkable:p=>safe(p)?{...p}:null,
   findPath:(a,b)=>{pathCalls++;routeHistory.push({a:{...a},b:{...b}});
    return router?router(a,b):[{...b}];},
@@ -98,6 +98,15 @@ test('another active child outing takes priority over Wren peer play',()=>{
  f.w.talk();assert.match(f.menu.html,/another childhood adventure/);
  assert.equal(f.w.session,null);
 });
+test('the standard iPhone close button cancels an unfinished child conversation',()=>{
+ const first=fixture();first.w.talk();first.api.closeModal();first.step(.1);
+ assert.equal(first.w.session,null);assert.equal(first.saves,0);
+ assert.equal(first.w.eligible(),true);
+ const last=fixture();last.playFirst();last.reach();
+ last.api.closeModal();last.step(.1);
+ assert.equal(last.w.session,null);assert.equal(last.saves,0);
+});
+
 test('a real first face-to-face encounter opens a unique two-step child dialogue',()=>{
  const f=fixture();assert.equal(f.w.talk(),true);
  assert.match(f.menu.html,/WREN & PIP/);
@@ -295,6 +304,7 @@ test('iPhone build loads Wren before save sanitization, routes world touch and u
  assert.match(game,/youngNeighbors\.hitMarker\(wx,wy\)/);
  assert.match(game,/youngNeighbors\.hit\(wx,wy\)/);
  assert.match(game,/yn295-/);
+ assert.match(game,/isDialogOpen:\(\)=>modal==='young-neighbors'/);
  assert.match(game,/charArt\(window\.HearthYoungNeighbors\.WREN/);
  assert.match(game,/youngNeighbors\.drawAccent/);
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
