@@ -70,7 +70,7 @@ function setup(api){
  const state=()=>api.getState(),child=()=>api.getChild(),day=()=>dayOK(state().day)?state().day:1;
  const scene=()=>api.getScene?.(),now=()=>finite(state().minute)?state().minute:-1;
  const records=()=>clean(child().homeVisits);
- const current=()=>records().pending;
+ const current=()=>{const p=records().pending;return p&&p.day>=day()?p:null};
  const earlier=id=>child().guardian==='player'&&dayOK(child().guardianDay)&&
   child().guardianDay<=day()&&IDS.includes(id)&&
   (child().mentor?.counts?.[id]||0)>=1&&
