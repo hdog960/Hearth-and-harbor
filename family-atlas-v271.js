@@ -261,6 +261,19 @@ function setup(api){
      home:null});
    }
   }
+  // Hand-crafted peer legacy follows only saved, validated old outing
+  // provenance and genuine co-present child corner chapters on separate days.
+  if(obj(peerData)&&obj(peerData.pip)&&root.HearthYoungNeighbors?.clean){
+   const club=root.HearthYoungNeighbors.clean(peerData.wren).club?.chapters||[];
+   for(const r of club){
+    const chapter=root.HearthYoungNeighbors.CLUB?.find(c=>c.kind===r.kind);
+    if(!chapter||!dayOK(r.day)||r.day>now)continue;
+    out.push({day:r.day,kind:'child-peer-club',ids:['pip','wren','player'],
+     title:'Friendship Corner · '+chapter.name,
+     detail:'After a real older childhood outing, Poppy, Pip and Wren made a visible handmade town keepsake together: '+chapter.ending[r.last],
+     home:null});
+   }
+  }
   // A true shared traditional keepsake is a childhood family memory,
   // never legal ancestry, marriage, a fictitious parent or a new guardian.
   const child=state().youngResidents?.pip,keeps=child?.legacyKeepsakes;

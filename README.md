@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.9.7 — The Friendship Corner
+
+**Pip and Wren can build a little permanent handmade place in Maplewood over three genuine days.** Each original story, color and nature chapter requires an earlier actual shared outing, a completed outing that day, physically traveling together to the real village project site, and choosing how to finish. Each chapter changes the original pixel-art friendship pennant in the playable world; the physical sign can be tapped to revisit true saved choices. No free click rewards, fake child memories, economy changes, new account or save reset.
+
+[Read the v2.9.7 Friendship Corner implementation, save safeguards and QA roadmap](WREN_FRIENDSHIP_CORNER_V297_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.9.6 Living Child Friendships
+
 # Hearth & Harbor v2.9.6 — Living Child Friendships
 
 **Pip and Wren now have little spontaneous moments between their actual planned afternoons.** When Pip is genuinely nearby in Maplewood, Wren can independently walk over along safe village paths and briefly share original paper-picture greetings without interrupting the player. Their topic reflects actually earned friendship days and past interests. Real two-stop activities remain the only way to grow the saved friendship; idle encounters grant no coins, relationship points, fake memories or adult/family ties. No additional tab, save key, account, or reset.

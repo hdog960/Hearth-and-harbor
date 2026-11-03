@@ -238,7 +238,7 @@ test('every touched production module and mobile asset is wired to a real featur
  assert.ok(html.indexOf('pip-guest-echoes-v290.js')<html.indexOf('little-sprouts-v272.js'));
  for(const asset of ['pip-guest-echoes-v290.js','pip-guest-echoes-v290.css'])
   assert.ok(sw.includes("'./"+asset+"'"));
- assert.match(sw,/hearth-harbor-v296-child-friendship-moments/);
+ assert.match(sw,/hearth-harbor-v297-friendship-corner/);
  assert.match(game,/littleSprouts\.guestEcho\.schedule\(n\.id,visitEntry\)/);
  assert.match(game,/littleSprouts\.guestEcho\.townGesture/);
  assert.match(game,/littleSprouts\.guestEcho\.townDialogue/);
