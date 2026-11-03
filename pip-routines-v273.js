@@ -49,14 +49,15 @@ function plan(minute,guardian){
   next:route[(i+1)%4].title,nextAt:((i+1)%4)*360,slot:i,
   route:route.map(r=>({start:r.start,title:r.title,icon:r.icon,note:r.note})),progress};
 }
-function mastery(memories,day){
+function mastery(memories,day,earnedCounts=null){
  const valid=Array.isArray(memories)?memories:[],result={};
  for(const [kind,meta] of Object.entries(MASTERIES)){
   const dates=new Set();
   for(const m of valid){
    if(obj(m)&&m.kind===kind&&validDay(m.day)&&m.day<=day&&Number.isInteger(m.choiceMask)&&m.choiceMask>=0&&m.choiceMask<=7)dates.add(m.day);
   }
-  const days=dates.size,rank=Math.min(3,Math.floor(days/2));
+  const prior=obj(earnedCounts)&&Number.isInteger(earnedCounts[kind])&&earnedCounts[kind]>=0&&earnedCounts[kind]<=999?earnedCounts[kind]:0;
+  const days=Math.max(dates.size,prior),rank=Math.min(3,Math.floor(days/2));
   result[kind]={kind,title:meta.title,icon:meta.icon,days,rank,label:meta.ranks[rank],next:rank===3?null:(rank+1)*2-days};
  }
  return result;
@@ -78,7 +79,7 @@ function setup(api){
  const nearby=()=>api.getScene?.()==='home'&&api.isNearby?.(location(),115);
  const eligible=()=>evening()&&nearby()&&!records().some(r=>r.day===day())&&!session;
  function card(){
-  const p=location(),d=child(),skills=mastery(d.memories,day());
+  const p=location(),d=child(),skills=mastery(d.memories,day(),d.skills);
   const schedule=p.route.map((s,i)=>'<div class="pr273-schedule'+(i===p.slot?' pr273-current':'')+'"><span>'+s.icon+'</span><div><b>'+s.title+'</b><small>'+s.note+'</small></div><small>'+['12 AM','6 AM','12 PM','6 PM'][i]+'</small></div>').join('');
   const skillsHtml=Object.values(skills).map(x=>'<div class="pr273-skill"><span>'+x.icon+'</span><div><b>'+x.title+' · '+x.label+'</b><small>'+x.days+' different days spent learning'+(x.next?' · '+x.next+' more to next chapter':' · Every chapter earned')+'</small><i><em style="width:'+Math.min(100,(x.days/6)*100)+'%"></em></i></div></div>').join('');
   return '<div class="pr273-panel"><div class="pr273-header"><small>A CHILDHOOD WITH ITS OWN RHYTHM</small><h3>🌼 Pip’s Living Day</h3><p>Pip actually follows this daily route in the playable world. The little schedule adjusts once Pip lives in your cottage.</p><strong>'+p.icon+' Right now: '+p.label+'</strong><small>Coming next: '+p.next+'</small></div><div class="pr273-route">'+schedule+'</div><h3>Little things Pip is learning</h3><p>These chapters grow only when your real shared activities are completed on different in-game days.</p>'+skillsHtml+(guardian()?'<div class="pr273-night"><strong>🌙 Our evening ritual</strong><p>After 6 PM, spend two thoughtful moments together in your cottage. Once each night; never an automatic reward.</p>'+(eligible()?'<button data-act="pr273-start">Start a cozy bedtime ritual</button>':records().some(r=>r.day===day())?'<small>✓ Tonight’s memory is already in the scrapbook.</small>':'<small>Visit Pip in your cottage after 6 PM to share this moment.</small>')+'</div>':'')+(records().length?'<h3>Bedtime memories</h3><ul class="pr273-memories">'+records().slice(-6).reverse().map(e=>'<li>🌙 Day '+e.day+' · A cozy evening together</li>').join('')+'</ul>':'')+'</div>';
@@ -138,7 +139,7 @@ function setup(api){
   }
   g.restore();
  }
- return {card,handle,start,page,choose,eligible,location,drawProp,mastery:()=>mastery(child().memories,day()),records, get session(){return session}};
+ return {card,handle,start,page,choose,eligible,location,drawProp,mastery:()=>mastery(child().memories,day(),child().skills),records, get session(){return session}};
 }
 root.HearthPipRoutines={setup,plan,mastery,cleanEvenings,ROUTES,MASTERIES};
 })(window);
