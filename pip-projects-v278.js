@@ -62,7 +62,7 @@ function schedule(minute,child,day,baseline){
  const focus=child?.dream?.focus,chosen=child?.dream?.chosenDay;
  if(child?.guardian!=='player'||!IDS.includes(focus)||!dayOK(chosen)||chosen>day)return fallback;
  const def=DREAMS[focus],baseRoute=fallback.route;
- const growth=root.HearthPipGrowth.progress(child,day).stage;
+ const growth=root.HearthPipGrowth.lifeStage(child,day);
  const morning={...def.morning},afternoon={...def.afternoon};
  if(growth>=1){
   morning.x+=12;morning.y-=12;
