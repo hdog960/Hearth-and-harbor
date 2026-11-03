@@ -74,7 +74,21 @@ function setup(api){
  const state=()=>api.getState(),child=()=>api.getChild(),day=()=>validDay(state().day)?state().day:1;
  const guardian=()=>child().guardian==='player',location=()=>{
   const s=state(),c=child(),base=root.HearthPipProjects.schedule(s.minute,c,day(),plan);
-  const actual=root.HearthPipGuides.attendancePose(base,c,s.minute,day(),api.getAdults?.()||[],api.isWalkable);
+  let actual=root.HearthPipGuides.attendancePose(base,c,s.minute,day(),api.getAdults?.()||[],api.isWalkable);
+  // A chosen Young Teen's quiet creative time is visible in the real cottage.
+  // Prioritize existing supervised child projects, mentors and earned home
+  // rhythms; ordinary time then uses genuine furniture-aware autonomy paths.
+  const teen=root.HearthPipGrowth?.clean?.(c.growth);
+  if(teen?.stage===3&&teen.thirdDay<=day()&&actual.scene==='home'&&
+     actual.slot===2&&!actual.project&&!actual.mentorVisit){
+   const curious=teen.thirdChoice===0;
+   const title=curious?'Planning a little adventure':'Making a welcome journal';
+   actual={...actual,x:curious?611:655,y:curious?756:795,
+    label:title,icon:curious?'🗺️':'🪡',prop:curious?'book':'crayon',
+    note:curious?'Drawing a real map of things to discover':'Making a gentle plan to help friends feel at home',
+    growthStage:3,route:actual.route?.map((r,i)=>i===2?
+      {...r,title,note:curious?'A self-chosen creative map':'A thoughtful handmade journal'}:r)||actual.route};
+  }
   return api.adjustHomePose?.(actual)||actual;
  };
  const records=()=>child().evenings||[];
