@@ -268,6 +268,7 @@ test('phone source uses existing real 3.8s action and child world tap, no new na
   assert.ok(sw.includes("'./"+f+"'"));
  assert.match(sw,/hearth-harbor-v294-bond-built-by-living/);
  assert.match(game,/littleSprouts\.initiatives\.completed\(kind,once,state\.day\)/);
+ assert.match(game,/if\(action\.startsWith\('pi292-'\)\|\|action\.startsWith\('pb294-'\)\)return littleSprouts\.handle\(action,id\)/);
  assert.match(game,/if\(!littleSprouts\.initiatives\.request\(\)&&!littleSprouts\.familyBond\.request\(\)\)littleSprouts\.entry\(\)/);
  assert.match(game,/householdHold=\{kind,where,id,remaining:3\.8,duration:3\.8\}/);
  assert.match(little,/getSchedule:\(\)=>approaches\.schedule\(initiatives\.schedule\(routines\.location\(\)\)\)/);
