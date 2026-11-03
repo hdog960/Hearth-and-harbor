@@ -125,6 +125,25 @@ function setup(api){
      home:null});
    }
   }
+  // Only explicit, dated optional childhood milestones appear as memories.
+  // Development is NOT biological aging, parentage, marriage or a new guardian.
+  const youth=state().youngResidents?.pip,earnedGrowth=youth?.growth;
+  if(youth?.guardian==='player'&&dayOK(youth.guardianDay)&&youth.guardianDay<=now&&obj(earnedGrowth)){
+   const first=earnedGrowth.firstDay,second=earnedGrowth.secondDay;
+   if(Number.isInteger(earnedGrowth.stage)&&earnedGrowth.stage>=1&&
+      dayOK(first)&&first<=now&&first>=youth.guardianDay){
+    out.push({day:first,kind:'child-growth',ids:['player','pip'],
+     title:'Pip Finds Their Own Feet',
+     detail:'A chosen developmental milestone earned through real family and village life',
+     home:'player'});
+    if(earnedGrowth.stage>=2&&dayOK(second)&&second>=first&&second<=now){
+     out.push({day:second,kind:'child-growth',ids:['player','pip'],
+      title:'Pip Is Ready for Bigger Adventures',
+      detail:'A second optional childhood milestone earned through long-term genuine experiences',
+      home:'player'});
+    }
+   }
+  }
   for(const home of HOMES.slice(1)){
    const portraits=api.getPortraits?.(home)||[];
    for(const p of portraits){

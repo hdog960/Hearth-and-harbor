@@ -3,7 +3,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 const env={window:{}};
-for(const file of ['pip-projects-v278.js','pip-guides-v279.js','pip-routines-v273.js','pip-neighbors-v275.js','pip-home-help-v276.js','pip-dreams-v277.js','little-sprouts-v272.js','family-atlas-v271.js'])
+for(const file of ['pip-growth-v280.js','pip-projects-v278.js','pip-guides-v279.js','pip-routines-v273.js','pip-neighbors-v275.js','pip-home-help-v276.js','pip-dreams-v277.js','little-sprouts-v272.js','family-atlas-v271.js'])
  vm.runInNewContext(read(file),env,{filename:file});
 const P=env.window.HearthPipProjects,R=env.window.HearthPipRoutines,L=env.window.HearthLittleSprouts,A=env.window.HearthFamilyAtlas;
 const plain=x=>JSON.parse(JSON.stringify(x));
@@ -229,7 +229,7 @@ test('iPhone asset order and offline cache include the fully working autonomous 
  for(const file of ['pip-projects-v278.js','pip-projects-v278.css']){assert.ok(html.includes(file));assert.ok(sw.includes("'./"+file+"'"))}
  assert.ok(html.indexOf('pip-projects-v278.js')<html.indexOf('pip-routines-v273.js'));
  assert.ok(html.indexOf('pip-projects-v278.js')<html.indexOf('little-sprouts-v272.js'));
- assert.match(html,/v=2\.7\.9/);assert.match(sw,/hearth-harbor-v279-maplewood-guides/);
+ assert.match(html,/v=2\.8\.0/);assert.match(sw,/hearth-harbor-v280-growing-seasons/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
  assert.match(little,/projects\.drawProp\(g,routine,tick\)/);assert.match(little,/projects\.panel\(\)/);
  assert.match(game,/routine\?\.project\?Math\.floor\(tick\*2\.5\)%2:0/);

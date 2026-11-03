@@ -1,0 +1,25 @@
+/* Hearth & Harbor v2.8.0 — Pip's Growing Seasons; accessible illustrated growth chart */
+.pg280-book{color:#5b7868;margin:14px 0 17px;padding-bottom:12px}
+.pg280-cover{padding:15px;border-radius:17px;background:radial-gradient(circle at 96% 5%,#f0c2d1,transparent 46%),linear-gradient(135deg,#dcebd8,#fff0dc);border:3px solid #f7ebd7;border-bottom:5px solid #c7ab91}
+.pg280-cover small{display:block;font-size:10px;letter-spacing:.1em;font-weight:900;color:#a77f6a}
+.pg280-cover h3{color:#537967;font-size:19px!important;line-height:1.25;margin:6px 0}
+.pg280-cover strong{display:block;margin:9px 0 0;font-size:13px;color:#557d65}
+.pg280-cover p,.pg280-book p{font-size:12px;color:#6f8171;line-height:1.5;margin:7px 0}
+.pg280-chapter{background:linear-gradient(145deg,#fff7e7,#f7efdb);border:2px solid #e3d2b8;border-bottom:4px solid #ceb596;border-radius:13px;padding:12px;margin:12px 0}
+.pg280-chapter header{display:flex;align-items:start;gap:9px}
+.pg280-chapter header>span{font-size:23px;flex:0 0 27px}
+.pg280-chapter strong{font-size:13px;color:#777b65}
+.pg280-chapter header p{font-size:11px;margin-top:3px}
+.pg280-chapter ul{list-style:none;padding:0;margin:10px 0}
+.pg280-chapter li{display:flex;gap:10px;font-size:11px;color:#8a8173;padding:7px 5px;border-top:1px dashed #e4d7bf}
+.pg280-chapter li>span{font-size:16px;color:#ae977e;flex:0 0 19px}
+.pg280-chapter li>div{flex:1}
+.pg280-chapter li small{display:block;color:#9b917e;font-size:10px;margin-top:2px}
+.pg280-chapter li.pg280-complete{color:#537b62;font-weight:800}
+.pg280-chapter li.pg280-complete>span{color:#659b70}
+.pg280-chapter>small{display:block;font-size:11px;color:#81906e;padding:9px 3px}
+.pg280-book button{width:100%;min-height:52px;border-radius:12px;border:2px solid #b5cdb6;border-bottom:4px solid #8ead95;background:linear-gradient(#e5f1df,#d2e5d0);text-align:left;font-size:13px;font-weight:850;color:#527461;padding:11px;touch-action:manipulation}
+.pg280-book button:focus-visible{outline:3px solid #305e8e;outline-offset:3px}
+.pg280-fine{font-size:11px!important;border-radius:9px;background:#e9eee2;padding:11px}
+@media(max-width:380px){.pg280-cover{padding:11px}.pg280-chapter{padding:10px}.pg280-book button{min-height:55px}}
+@media(prefers-reduced-motion:reduce){.pg280-book *,.pg280-book *:before,.pg280-book *:after{animation:none!important;transition:none!important}}

@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.7.9 — Maplewood's Little Guides
+# Hearth & Harbor v2.8.0 — Pip's Growing Seasons
+
+**Pip can now genuinely grow through two optional developmental childhood milestones.** After earning a foundation in real story/nature/art activities, helpful cottage routines, bedtime care, neighbor friendships, and later completed dreams and independent projects, the player can choose to celebrate **Growing Child** and then **Independent Child**. Nothing happens just because time passed or a menu was opened; Pip remains a child without invented birthdays, parents, adult jobs or passive currency.
+
+Growth visibly affects the **actual playable 2.5D world**: Pip's sprite gets taller, new original accessories appear, the family cottage gains a handmade height-chart, and Pip's morning and afternoon dream-based project stations become more independent. The Daybook shows truthful milestone progress and the Connections Atlas records genuine dates. All previous saved progress and gameplay remain compatible under the unchanged local save key.
+
+[Read the detailed v2.8.0 QA, save migration and Generations roadmap](PIPS_GROWING_SEASONS_V280_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.7.9 Maplewood's Little Guides
 
 **Pip can now develop real, lasting bonds with the village's six existing adult neighbors.** Each real two-part neighbor encounter increases genuine familiarity, permanently retaining the progress even after old scrapbook pages roll off. After two distinct shared days, Poppy may explicitly choose that neighbor as Pip's favorite village guide—this is friendship, not a new legal or biological family link.
 
