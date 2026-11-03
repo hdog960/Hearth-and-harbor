@@ -169,7 +169,7 @@ test('iPhone loads Pip scripts before core and caches sprites, Atlas and UI offl
   assert.ok(html.includes(file));assert.ok(sw.includes("'./"+file+"'"));
  }
  assert.ok(html.indexOf('little-sprouts-v272.js')<html.indexOf('game.js'));
- assert.match(html,/v=2\.7\.3/);assert.match(sw,/hearth-harbor-v273-pips-living-day/);
+ assert.match(html,/v=2\.7\.4/);assert.match(sw,/hearth-harbor-v274-permanent-learning/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
  assert.match(game,/youngResidents:\{pip:window\.HearthLittleSprouts\.clean\(raw\.youngResidents\?\.pip\)\}/);
  assert.match(game,/littleSprouts\.hit\(wx,wy,'town'\)/);
