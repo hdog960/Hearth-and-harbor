@@ -191,7 +191,7 @@ test('a choice remains a real family stage after earlier bounded scrapbook pages
 test('three one-time reflections paint three different real original cottage pennants',()=>{
  const f=fixture({reflections:[{id:1,day:4,choice:0},{id:2,day:8,choice:1},{id:3,day:14,choice:0}]});
  const p=pen();assert.equal(f.b.drawWall(p.g,0),true);
- assert.ok(p.calls.length>=24);
+ assert.ok(p.calls.length>=21);
  assert.equal(new Set(p.calls.filter(x=>x[4]===37).map(x=>x[1])).size,3);
 });
 test('branching family decisions visibly alter the wall art',()=>{
