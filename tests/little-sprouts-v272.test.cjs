@@ -2,7 +2,7 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
-const env={window:{}};vm.runInNewContext(read('pip-projects-v278.js'),env,{filename:'pip-projects-v278.js'});vm.runInNewContext(read('pip-routines-v273.js'),env,{filename:'pip-routines-v273.js'});vm.runInNewContext(read('pip-neighbors-v275.js'),env,{filename:'pip-neighbors-v275.js'});vm.runInNewContext(read('pip-home-help-v276.js'),env,{filename:'pip-home-help-v276.js'});vm.runInNewContext(read('pip-dreams-v277.js'),env,{filename:'pip-dreams-v277.js'});vm.runInNewContext(read('little-sprouts-v272.js'),env,{filename:'little-sprouts-v272.js'});
+const env={window:{}};vm.runInNewContext(read('pip-projects-v278.js'),env,{filename:'pip-projects-v278.js'});vm.runInNewContext(read('pip-guides-v279.js'),env,{filename:'pip-guides-v279.js'});vm.runInNewContext(read('pip-routines-v273.js'),env,{filename:'pip-routines-v273.js'});vm.runInNewContext(read('pip-neighbors-v275.js'),env,{filename:'pip-neighbors-v275.js'});vm.runInNewContext(read('pip-home-help-v276.js'),env,{filename:'pip-home-help-v276.js'});vm.runInNewContext(read('pip-dreams-v277.js'),env,{filename:'pip-dreams-v277.js'});vm.runInNewContext(read('little-sprouts-v272.js'),env,{filename:'little-sprouts-v272.js'});
 vm.runInNewContext(read('family-atlas-v271.js'),env,{filename:'family-atlas-v271.js'});
 const L=env.window.HearthLittleSprouts,A=env.window.HearthFamilyAtlas;
 function fixture(options={}){
@@ -169,7 +169,7 @@ test('iPhone loads Pip scripts before core and caches sprites, Atlas and UI offl
   assert.ok(html.includes(file));assert.ok(sw.includes("'./"+file+"'"));
  }
  assert.ok(html.indexOf('little-sprouts-v272.js')<html.indexOf('game.js'));
- assert.match(html,/v=2\.7\.8/);assert.match(sw,/hearth-harbor-v278-independent-projects/);
+ assert.match(html,/v=2\.7\.9/);assert.match(sw,/hearth-harbor-v279-maplewood-guides/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
  assert.match(game,/youngResidents:\{pip:window\.HearthLittleSprouts\.clean\(raw\.youngResidents\?\.pip\)\}/);
  assert.match(game,/littleSprouts\.hit\(wx,wy,'town'\)/);

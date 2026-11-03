@@ -1,0 +1,25 @@
+/* Hearth & Harbor v2.7.9 — Maplewood's Little Guides */
+.pm279-panel{color:#5c7665;margin:14px 0 18px}
+.pm279-cover{border:3px solid #f5ead8;border-bottom:5px solid #c7a991;border-radius:18px;padding:15px;background:radial-gradient(circle at 94% 7%,#f2c7da,transparent 50%),linear-gradient(135deg,#dcebd9,#fff1de)}
+.pm279-cover small{font-size:10px;font-weight:900;letter-spacing:.08em;color:#a5816a}
+.pm279-cover h3{font-size:18px!important;color:#527b67;margin:5px 0}
+.pm279-cover p,.pm279-panel p{font-size:12px;line-height:1.55;color:#728073;margin:7px 0}
+.pm279-panel h3{font-size:14px!important;color:#68866e;margin:15px 0 8px}
+.pm279-list{display:grid;gap:8px}
+.pm279-guide{display:flex;align-items:center;gap:8px;background:#fdf6e7;border:2px solid #e3d3b9;border-radius:12px;padding:10px;min-height:54px}
+.pm279-guide>span{font-size:24px;flex:0 0 31px;text-align:center}
+.pm279-guide>div{flex:1;min-width:0}
+.pm279-guide strong{display:block;font-size:12px;color:#62806a}
+.pm279-guide small{display:block;font-size:10px;line-height:1.4;color:#8b816d}
+.pm279-guide button{width:auto!important;min-height:44px!important;white-space:nowrap;font-size:11px!important;flex:0 0 auto;padding:9px!important}
+.pm279-panel button,.pm279-story button{width:100%;min-height:51px;display:block;border:2px solid #b6cbb4;border-bottom:4px solid #94b39a;border-radius:12px;padding:11px 12px;background:linear-gradient(#e5efde,#d3e5d0);color:#537563;text-align:left;font-size:12px;font-weight:850;touch-action:manipulation}
+.pm279-panel button:focus-visible,.pm279-story button:focus-visible{outline:3px solid #315e91;outline-offset:3px}
+.pm279-outing,.pm279-now{background:#f8efd9;border:2px solid #d8c5a6;border-bottom:4px solid #c5ac8c;border-radius:14px;margin:11px 0;padding:12px}
+.pm279-now{background:#e8f2df;border-color:#b9d1b4;border-bottom-color:#91b49b}
+.pm279-outing strong,.pm279-now strong{font-size:13px;color:#718069}
+.pm279-outing small,.pm279-now small{display:block;font-size:11px;color:#8b846d}
+.pm279-history{list-style:none;padding:0;margin:8px 0}
+.pm279-history li{background:#faf1e3;border-left:4px solid #a7c5aa;padding:9px 12px;margin:7px 0;border-radius:6px;font-size:11px;color:#7d8371}
+.pm279-note{background:#eceddf;padding:11px;border-radius:12px;font-size:11px!important}
+@media(max-width:380px){.pm279-cover{padding:11px}.pm279-guide{gap:6px;padding:8px}.pm279-guide button{padding:8px!important}.pm279-panel button{min-height:53px}}
+@media(prefers-reduced-motion:reduce){.pm279-panel *,.pm279-story *{animation:none!important;transition:none!important}}

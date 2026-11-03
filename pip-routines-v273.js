@@ -72,7 +72,10 @@ function cleanEvenings(raw){
 }
 function setup(api){
  const state=()=>api.getState(),child=()=>api.getChild(),day=()=>validDay(state().day)?state().day:1;
- const guardian=()=>child().guardian==='player',location=()=>root.HearthPipProjects.schedule(state().minute,child(),day(),plan);
+ const guardian=()=>child().guardian==='player',location=()=>{
+  const s=state(),c=child(),base=root.HearthPipProjects.schedule(s.minute,c,day(),plan);
+  return root.HearthPipGuides.attendancePose(base,c,s.minute,day(),api.getAdults?.()||[],api.isWalkable);
+ };
  const records=()=>child().evenings||[];
  let session=null;
  const evening=()=>guardian()&&Number(state().minute)>=1080&&Number(state().minute)<1440;

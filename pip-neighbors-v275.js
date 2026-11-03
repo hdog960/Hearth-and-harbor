@@ -102,7 +102,8 @@ function setup(api){
   const now=adultNear(),already=now&&saved.some(m=>m.day===day()&&m.id===now.id);
   const heading='<div class="pn275-heading"><small>CHILDHOOD · FRIENDLY VILLAGE MOMENTS</small><h3>🌼 Meet the Neighbors</h3><p>Pip meets real villagers only when you are walking together and they are nearby. No imagined conversations from a distant menu.</p></div>';
   const walkingPanel=isGuardian()?
-   (walkingNow()?'<div class="pn275-walk"><strong>🚶 Walking together</strong><p>Pip follows you in the actual Maplewood world. Find a neighbor, then open Pip’s Daybook again to share a moment.</p><button data-act="pn275-stop">Finish our stroll</button></div>':
+   (api.isMentorVisit?.()?'<div class="pn275-walk"><strong>🌷 A village guide afternoon</strong><p>Pip is spending time near a real Maplewood guide. Meet the villager in town to share a genuine memory.</p></div>':
+    walkingNow()?'<div class="pn275-walk"><strong>🚶 Walking together</strong><p>Pip follows you in the actual Maplewood world. Find a neighbor, then open Pip’s Daybook again to share a moment.</p><button data-act="pn275-stop">Finish our stroll</button></div>':
     '<div class="pn275-walk"><strong>🏡 Take Pip for a walk</strong><p>Visit Pip in your cottage to begin an accompanied stroll through the real village.</p>'+ (api.getScene?.()==='home'&&api.isPlayerNearChild?.(130)?'<button data-act="pn275-walk">Take a village stroll</button>':'<small>Find Pip at home first to start a walk.</small>')+'</div>'):'';
   const encounter=now?'<div class="pn275-neighbor"><strong>'+STORIES[now.id].icon+' '+esc(now.name)+' is really here</strong><p>'+esc(STORIES[now.id].title)+' · '+(already?'You have already shared today’s moment.':'Choose a tiny two-part activity together.')+'</p>'+(already?'<small>✓ Today’s visit is remembered.</small>':'<button data-act="pn275-start" data-id="'+now.id+'">Share a real neighbor moment</button>')+'</div>':'<div class="pn275-no-neighbor">No villager is close to Pip right now. Look for one in the playable town—not everyone is available all the time.</div>';
   const memories=saved.slice(-8).reverse().map(m=>'<li>'+STORIES[m.id].icon+' Day '+m.day+' · '+esc(STORIES[m.id].title)+'</li>').join('');
@@ -131,7 +132,8 @@ function setup(api){
   }
   const finished={id:session.id,day:day(),mask:session.mask};session=null;
   if(meetings().some(m=>m.day===finished.day&&m.id===finished.id))return false;
-  const c=child();c.meetings=clean([...meetings(),finished]);
+  const c=child(),prior=meetings().slice();c.meetings=clean([...prior,finished]);
+  api.onMeetingCompleted?.(finished,prior);
   c.needs.curiosity=Math.min(100,c.needs.curiosity+6);
   c.needs.confidence=Math.min(100,c.needs.confidence+4);
   api.save?.();api.updateUI?.();

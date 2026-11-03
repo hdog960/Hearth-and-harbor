@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.7.8 — Pip’s Independent Little Projects
+# Hearth & Harbor v2.7.9 — Maplewood's Little Guides
+
+**Pip can now develop real, lasting bonds with the village's six existing adult neighbors.** Each real two-part neighbor encounter increases genuine familiarity, permanently retaining the progress even after old scrapbook pages roll off. After two distinct shared days, Poppy may explicitly choose that neighbor as Pip's favorite village guide—this is friendship, not a new legal or biological family link.
+
+Guided afternoons are **off by default**. After choosing to allow them, Pip can spend noon to 5 PM next to their guide at the villager's **actual moving location** in Maplewood, provided the character is present and there is a valid place to stand. Original child sprite and world props, touch position, map navigation and the Daybook follow Pip to the genuine spot. Poppy can join a different two-part activity with each real guide; only finished in-person sessions become dated childhood memories and small capped need benefits. No automatic payments, fabricated school or passive grinding.
+
+[Read the v2.7.9 implementation, QA and Generations handoff](MAPLEWOOD_LITTLE_GUIDES_V279_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.7.8 Pip’s Independent Little Projects
 
 **Pip’s childhood dreams now shape what they actually do inside the playable cottage.** After choosing optional guardianship and a childhood dream, Pip independently follows a different morning and afternoon schedule, with real locations, movement, character working frames and handmade little world props for storytelling, caring for home or exploring nature. Unselected dreams leave earlier schedules intact, and peaceful rest and bedtime remain familiar.
 

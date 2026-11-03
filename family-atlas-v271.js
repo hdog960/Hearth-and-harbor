@@ -106,6 +106,25 @@ function setup(api){
      home:'player'});
    }
   }
+  // Personal, attended childhood guide reflections belong to lived
+  // neighborhood history. A trusted village guide is NOT a legal guardian,
+  // spouse, blood relative, or independent family connection edge.
+  const guided=state().youngResidents?.pip?.mentor?.guided;
+  if(Array.isArray(guided)){
+   const seen=new Set();
+   const titles={mabel:'Flower Notes with Mabel',rosie:'Market Kindness with Rosie',
+    oliver:'Bakery Ideas with Oliver',jun:'Bookish Afternoon with Jun',
+    bea:'Colors with Bea',finn:'Pond Observations with Finn'};
+   for(const rec of guided.slice(-48)){
+    if(!obj(rec)||!Object.hasOwn(titles,rec.id)||!dayOK(rec.day)||rec.day>now||
+     !['stories','kindness','discover'].includes(rec.focus)||
+     !Number.isInteger(rec.mask)||rec.mask<0||rec.mask>3||seen.has(rec.day))continue;
+    seen.add(rec.day);
+    out.push({day:rec.day,kind:'child-guide',ids:['pip',rec.id],
+     title:titles[rec.id],detail:'An actual shared reflection beside a real village guide',
+     home:null});
+   }
+  }
   for(const home of HOMES.slice(1)){
    const portraits=api.getPortraits?.(home)||[];
    for(const p of portraits){
