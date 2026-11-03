@@ -193,6 +193,27 @@ function setup(api){
      home:null});
    }
   }
+  // Poppy's actual visits with Pip and an acquainted adult.
+  // A visitor first walked through town to the cottage on a later day.
+  // The event was only saved after a real timed home activity and final choice;
+  // never add a fictitious parent, household member or marriage edge.
+  const guestChild=state().youngResidents?.pip;
+  if(guestChild?.guardian==='player'&&dayOK(guestChild.guardianDay)&&
+     guestChild.guardianDay<=now&&root.HearthPipHomeVisits?.clean){
+   const data=root.HearthPipHomeVisits.clean(guestChild.homeVisits);
+   const seen=new Set();
+   for(const r of data.memories){
+    if(!dayOK(r.day)||r.day>now||r.day<=guestChild.guardianDay||
+       !root.HearthPipHomeVisits.VISITS[r.id]||
+       seen.has(r.id)||!Array.isArray(guestChild.meetings)||
+       !guestChild.meetings.some(m=>m.id===r.id&&dayOK(m.day)&&m.day<r.day))continue;
+    seen.add(r.id);
+    out.push({day:r.day,kind:'child-cottage-visit',ids:['player','pip',r.id],
+     title:'A Real Cottage Visit · '+root.HearthPipHomeVisits.VISITS[r.id].name,
+     detail:'Poppy, Pip and the actual neighbor shared a completed household action after meeting at the front door',
+     home:'player'});
+   }
+  }
   // A true shared traditional keepsake is a childhood family memory,
   // never legal ancestry, marriage, a fictitious parent or a new guardian.
   const child=state().youngResidents?.pip,keeps=child?.legacyKeepsakes;
