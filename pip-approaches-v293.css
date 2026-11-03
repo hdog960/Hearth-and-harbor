@@ -1,0 +1,7 @@
+/* v2.9.3 — in-world initiative cue, quiet Daybook context only */
+.pa293-visit{margin:8px 0;padding:9px 11px;border-radius:12px;border:1px solid #d2b3a3;
+ background:#fff1dc;color:#634b47;font-size:12px;line-height:1.5}
+.pa293-visit strong{font-size:12px;display:block}
+.pa293-visit small{font-size:11px;display:block;opacity:.85}
+@media(max-width:380px){.pa293-visit{padding:8px}}
+@media(prefers-reduced-motion:reduce){.pa293-visit *{animation:none!important;transition:none!important}}
