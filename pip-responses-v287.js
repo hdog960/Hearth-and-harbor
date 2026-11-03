@@ -72,7 +72,7 @@ function setup(api){
   if(day()<=r.day)return null;
   // Those earlier choices are real, saved words, not random flattery.
   const project=root.HearthPipHelpers.PROJECTS[id];
-  return d.note+' I remember when Pip chose “‘+project.first[r.plan]+'” and later “‘+project.last[r.finish]+'”.';
+  return d.note+' I remember when Pip chose "'+project.first[r.plan]+'" and later "'+project.last[r.finish]+'".';
  }
  function panel(){
   const relevant=IDS.filter(id=>!!original(id));
