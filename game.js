@@ -2096,12 +2096,13 @@ function drawScene(){if(!W||!H)return;
  ctx.save();ctx.translate(W/2,H*.54);ctx.scale(worldScale,worldScale);ctx.translate(-cam.x,-cam.y);
  if(scene==='town'){drawTownGround(ctx);stewardship.drawProjects(ctx,{season:state.season,tick});memoryWalk.draw(ctx,{season:state.season,tick});stewardship.festivalStalls(ctx,{season:state.season,day:state.day,tick});festivalMarket.decorate(ctx,{season:state.season,day:state.day,tick});festival.drawTown(ctx,{season:state.season,day:state.day,tick});community.drawTown(ctx,{season:state.season,day:state.day,tick});villageLife.drawDecor(ctx,{season:state.season,day:state.day,tick});neighborScenes.draw(ctx,{tick});drawWeddingVenue(ctx);}else if(scene==='grove')HearthGrove.draw(ctx,{season:state.season,record:groveRecord(),tick});else if(scene==='museum')HearthMuseum.drawRoom(ctx,{species:NATURE_SPECIES,donated:state.nature.donated,tick,season:state.season});else if(scene==='residence'){drawResidenceGround(ctx);heirlooms.draw(ctx,activeResidence);familyPortraits.draw(ctx,activeResidence);lifeSeasons.draw(ctx,activeResidence);careCircles.draw(ctx,activeResidence);mentorship.draw(ctx,activeResidence);familyRoots.draw(ctx,activeResidence);chronicle.draw(ctx,activeResidence);sharedScenes.drawStage(ctx,{home:activeResidence,tick});roommateProjects.drawWall(ctx,activeResidence);householdRoles.drawFloor(ctx,activeResidence);homeAspirations.drawWall(ctx,{home:activeResidence,members:roomResidents().map(n=>n.id)});traditions.drawWall(ctx,activeResidence);functionalHomes.draw(ctx,activeResidence);familyTable.draw(ctx,{home:activeResidence,day:state.day,tick});helpingHands.draw(ctx,{home:activeResidence,tick});hobbyStudio.draw(ctx,{home:activeResidence,tick});}else{drawHomeGround(ctx);heirlooms.draw(ctx,'player');chronicle.draw(ctx,'player');householdRoles.drawFloor(ctx,'player');homeAspirations.drawWall(ctx,{home:'player'});traditions.drawWall(ctx,'player');functionalHomes.draw(ctx,'player');familyTable.draw(ctx,{home:'player',day:state.day,tick});}
  if(scene==='town'){
-  const ordered=objects.map(o=>({...o,draw:0})).concat(NPCS.map(o=>({...o,type:'npc',draw:1})),[{type:'player',x:player.x,y:player.y,draw:2}]).sort((a,b)=>a.y-b.y);
+  const ordered=objects.map(o=>({...o,draw:0})).concat(littleSprouts.worldKeepsakes.displays().map(o=>({...o,draw:1})),NPCS.map(o=>({...o,type:'npc',draw:1})),[{type:'player',x:player.x,y:player.y,draw:2}]).sort((a,b)=>a.y-b.y);
   for(const o of ordered){if(Math.abs(o.x-cam.x)>W/worldScale*.85+230||Math.abs(o.y-cam.y)>H/worldScale*.85+230)continue;
    if(o.type==='npc'){
     const original=NPCS.find(n=>n.id===o.id);
-    drawCharacter(ctx,original,o.x,o.y,original.moving>0?original.facing||'front':'front',original.moving>0,original.emotionUntil>tick?original.emotion:'neutral');
+    drawCharacter(ctx,original,o.x,o.y,original.moving>0?original.facing||'front':'front',original.moving>0,littleSprouts.worldKeepsakes.actorMood('adult',o.id)?'happy':original.emotionUntil>tick?original.emotion:'neutral');
     drawActivity(ctx,original,o.x,o.y);
+    littleSprouts.worldKeepsakes.drawActor(ctx,'adult',o.id,{x:o.x,y:o.y},tick);
     if(Math.hypot(player.x-o.x,player.y-o.y)<175){
      drawName(ctx,o.name,o.x,o.y-151);
      const feeling=personalMood(original);
@@ -2111,12 +2112,16 @@ function drawScene(){if(!W||!H)return;
      if(original.moving===0&&!talk){const activity=currentRoutine(original);
       ctx.font='18px system-ui';ctx.textAlign='center';ctx.fillText(activity.icon,o.x+48,o.y-169+Math.sin(tick*1.5+o.x)*2);ctx.textAlign='left'}
     }
-   }else if(o.type==='player')drawCharacter(ctx,playerDef(),player.x,player.y,player.facing,!!player.target);
+   }else if(o.type==='player'){
+    drawCharacter(ctx,playerDef(),player.x,player.y,player.facing,!!player.target,littleSprouts.worldKeepsakes.actorMood('player')?'happy':'neutral');
+    littleSprouts.worldKeepsakes.drawActor(ctx,'player','player',{x:player.x,y:player.y},tick);
+   }else if(o.type==='pip-keepsake')littleSprouts.worldKeepsakes.drawDisplay(ctx,o,tick);
    else drawStatic(o,ctx);
   }
   littleSprouts.adventures.draw(ctx,tick);
   littleSprouts.helpers.draw(ctx,tick);
-  littleSprouts.draw(ctx,{scene,tick,drawSprite:(child,x,y,routine)=>{ellipse(ctx,'#21474444',x,y,21,6);drawArt(ctx,charArt(child,routine?.facing||'front',routine?.moving?Math.floor(tick*8)%2:routine?.project?Math.floor(tick*2.5)%2:0,'happy'),x,y,littleSprouts.growth.visual().scale)}});
+  littleSprouts.draw(ctx,{scene,tick,drawSprite:(child,x,y,routine)=>{ellipse(ctx,'#21474444',x,y,21,6);drawArt(ctx,charArt(child,routine?.facing||'front',routine?.moving?Math.floor(tick*8)%2:routine?.project?Math.floor(tick*2.5)%2:0,'happy'),x,y,littleSprouts.growth.visual().scale);littleSprouts.worldKeepsakes.drawActor(ctx,'child','pip',{x,y},tick)}});
+   littleSprouts.worldKeepsakes.drawCelebration(ctx,tick);
    drawCoupleSparkles(ctx);
  }else{
   if(scene==='residence')drawResidenceFurniture(ctx);else if(scene==='home')drawHomeFurniture(ctx);
@@ -2364,6 +2369,13 @@ function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){sto
  const pipAdventure=littleSprouts.adventures.hit(wx,wy);
  if(pipAdventure){goTo(nearestWalkable({x:pipAdventure.x,y:pipAdventure.y},'town',true)||pipAdventure,
   ()=>littleSprouts.adventures.arrive(pipAdventure.step));return}
+ const pipKeepsake=littleSprouts.worldKeepsakes.hit(wx,wy);
+ if(pipKeepsake){
+  const approach=littleSprouts.worldKeepsakes.approach(pipKeepsake.id);
+  if(approach)goTo(approach,()=>littleSprouts.worldKeepsakes.inspect(pipKeepsake.id));
+  else notify('There is no safe path to this memory display just now.');
+  return;
+ }
  if(littleSprouts.hit(wx,wy,'town')){const c=littleSprouts.position();goTo(nearestWalkable({x:c.x-64,y:c.y+38},'town',true)||{x:c.x-64,y:c.y+38},()=>littleSprouts.entry());return}
   const festivalStall=festivalMarket.hit(wx,wy);if(festivalStall){goTo(nearestWalkable({x:festivalStall.walkX,y:festivalStall.walkY},'town',true)||{x:festivalStall.walkX,y:festivalStall.walkY},()=>festivalMarket.visit(festivalStall.id));return}
  const remembered=memoryWalk.hit(wx,wy);if(remembered){goTo(nearestWalkable({x:remembered.walkX,y:remembered.walkY},'town',true)||{x:remembered.walkX,y:remembered.walkY},()=>memoryWalk.visit(remembered.id));return}
@@ -2835,6 +2847,7 @@ function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0'
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
 function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Family Seasons Sampler v2.8.3 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Postcards'+(todaysPostcard()?.status==='pending'?' · New!':''),'postcards')}${btn('💌 Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🦋 Field Guide & Curiosity Cabinet','nature-guide')}${btn('🕸️ Meadow Net · Catch insects','bug-hunt')}${btn('🎣 Pond Almanac · Go fishing','fish-guide')}${btn('🌲 Cloverbank Grove · Explore','grove-travel')}${btn('🎪 Festival Calendar','festival-calendar')}${btn('💌 Together in Maplewood','comm-board')}${btn('🌿 Build the Village','stew-board')}${btn('🧺 Village Trades & Kindness','trade-board')}${btn('🎪 Festival Market','fmarket-overview')}${btn('🌷 Village Community Diary','vl-board')}${btn('💌 Neighbors Together','nm-book')}${btn('🏡 Roots & Keepsakes','asp-board')}${btn('🖼️ Home & Town Traditions','ht-board')}${btn('🌿 Village Memory Walk · v2.6','mw26-board')}${btn('✦ The Heirloom Cabinet','hl37-board')}${btn('🖼️ Family Portraits · Generations','fp27-board')}${btn('🌳 Connections Atlas','fa271-board')}${btn('🌱 Pip & Little Sprouts','ls272-book')}${btn('🧵 Our Little Legacy Shelf','pl282-board')}${btn('🧶 Family Seasons Sampler','pf283-board')}${btn('🍂 Seasons of Life · Birthdays','ls36-board')}${btn('💗 Little Acts of Care','cc35-board')}${btn('🎓 Passing It On · Mentorship','mt34-board')}${btn('🌿 Family Roots & Connections','fr33-board')}${btn('📖 Household Chronicle','hc32-board')}${btn('🧺 Household Promises','hr26-board')}${btn('🪑 Rooms With Purpose','hf-board')}${btn('🍳 Hearth Kitchen','cook-book')}${btn('🍽️ At Our Table','ft-board')}${scene==='residence'?btn('🌷 Helping Hands','hh-board')+btn('🎨 Little Passions Studio','hs-board'):''}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
 function handleAction(action,id){
+ if(action.startsWith('pw285-'))return littleSprouts.worldKeepsakes.handle(action,id);
  if(action==='ph284-direct'){
   const who=talk;if(!who||!littleSprouts.helpers.eligible(who))return;
   closeTalk();return littleSprouts.helpers.start(who);

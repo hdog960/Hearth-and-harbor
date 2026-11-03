@@ -128,8 +128,19 @@ function setup(api){
   name:id=>api.getAdults?.().find(a=>a.id===id)?.name||id,
   save:api.save,updateUI:api.updateUI,notify:api.notify,
   showModal:api.showModal,closeModal:api.closeModal,closeTalk:api.closeTalk,
-  openBook:()=>entry(),bondAdult:api.bondAdult
+  openBook:()=>entry(),bondAdult:api.bondAdult,
+  onProjectCompleted:record=>worldKeepsakes.completed(record)
  })||{panel:()=>'',draw:()=>false,drawRibbon:()=>false,handle:()=>false,hit:()=>null};
+ const worldKeepsakes=root.HearthPipWorldKeepsakes?.setup?.({
+  getState:state,getChild:data,getScene:api.getScene,
+  getHelper:()=>helpers,getPlayer:api.getPlayer,getAdults:api.getAdults,
+  getChildPosition:()=>position(),isWalkable:api.isWalkable,
+  nearestWalkable:api.nearestWalkable,isPaused:api.isPaused,
+  showModal:api.showModal,closeModal:api.closeModal,
+  name:id=>api.getAdults?.().find(a=>a.id===id)?.name||id
+ })||{completed:()=>false,drawActor:()=>false,drawDisplay:()=>false,
+  drawCelebration:()=>false,displays:()=>[],hit:()=>null,approach:()=>null,
+  inspect:()=>false,actorMood:()=>false,advance:()=>{},handle:()=>false};
  const familyLegacy=root.HearthPipLegacy.setup({
   getState:state,getChild:data,getScene:api.getScene,
   nearChild:d=>api.isNearby?.(position(),d)===true,
@@ -236,7 +247,7 @@ function setup(api){
    g.restore();
   }
  }
- function advance(dt){neighbors.advance(dt);rituals.follow(dt)}
+ function advance(dt){neighbors.advance(dt);rituals.follow(dt);worldKeepsakes.advance(dt)}
  function hit(x,y,scene){
   if(scene!==api.getScene?.()||!inPlace()||!Number.isFinite(x)||!Number.isFinite(y))return false;
   const p=position();return Math.abs(x-p.x)<=46&&Math.abs(y-(p.y-46))<=71;
@@ -251,6 +262,7 @@ function setup(api){
   if(action.startsWith('pg280-'))return growth.handle(action,id);
   if(action.startsWith('pa281-'))return adventures.handle(action,id);
   if(action.startsWith('ph284-'))return helpers.handle(action,id);
+  if(action.startsWith('pw285-'))return worldKeepsakes.handle(action,id);
   if(action.startsWith('pl282-'))return familyLegacy.handle(action,id);
   if(action.startsWith('pf283-'))return rituals.handle(action,id);
   if(action==='ls272-book')return entry();
@@ -262,7 +274,7 @@ function setup(api){
   if(action==='ls272-close'){session=null;return api.closeModal?.()}
   return false;
  }
- return {status,position,entry,begin,choose,page,guardian,canBegin,hit,draw,handle,tick,advance,routines,neighbors,homeHelp,dreams,projects,guides,growth,adventures,helpers,familyLegacy,rituals,get data(){return data()},get session(){return session},CHILD,ACTIONS};
+ return {status,position,entry,begin,choose,page,guardian,canBegin,hit,draw,handle,tick,advance,routines,neighbors,homeHelp,dreams,projects,guides,growth,adventures,helpers,worldKeepsakes,familyLegacy,rituals,get data(){return data()},get session(){return session},CHILD,ACTIONS};
 }
 root.HearthLittleSprouts={setup,clean,defaults,CHILD,ACTIONS};
 })(window);
