@@ -210,7 +210,7 @@ test('phone assets, original save, existing NPC pathing and Atlas are integrated
  assert.ok(html.indexOf('pip-world-keepsakes-v285.js')<html.indexOf('pip-responses-v287.js'));
  assert.ok(html.indexOf('pip-responses-v287.js')<html.indexOf('little-sprouts-v272.js'));
  for(const s of ['pip-responses-v287.js','pip-responses-v287.css'])assert.ok(sw.includes("'./"+s+"'"));
- assert.match(sw,/hearth-harbor-v294-bond-built-by-living/);
+ assert.match(sw,/hearth-harbor-v295-wren-young-neighbor/);
  assert.match(game,/littleSprouts\.responses\.schedule\(n\.id,baseEntry\)/);
  assert.match(game,/littleSprouts\.responses\.drawAdult/);
  assert.match(game,/littleSprouts\.responses\.mark/);
