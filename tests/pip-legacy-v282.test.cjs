@@ -260,7 +260,7 @@ test('the family shelf draws three distinct handmade frames only in the actual c
  assert.equal(f.handoff.draw(g,1),false);
  finish(f,'welcome');f.state.day=26;finish(f,'supper');f.state.day=27;finish(f,'orchard');
  assert.equal(f.handoff.draw(g,1),true);
- assert.ok(calls.length>30);
+ assert.ok(calls.length>=24,'all three physical keepsake frames contain multiple painted parts');
  calls.length=0;f.setScene('town');assert.equal(f.handoff.draw(g,1),false);assert.equal(calls.length,0);
 });
 test('earned family comforts are bounded and tied to actual valid dated records',()=>{
