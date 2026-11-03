@@ -6,7 +6,7 @@ const env={window:{}};
 for(const file of ['pip-growth-v280.js','pip-projects-v278.js','pip-guides-v279.js','pip-routines-v273.js',
  'pip-neighbors-v275.js','pip-home-help-v276.js','pip-dreams-v277.js','little-sprouts-v272.js','family-atlas-v271.js'])
  vm.runInNewContext(read(file),env,{filename:file});
-const G=env.window.HearthPipGrowth,P=env.window.HearthPipProjects,L=env.window.HearthLittleSprouts,A=env.window.HearthFamilyAtlas;
+const G=env.window.HearthPipGrowth,P=env.window.HearthPipProjects,R=env.window.HearthPipRoutines,L=env.window.HearthLittleSprouts,A=env.window.HearthFamilyAtlas;
 const plain=x=>JSON.parse(JSON.stringify(x));
 function fixture({guardian=true,focus='stories',day=25,minute=850}={}){
  const c=L.defaults();if(guardian){c.guardian='player';c.guardianDay=2}
@@ -156,11 +156,14 @@ test('previous chapter receipts persist in the original save format after a roun
  assert.deepEqual(plain(next.growth),{stage:2,firstDay:25,secondDay:25});
  assert.equal(next.mentor.counts.bea,2);assert.equal(next.projects.length,3);
 });
-test('a forged incomplete, reversed or malformed growth save never grants mature status',()=>{
- for(const input of [{stage:2,firstDay:0,secondDay:3},{stage:2,firstDay:9,secondDay:8},
+test('a malformed growth save never grants a second stage, but preserves a legitimate first receipt',()=>{
+ for(const input of [{stage:2,firstDay:0,secondDay:3},
  {stage:'2',firstDay:4,secondDay:5},{stage:1,firstDay:-2},{stage:5,firstDay:0}]){
   const g=G.clean(input);assert.equal(g.stage,0);
  }
+ const incomplete=G.clean({stage:2,firstDay:9,secondDay:8});
+ assert.equal(incomplete.stage,1);
+ assert.equal(incomplete.firstDay,9);assert.equal(incomplete.secondDay,0);
 });
 test('future-dated growth records do not change actual physical age early',()=>{
  const f=fixture();f.c().growth={stage:2,firstDay:30,secondDay:40};
