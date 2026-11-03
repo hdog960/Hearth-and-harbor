@@ -295,10 +295,10 @@ test('iPhone build loads Wren before save sanitization, routes world touch and u
  assert.ok(html.includes('wren-neighbor-v295.js?v=2.9.8'));
  assert.ok(html.includes('wren-neighbor-v295.css?v=2.9.6'));
  assert.ok(html.indexOf('wren-neighbor-v295.js')<html.indexOf('game.js'));
- assert.ok(html.includes('game.js?v=2.9.8'));
+ assert.ok(html.includes('game.js?v=2.9.9'));
  for(const p of ['wren-neighbor-v295.js','wren-neighbor-v295.css'])
   assert.ok(sw.includes("'./"+p+"'"));
- assert.match(sw,/hearth-harbor-v298-childhood-reunions/);
+ assert.match(sw,/hearth-harbor-v299-stories-brought-home/);
  assert.match(game,/youngResidents:\{pip:window\.HearthLittleSprouts\.clean\(raw\.youngResidents\?\.pip\),wren:window\.HearthYoungNeighbors\.clean\(raw\.youngResidents\?\.wren\)\}/);
  assert.match(game,/youngNeighbors\.advance\(dt\)/);
  assert.match(game,/youngNeighbors\.hitMarker\(wx,wy\)/);

@@ -235,15 +235,17 @@ test('phone build loads bond engine, saved family history, and actual in-world g
   css=read('pip-family-bond-v294.css');
  for(const file of ['pip-family-bond-v294.js','pip-family-bond-v294.css'])
   assert.ok(sw.includes("'./"+file+"'"));
- assert.match(sw,/hearth-harbor-v298-childhood-reunions/);
+ assert.match(sw,/hearth-harbor-v299-stories-brought-home/);
  assert.ok(html.includes('pip-family-bond-v294.js?v=2.9.4'));
  assert.ok(html.includes('pip-family-bond-v294.css?v=2.9.4'));
  assert.ok(html.indexOf('pip-family-bond-v294.js')<html.indexOf('little-sprouts-v272.js'));
- assert.ok(html.includes('family-atlas-v271.js?v=2.9.5'));
- assert.ok(html.includes('game.js?v=2.9.8'));
+ assert.ok(html.includes('family-atlas-v271.js?v=2.9.9'));
+ assert.ok(html.includes('game.js?v=2.9.9'));
  assert.match(game,/littleSprouts\.familyBond\.drawWall\(ctx,tick\)/);
  assert.match(game,/littleSprouts\.familyBond\.request\(\)/);
- assert.match(game,/if\(action\.startsWith\('pi292-'\)\|\|action\.startsWith\('pb294-'\)\)return littleSprouts\.handle\(action,id\)/);
+ assert.match(game,/action\.startsWith\('pi292-'\)/);
+ assert.match(game,/action\.startsWith\('pb294-'\)/);
+ assert.match(game,/action\.startsWith\('phe299-'\)/);
  assert.match(little,/familyBond\.drawGesture\(g,pos,tick\)/);
  assert.match(little,/familyBond\.panel\(\)/);
  assert.match(little,/familyBond:root\.HearthPipFamilyBond\?\.clean/);

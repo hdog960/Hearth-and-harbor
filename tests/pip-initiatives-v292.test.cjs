@@ -266,9 +266,11 @@ test('phone source uses existing real 3.8s action and child world tap, no new na
  assert.ok(html.indexOf('pip-initiatives-v292.js')<html.indexOf('little-sprouts-v272.js'));
  for(const f of ['pip-initiatives-v292.js','pip-initiatives-v292.css'])
   assert.ok(sw.includes("'./"+f+"'"));
- assert.match(sw,/hearth-harbor-v298-childhood-reunions/);
+ assert.match(sw,/hearth-harbor-v299-stories-brought-home/);
  assert.match(game,/littleSprouts\.initiatives\.completed\(kind,once,state\.day\)/);
- assert.match(game,/if\(action\.startsWith\('pi292-'\)\|\|action\.startsWith\('pb294-'\)\)return littleSprouts\.handle\(action,id\)/);
+ assert.match(game,/action\.startsWith\('pi292-'\)/);
+ assert.match(game,/action\.startsWith\('pb294-'\)/);
+ assert.match(game,/action\.startsWith\('phe299-'\)/);
  assert.match(game,/if\(!littleSprouts\.initiatives\.request\(\)&&!littleSprouts\.familyBond\.request\(\)\)littleSprouts\.entry\(\)/);
  assert.match(game,/householdHold=\{kind,where,id,remaining:3\.8,duration:3\.8\}/);
  assert.match(little,/getSchedule:\(\)=>approaches\.schedule\(initiatives\.schedule\(routines\.location\(\)\)\)/);
@@ -276,7 +278,7 @@ test('phone source uses existing real 3.8s action and child world tap, no new na
  assert.match(little,/initiatives\.panel\(\)/);
  assert.match(little,/childInitiatives:root\.HearthPipInitiatives\?\.clean/);
  assert.match(read('family-atlas-v271.js'),/child-home-initiative/);
- assert.ok(html.includes('family-atlas-v271.js?v=2.9.5'));
+ assert.ok(html.includes('family-atlas-v271.js?v=2.9.9'));
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
  assert.match(css,/:focus-visible/);
  assert.match(css,/@media\(max-width:380px\)/);

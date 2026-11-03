@@ -246,6 +246,21 @@ function setup(api){
      home:'player'});
    }
   }
+  // A genuine friendship experience can become a later Poppy/Pip cottage
+  // memory only after a separately completed real shared home activity.
+  // Wren remains a separate village child, never a member of this household.
+  if(bondChild?.guardian==='player'&&dayOK(bondChild.guardianDay)&&
+    root.HearthPipHomeEchoes?.clean){
+   const echoes=root.HearthPipHomeEchoes.clean(bondChild.homeEchoes,bondChild.guardianDay).records;
+   for(const r of echoes){
+    const story=root.HearthPipHomeEchoes.STORIES?.[r.kind];
+    if(!story||r.day>now)continue;
+    out.push({day:r.day,kind:'child-home-friendship-echo',
+     ids:['player','pip'],title:'Poppy & Pip · '+story.name,
+     detail:'After a real Wren friendship day and a later completed shared cottage routine: '+story.after[r.choice],
+     home:'player'});
+   }
+  }
   // A real second child is a peer, not a Poppy household member,
   // fabricated adoptee, adult or prospective romantic relationship.
   // Only the completed two-stage physically co-present outing writes this.

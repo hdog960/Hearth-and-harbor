@@ -1,3 +1,11 @@
+# Hearth & Harbor v2.9.9 — Stories Brought Home
+
+**A real childhood friendship can now change life inside Poppy and Pip's cottage.** After a genuine Pip–Wren village outing on an earlier day, Poppy and Pip must complete a matching *real, timed shared household activity* to unlock one of three original, personally meaningful family conversations. Your response produces a small permanent, choice-colored pixel painting on the cottage wall and an authentic Connections Atlas memory. Three different earned stories become a little family gallery. No artificial auto-completion, new family ties, fake rewards, account, paywall or save reset.
+
+[Read the v2.9.9 implementation, QA documentation and Generations roadmap](PIPS_STORIES_BROUGHT_HOME_V299_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.9.8 Childhood Reunions
+
 # Hearth & Harbor v2.9.8 — Childhood Reunions
 
 **Wren now independently checks on the actual Friendship Corner** once a genuine chapter has been created. Visit the painted sign with both children on a later day to make one of three individually written follow-up memories; each choice adds its own permanent stitched detail to the world artwork and changes real later dialogue. Physical presence, genuine previous chapter provenance and separate days are mandatory. This also repairs the v2.9.7 club buttons, which previously weren't connected through the main in-game action handler. No new save key, currency, paywall, account, fabricated family ties or instant relationship rewards.

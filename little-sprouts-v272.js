@@ -27,7 +27,7 @@ const KINDS=Object.keys(ACTIONS),obj=x=>x!==null&&typeof x==='object'&&!Array.is
 const validDay=x=>Number.isInteger(x)&&x>=1&&x<=9999;
 const clamp=x=>Math.max(0,Math.min(100,Number.isFinite(x)?x:0));
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const defaults=()=>({guardian:null,guardianDay:0,needs:{joy:62,curiosity:55,confidence:50},daily:{day:0,done:[]},days:[],memories:[],evenings:[],skills:{story:0,garden:0,art:0},meetings:[],homeHelps:[],dream:root.HearthPipDreams.clean(null),projects:[],mentor:root.HearthPipGuides.clean(null,[]),growth:root.HearthPipGrowth.clean(null),adventures:[],legacyKeepsakes:[],familyRituals:[],helperProjects:[],neighborResponses:[],homeRhythms:{totals:{read:0,tidy:0,meal:0,hobby:0},last:null},homeVisits:{pending:null,memories:[]},childInitiatives:{records:[],leadDays:0,learnDays:0},familyBond:{chapters:[]}});
+const defaults=()=>({guardian:null,guardianDay:0,needs:{joy:62,curiosity:55,confidence:50},daily:{day:0,done:[]},days:[],memories:[],evenings:[],skills:{story:0,garden:0,art:0},meetings:[],homeHelps:[],dream:root.HearthPipDreams.clean(null),projects:[],mentor:root.HearthPipGuides.clean(null,[]),growth:root.HearthPipGrowth.clean(null),adventures:[],legacyKeepsakes:[],familyRituals:[],helperProjects:[],neighborResponses:[],homeRhythms:{totals:{read:0,tidy:0,meal:0,hobby:0},last:null},homeVisits:{pending:null,memories:[]},childInitiatives:{records:[],leadDays:0,learnDays:0},familyBond:{chapters:[]},homeEchoes:{records:[]}});
 function clean(raw){
  const src=obj(raw)?raw:{},d=defaults(),needs=obj(src.needs)?src.needs:{},daily=obj(src.daily)?src.daily:{},memories=[],days=[];
  const guardian=src.guardian==='player'&&validDay(src.guardianDay)?'player':null;
@@ -48,13 +48,13 @@ function clean(raw){
  }
  const safeDaily=validDay(daily.day)?daily.day:0;
  const done=Array.isArray(daily.done)?[...new Set(daily.done.filter(x=>KINDS.includes(x)))].slice(0,3):[];
- return {guardian,guardianDay,needs:Object.fromEntries(Object.keys(d.needs).map(k=>[k,typeof needs[k]==='number'&&Number.isFinite(needs[k])?clamp(needs[k]):d.needs[k]])),daily:{day:safeDaily,done},days,memories:memories.slice(-40),evenings:root.HearthPipRoutines.cleanEvenings(src.evenings),skills,meetings:root.HearthPipNeighbors.clean(src.meetings),homeHelps:root.HearthPipHomeHelp.clean(src.homeHelps),dream:root.HearthPipDreams.clean(src.dream),projects:root.HearthPipProjects.clean(src.projects),mentor:root.HearthPipGuides.clean(src.mentor,src.meetings),growth:root.HearthPipGrowth.clean(src.growth),adventures:root.HearthPipAdventures.clean(src.adventures),legacyKeepsakes:root.HearthPipLegacy.clean(src.legacyKeepsakes),familyRituals:root.HearthPipRituals.clean(src.familyRituals),helperProjects:root.HearthPipHelpers?.clean?.(src.helperProjects)||[],neighborResponses:root.HearthPipResponses?.clean?.(src.neighborResponses)||[],homeRhythms:root.HearthPipHomeRhythms?.clean?.(src.homeRhythms,src.homeHelps,guardianDay)||{totals:{read:0,tidy:0,meal:0,hobby:0},last:null},homeVisits:root.HearthPipHomeVisits?.clean?.(src.homeVisits)||{pending:null,memories:[]},childInitiatives:root.HearthPipInitiatives?.clean?.(src.childInitiatives,guardianDay)||{records:[],leadDays:0,learnDays:0},familyBond:root.HearthPipFamilyBond?.clean?.(src.familyBond,guardianDay)||{chapters:[]}};
+ return {guardian,guardianDay,needs:Object.fromEntries(Object.keys(d.needs).map(k=>[k,typeof needs[k]==='number'&&Number.isFinite(needs[k])?clamp(needs[k]):d.needs[k]])),daily:{day:safeDaily,done},days,memories:memories.slice(-40),evenings:root.HearthPipRoutines.cleanEvenings(src.evenings),skills,meetings:root.HearthPipNeighbors.clean(src.meetings),homeHelps:root.HearthPipHomeHelp.clean(src.homeHelps),dream:root.HearthPipDreams.clean(src.dream),projects:root.HearthPipProjects.clean(src.projects),mentor:root.HearthPipGuides.clean(src.mentor,src.meetings),growth:root.HearthPipGrowth.clean(src.growth),adventures:root.HearthPipAdventures.clean(src.adventures),legacyKeepsakes:root.HearthPipLegacy.clean(src.legacyKeepsakes),familyRituals:root.HearthPipRituals.clean(src.familyRituals),helperProjects:root.HearthPipHelpers?.clean?.(src.helperProjects)||[],neighborResponses:root.HearthPipResponses?.clean?.(src.neighborResponses)||[],homeRhythms:root.HearthPipHomeRhythms?.clean?.(src.homeRhythms,src.homeHelps,guardianDay)||{totals:{read:0,tidy:0,meal:0,hobby:0},last:null},homeVisits:root.HearthPipHomeVisits?.clean?.(src.homeVisits)||{pending:null,memories:[]},childInitiatives:root.HearthPipInitiatives?.clean?.(src.childInitiatives,guardianDay)||{records:[],leadDays:0,learnDays:0},familyBond:root.HearthPipFamilyBond?.clean?.(src.familyBond,guardianDay)||{chapters:[]},homeEchoes:root.HearthPipHomeEchoes?.clean?.(src.homeEchoes,guardianDay)||{records:[]}};
 }
 function setup(api){
  const state=()=>api.getState(),data=()=>{
   const s=state();if(!obj(s.youngResidents)||!obj(s.youngResidents.pip))s.youngResidents={pip:defaults()};
   const c=s.youngResidents.pip;
-  if(!obj(c.needs)||!obj(c.daily)||!Array.isArray(c.days)||!Array.isArray(c.memories)||!Array.isArray(c.evenings)||!obj(c.skills)||!Array.isArray(c.meetings)||!Array.isArray(c.homeHelps)||!obj(c.dream)||!Array.isArray(c.projects)||!obj(c.mentor)||!obj(c.growth)||!Array.isArray(c.adventures)||!Array.isArray(c.legacyKeepsakes)||!Array.isArray(c.familyRituals)||!Array.isArray(c.helperProjects)||!Array.isArray(c.neighborResponses)||!obj(c.homeRhythms)||!obj(c.homeVisits)||!obj(c.childInitiatives)||!obj(c.familyBond))s.youngResidents.pip=clean(c);
+  if(!obj(c.needs)||!obj(c.daily)||!Array.isArray(c.days)||!Array.isArray(c.memories)||!Array.isArray(c.evenings)||!obj(c.skills)||!Array.isArray(c.meetings)||!Array.isArray(c.homeHelps)||!obj(c.dream)||!Array.isArray(c.projects)||!obj(c.mentor)||!obj(c.growth)||!Array.isArray(c.adventures)||!Array.isArray(c.legacyKeepsakes)||!Array.isArray(c.familyRituals)||!Array.isArray(c.helperProjects)||!Array.isArray(c.neighborResponses)||!obj(c.homeRhythms)||!obj(c.homeVisits)||!obj(c.childInitiatives)||!obj(c.familyBond)||!obj(c.homeEchoes))s.youngResidents.pip=clean(c);
   return s.youngResidents.pip;
  };
  let session=null;
@@ -223,6 +223,18 @@ function setup(api){
  })||{profile:()=>({stage:0}),panel:()=>'',request:()=>false,ready:()=>false,
   line:()=>'',ideaLine:()=>'',drawGesture:()=>false,drawWall:()=>false,
   handle:()=>false,advance:()=>{}};
+ const homeEchoes=root.HearthPipHomeEchoes?.setup?.({
+  getState:state,getChild:data,getScene:api.getScene,
+  getPlayer:api.getPlayer,getChildPosition:()=>position(),
+  getPeerRecords:()=>root.HearthYoungNeighbors?.clean?.(state().youngResidents?.wren)?.friendships||[],
+  isOtherActivity:()=>!!session||!!homeHelp.pending||!!homeVisits.session||
+   !!familyLegacy.pose()||!!rituals.pose()||api.isOwnRoutineBusy?.(),
+  isPlayerMoving:api.isPlayerMoving,
+  isDialogOpen:()=>api.isDialogOpen?.()===true,
+  showModal:api.showModal,closeModal:api.closeModal,
+  save:api.save,updateUI:api.updateUI,notify:api.notify,openBook:()=>entry()
+ })||{records:()=>[],panel:()=>'',drawWall:()=>false,drawHint:()=>false,
+  handle:()=>false,advance:()=>{}};
  const initiatives=root.HearthPipInitiatives?.setup?.({
   getState:state,getChild:data,getScene:api.getScene,
   getPlayer:api.getPlayer,getChildPosition:()=>position(),
@@ -277,7 +289,7 @@ function setup(api){
   const arrivalLine=arrive.near?'<div class="pa293-visit"><strong>🌱 Pip came over to talk</strong><small>Pip is here with a little idea. You may tap Pip in the world to hear it—or simply continue your day.</small></div>':arrive.walking?'<div class="pa293-visit"><small>👣 Pip is making their own way over to Poppy.</small></div>':'';
   const homeLine=steps?'<div class="pha291-status"><span class="pha291-icon">'+(steps.walking?'👣':'🌷')+'</span><div><strong>'+esc(steps.walking?'Pip is finding a path':'Pip is enjoying their day')+'</strong><small>'+esc(steps.label)+'. Their real cottage route respects your furniture and shared activities.</small></div></div>':'';
   const activities=KINDS.map(k=>'<button data-act="ls272-start" data-id="'+k+'" '+(s.done.includes(k)||!nearby?'disabled':'')+'><b>'+ACTIONS[k].icon+' '+ACTIONS[k].name+'</b><small>'+(s.done.includes(k)?'A happy memory already made today':!nearby?'Visit Pip in the world first':'Play a real three-part activity together')+'</small></button>').join('');
-  api.showModal?.('little-sprouts','<section class="ls272-book"><header class="ls272-cover"><small>GENERATIONS · THE FIRST LITTLE SPROUT</small><h2>🌱 Pip’s Daybook</h2><p>'+friend+' Pip is a child and has their own needs, drawings and memories—not adult jobs or romance.</p></header>'+homeLine+arrivalLine+familyBond.panel()+initiatives.panel()+(api.getPeerPanel?.()||'')+'<div class="ls272-profile"><span>🌼</span><div><b>Pip · '+esc(s.stage)+'</b><small>'+(s.guardian?'Poppy is Pip’s chosen guardian · since Day '+s.guardianDay:'A young friend learning about Maplewood')+'</small></div></div>'+bars+'<p class="ls272-progress">'+s.careDays+' / 3 different care days · All three kinds of shared activities needed to offer guardianship.</p><h3>Spend a real afternoon together</h3>'+(nearby?'':'<button data-act="ls272-visit">📍 Visit Pip in the playable world</button>')+'<div class="ls272-choices">'+activities+'</div>'+(s.ready&&!s.guardian&&nearby?'<div class="ls272-guardian"><strong>🏡 An invitation of trust</strong><p>After these real shared days, you may choose to welcome Pip into your cottage as a guardian. This is optional, not automatic. Pip will live with you in the playable cottage, while other adults and save records remain unchanged.</p><button data-act="ls272-guardian">🌷 Become Pip’s guardian</button></div>':'')+(s.guardian?'<div class="ls272-guardian"><strong>🏡 Your shared cottage</strong><p>Pip lives at your cottage and joins you for stories, nature walks and sketching. No forced aging, penalties or invented biological family links.</p></div>':'')+'<p class="ls272-progress">'+routine.icon+' Today: '+routine.label+'</p>'+routines.card()+'<h3>Our actual memories</h3><ul class="ls272-memories">'+(s.memories.length?s.memories.slice(-12).reverse().map(m=>'<li>Day '+m.day+' · '+ACTIONS[m.kind].icon+' '+ACTIONS[m.kind].name+'</li>').join(''):'<li>Spend time together to start a genuine scrapbook.</li>')+'</ul>'+growth.panel()+familyLegacy.panel()+rituals.panel()+adventures.panel()+helpers.panel()+responses.panel()+homeVisits.panel()+dreams.panel()+projects.panel()+homeHelp.panel()+guides.panel()+neighbors.page()+'<button class="ls272-secondary" data-act="ls272-close">Close Pip’s Daybook</button></section>');
+  api.showModal?.('little-sprouts','<section class="ls272-book"><header class="ls272-cover"><small>GENERATIONS · THE FIRST LITTLE SPROUT</small><h2>🌱 Pip’s Daybook</h2><p>'+friend+' Pip is a child and has their own needs, drawings and memories—not adult jobs or romance.</p></header>'+homeLine+arrivalLine+familyBond.panel()+homeEchoes.panel()+initiatives.panel()+(api.getPeerPanel?.()||'')+'<div class="ls272-profile"><span>🌼</span><div><b>Pip · '+esc(s.stage)+'</b><small>'+(s.guardian?'Poppy is Pip’s chosen guardian · since Day '+s.guardianDay:'A young friend learning about Maplewood')+'</small></div></div>'+bars+'<p class="ls272-progress">'+s.careDays+' / 3 different care days · All three kinds of shared activities needed to offer guardianship.</p><h3>Spend a real afternoon together</h3>'+(nearby?'':'<button data-act="ls272-visit">📍 Visit Pip in the playable world</button>')+'<div class="ls272-choices">'+activities+'</div>'+(s.ready&&!s.guardian&&nearby?'<div class="ls272-guardian"><strong>🏡 An invitation of trust</strong><p>After these real shared days, you may choose to welcome Pip into your cottage as a guardian. This is optional, not automatic. Pip will live with you in the playable cottage, while other adults and save records remain unchanged.</p><button data-act="ls272-guardian">🌷 Become Pip’s guardian</button></div>':'')+(s.guardian?'<div class="ls272-guardian"><strong>🏡 Your shared cottage</strong><p>Pip lives at your cottage and joins you for stories, nature walks and sketching. No forced aging, penalties or invented biological family links.</p></div>':'')+'<p class="ls272-progress">'+routine.icon+' Today: '+routine.label+'</p>'+routines.card()+'<h3>Our actual memories</h3><ul class="ls272-memories">'+(s.memories.length?s.memories.slice(-12).reverse().map(m=>'<li>Day '+m.day+' · '+ACTIONS[m.kind].icon+' '+ACTIONS[m.kind].name+'</li>').join(''):'<li>Spend time together to start a genuine scrapbook.</li>')+'</ul>'+growth.panel()+familyLegacy.panel()+rituals.panel()+adventures.panel()+helpers.panel()+responses.panel()+homeVisits.panel()+dreams.panel()+projects.panel()+homeHelp.panel()+guides.panel()+neighbors.page()+'<button class="ls272-secondary" data-act="ls272-close">Close Pip’s Daybook</button></section>');
  }
  function begin(kind){
   if(!canBegin(kind)){api.notify?.('Visit Pip in person and choose an activity not yet enjoyed today.');return false}
@@ -343,6 +355,7 @@ function setup(api){
   if(!approaches.isNear())initiatives.drawHint(g,pos,tick);
   approaches.draw(g,pos,tick);
   familyBond.drawGesture(g,pos,tick);
+  homeEchoes.drawHint(g,pos,tick);
   growth.drawAccessory(g,pos.x,pos.y+phase,tick);
   helpers.drawRibbon(g,pos,tick);
   neighbors.drawAura(g,tick,pos);
@@ -354,7 +367,7 @@ function setup(api){
    g.restore();
   }
  }
- function advance(dt){neighbors.advance(dt);rituals.follow(dt);worldKeepsakes.advance(dt);homeVisits.advance(dt);initiatives.advance(dt);approaches.advance(dt);homeAutonomy.advance(dt);familyBond.advance(dt)}
+ function advance(dt){neighbors.advance(dt);rituals.follow(dt);worldKeepsakes.advance(dt);homeVisits.advance(dt);initiatives.advance(dt);approaches.advance(dt);homeAutonomy.advance(dt);familyBond.advance(dt);homeEchoes.advance(dt)}
  function hit(x,y,scene){
   if(scene!==api.getScene?.()||!inPlace()||!Number.isFinite(x)||!Number.isFinite(y))return false;
   const p=position();return Math.abs(x-p.x)<=46&&Math.abs(y-(p.y-46))<=71;
@@ -375,6 +388,7 @@ function setup(api){
   if(action.startsWith('pe290-'))return guestEcho.handle(action,id);
   if(action.startsWith('pi292-'))return initiatives.handle(action,id);
   if(action.startsWith('pb294-'))return familyBond.handle(action,id);
+  if(action.startsWith('phe299-'))return homeEchoes.handle(action,id);
   if(action.startsWith('pl282-'))return familyLegacy.handle(action,id);
   if(action.startsWith('pf283-'))return rituals.handle(action,id);
   if(action==='ls272-book')return entry();
@@ -386,7 +400,7 @@ function setup(api){
   if(action==='ls272-close'){session=null;return api.closeModal?.()}
   return false;
  }
- return {status,position,entry,begin,choose,page,guardian,canBegin,hit,draw,handle,tick,advance,routines,neighbors,homeHelp,homeRhythms,homeVisits,guestEcho,homeAutonomy,initiatives,approaches,familyBond,dreams,projects,guides,growth,adventures,helpers,worldKeepsakes,responses,familyLegacy,rituals,get data(){return data()},get session(){return session},CHILD,ACTIONS};
+ return {status,position,entry,begin,choose,page,guardian,canBegin,hit,draw,handle,tick,advance,routines,neighbors,homeHelp,homeRhythms,homeVisits,guestEcho,homeAutonomy,initiatives,approaches,familyBond,homeEchoes,dreams,projects,guides,growth,adventures,helpers,worldKeepsakes,responses,familyLegacy,rituals,get data(){return data()},get session(){return session},CHILD,ACTIONS};
 }
 root.HearthLittleSprouts={setup,clean,defaults,CHILD,ACTIONS};
 })(window);
