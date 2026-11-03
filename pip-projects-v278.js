@@ -62,7 +62,18 @@ function schedule(minute,child,day,baseline){
  const focus=child?.dream?.focus,chosen=child?.dream?.chosenDay;
  if(child?.guardian!=='player'||!IDS.includes(focus)||!dayOK(chosen)||chosen>day)return fallback;
  const def=DREAMS[focus],baseRoute=fallback.route;
- const morning=def.morning,afternoon=def.afternoon;
+ const growth=root.HearthPipGrowth.progress(child,day).stage;
+ const morning={...def.morning},afternoon={...def.afternoon};
+ if(growth>=1){
+  morning.x+=12;morning.y-=12;
+  morning.title='A Growing '+def.morning.title;
+  morning.note='Pip independently tackles a bigger '+def.title.toLowerCase()+' project';
+ }
+ if(growth>=2){
+  afternoon.x-=18;afternoon.y-=14;
+  afternoon.title='An Independent '+def.afternoon.title;
+  afternoon.note='Pip plans the next step on their own, ready to share it with Poppy';
+ }
  const route=[
   {start:0,x:765,y:756,title:'Quiet rest',icon:'🌙',prop:'pillow',note:'A safe little cottage morning'},
   {start:360,...morning},
@@ -80,7 +91,7 @@ function schedule(minute,child,day,baseline){
   label:current.title,icon:current.icon,prop:current.prop,note:current.note,
   next:route[(slot+1)%4].title,nextAt:((slot+1)%4)*360,slot,progress,
   route:route.map(r=>({start:r.start,title:r.title,icon:r.icon,note:r.note})),
-  project:slot===1||slot===2,focus,stage,activeDream:def.title};
+  project:slot===1||slot===2,focus,stage,growthStage:growth,activeDream:def.title};
 }
 function setup(api){
  const state=()=>api.getState(),child=()=>api.getChild(),day=()=>dayOK(state().day)?state().day:1;
@@ -178,6 +189,14 @@ function setup(api){
   if(p.stage>=2){
    g.fillStyle=DREAMS[focus].color;g.fillRect(x-26,y-25,7,7);
    g.fillStyle='#fff0d4';g.fillRect(x-24,y-23,3,3);
+  }
+  if(p.growthStage>=1){
+   g.fillStyle='#f7e8c8';g.fillRect(x-27,y+5,8,11);
+   g.fillStyle='#bb9d85';g.fillRect(x-26,y+7,6,3);
+  }
+  if(p.growthStage>=2){
+   g.fillStyle=DREAMS[focus].color;g.fillRect(x+25,y-19,10,17);
+   g.fillStyle='#fff0dc';g.fillRect(x+27,y-16,6,8);
   }
   g.restore();return true;
  }
