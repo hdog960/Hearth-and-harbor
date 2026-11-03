@@ -2624,6 +2624,7 @@ const youngNeighbors=window.HearthYoungNeighbors.setup({
  nearestWalkable:(p,w)=>nearestWalkable(p,w,true),
  findPath:(a,b,w)=>findPath(a,b,w),
  isPlayerMoving:()=>!!player.target,isPaused:()=>!!modal||!!talk||speed===0,
+ isDialogOpen:()=>modal==='young-neighbors',
  save,updateUI,notify,showModal,closeModal
 });
 const familyAtlas=window.HearthFamilyAtlas.setup({
