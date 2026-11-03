@@ -20,9 +20,11 @@ function harness(overrides={}){
  const normalize=x=>JSON.parse(JSON.stringify(x));
  return {a,api,homes,state,pictures,normalize,get modal(){return modal},get opened(){return opened},get saves(){return saves}};
 }
-test('fresh save has eight actual residents including Pip and no invented bloodline links',()=>{
+test('fresh save has nine real residents including Pip and Wren, with no invented bloodlines',()=>{
  const f=harness(),g=f.normalize(f.a.graph());
- assert.equal(g.nodes.length,8);assert.equal(g.households.length,7);
+ assert.equal(g.nodes.length,9);assert.equal(g.households.length,7);
+ assert.equal(g.nodes.find(n=>n.id==='wren').home,null);
+ assert.equal(g.edges.some(e=>e.ids?.includes('wren')),false);
  assert.equal(g.edges.filter(e=>e.kind==='marriage'||e.kind==='chosen').length,0);
  assert.equal(g.nodes.find(n=>n.id==='player').home,'player');
  assert.equal(g.edges.filter(e=>e.kind==='household').length,3);

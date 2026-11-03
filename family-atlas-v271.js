@@ -4,8 +4,8 @@
  * guardians, children, surnames, succession or lineage are inferred.
  */
 (function(root){'use strict';
-const PEOPLE=['player','mabel','rosie','oliver','jun','bea','finn','pip'];
-const ADULTS=PEOPLE.slice(1,-1);
+const PEOPLE=['player','mabel','rosie','oliver','jun','bea','finn','pip','wren'];
+const ADULTS=PEOPLE.slice(1,-2);
 const HOMES=['player','h0','h1','h2','h3','h4','h5'];
 const THEMES={story:'Our Storybook Afternoon',hearth:'A Heart-to-Heart',maker:'Made with Love'};
 const obj=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
@@ -17,7 +17,7 @@ function setup(api){
  const state=()=>api.getState();
  const name=id=>String(api.getPersonLabel?.(id)||(id==='player'?'Poppy':id)).slice(0,38);
  const homeName=home=>String(api.getHomeLabel?.(home)||home).slice(0,60);
- const homeOf=id=>id==='player'?'player':id==='pip'?(api.getYoungResident?.()?.guardian==='player'?'player':null):api.getResidentHome?.(id);
+ const homeOf=id=>id==='player'?'player':id==='wren'?null:id==='pip'?(api.getYoungResident?.()?.guardian==='player'?'player':null):api.getResidentHome?.(id);
  const today=()=>dayOK(state().day)?state().day:1;
  const residents=home=>home==='player'?['player',...(homeOf('pip')==='player'?['pip']:[])]:ADULTS.filter(id=>homeOf(id)===home);
  function graph(){
@@ -244,6 +244,21 @@ function setup(api){
      title:'Poppy & Pip · '+story.name,
      detail:'After genuinely shared family days: '+story.after[r.choice],
      home:'player'});
+   }
+  }
+  // A real second child is a peer, not a Poppy household member,
+  // fabricated adoptee, adult or prospective romantic relationship.
+  // Only the completed two-stage physically co-present outing writes this.
+  const peerData=state().youngResidents;
+  if(obj(peerData)&&obj(peerData.pip)&&root.HearthYoungNeighbors?.clean){
+   const shared=root.HearthYoungNeighbors.clean(peerData.wren).friendships;
+   for(const r of shared){
+    const story=root.HearthYoungNeighbors.STORIES[r.kind];
+    if(!story||!dayOK(r.day)||r.day>now)continue;
+    out.push({day:r.day,kind:'child-peer-friendship',ids:['pip','wren','player'],
+     title:'Pip & Wren · '+story.name,
+     detail:'After meeting both children in the village and walking to their shared discovery spot: '+story.ending[r.last],
+     home:null});
    }
   }
   // A true shared traditional keepsake is a childhood family memory,

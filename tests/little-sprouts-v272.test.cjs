@@ -136,7 +136,7 @@ test('guardian relation appears in actual family Atlas only after explicit real 
  const f=fixture();
  const api={getState:()=>f.state,getPersonLabel:id=>id,getResidentHome:id=>({mabel:'h0',rosie:'h0'})[id],getYoungResident:()=>f.sprout.status(),showModal(){}};
  const atlas=A.setup(api);
- assert.equal(atlas.graph().nodes.length,8);
+ assert.equal(atlas.graph().nodes.length,9);
  assert.equal(atlas.graph().edges.filter(e=>e.kind==='guardian').length,0);
  for(const [day,kind] of [[5,'story'],[6,'garden'],[7,'art']]){f.state.day=day;complete(f,kind)}f.sprout.guardian();
  assert.equal(atlas.graph().edges.filter(e=>e.kind==='guardian').length,1);
@@ -171,7 +171,7 @@ test('iPhone loads Pip scripts before core and caches sprites, Atlas and UI offl
  assert.ok(html.indexOf('little-sprouts-v272.js')<html.indexOf('game.js'));
  assert.match(html,/v=2\.8\.3/);assert.match(sw,/hearth-harbor-v283-family-seasons/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
- assert.match(game,/youngResidents:\{pip:window\.HearthLittleSprouts\.clean\(raw\.youngResidents\?\.pip\)\}/);
+ assert.match(game,/youngResidents:\{pip:window\.HearthLittleSprouts\.clean\(raw\.youngResidents\?\.pip\),wren:window\.HearthYoungNeighbors\.clean\(raw\.youngResidents\?\.wren\)\}/);
  assert.match(game,/littleSprouts\.hit\(wx,wy,'town'\)/);
  assert.match(game,/littleSprouts\.draw\(ctx,\{scene,tick,drawSprite/);
  assert.match(game,/littleSprouts\.tick\(elapsed\)/);
