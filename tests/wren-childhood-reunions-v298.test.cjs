@@ -169,6 +169,11 @@ test('actual in-game touch routes both v2.9.7 club buttons and new v2.9.8 reunio
  for(const a of ['yn297-begin','yn297-first','yn297-last','yn298-begin','yn298-choose'])
   assert.ok(wren.includes("action==='"+a+"'"),a);
  assert.match(core,/youngNeighbors\.drawTending\(ctx,tick\)/);
+ assert.match(core,/o\.type==='friendship-corner'/);
+ assert.match(core,/const childTap=/);
+ assert.match(core,/Math\.hypot\(wx-wp\.x,wy-\(wp\.y-51\)\)/);
+ assert.ok(core.indexOf("cornerPose?[{type:'friendship-corner'")<
+  core.indexOf("wrenPose?[{type:'young-neighbor'"));
 });
 test('iPhone offline cache and live Canvas script use v2.9.8 without changing original storage',()=>{
  const html=read('index.html'),sw=read('sw.js'),game=read('game.js');
