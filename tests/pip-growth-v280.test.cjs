@@ -148,7 +148,8 @@ test('second chosen milestone changes Pip to a larger independent child and reco
 test('earned growth remains opt-in and carries forward into future real days',()=>{
  const f=fixture();second(f);f.pip.growth.celebrate(1);f.pip.growth.celebrate(2);
  f.state.day=40;assert.equal(f.pip.growth.stage,2);
- assert.equal(f.pip.growth.progress().chapters.every(c=>c.claimed),true);
+ assert.equal(f.pip.growth.progress().chapters.slice(0,2).every(c=>c.claimed),true);
+ assert.equal(f.pip.growth.progress().chapters[2].claimed,false,'the new teen milestone stays optional');
 });
 test('previous chapter receipts persist in the original save format after a round trip',()=>{
  const f=fixture();second(f);f.pip.growth.celebrate(1);f.pip.growth.celebrate(2);
