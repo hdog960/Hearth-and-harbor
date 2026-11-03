@@ -1,4 +1,10 @@
-# Hearth & Harbor v2.7.3 — Pip's Living Day
+# Hearth & Harbor v2.7.4 — Permanent Child Learning
+
+**Pip's genuine childhood growth now survives long playthroughs.** The three Storytelling, Nature and Creativity practice records only advance after real completed activities, and permanently retain earned milestones when the bounded scrapbook rolls over after many days. Earlier saves migrate safely from their real remaining memories. The original save key, all adults, Pip's routine, cottage, guardianship and bedtime gameplay remain unchanged.
+
+[Read the small v2.7.4 quality patch and migration report](PERMANENT_CHILD_LEARNING_V274_QA.md).
+
+## Previous release — v2.7.3 Pip's Living Day
 
 **Pip now lives a visible daily rhythm.** Maplewood's first younger resident moves smoothly through four in-world routines with animated walking/facing and handmade little activity props. After you choose to become Pip's guardian, a different household routine runs inside Poppy's cottage. Pip's Daybook shows real current activities, daily schedules and three earned learning tracks based on completed Story, Nature and Art activities.
 

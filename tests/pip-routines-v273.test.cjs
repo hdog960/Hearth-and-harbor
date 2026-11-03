@@ -173,12 +173,44 @@ test('phone asset order, cache, scrolling and accessibility gates include v2.7.3
  }
  assert.ok(html.indexOf('pip-routines-v273.js')<html.indexOf('little-sprouts-v272.js'));
  assert.ok(html.indexOf('little-sprouts-v272.js')<html.indexOf('game.js'));
- assert.match(html,/v=2\.7\.3/);assert.match(sw,/hearth-harbor-v273-pips-living-day/);
+ assert.match(html,/v=2\.7\.4/);assert.match(sw,/hearth-harbor-v274-permanent-learning/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
- assert.match(css,/prefers-reduced-motion/);assert.match(game,/Pip.s Living Day v2\.7\.3/);
+ assert.match(css,/prefers-reduced-motion/);assert.match(game,/Pip.s Living Day v2\.7\.4/);
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
 });
 test('new routines have no timers, network, embedded payment or second storage key',()=>{
  const src=read('pip-routines-v273.js');
  assert.doesNotMatch(src,/setInterval|setTimeout|XMLHttpRequest|WebSocket|localStorage|fetch\(|new Image\(/);
+});
+
+test('skills are earned only through completed child gameplay and never from opening menus',()=>{
+ const f=fixture();assert.deepEqual(JSON.parse(JSON.stringify(f.pip.data.skills)),{story:0,garden:0,art:0});
+ f.pip.entry();assert.equal(f.pip.data.skills.story,0);
+ f.pip.begin('story');f.pip.choose(0);assert.equal(f.pip.data.skills.story,0);
+ f.pip.page();f.pip.choose(0);f.pip.page();f.pip.choose(1);
+ assert.equal(f.pip.data.skills.story,1);assert.equal(f.pip.routines.mastery().story.days,1);
+});
+test('old child memory history migrates into verified lifetime skill counters',()=>{
+ const imported=L.clean({memories:[{day:2,kind:'art',choiceMask:1},{day:3,kind:'art',choiceMask:3},
+ {day:3,kind:'art',choiceMask:3},{day:4,kind:'story',choiceMask:0},{day:6,kind:'hacked',choiceMask:0}]});
+ assert.deepEqual(JSON.parse(JSON.stringify(imported.skills)),{story:1,garden:0,art:2});
+ assert.equal(P.mastery(imported.memories,8,imported.skills).art.rank,1);
+});
+test('earned mastery remains permanent after rolling scrapbook trims early memories',()=>{
+ const f=fixture();for(let day=1;day<=18;day++){
+  f.state.day=day;f.state.minute=120;
+  for(const kind of ['story','garden','art']){
+   assert.equal(f.pip.begin(kind),true);
+   f.pip.choose(0);f.pip.page();f.pip.choose(0);f.pip.page();f.pip.choose(0);
+  }
+ }
+ assert.equal(f.pip.data.memories.length,40);assert.equal(f.pip.data.skills.story,18);
+ assert.equal(f.pip.routines.mastery().story.days,18);
+ const restored=L.clean(JSON.parse(JSON.stringify(f.pip.data)));
+ assert.equal(restored.skills.story,18);
+ assert.equal(P.mastery(restored.memories,18,restored.skills).story.days,18);
+});
+test('malformed forged lifetime counters are bounded and old memories remain safe',()=>{
+ const bad=L.clean({skills:{story:'999',garden:100000,art:-1},memories:[{day:3,kind:'story',choiceMask:1}]});
+ assert.deepEqual(JSON.parse(JSON.stringify(bad.skills)),{story:1,garden:0,art:0});
 });

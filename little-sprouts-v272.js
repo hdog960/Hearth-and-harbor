@@ -27,7 +27,7 @@ const KINDS=Object.keys(ACTIONS),obj=x=>x!==null&&typeof x==='object'&&!Array.is
 const validDay=x=>Number.isInteger(x)&&x>=1&&x<=9999;
 const clamp=x=>Math.max(0,Math.min(100,Number.isFinite(x)?x:0));
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const defaults=()=>({guardian:null,guardianDay:0,needs:{joy:62,curiosity:55,confidence:50},daily:{day:0,done:[]},days:[],memories:[],evenings:[]});
+const defaults=()=>({guardian:null,guardianDay:0,needs:{joy:62,curiosity:55,confidence:50},daily:{day:0,done:[]},days:[],memories:[],evenings:[],skills:{story:0,garden:0,art:0}});
 function clean(raw){
  const src=obj(raw)?raw:{},d=defaults(),needs=obj(src.needs)?src.needs:{},daily=obj(src.daily)?src.daily:{},memories=[],days=[];
  const guardian=src.guardian==='player'&&validDay(src.guardianDay)?'player':null;
@@ -39,15 +39,22 @@ function clean(raw){
   if(memories.some(m=>m.day===x.day&&m.kind===x.kind))continue;
   memories.push({day:x.day,kind:x.kind,choiceMask:x.choiceMask});
  }
+ const skills={};
+ for(const kind of KINDS){
+  const old=Array.isArray(src.memories)?src.memories.filter(m=>obj(m)&&m.kind===kind&&validDay(m.day)&&Number.isInteger(m.choiceMask)&&m.choiceMask>=0&&m.choiceMask<=7):[];
+  const learned=new Set(old.map(m=>m.day)).size;
+  const claimed=obj(src.skills)&&Number.isInteger(src.skills[kind])&&src.skills[kind]>=0&&src.skills[kind]<=999?src.skills[kind]:0;
+  skills[kind]=Math.max(learned,claimed);
+ }
  const safeDaily=validDay(daily.day)?daily.day:0;
  const done=Array.isArray(daily.done)?[...new Set(daily.done.filter(x=>KINDS.includes(x)))].slice(0,3):[];
- return {guardian,guardianDay,needs:Object.fromEntries(Object.keys(d.needs).map(k=>[k,typeof needs[k]==='number'&&Number.isFinite(needs[k])?clamp(needs[k]):d.needs[k]])),daily:{day:safeDaily,done},days,memories:memories.slice(-40),evenings:root.HearthPipRoutines.cleanEvenings(src.evenings)};
+ return {guardian,guardianDay,needs:Object.fromEntries(Object.keys(d.needs).map(k=>[k,typeof needs[k]==='number'&&Number.isFinite(needs[k])?clamp(needs[k]):d.needs[k]])),daily:{day:safeDaily,done},days,memories:memories.slice(-40),evenings:root.HearthPipRoutines.cleanEvenings(src.evenings),skills};
 }
 function setup(api){
  const state=()=>api.getState(),data=()=>{
   const s=state();if(!obj(s.youngResidents)||!obj(s.youngResidents.pip))s.youngResidents={pip:defaults()};
   const c=s.youngResidents.pip;
-  if(!obj(c.needs)||!obj(c.daily)||!Array.isArray(c.days)||!Array.isArray(c.memories)||!Array.isArray(c.evenings))s.youngResidents.pip=clean(c);
+  if(!obj(c.needs)||!obj(c.daily)||!Array.isArray(c.days)||!Array.isArray(c.memories)||!Array.isArray(c.evenings)||!obj(c.skills))s.youngResidents.pip=clean(c);
   return s.youngResidents.pip;
  };
  let session=null;
@@ -107,6 +114,7 @@ function setup(api){
   d.daily.done.push(kind);
   if(!d.days.includes(today)){d.days.push(today);d.days=d.days.slice(-40)}
   d.memories.push({day:today,kind,choiceMask:mask});d.memories=d.memories.slice(-40);
+  d.skills[kind]=Math.min(999,(Number.isInteger(d.skills[kind])?d.skills[kind]:0)+1);
   const key=action.need;d.needs[key]=Math.min(100,d.needs[key]+16);
   for(const other of Object.keys(d.needs).filter(x=>x!==key))d.needs[other]=Math.min(100,d.needs[other]+4);
   api.save?.();api.updateUI?.();api.notify?.('🌷 A real new memory with Pip! '+key+' +16.');
