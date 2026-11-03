@@ -218,7 +218,7 @@ test('phone assets, original save, existing NPC pathing and Atlas are integrated
  assert.match(game,/littleSprouts\.responses\.dialogue/);
  assert.match(game,/pr287-direct/);
  assert.match(little,/responses\.panel\(\)/);
- assert.match(little,/root\.HearthPipResponses\.clean\(src\.neighborResponses\)/);
+ assert.match(little,/root\.HearthPipResponses\?\.clean\?\.\(src\.neighborResponses\)/);
  assert.match(atlas,/child-neighbor-response/);
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
  assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:380px\)/);
