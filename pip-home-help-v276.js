@@ -61,6 +61,7 @@ function setup(api){
   const task=TASKS[kind];
   d.needs[task.skill]=Math.min(100,Math.max(0,d.needs[task.skill]||0)+task.boost);
   d.needs.joy=Math.min(100,Math.max(0,d.needs.joy||0)+3);
+  api.onSharedHomeCompleted?.(record);
   api.save?.();api.updateUI?.();
   api.notify?.('💛 Pip really helped Poppy! '+task.skill+' +'+task.boost+' · a new home memory.');
   return true;
@@ -84,6 +85,7 @@ function setup(api){
    (s.pending?'<div class="ph276-pending"><strong>🌷 Planned together: '+TASKS[s.pending.kind].name+'</strong><p>Finish Poppy’s real Daybook activity. Pip joins the action at the furniture.</p><button data-act="ph276-cancel">Stop planning this activity</button></div>':
     '<h3>Invite Pip to help</h3><div class="ph276-choices">'+choices+'</div>')+
    '<div class="ph276-progress"><strong>🧵 Our Home Banner</strong><p>Complete three different kinds of help across three real days to make an illustrated keepsake inside the cottage. No new money or passive farming.</p><small>'+s.types+' of 3 kinds · '+s.days+' of 3 days'+(s.keepsake?' · ✓ Banner earned and displayed on the wall':'')+'</small></div>'+
+   (api.getHomeRhythmsPanel?.()||'')+
    '<h3>Little home memories</h3><ul class="ph276-memories">'+(records||'<li>No completed shared chores yet.</li>')+'</ul></section>';
  }
  function pose(){
