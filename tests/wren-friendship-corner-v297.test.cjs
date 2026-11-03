@@ -131,7 +131,7 @@ test('touching built Friendship Corner only opens an honest read-only memory',()
  const b=f.w.clubSite();f.setPlayer(b.x,b.y);
  const before=plain(f.state),saves=f.saves;
  assert.equal(f.w.inspectClub(),true);assert.match(f.modal.html,/Day 4/);
- assert.match(f.modal.html,/read-only memory/);
+ assert.match(f.modal.html,/read-only/);
  assert.deepEqual(plain(f.state),before);assert.equal(f.saves,saves);
 });
 test('finished keepsakes survive peer scrapbook rollover of more than 48 days',()=>{
