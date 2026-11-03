@@ -116,9 +116,9 @@ test('v2.9.6 is actually connected to the playable world and offline Home Screen
  const game=read('game.js'),html=read('index.html'),sw=read('sw.js');
  assert.match(game,/youngNeighbors\.drawSocial\(ctx,tick\)/);
  assert.match(game,/youngNeighbors\.advance\(dt\)/);
- assert.ok(html.includes('wren-neighbor-v295.js?v=2.9.6'));
- assert.ok(html.includes('game.js?v=2.9.6'));
- assert.match(sw,/hearth-harbor-v296-child-friendship-moments/);
+ assert.ok(html.includes('wren-neighbor-v295.js?v=2.9.7'));
+ assert.ok(html.includes('game.js?v=2.9.7'));
+ assert.match(sw,/hearth-harbor-v297-friendship-corner/);
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
  const src=read('wren-neighbor-v295.js');
  assert.doesNotMatch(src,/fetch\(|XMLHttpRequest|WebSocket|localStorage|setInterval|setTimeout/);
