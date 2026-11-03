@@ -185,8 +185,8 @@ test('real game world taps, responsive PWA and old saves use the new milestone',
  assert.match(game,/youngNeighbors\.drawClub\(ctx,tick\)/);
  assert.match(game,/youngNeighbors\.inspectClub\(\)/);
  assert.ok(html.includes('wren-neighbor-v295.js?v=2.9.8'));
- assert.ok(html.includes('game.js?v=2.9.9'));
- assert.match(sw,/hearth-harbor-v299-stories-brought-home/);
+ assert.ok(html.includes('game.js?v=3.0'));
+ assert.match(sw,/hearth-harbor-v300-chosen-generations/);
  const w=read('wren-neighbor-v295.js');
  assert.doesNotMatch(w,/fetch\(|WebSocket|XMLHttpRequest|localStorage|setInterval|setTimeout/);
  assert.doesNotMatch(w,/adultRomance|marriagePlans|coins\s*\+=/);
