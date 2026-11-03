@@ -14,7 +14,7 @@ Each ritual has two authored options in its opening and two different final memo
 
 ### Physical seasonal sampler
 
-A genuine completed record saves its day, actual season, earned heirloom and both decisions in a small bounded list. Across different seasons, the real cottage wall displays a progressively sewn original illustrated seasonal sampler. Three distinct in-game seasons add a finishing border and just +1 home comfort, subject to the existing 100 cap. This creates meaningful longevity without flooding the game's economy. Genuine dated memories appear in the Connections Atlas as lived experiences between Poppy and Pip, not biological ancestry, marriages or another legal guardian.
+A genuine completed record saves its day, actual season, earned heirloom and both decisions in a small bounded list. The capped 40-memory scrapbook protects one authentic receipt for each witnessed season, so seasonal progress never vanishes when the journal fills. Across different seasons, the real cottage wall displays a progressively sewn original illustrated seasonal sampler. Three distinct in-game seasons add a finishing border and just +1 home comfort, subject to the existing 100 cap. This creates meaningful longevity without flooding the game's economy. Genuine dated memories appear in the Connections Atlas as lived experiences between Poppy and Pip, not biological ancestry, marriages or another legal guardian.
 
 ### Save and system compatibility
 
