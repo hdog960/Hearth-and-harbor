@@ -267,6 +267,8 @@ test('phone source uses existing real 3.8s action and child world tap, no new na
  assert.match(little,/initiatives\.drawDuringHold\(g,pos,tick\)/);
  assert.match(little,/initiatives\.panel\(\)/);
  assert.match(little,/childInitiatives:root\.HearthPipInitiatives\?\.clean/);
+ assert.match(read('family-atlas-v271.js'),/child-home-initiative/);
+ assert.ok(html.includes('family-atlas-v271.js?v=2.9.2'));
  assert.match(game,/const SAVE='hearth-harbor-save-v1'/);
  assert.match(css,/:focus-visible/);
  assert.match(css,/@media\(max-width:380px\)/);
