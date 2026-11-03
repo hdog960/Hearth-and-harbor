@@ -131,7 +131,7 @@ function setup(api){
   }).join('');
   const recent=records().filter(r=>r.day<=now()).slice().reverse().map(r=>'<li>Day '+r.day+' · '+TRACKS[r.key].icon+' '+esc(TRACKS[r.key].title)+'</li>').join('');
   return '<section class="pl282-panel"><div class="pl282-cover"><small>GENERATIONS · HANDMADE WITH LOVE</small><h3>🖼️ Our Little Legacy Shelf</h3><p>The adult Home & Town Traditions book is the foundation. Pip’s real friendships, helping days, and learning unlock a final genuine household activity, creating a permanent physical keepsake.</p><strong>'+records().filter(r=>r.day<=now()).length+' / 3 shared traditions made · '+grown+' childhood stage</strong></div><h3>Three family traditions we can make together</h3>'+
-   '<div class="pl282-grid">'+cards+'</div><h3>Our handmade family memories</h3><ul class="pl282-history">'+(recent||'<li>Our first shared creation is waiting.</li>')+'</ul><p class="pl282-fine">Only an actual timed and completed Poppy Daybook activity creates these. Nothing is awarded for opening a book or putting an activity in the queue. No passive coins, compulsory aging, or fabricated relatives.</p></section>';
+   '<div class="pl282-grid">'+cards+'</div><button data-act="pf283-board">🧶 Gather around our family keepsakes</button><h3>Our handmade family memories</h3><ul class="pl282-history">'+(recent||'<li>Our first shared creation is waiting.</li>')+'</ul><p class="pl282-fine">Only an actual timed and completed Poppy Daybook activity creates these. Nothing is awarded for opening a book or putting an activity in the queue. No passive coins, compulsory aging, or fabricated relatives.</p></section>';
  }
  function draw(g,tick=0){
   if(!g||!isHome())return false;
