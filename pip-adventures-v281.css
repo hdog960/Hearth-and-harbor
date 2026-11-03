@@ -1,0 +1,24 @@
+/* Hearth & Harbor v2.8.1 — actual town-tap adventures for older Pip */
+.pa281-panel{color:#607a68;margin:13px 0 17px;padding-bottom:13px}
+.pa281-cover{padding:15px;border:3px solid #f7e9d5;border-bottom:5px solid #c7ad92;border-radius:18px;background:radial-gradient(circle at 96% 8%,#f3c5cd,transparent 48%),linear-gradient(135deg,#e2efdd,#fff1df)}
+.pa281-cover small{font-size:10px;letter-spacing:.09em;font-weight:900;color:#a6806a}
+.pa281-cover h3{margin:6px 0;color:#527967;font-size:18px!important}
+.pa281-cover p,.pa281-panel p{font-size:12px;line-height:1.55;color:#718471;margin:7px 0}
+.pa281-cover strong{font-size:13px;color:#64816c}
+.pa281-panel h3{font-size:14px!important;color:#68866d;margin:14px 0 7px}
+.pa281-list{display:grid;gap:8px}
+.pa281-row{display:flex;align-items:center;gap:8px;border-radius:13px;border:2px solid #e1d4bd;background:#fbf4e6;padding:9px;min-height:54px}
+.pa281-row>span{font-size:23px;flex:0 0 29px;text-align:center}
+.pa281-row>div{flex:1;min-width:0}
+.pa281-row strong{font-size:12px;color:#577b68;display:block;line-height:1.35}
+.pa281-row small{font-size:10px;color:#847f6e;display:block;line-height:1.35;margin-top:2px}
+.pa281-panel button,.pa281-final button{display:block;width:100%;min-height:51px;text-align:left;padding:11px 12px;border-radius:12px;border:2px solid #b8ceb8;border-bottom:4px solid #95b19b;background:linear-gradient(#e5f0df,#d1e4d2);color:#4f7560;font-size:12px;font-weight:850;touch-action:manipulation}
+.pa281-row button{width:auto!important;min-height:44px!important;flex:0 0 auto;padding:9px!important}
+.pa281-panel button:focus-visible,.pa281-final button:focus-visible{outline:3px solid #32638c;outline-offset:3px}
+.pa281-active{border:2px solid #c9bfa8;border-bottom:4px solid #b9a685;background:#f8edda;border-radius:13px;padding:12px;margin:12px 0}
+.pa281-active strong{font-size:13px;color:#8e7563}
+.pa281-active p{font-size:12px;color:#887966}
+.pa281-history{list-style:none;padding:0;margin:8px 0}
+.pa281-history li{margin:7px 0;padding:10px;border-radius:8px;background:#f8f0e2;border-left:4px solid #aac7a9;font-size:11px;color:#7a806d}
+@media(max-width:380px){.pa281-cover{padding:12px}.pa281-row{gap:6px;padding:8px}.pa281-row button{padding:8px!important}.pa281-panel button{min-height:54px}}
+@media(prefers-reduced-motion:reduce){.pa281-panel *,.pa281-final *{animation:none!important;transition:none!important}}

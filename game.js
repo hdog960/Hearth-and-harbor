@@ -1,4 +1,4 @@
-/* Hearth & Harbor — Pip’s Growing Seasons v2.8.0
+/* Hearth & Harbor — Pip’s Growing Adventures v2.8.1
    A complete 2.5D canvas rendering reset. Original pixel artwork, zero 3D dependencies. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});
@@ -2112,6 +2112,7 @@ function drawScene(){if(!W||!H)return;
    }else if(o.type==='player')drawCharacter(ctx,playerDef(),player.x,player.y,player.facing,!!player.target);
    else drawStatic(o,ctx);
   }
+  littleSprouts.adventures.draw(ctx,tick);
   littleSprouts.draw(ctx,{scene,tick,drawSprite:(child,x,y,routine)=>{ellipse(ctx,'#21474444',x,y,21,6);drawArt(ctx,charArt(child,routine?.facing||'front',routine?.moving?Math.floor(tick*8)%2:routine?.project?Math.floor(tick*2.5)%2:0,'happy'),x,y,littleSprouts.growth.visual().scale)}});
    drawCoupleSparkles(ctx);
  }else{
@@ -2346,6 +2347,9 @@ function clickWorld(x,y){if(modal||talk)return;if(householdBusy&&!placement){sto
   }else goTo(bounds);
   return;
  }
+ const pipAdventure=littleSprouts.adventures.hit(wx,wy);
+ if(pipAdventure){goTo(nearestWalkable({x:pipAdventure.x,y:pipAdventure.y},'town',true)||pipAdventure,
+  ()=>littleSprouts.adventures.arrive(pipAdventure.step));return}
  if(littleSprouts.hit(wx,wy,'town')){const c=littleSprouts.position();goTo(nearestWalkable({x:c.x-64,y:c.y+38},'town',true)||{x:c.x-64,y:c.y+38},()=>littleSprouts.entry());return}
   const festivalStall=festivalMarket.hit(wx,wy);if(festivalStall){goTo(nearestWalkable({x:festivalStall.walkX,y:festivalStall.walkY},'town',true)||{x:festivalStall.walkX,y:festivalStall.walkY},()=>festivalMarket.visit(festivalStall.id));return}
  const remembered=memoryWalk.hit(wx,wy);if(remembered){goTo(nearestWalkable({x:remembered.walkX,y:remembered.walkY},'town',true)||{x:remembered.walkX,y:remembered.walkY},()=>memoryWalk.visit(remembered.id));return}
@@ -2507,7 +2511,7 @@ const familyPortraits=window.HearthFamilyPortraits.setup({
  addSchedule:(home,id,kind)=>schedules.add(home,id,kind)
 });
 const littleSprouts=window.HearthLittleSprouts.setup({
- getState:()=>state,save,updateUI,notify,showModal,closeModal,
+ getState:()=>state,save,updateUI,notify,showModal,closeModal,closeTalk,
  getScene:()=>scene,
  isNearby:(p,d)=>Math.hypot(player.x-p.x,player.y-p.y)<=d,
  getPlayer:()=>({x:player.x,y:player.y}),
@@ -2662,6 +2666,8 @@ function talkChoices(mode='main'){
  if(mode==='main'&&scene==='town'&&['mabel','bea','finn','rosie'].includes(talk))options.splice(1,0,['stew-board','🌿 Improve the village']);
  if(mode==='main'&&scene==='town'&&festivalMarket.open()&&['bea','rosie','oliver'].includes(talk))options.splice(1,0,['fmarket-overview','🎪 Visit the festival stalls']);
  if(mode==='main'&&scene==='town'&&community.festivalOpen()&&community.hosts().some(m=>m.id===talk))options.splice(1,0,['comm-talk','🎪 Help with the festival']);
+ if(mode==='main'&&scene==='town'&&littleSprouts.adventures.eligible(talk))
+   options.splice(1,0,['pa281-direct','🌼 Pip’s growing adventure']);
  if(mode==='main'&&scene==='town'&&littleSprouts.guides.eligible()&&littleSprouts.routines.location().mentorId===talk)
     options.splice(1,0,['pm279-direct','🌼 Join Pip’s guide reflection']);
   if(mode==='main'&&scene==='town'&&littleSprouts.neighbors.adultNear(talk)&&
@@ -2801,8 +2807,14 @@ function decorate(){if(scene!=='home')goScene('home');
 function style(){const pendingName=$('nameInput')?.value;const outfit=['#f18bb0','#8cb2e5','#e8bc65','#83c5ad','#a29be2','#f2a577'],hair=['#453536','#895b47','#d3a76b','#393546','#b67360','#dba66a'],skin=['#f5dbb3','#eeb892','#c88d63','#8e5943','#5f4033'];
  showModal('style',`<h2>🎀 Make Your Own Villager</h2><p>A little pixel person with a style all their own.</p><label>Your name</label><input id="nameInput" class="input" maxlength="18" value="${escapeHtml(pendingName??state.name)}"/><h3>Outfit</h3><div class="swatches">${outfit.map(s=>`<button class="swatch" style="background:${s}" data-act="set-outfit" data-id="${s}"></button>`).join('')}</div><h3>Hair color</h3><div class="swatches">${hair.map(s=>`<button class="swatch" style="background:${s}" data-act="set-hair" data-id="${s}"></button>`).join('')}</div><h3>Haircut</h3><div class="haircuts">${['Bob','Side-part','Tousled','Ponytail','Buns'].map((n,i)=>`<button data-act="set-style" data-id="${i}" aria-pressed="${state.hairStyle===i}" class="haircut ${state.hairStyle===i?'selected':''}">${n}</button>`).join('')}</div><h3>Skin</h3><div class="swatches">${skin.map(s=>`<button class="swatch" style="background:${s}" data-act="set-skin" data-id="${s}"></button>`).join('')}</div>${btn('Save my look 🌷','save-look')}`)}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
-function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Pip’s Growing Seasons v2.8.0 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Postcards'+(todaysPostcard()?.status==='pending'?' · New!':''),'postcards')}${btn('💌 Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🦋 Field Guide & Curiosity Cabinet','nature-guide')}${btn('🕸️ Meadow Net · Catch insects','bug-hunt')}${btn('🎣 Pond Almanac · Go fishing','fish-guide')}${btn('🌲 Cloverbank Grove · Explore','grove-travel')}${btn('🎪 Festival Calendar','festival-calendar')}${btn('💌 Together in Maplewood','comm-board')}${btn('🌿 Build the Village','stew-board')}${btn('🧺 Village Trades & Kindness','trade-board')}${btn('🎪 Festival Market','fmarket-overview')}${btn('🌷 Village Community Diary','vl-board')}${btn('💌 Neighbors Together','nm-book')}${btn('🏡 Roots & Keepsakes','asp-board')}${btn('🖼️ Home & Town Traditions','ht-board')}${btn('🌿 Village Memory Walk · v2.6','mw26-board')}${btn('✦ The Heirloom Cabinet','hl37-board')}${btn('🖼️ Family Portraits · Generations','fp27-board')}${btn('🌳 Connections Atlas','fa271-board')}${btn('🌱 Pip & Little Sprouts','ls272-book')}${btn('🍂 Seasons of Life · Birthdays','ls36-board')}${btn('💗 Little Acts of Care','cc35-board')}${btn('🎓 Passing It On · Mentorship','mt34-board')}${btn('🌿 Family Roots & Connections','fr33-board')}${btn('📖 Household Chronicle','hc32-board')}${btn('🧺 Household Promises','hr26-board')}${btn('🪑 Rooms With Purpose','hf-board')}${btn('🍳 Hearth Kitchen','cook-book')}${btn('🍽️ At Our Table','ft-board')}${scene==='residence'?btn('🌷 Helping Hands','hh-board')+btn('🎨 Little Passions Studio','hs-board'):''}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
+function menu(){showModal('menu',`<h2>⚙️ Your Village</h2><p>Hearth & Harbor: Pip’s Growing Adventures v2.8.1 — an original 2.5D retro life simulation. Your progress saves on this device.</p>${btn('💗 Hearts & Personalities','hearts')}${btn('💌 Postcards'+(todaysPostcard()?.status==='pending'?' · New!':''),'postcards')}${btn('💌 Town Stories','stories')}${btn('💕 Town Hearts','town-hearts')}${btn('📅 Visiting Hours','visits')}${btn('🏡 Little Households','housing')}${btn('🦋 Field Guide & Curiosity Cabinet','nature-guide')}${btn('🕸️ Meadow Net · Catch insects','bug-hunt')}${btn('🎣 Pond Almanac · Go fishing','fish-guide')}${btn('🌲 Cloverbank Grove · Explore','grove-travel')}${btn('🎪 Festival Calendar','festival-calendar')}${btn('💌 Together in Maplewood','comm-board')}${btn('🌿 Build the Village','stew-board')}${btn('🧺 Village Trades & Kindness','trade-board')}${btn('🎪 Festival Market','fmarket-overview')}${btn('🌷 Village Community Diary','vl-board')}${btn('💌 Neighbors Together','nm-book')}${btn('🏡 Roots & Keepsakes','asp-board')}${btn('🖼️ Home & Town Traditions','ht-board')}${btn('🌿 Village Memory Walk · v2.6','mw26-board')}${btn('✦ The Heirloom Cabinet','hl37-board')}${btn('🖼️ Family Portraits · Generations','fp27-board')}${btn('🌳 Connections Atlas','fa271-board')}${btn('🌱 Pip & Little Sprouts','ls272-book')}${btn('🍂 Seasons of Life · Birthdays','ls36-board')}${btn('💗 Little Acts of Care','cc35-board')}${btn('🎓 Passing It On · Mentorship','mt34-board')}${btn('🌿 Family Roots & Connections','fr33-board')}${btn('📖 Household Chronicle','hc32-board')}${btn('🧺 Household Promises','hr26-board')}${btn('🪑 Rooms With Purpose','hf-board')}${btn('🍳 Hearth Kitchen','cook-book')}${btn('🍽️ At Our Table','ft-board')}${scene==='residence'?btn('🌷 Helping Hands','hh-board')+btn('🎨 Little Passions Studio','hs-board'):''}${scene==='residence'?btn('📖 Household Daybook','daybook')+btn('🛋️ About this home','room-info'):scene==='home'?btn('📖 Poppy’s Household Daybook','daybook'):''}${btn('💾 Save now','save')} ${btn('📤 Export backup','export')} ${btn('📥 Import backup','import')}<hr><p><strong>How to play</strong><br>Tap a destination to walk. Tap neighbors, homes, the café, fruit stall, garden and pond to interact. Use the bottom menu to explore life, style and decorating.</p><p>💚 No accounts, energy paywalls, ads or purchases.</p>`)}
 function handleAction(action,id){
+ if(action==='pa281-direct'){
+  const who=talk;
+  if(!who||!littleSprouts.adventures.eligible(who))return;
+  closeTalk();return littleSprouts.adventures.start(who);
+ }
+ if(action.startsWith('pa281-'))return littleSprouts.handle(action,id);
  if(action==='pm279-direct'){
   const selected=talk;
   if(!selected||!littleSprouts.guides.eligible()||littleSprouts.routines.location().mentorId!==selected)return;

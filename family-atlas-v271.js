@@ -144,6 +144,24 @@ function setup(api){
     }
    }
   }
+  // Only a three-stop real-world Pip adventure followed by its final choice
+  // becomes dated neighborhood history; no adult-family or kinship edge.
+  const grownAdventures=state().youngResidents?.pip?.adventures;
+  if(Array.isArray(grownAdventures)){
+   const seen=new Set(),names={
+    mabel:['The Pollinator Path',1],rosie:['The Friendly Market Trail',1],
+    bea:['Three Colors of Maplewood',1],jun:['The Little Story Trail',2],
+    oliver:['The Thoughtful Recipe Hunt',2],finn:['Pondwatch Field Notes',2]};
+   for(const r of grownAdventures.slice(-60)){
+    if(!obj(r)||!Object.hasOwn(names,r.id)||!dayOK(r.day)||r.day>now||
+      r.stage!==names[r.id][1]||![0,1].includes(r.choice)||seen.has(r.day))continue;
+    seen.add(r.day);
+    out.push({day:r.day,kind:'child-adventure',ids:['pip',r.id],
+     title:names[r.id][0],
+     detail:'A growing child completed three physical village stops with Poppy and a real neighbor',
+     home:null});
+   }
+  }
   for(const home of HOMES.slice(1)){
    const portraits=api.getPortraits?.(home)||[];
    for(const p of portraits){

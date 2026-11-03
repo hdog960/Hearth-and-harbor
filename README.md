@@ -1,4 +1,12 @@
-# Hearth & Harbor v2.8.0 — Pip's Growing Seasons
+# Hearth & Harbor v2.8.1 — Pip's Growing Adventures
+
+**Pip's Growing Child and Independent Child stages now unlock six distinct physical activities in the actual 2.5D village.** Growing children can explore flowers with Mabel, help Rosie make the market welcoming, and practice color with Bea. Independent children can put together stories with Jun, plan recipe ideas with Oliver, and learn about the pond with Finn.
+
+These are not instant menu rewards: Poppy must actually walk with Pip to the real neighbor, **tap three separate glowing illustrated world objects** and physically walk to each stop, then make a final reflective choice. A completed journey creates one genuine dated child memory per day and a small need boost. The memories appear in the Connections Atlas, without inventing family ties. There is no new paid service, account, passive income or separate save key; existing games and childhood progression remain compatible.
+
+[Read the v2.8.1 implementation, QA and Generations roadmap](PIPS_GROWING_ADVENTURES_V281_QA_AND_GENERATIONS.md).
+
+## Previous release — v2.8.0 Pip's Growing Seasons
 
 **Pip can now genuinely grow through two optional developmental childhood milestones.** After earning a foundation in real story/nature/art activities, helpful cottage routines, bedtime care, neighbor friendships, and later completed dreams and independent projects, the player can choose to celebrate **Growing Child** and then **Independent Child**. Nothing happens just because time passed or a menu was opened; Pip remains a child without invented birthdays, parents, adult jobs or passive currency.
 
