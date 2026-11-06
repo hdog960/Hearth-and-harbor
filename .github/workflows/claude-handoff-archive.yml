@@ -1,0 +1,76 @@
+name: Export Hearth and Harbor v3.0 for Claude
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/claude-handoff-archive.yml'
+      - 'CLAUDE_DEVELOPER_HANDOFF.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export-full-source:
+    name: Package every tracked source, asset, document and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify all shipped browser JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in *.js; do node --check "$file"; done
+          node --test tests/*.test.cjs
+      - name: Assemble complete source plus extra handoff and checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist/staging/Hearth-and-Harbor-v3.0
+          rsync -a --exclude='/.git/' --exclude='/dist/' ./ dist/staging/Hearth-and-Harbor-v3.0/
+          cat > dist/staging/Hearth-and-Harbor-v3.0/START_HERE_CLAUDE.txt <<'EOF'
+          HEARTH & HARBOR — COMPLETE v3.0 CLAUDE HANDOFF
+
+          This package includes the entire GitHub Pages game, all tracked assets,
+          all original development notes, all automated test suites, and the
+          added CLAUDE_DEVELOPER_HANDOFF.md.
+
+          1. Read CLAUDE_DEVELOPER_HANDOFF.md.
+          2. Read GENERATIONS_V300_REVIEW_AND_QA.md and ROADMAP_V22_V30.md.
+          3. Read README.md, DEVELOPMENT_NOTES.md, index.html, game.js.
+          4. Inspect the Pip/Wren and home modules before making assumptions.
+          5. Preserve hearth-harbor-save-v1, original artwork and the iPhone PWA.
+          6. Full Node check: node --test tests/*.test.cjs
+          7. Local static server: python3 -m http.server 8000
+
+          STOP POINT: v3.0 is COMPLETE and PAUSED pending the player's creative
+          review. Do not proceed into v3.1 without an explicit new roadmap.
+          EOF
+          printf 'Game version: Hearth & Harbor v3.0 Generations\nOriginal game merge: f8d4b11b0d3da7c8c2a23ad5910b50a6fb9dc5a7\nPackaging commit: %s\nRepository: https://github.com/hdog960/Hearth-and-harbor\nPublication: https://hdog960.github.io/Hearth-and-harbor/\n' "$(git rev-parse HEAD)" > dist/staging/Hearth-and-Harbor-v3.0/SOURCE_SNAPSHOT.txt
+          python3 - <<'PY'
+          import hashlib
+          from pathlib import Path
+          root=Path("dist/staging/Hearth-and-Harbor-v3.0")
+          entries=[]
+          for f in sorted(root.rglob("*")):
+              if f.is_file() and f.name!="CHECKSUMS_SHA256.txt":
+                  entries.append(f"{hashlib.sha256(f.read_bytes()).hexdigest()}  {f.relative_to(root).as_posix()}")
+          (root/"CHECKSUMS_SHA256.txt").write_text("\n".join(entries)+"\n",encoding="utf-8")
+          print("Packed files before manifest:",len(entries))
+          print("Markdown docs:",len(list(root.rglob("*.md"))))
+          print("Node test suites:",len(list(root.glob("tests/*.test.cjs"))))
+          PY
+          (cd dist/staging && zip -qr ../Hearth-and-Harbor-v3.0-FULL-CLAUDE-HANDOFF.zip Hearth-and-Harbor-v3.0)
+          unzip -tq dist/Hearth-and-Harbor-v3.0-FULL-CLAUDE-HANDOFF.zip
+          ls -lh dist/Hearth-and-Harbor-v3.0-FULL-CLAUDE-HANDOFF.zip
+      - name: Upload handoff archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: HearthHarbor-v3.0-Complete-Source-and-Docs
+          path: dist/Hearth-and-Harbor-v3.0-FULL-CLAUDE-HANDOFF.zip
+          if-no-files-found: error
+          retention-days: 30
